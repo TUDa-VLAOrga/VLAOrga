@@ -1,5 +1,5 @@
 # Specification for VLAOrga
-## Project Description
+## Project Description (about 500 words)
 
 The project VLAOrga is part of a practical lecture held at the Technical University in Darmstadt that aims at improving existing university systems or constructing new solutions.
 
@@ -34,8 +34,49 @@ The workflow of the VLA will also benefit from many quality of life improvements
 
 [Diagram of Architecture]
 
-## Deliverables
+## Deliverables (currently 482 words)
 
-## Risks
+VLAOrga will be developed as a fully fledged web server.
+This includes the client being able to interact with the program via the responsive frontend that can be viewed using any modern browser. 
+The main processing and synchronisation will happen in the backend, a part of our software that will handle most of our program logic. This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements..
+
+The backend will be compatible with any modern operating system with a reliabel internet connection due to the usage of the de-facto containerization standard Docker.
+
+Developement of the frontend will use well established tools like React and TypeScript.
+The backend will be written in Spring Boot, a Java Framework, allowing for object oriented programming and with it many the advantage to define clear module interfaces.
+
+As discussed an agreed upon with the VLA, the development and documentation of this software will be found on GitHub (https://github.com/TUDa-VLAOrga/VLAOrga).
+GitHub will also be used as a the primary platform for project communication. 
+This includes, among other things, the "Issues" tab where any interested person can see the current planning state of the project e.g which features are targeted in a given iteration and much more.
+
+Most of the implemented features will be tested thoroughly, especially the core functionality. 
+The test will happen at least on unit and integration level.
+This does explicitly not mean that we are aming for 100% test coverage as we prioritize the quality of tests over the quanitity of tests.
+
+During developement new feature requests will be discussed with the VLA but we cannot guarantee that all features will be implemented. If a feature should not make it into the release we will inform the VLA beforehand and discuss further prioritization in case of triages directly with the VLA.  
+
+We hereby guarantee that core functionality will be part of the final release of this software.
+This functionality can only be guaranteed when a stable internet connection is available.
+The core functionalities that we have identified will be in the last part of this segment.
+
+### Calendar
+The calendar will list an overview of experiments and their due dates.
+
+This very arrangment of experiment usage times will be displayed in a row corresponding to the day that it is taking place on.
+
+The calendar will have an option to go forward or backward in time.
+
+The calendar will sync to the existing data base and will display only the latest of information.
+
+The calendar will allow clicking of lectures ensuring an overview over the experiments
+
+### Experiments
+An overview of Experiments will be accessible within the interfaces.
+
+There will be an option to reschedule experiments.
+
+For any given experiment that is also registered in the existing data base, the current status should be displayed.
+
+## Risks 
 
 ## Legal
