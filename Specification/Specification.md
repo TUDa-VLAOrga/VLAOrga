@@ -79,4 +79,14 @@ For any given experiment that is also registered in the existing data base, the 
 
 ## Risks 
 
-## Legal
+## Legal (approx. 118 words)
+
+It was agreed upon that this project will be an open-source project.
+
+We encourage you to use this software if it can help you adapt your work efficiency. 
+
+If used outside of TU Darmstadt, we cannot guarantee that all features will work in the same extent it does there. Different environments will need adaption to different interfaces.
+
+The ownership of the repository containing the project will not be transferred after the developement has ended.
+
+Communication with the VLA will primarly consist of Mail exchanges and meetups. The Mails have already been exchanged and will not be listed due to privacy concerns.
