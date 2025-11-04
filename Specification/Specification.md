@@ -5,7 +5,9 @@ The project VLAOrga is part of a practical lecture held at the Technical Univers
 
 ### Domain
 
-The "Vorlesungsassistenz Physik", which will from now on be abbreviated to VLA, of the physical department at TU Darmstadt is an essential part of ensuring that various physics based lectures can be held properly by ensuring that experiments are prepared before the lecture takes place. This very taks requires a lot of planning as a lectures do not have the time to prepare those experiments and one lecture might even contain multiple experiments.
+The "Vorlesungsassistenz Physik", which will from now on be abbreviated to VLA, of the physical department at TU Darmstadt is an essential part of ensuring that various physics based lectures can be held properly by ensuring that experiments are prepared before the lecture takes place.
+
+This very taks requires a lot of planning as a lectures do not have the time to prepare those experiments and one lecture might even contain multiple experiments.
 
 For this purpose the VLA already has established a manual system in which they arrange themselves in a way that enables lecturers to receive their wished for experiments after requesting that very experiment via https://linus.iap.physik.tu-darmstadt.de/
 
@@ -18,7 +20,7 @@ Following a prior project that allowed the VLA to store and manage information a
 As of now a large chunk of organizational communication is done using this very blackboard, printed mediums and hand-written notes. 
 [Image of Blackboard]
 
-Furthermore the VLA is, as of now, greatly hindered from doing their work efficiently as electronic mails are distributed on a per person basis instead of one central instance. This causes further effort in communicating what already has been worked on and what has not even been read yet making room for misinterpretations and errors. 
+Furthermore, the VLA is, as of now, greatly hindered from doing their work efficiently as electronic mails are distributed on a per person basis instead of one central instance. This causes further effort in communicating what already has been worked on and what has not even been read yet making room for misinterpretations and errors. 
 
 ### Vision
 
@@ -26,7 +28,7 @@ With this project we aim at tackling those organizational bottlenecks by creatin
 
 An easy to use digital overview in the form of a central calendar with clickable lecture experiment overviews should replace the necessity for hand-written notes and printed out timetables. 
 
-This calendar will not only serve its purpose in clearly displaying the different dates in a unified and easy to read format. An approach like this will also greatly lessen further misscommunication between the members of the VLA as everyone with appropriate access to the calendar will be able to see the latest modifications and an up-to-date view of the current organizational status using their phone.
+This calendar will not only serve its purpose in clearly displaying the different dates in a unified and easy to read format, it will also greatly lessen the possibility for further misscommunication between members of the VLA as everyone with appropriate access to the calendar will be able to see the latest modifications and an up-to-date view of the current organizational status using their phone.
 
 The workflow of the VLA will also benefit from many quality of life improvements that will not only increase efficiency, but make certain tasks such as checking the current state of an specific experiment material or moving certain experiments between lectures much less of a hassle.
 
@@ -46,6 +48,7 @@ Developement of the frontend will use well established tools like React and Type
 The backend will be written in Spring Boot, a Java Framework, allowing for object oriented programming and with it many the advantage to define clear module interfaces.
 
 As discussed an agreed upon with the VLA, the development and documentation of this software will be found on GitHub (https://github.com/TUDa-VLAOrga/VLAOrga).
+
 GitHub will also be used as a the primary platform for project communication. 
 This includes, among other things, the "Issues" tab where any interested person can see the current planning state of the project e.g which features are targeted in a given iteration and much more.
 
