@@ -20,7 +20,8 @@ Following a prior project that allowed the VLA to store and manage information a
 As of now a large chunk of organizational communication is done using this very blackboard, printed mediums and hand-written notes. 
 [Image of Blackboard]
 
-Furthermore, the VLA is, as of now, greatly hindered from doing their work efficiently as electronic mails are distributed on a per person basis instead of one central instance. This causes further effort in communicating what already has been worked on and what has not even been read yet making room for misinterpretations and errors. 
+Furthermore, the VLA is, as of now, greatly hindered from doing their work efficiently as electronic mails are distributed on a per person basis instead of one central instance.
+This causes further effort in communicating what already has been worked on and what has not even been read yet making room for misinterpretations and errors. 
 
 ### Vision
 
@@ -28,7 +29,8 @@ With this project we aim at tackling those organizational bottlenecks by creatin
 
 An easy to use digital overview in the form of a central calendar with clickable lecture experiment overviews should replace the necessity for hand-written notes and printed out timetables. 
 
-This calendar will not only serve its purpose in clearly displaying the different dates in a unified and easy to read format, it will also greatly lessen the possibility for further misscommunication between members of the VLA as everyone with appropriate access to the calendar will be able to see the latest modifications and an up-to-date view of the current organizational status using their phone.
+This calendar will not only serve its purpose in clearly displaying the different dates in a unified and easy to read format.
+It will also greatly lessen the possibility for further misscommunication between members of the VLA as everyone with appropriate access to the calendar will be able to see the latest modifications and an up-to-date view of the current organizational status using their phone.
 
 The workflow of the VLA will also benefit from many quality of life improvements that will not only increase efficiency, but make certain tasks such as checking the current state of an specific experiment material or moving certain experiments between lectures much less of a hassle.
 
@@ -40,7 +42,8 @@ The workflow of the VLA will also benefit from many quality of life improvements
 
 VLAOrga will be developed as a fully fledged web server.
 This includes the client being able to interact with the program via the responsive frontend that can be viewed using any modern browser. 
-The main processing and synchronisation will happen in the backend, a part of our software that will handle most of our program logic. This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements..
+The main processing and synchronisation will happen in the backend, a part of our software that will handle most of our program logic.
+This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements..
 
 The backend will be compatible with any modern operating system with a reliabel internet connection due to the usage of the de-facto containerization standard Docker.
 
@@ -56,7 +59,8 @@ Most of the implemented features will be tested thoroughly, especially the core 
 The test will happen at least on unit and integration level.
 This does explicitly not mean that we are aming for 100% test coverage as we prioritize the quality of tests over the quanitity of tests.
 
-During developement new feature requests will be discussed with the VLA but we cannot guarantee that all features will be implemented. If a feature should not make it into the release we will inform the VLA beforehand and discuss further prioritization in case of triages directly with the VLA.  
+During developement new feature requests will be discussed with the VLA but we cannot guarantee that all features will be implemented.
+If a feature should not make it into the release we will inform the VLA beforehand and discuss further prioritization in case of triages directly with the VLA.  
 
 We hereby guarantee that core functionality will be part of the final release of this software.
 This functionality can only be guaranteed when a stable internet connection is available.
@@ -81,23 +85,35 @@ There will be an option to reschedule experiments.
 For any given experiment that is also registered in the existing data base, the current status should be displayed.
 
 ## Risks (497 words)
-In general we will focus on a quick adaption in our prioritization if any major problem were to happen. Independent of the problem at hand we will first discuss further actions within our the confines of our team and afterwards we will inform and discuss our plans with the VLA. Most importantly certain nice-to-have features will possibly be postponed to later iterations of the development cycles in favor of the core features.
+In general we will focus on a quick adaption in our prioritization if any major problem were to happen.
+Independent of the problem at hand we will first discuss further actions within our the confines of our team and afterwards we will inform and discuss our plans with the VLA.
+Most importantly certain nice-to-have features will possibly be postponed to later iterations of the development cycles in favor of the core features.
 
 A delay in core functionality cannot be ruled out and will be communicated as soon as possible.  
 
-If the actions of a team member results in a time deficit at the time of any given iteration, we will soon inform them about their working time deficit. For that we have set up time tracking, allowing us to compare if everyone is working on their features as expected. In addition to that we will also work with certain techniques allowing a gross estimation of problem complexity.
-This scenario could, for example, be caused by a long extended sickness. In such a case we will have to deal with that lost time. There is a possibility that this might happen but we do not think that will occur.
+If the actions of a team member results in a time deficit at the time of any given iteration, we will soon inform them about their working time deficit.
+For that we have set up time tracking, allowing us to compare if everyone is working on their features as expected.
+In addition to that we will also work with certain techniques allowing a gross estimation of problem complexity.
+This scenario could, for example, be caused by a long extended sickness.
+In such a case we will have to deal with that lost time.
+There is a possibility that this might happen but we do not think that will occur.
 
-If the infrastructure of one person fails, the university provides multiple backup methods such as power, eduroam or even a borrowable laptop. If a fault like this happens we will communicate this situation to the VLA as soon as possible. This could lead to some delay and with that missing features in the future. A sudden collapse of home infrastructure is also quite unlikely, so we will not expect this circumstance.
+If the infrastructure of one person fails, the university provides multiple backup methods such as power, eduroam or even a borrowable laptop.
+If a fault like this happens we will communicate this situation to the VLA as soon as possible.
+This could lead to some delay and with that missing features in the future.
+A sudden collapse of home infrastructure is also quite unlikely, so we will not expect this circumstance.
 
 If the E-Mail communication with the VLA suddenly comes to a halt, we will try to contact you via alternative means e.g. other mails, telephone, etc.. and communicate this to our supervisor.
 As communication has proven to be great and reliable until know we do not expect to run into this problem.
 
-If GitHub proves to be unreliable or even problematic from a reliability point of view, we will communicate our problems with the our supervisor and the VLA. We hereby allow ourself to migrate the codebase to another git hosting platform and revising the specified instances of GitHub and the according links to the project within the specification.
+If GitHub proves to be unreliable or even problematic from a reliability point of view, we will communicate our problems with the our supervisor and the VLA.
+We hereby allow ourself to migrate the codebase to another git hosting platform and revising the specified instances of GitHub and the according links to the project within the specification.
 As GitHub has proven to be reliable over many years, we doubt that this scenario could happen. 
 
-If one of our team members gets hacked, we will tell our supervisor and the VLA as soon as we, as a team, are informed about such an occurence. Only a part of work that was done on that local machine might be lost during process. A recovery could possibly delay our plan a bit but this should not result in any major problems.
-We will make sure that safety precautions such as 2FA will be enabled on every account making such an attack quite unlikely. If it were to happen, we could recover the project within a few days at maximum. 
+If one of our team members gets hacked, we will tell our supervisor and the VLA as soon as we, as a team, are informed about such an occurence.
+Only a part of work that was done on that local machine might be lost during process. A recovery could possibly delay our plan a bit but this should not result in any major problems.
+We will make sure that safety precautions such as 2FA will be enabled on every account making such an attack quite unlikely.
+If it were to happen, we could recover the project within a few days at maximum. 
 
 
 
