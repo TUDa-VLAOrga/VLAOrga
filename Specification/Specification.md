@@ -1,8 +1,15 @@
-# Specification for VLAOrga
-## Project Description (about 500 words)
+---
+geometry: right=2cm,left=2cm,top=2cm,bottom=2c
+---
 
-The project VLAOrga is part of a practical lecture held at the Technical University in Darmstadt
-that aims at improving existing university systems or constructing new solutions.
+
+# Specification for VLAOrga - Organization Application for Vorlesungsassistenz Physik
+
+## Project Description
+
+The project VLAOrga is part of a practical lecture held at the Technical University of Darmstadt
+that teaches agile software project by working on projects
+that aim at improving existing university systems or constructing new solutions.
 
 ### Domain
 
@@ -15,7 +22,7 @@ and one lecture might even contain multiple experiments.
 
 For this purpose the VLA already has established a manual system in which they arrange themselves
 in a way that enables lecturers to receive their wished for experiments after requesting that very experiment via
-https://linus.iap.physik.tu-darmstadt.de/
+<https://linus.iap.physik.tu-darmstadt.de/>
 
 For the VLA some dependencies on certain HRZ services i.e. the Ticketing system, Mails, etc. have proven to be unconvenient
 at times and are, as of now, a bottleneck for a seemless working environment.
@@ -23,12 +30,13 @@ at times and are, as of now, a bottleneck for a seemless working environment.
 ### Current State
 
 Following a prior project that allowed the VLA to store and manage information about their experiments
-within a data base via the aforementioned linus (see link above), the VLA requested us to further simplfy
+within a database via the aforementioned linus (see link above), the VLA requested us to further simplfy
 the process of organizing the deployment of experiments as well as reducing uncertainties that may arise
 due to natural miscommunication or analog on-the-fly communication.
 
-As of now a large chunk of organizational communication is done using this very blackboard, printed mediums and hand-written notes.
-[Image of Blackboard]
+As of now a large chunk of organizational communication is done using this very whiteboard, printed mediums and hand-written notes.
+
+![current whiteboard of VLA](../../hessenbox/img/vlawhiteboard-full.jpg){width=70%}
 
 Furthermore, the VLA is, as of now, greatly hindered from doing their work efficiently
 as electronic mails are distributed on a per person basis instead of one central instance.
@@ -55,13 +63,13 @@ or moving certain experiments between lectures much less of a hassle.
 
 ### Diagram of architecture
 
-[Diagram of Architecture]
+![Architecture Diagram: How our Software integrates into existing services](../../hessenbox/img/architecture-diagram-v2.png){width=70%}
 
-## Deliverables (currently 482 words)
+## Deliverables
 
-VLAOrga will be developed as a fully fledged web server.
+VLAOrga will be developed as a fully fledged web application.
 This includes the client being able to interact with the program via the responsive frontend that can be viewed using any modern browser.
-The main processing and synchronisation will happen in the backend, a part of our software that will handle most of our program logic.
+The main processing and synchronization will happen in the backend, a part of our software that will handle most of our program logic.
 This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements..
 
 The backend will be compatible with any modern operating system with a reliabel internet connection due to the usage of the de-facto containerization standard Docker.
@@ -71,7 +79,7 @@ The backend will be written in Spring Boot, a Java Framework, allowing for objec
 and with it many the advantage to define clear module interfaces.
 
 As discussed an agreed upon with the VLA, the development and documentation of this software will be found
-on GitHub (https://github.com/TUDa-VLAOrga/VLAOrga).
+on GitHub (<https://github.com/TUDa-VLAOrga/VLAOrga>).
 
 GitHub will also be used as a the primary platform for project communication.
 This includes, among other things, the "Issues" tab where any interested person can see
@@ -92,13 +100,13 @@ This functionality can only be guaranteed when a stable internet connection is a
 The core functionalities that we have identified will be in the last part of this segment.
 
 ### Calendar
-The calendar will list an overview of experiments and their due dates.
+The calendar will list an overview of lectures in the lecture hall and planned experiments for every appointment.
 
-This very arrangment of experiment usage times will be displayed in a row corresponding to the day that it is taking place on.
+This very arrangment of experiment usage times will be displayed in one column per day that it is taking place on.
 
 The calendar will have an option to go forward or backward in time.
 
-The calendar will sync to the existing data base and will display only the latest of information.
+The calendar will sync to the existing database and will display only the latest of information.
 
 The calendar will allow clicking of lectures ensuring an overview over the experiments
 
@@ -107,9 +115,9 @@ An overview of Experiments will be accessible within the interfaces.
 
 There will be an option to reschedule experiments.
 
-For any given experiment that is also registered in the existing data base, the current status should be displayed.
+For any given experiment that is also registered in the existing database, the current status should be displayed.
 
-## Risks (497 words)
+## Risks
 In general we will focus on a quick adaption in our prioritization if any major problem were to happen.
 Independent of the problem at hand we will first discuss further actions within our the confines of our team
 and afterwards we will inform and discuss our plans with the VLA.
@@ -150,7 +158,7 @@ If it were to happen, we could recover the project within a few days at maximum.
 
 
 
-## Legal (approx. 118 words)
+## Legal
 
 It was agreed upon that this project will be an open-source project.
 
