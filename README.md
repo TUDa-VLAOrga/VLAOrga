@@ -4,4 +4,5 @@ Dashboard web application for Organization of the Vorlesungsassistenz Physik, TU
 Frontend start:
 
 cd VLA-Frontend
+
 npm run dev
