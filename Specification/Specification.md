@@ -108,7 +108,7 @@ The calendar will visualize booked slots that are related to lectures with exper
 Upon clicking on such a slot, the user will receive additional information about that slot
 such as the experiments that were requested for that lecture.
 
-Time slots will be displayed in time dependent parts of their respective day-specific column.
+Time slots will be displayed in time-dependent parts of their respective day-specific column.
 
 The calendar will have an option to go forward or backward in time.
 
@@ -125,7 +125,7 @@ There will be an option to reschedule experiments.
 
 ## Risks
 In general we will focus on a quick adaption in our prioritization if any major problem were to happen.
-Independent of the problem at hand we will first discuss further actions within our the confines of our team.
+Independent of the problem at hand we will first discuss further actions within the confines of our team.
 Afterwards we will inform and discuss our plans with the VLA.
 Most importantly certain nice-to-have features will possibly be postponed to later iterations
 of the development cycles in favor of the core features.
@@ -147,7 +147,7 @@ This could lead to some delay and with that missing features in the future.
 A long collapse of home infrastructure is also quite unlikely, so we will not expect this circumstance.
 
 If the E-Mail communication with the VLA suddenly comes to a halt, we will try to contact you via alternative means
-e.g. other mails, telephone, etc.. and communicate this to our supervisor.
+e.g. other mails, telephone, etc. and communicate this to our supervisor.
 As communication has proven to be great and reliable until now we do not expect to run into this problem.
 
 If GitHub proves to be unreliable,
