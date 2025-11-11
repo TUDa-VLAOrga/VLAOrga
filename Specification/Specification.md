@@ -8,24 +8,24 @@ geometry: right=2cm,left=2cm,top=2cm,bottom=2c
 ## Project Description
 
 The project VLAOrga is part of a practical lecture held at the Technical University of Darmstadt
-that teaches agile software project by working on projects
-that aim at improving existing university systems or constructing new solutions.
+that teaches agile software development by working on projects
+which aim at improving already existing university systems or constructing new solutions.
 
 ### Domain
 
-The "Vorlesungsassistenz Physik", which will from now on be abbreviated to VLA,
-of the physical department at TU Darmstadt is an essential part of ensuring that various physics based lectures
-can be held properly by ensuring that experiments are prepared before the lecture takes place.
+The "Vorlesungsassistenz Physik", which will from now on be abbreviated as VLA,
+of the department of physics at TU Darmstadt is an essential part of ensuring that various lectures containing demonstration experiments can be held properly. 
+This is achieved by the VLA preparing those experiments before those lectures takes place.
 
-This very taks requires a lot of planning as a lectures do not have the time to prepare those experiments
-and one lecture might even contain multiple experiments.
+Those tasks require a lot of planning as lecturers do not have the time to prepare those experiments themselves.   
+Furthermore one lecture might even contain multiple experiments.
 
-For this purpose the VLA already has established a manual system in which they arrange themselves
-in a way that enables lecturers to receive their wished for experiments after requesting that very experiment via
+For this purpose the VLA has already established a manual system in which they arrange themselves
+in a way that enables lecturers to receive their wished for experiments after requesting it via
 <https://linus.iap.physik.tu-darmstadt.de/>
 
-For the VLA some dependencies on certain HRZ services i.e. the Ticketing system, Mails, etc. have proven to be unconvenient
-at times and are, as of now, a bottleneck for a seemless working environment.
+For the VLA some dependencies on certain HRZ services i.e. the Ticketing system, Mails, etc. have proven to be inconvenient
+at times and are, as of now, a bottleneck for a seamless working environment.
 
 ### Current State
 
@@ -34,11 +34,11 @@ within a database via the aforementioned linus (see link above), the VLA request
 the process of organizing the deployment of experiments as well as reducing uncertainties that may arise
 due to natural miscommunication or analog on-the-fly communication.
 
-As of now a large chunk of organizational communication is done using this very whiteboard, printed mediums and hand-written notes.
+As of now a large chunk of organizational communication is done using this whiteboard, printed mediums and hand-written notes.
 
 ![current whiteboard of VLA](../../hessenbox/img/vlawhiteboard-full.jpg){width=70%}
 
-Furthermore, the VLA is, as of now, greatly hindered from doing their work efficiently
+Furthermore, the VLA is, as of now, hindered from doing their work efficiently
 as electronic mails are distributed on a per person basis instead of one central instance.
 This causes further effort in communicating what already has been worked on and what has not even been read yet
 making room for misinterpretations and errors.
@@ -46,18 +46,19 @@ making room for misinterpretations and errors.
 ### Vision
 
 With this project we aim at tackling those organizational bottlenecks
-by creating an easy to setup and maintaintable web application
-that can be used to greatly lessen miscommunication and improve on the VLA workflow for years to come.
+by creating a maintaintable web application that is easy-to-use and easy to set up.
+This will greatly lessen miscommunication and improve on the VLA workflow for years to come.
 
-An easy to use digital overview in the form of a central calendar with clickable lecture experiment overviews
+An easy to use digital overview in the form of a central calendar with clickable time slots
+that represent certain organizational events
 should replace the necessity for hand-written notes and printed out timetables.
 
-This calendar will not only serve its purpose in clearly displaying the different dates in a unified and easy to read format.
-It will also greatly lessen the possibility for further misscommunication between members of the VLA
-as everyone with appropriate access to the calendar will be able to see the latest modifications
-and an up-to-date view of the current organizational status using their phone.
+This calendar will not only serve its purpose in clearly displaying the different dates in a unified and easy-to-read format.
+It will also greatly lessen the possibility for further misscommunication between members of the VLA.
+Anyone with appropriate access to the calendar will be able to see the latest modifications
+and an up-to-date view of the current organizational status on their device.
 
-The workflow of the VLA will also benefit from many quality of life improvements that will not only increase efficiency,
+The workflow of the VLA will also benefit from many quality-of-life improvements that will not only increase efficiency,
 but make certain tasks such as checking the current state of an specific experiment material
 or moving certain experiments between lectures much less of a hassle.
 
@@ -68,17 +69,16 @@ or moving certain experiments between lectures much less of a hassle.
 ## Deliverables
 
 VLAOrga will be developed as a fully fledged web application.
-This includes the client being able to interact with the program via the responsive frontend that can be viewed using any modern browser.
+This includes the client being able to interact with the program via our device-adapting frontend that can be viewed using any modern browser.
 The main processing and synchronization will happen in the backend, a part of our software that will handle most of our program logic.
 This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements..
 
 The backend will be compatible with any modern operating system with a reliabel internet connection due to the usage of the de-facto containerization standard Docker.
 
-Developement of the frontend will use well established tools like React and TypeScript.
-The backend will be written in Spring Boot, a Java Framework, allowing for object oriented programming
-and with it many the advantage to define clear module interfaces.
+Development of the frontend will use well established tools like React and TypeScript.
+The backend will be written in a Java Framework like Spring Boot, allowing for object oriented programming and the definition of clear module interfaces.
 
-As discussed an agreed upon with the VLA, the development and documentation of this software will be found
+As discussed and agreed upon with the VLA, the development and documentation of this software will be found
 on GitHub (<https://github.com/TUDa-VLAOrga/VLAOrga>).
 
 GitHub will also be used as a the primary platform for project communication.
@@ -86,14 +86,13 @@ This includes, among other things, the "Issues" tab where any interested person 
 the current planning state of the project e.g which features are targeted in a given iteration and much more.
 
 Most of the implemented features will be tested thoroughly, especially the core functionality.
-The test will happen at least on unit and integration level.
-This does explicitly not mean that we are aming for 100% test coverage
+This does explicitly not mean that we are aiming for 100% test coverage
 as we prioritize the quality of tests over the quanitity of tests.
 
 During developement new feature requests will be discussed with the VLA
 but we cannot guarantee that all features will be implemented.
-If a feature should not make it into the release we will inform the VLA beforehand
-and discuss further prioritization in case of triages directly with the VLA.
+If a feature should not make it into its scheduled release, we will inform the VLA beforehand.
+In case of feature triages we'll coordinate our prioritization plan directly with the VLA.
 
 We hereby guarantee that core functionality will be part of the final release of this software.
 This functionality can only be guaranteed when a stable internet connection is available.
@@ -156,8 +155,6 @@ A recovery could possibly delay our plan a bit but this should not result in any
 We will make sure that safety precautions such as 2FA will be enabled on every account making such an attack quite unlikely.
 If it were to happen, we could recover the project within a few days at maximum.
 
-
-
 ## Legal
 
 It was agreed upon that this project will be an open-source project.
@@ -167,7 +164,4 @@ We encourage you to use this software if it can help you adapt your work efficie
 If used outside of TU Darmstadt, we cannot guarantee that all features will work in the same extent it does there.
 Different environments will need adaption to different interfaces.
 
-The ownership of the repository containing the project will not be transferred after the developement has ended.
-
 Communication with the VLA will primarly consist of Mail exchanges and meetups.
-The Mails have already been exchanged and will not be listed due to privacy concerns.
