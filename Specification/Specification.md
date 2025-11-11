@@ -16,9 +16,9 @@ that aim at improving already existing systems or constructing new solutions.
 The "Vorlesungsassistenz Physik" of the department of physics at TU Darmstadt,
 which will from now on be abbreviated as VLA,
 is an essential part of ensuring that various lectures containing demonstration experiments can be held properly. 
-This is achieved by the VLA by preparing those experiments before these lectures take place.
+The VLA achieves this by preparing those experiments before these lectures take place.
 
-Those tasks require a lot of planning as the lecturers do not have the time to prepare those experiments themselves.   
+The organization of multiple lecture requests requires a lot of planning as the lecturers do not have the time to prepare those experiments themselves.   
 Furthermore one lecture might even contain multiple experiments.
 
 For this purpose the VLA has already established a semi-automatic booking system.
@@ -41,14 +41,14 @@ As of now a large chunk of organizational communication is done using this white
 ![Current planning whiteboard of the VLA](../../hessenbox/img/vlawhiteboard-full.jpg){width=70%}
 
 Furthermore, the VLA is, as of now, hindered from doing their work efficiently
-as electronic mails are distributed on a per person basis instead of one central instance.
+as E-Mails are distributed on a per person basis instead of one central instance.
 This causes further effort in communicating what already has been worked on and what has not even been read yet
 making room for misinterpretations and errors.
 
 ### Vision
 
 With this project we aim at tackling those organizational bottlenecks
-by creating a maintaintable web application that is easy to set up.
+by creating a maintaintable web application.
 This will greatly lessen miscommunication and improve on the VLA workflow for years to come.
 
 An easy-to-use digital overview in the form of a central calendar with clickable time slots
@@ -74,10 +74,11 @@ VLAOrga will be developed as a fully fledged web application.
 This includes the client being able to interact with the program via our device-adapting frontend that can be viewed using any modern browser.
 The main processing and synchronization will happen in the backend, a part of our software that will handle most of our program logic.
 This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements.
+Furthermore, this software will be easy to set up at TU Darmstadt.
 
-The backend will be compatible with any modern operating system with a reliabel internet connection due to the usage of the containerization standard Docker.
+The backend will be compatible with any modern operating system that has a reliabel internet connection due to the usage of the containerization standard Docker.
 
-Development of the frontend will use well established tools like a frontend framwork, e.g. React, and TypeScript.
+Development of the frontend will use well established tools like a frontend framework, e.g. React, and TypeScript.
 The backend will be written in a Java Framework, e.g. Spring Boot, allowing for object oriented programming and the definition of clear module interfaces.
 
 As discussed and agreed upon with the VLA, the development and documentation of this software will be found
@@ -107,7 +108,7 @@ The calendar will visualize booked slots that are related to lectures with exper
 Upon clicking on such a slot, the user will receive additional information about that slot
 such as the experiments that were requested for that lecture.
 
-Time slots will be displayed in time dependent parts of their respective day-specific columns.
+Time slots will be displayed in time dependent parts of their respective day-specific column.
 
 The calendar will have an option to go forward or backward in time.
 
@@ -124,8 +125,8 @@ There will be an option to reschedule experiments.
 
 ## Risks
 In general we will focus on a quick adaption in our prioritization if any major problem were to happen.
-Independent of the problem at hand we will first discuss further actions within our the confines of our team
-and afterwards we will inform and discuss our plans with the VLA.
+Independent of the problem at hand we will first discuss further actions within our the confines of our team.
+Afterwards we will inform and discuss our plans with the VLA.
 Most importantly certain nice-to-have features will possibly be postponed to later iterations
 of the development cycles in favor of the core features.
 
