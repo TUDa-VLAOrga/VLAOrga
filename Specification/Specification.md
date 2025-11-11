@@ -76,7 +76,7 @@ The main processing and synchronization will happen in the backend, a part of ou
 This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements.
 Furthermore, this software will be easy to set up at TU Darmstadt.
 
-The backend will be compatible with any modern operating system that has a reliabel internet connection due to the usage of the containerization standard Docker.
+The backend will be compatible with any modern operating system that has a reliable internet connection due to the usage of the containerization standard Docker.
 
 Development of the frontend will use well established tools like a frontend framework, e.g. React, and TypeScript.
 The backend will be written in a Java Framework, e.g. Spring Boot, allowing for object oriented programming and the definition of clear module interfaces.
@@ -86,7 +86,7 @@ on GitHub (<https://github.com/TUDa-VLAOrga/VLAOrga>).
 
 GitHub will also be used as a the primary platform for project communication.
 This includes, among other things, the "Issues" tab where any interested person can see
-the current planning state of the project e.g which features are targeted in a given iteration and much more.
+the current planning state of the project e.g. which features are targeted in a given iteration and much more.
 
 Most of the implemented features will be tested thoroughly, especially the core functionality.
 This does explicitly not mean that we are aiming for 100% test coverage
