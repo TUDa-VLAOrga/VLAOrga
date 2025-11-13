@@ -85,8 +85,11 @@ The backend will be compatible with any modern operating system that has a relia
 Development of the frontend will use well established tools like a frontend framework, e.g. React, and TypeScript.
 The backend will be written in a Java Framework, e.g. Spring Boot, allowing for object oriented programming and the definition of clear module interfaces.
 
-As discussed and agreed upon with the VLA, the development and documentation of this software will be found
-on GitHub (<https://github.com/TUDa-VLAOrga/VLAOrga>).
+The development of this project will take place on GitHub and is publically accessible
+via <https://github.com/TUDa-VLAOrga/VLAOrga>.
+This repository will contain all of the source code as well as documentation for
+anyone, especially the VLA, that is interested in setting up this project in a
+production environment. 
 
 GitHub will also be used as a the primary platform for project communication.
 This includes, among other things, the "Issues" tab where any interested person can see
