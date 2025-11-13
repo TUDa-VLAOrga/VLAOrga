@@ -18,7 +18,7 @@ which will from now on be abbreviated as VLA,
 is an essential part of ensuring that various lectures containing demonstration experiments can be held properly. 
 The VLA achieves this by preparing those experiments before these lectures take place.
 
-From that many students, lecturers and possibly future physics institutions profit from the great work of the VLA. 
+Many students, lecturers and possibly future physics institutions benefit from the great work of the VLA. 
 
 The organization of multiple lecture requests requires a lot of planning as the lecturers do not have the time to prepare those experiments themselves.   
 Furthermore, one lecture might even contain multiple experiments.
@@ -38,7 +38,7 @@ but an external IT administator.
 ### Current State
 
 Following a prior project that allowed the VLA to store and manage information about their experiments
-within a database via the aforementioned linus (see link above), the VLA requested us to further simplfy
+within a database via the aforementioned linus (see link above), the VLA requested us to further simplify
 the process of organizing the deployment of experiments as well as reducing uncertainties that may arise
 due to natural miscommunication or analog on-the-fly communication.
 
@@ -58,7 +58,7 @@ by creating a web application.
 This will greatly lessen miscommunication and improve on the VLA workflow for years to come.
 
 An easy-to-use digital overview in the form of a central calendar with clickable time slots
-that represent that represent certain appointments such as planned experiments.
+that represent certain appointments such as planned experiments.
 should replace the necessity for hand-written notes and printed out timetables.
 
 This calendar will not only serve its purpose in clearly displaying the different appointments in a unified and easy-to-read format.
