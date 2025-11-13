@@ -74,7 +74,8 @@ VLAOrga will be developed as a fully fledged web application.
 This includes the client being able to interact with the program via our device-adapting frontend that can be viewed using any modern browser.
 The main processing and synchronization will happen in the backend, a part of our software that will handle most of our program logic.
 This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements.
-Furthermore, this software will be easy to set up at TU Darmstadt.
+Furthermore, this software will be easy to set up at TU Darmstadt 
+using a guide that we'll provide near the end of our development.
 
 The backend will be compatible with any modern operating system that has a reliable internet connection due to the usage of the containerization standard Docker.
 
