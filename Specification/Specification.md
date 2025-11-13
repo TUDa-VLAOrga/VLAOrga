@@ -18,16 +18,22 @@ which will from now on be abbreviated as VLA,
 is an essential part of ensuring that various lectures containing demonstration experiments can be held properly. 
 The VLA achieves this by preparing those experiments before these lectures take place.
 
+From that many students, lecturers and possibly future physics institutions profit from the great work of the VLA. 
+
 The organization of multiple lecture requests requires a lot of planning as the lecturers do not have the time to prepare those experiments themselves.   
-Furthermore one lecture might even contain multiple experiments.
+Furthermore, one lecture might even contain multiple experiments.
 
 For this purpose the VLA has already established a semi-automatic booking system.
 Lecturers may request experiments via the web application 
 linus (<https://linus.iap.physik.tu-darmstadt.de/>).
 Then the VLA will process those requests manually, prepare the needed materials and assign someone that sets up the experiment.
 
-For the VLA some dependencies on certain HRZ services i.e. the ticketing system, mails, etc. have proven to be inconvenient
-at times and are, as of now, a bottleneck for a seamless working environment.
+Peripherally to those main tasks, the VLA also communicates with some external stakeholders. 
+
+Especially if something like inventory of the lecture hall or equipment for experiments needs repair, the VLA contacts different craftspeople of TU Darmstadt via Mail to different ticket systems operated by the Hochschulrechenzentrum (HRZ).
+
+The aforementioned linus is also not being maintained by the VLA directly
+but an external IT administator.
 
 ### Current State
 
