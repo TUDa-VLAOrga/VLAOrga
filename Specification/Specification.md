@@ -144,8 +144,14 @@ we will soon inform them about their working time deficit.
 For that we have set up time tracking, allowing us to compare if everyone is working on their features as expected.
 In addition to that we will also work with certain techniques allowing a gross estimation of problem complexity.
 This scenario could, for example, be caused by a long extended sickness.
-In such a case we will have to deal with that lost time.
+Such cases will be handled as described above.
 There is a possibility that this might happen but we do not think that will occur.
+
+If external interfaces, such as connecting to the existing linus database or fetching of appointments out of third-party calendars, turn out to be unreachable or nonexistent,
+we will inform the VLA of our findings and try to find alternative solutions, which
+might cause a delay.
+This scenario cannot be ruled out and will, especially in the beginning, be considered
+as a potential problem.  
 
 If the infrastructure of one person fails, the university provides multiple backup methods such as power,
 eduroam or even a borrowable laptop.
