@@ -39,8 +39,7 @@ out/
 ### VS Code ###
 .env
 
-# OS
-.DS_Store
+
 
 # Logs
 *.log

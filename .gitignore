@@ -1,6 +1,3 @@
-# OS system files
-.DS_Store
-__MACOSX/
 
 # Environment
 .env
