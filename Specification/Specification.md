@@ -3,7 +3,7 @@ geometry: right=2cm,left=2cm,top=2cm,bottom=2c
 ---
 
 
-# Specification for VLAOrga - Organization Application for Vorlesungsassistenz Physik
+# Specification for "Organisation Vorlesungsassistenz Physik"
 
 ## Project Description
 
