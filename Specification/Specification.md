@@ -48,7 +48,7 @@ making room for misinterpretations and errors.
 ### Vision
 
 With this project we aim at tackling those organizational bottlenecks
-by creating a maintaintable web application.
+by creating a web application.
 This will greatly lessen miscommunication and improve on the VLA workflow for years to come.
 
 An easy-to-use digital overview in the form of a central calendar with clickable time slots
@@ -63,6 +63,9 @@ and an up-to-date view of the current organizational status on their device.
 The workflow of the VLA will also benefit from many quality-of-life improvements that will not only increase efficiency,
 but make certain tasks such as checking the current state of a specific experiment component
 or moving certain experiments between lectures much less of a hassle.
+
+Furthermore, this software should be maintainable, so that other development teams
+can continue developing it from where we left off. 
 
 ### Diagram of architecture
 
