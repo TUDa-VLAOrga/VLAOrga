@@ -30,7 +30,10 @@ Then the VLA will process those requests manually, prepare the needed materials 
 
 Peripherally to those main tasks, the VLA also communicates with some external stakeholders. 
 
-Especially if something like inventory of the lecture hall or equipment for experiments needs repair, the VLA contacts different craftspeople of TU Darmstadt via Mail to different ticket systems operated by the Hochschulrechenzentrum (HRZ).
+When lecture hall inventory, experimental equipment or comparable items
+require repair, the VLA contacts various craftspeople of TU Darmstadt
+by creating tickets in the according ticketing systems via Mail.
+These systems are operated by the Hochschulrechenzentrum (HRZ).
 
 The aforementioned linus is also not being maintained by the VLA directly
 but an external IT administator.
@@ -48,7 +51,7 @@ As of now a large chunk of organizational communication is done using this white
 
 Furthermore, the VLA is, as of now, hindered from doing their work efficiently
 as E-Mails are distributed on a per person basis instead of one central instance.
-This causes further effort in communicating what already has been worked on and what has not even been read yet
+This causes further effort in communicating what already has been worked on and what has not even been looked at yet
 making room for misinterpretations and errors.
 
 ### Vision
