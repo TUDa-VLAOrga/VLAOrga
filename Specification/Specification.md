@@ -14,43 +14,43 @@ that arise within the university.
 ### Domain
 
 The "Vorlesungsassistenz Physik" of the department of physics at TU Darmstadt,
-which will from now on be abbreviated as VLA,
-is an essential part of ensuring that various lectures containing demonstration experiments can be held properly. 
+abbreviated as VLA,
+is an essential part of ensuring that lectures containing demonstration experiments can be held properly. 
 The VLA achieves this by preparing those experiments before these lectures take place.
 
-Many students, lecturers and possibly future physics institutions benefit from the great work of the VLA. 
+Many students, lecturers and possibly future physics institutions benefit from the work of the VLA. 
 
-The organization of multiple lecture requests requires a lot of planning as the lecturers do not have the time to prepare those experiments themselves.   
-Furthermore, one lecture might even contain multiple experiments.
+The organization behind multiple lecture requests requires a lot of planning as the lecturers do not have the time to prepare those experiments themselves.   
+Furthermore, a lecture might even contain multiple experiments.
 
-For this purpose the VLA has already established a semi-automatic booking system.
+For this purpose the VLA has established a semi-automatic booking system.
 Lecturers may request experiments via the web application 
 linus (<https://linus.iap.physik.tu-darmstadt.de/>).
-Then the VLA will process those requests manually, prepare the needed materials and assign someone that sets up the experiment.
 
-Peripherally to those main tasks, the VLA also communicates with some external stakeholders. 
+The VLA processes those requests manually, prepares the needed materials and assigns someone that sets up the experiment.
+
+Communicating with external stakeholders is also essential for the VLA. 
 
 When lecture hall inventory, experimental equipment or comparable items
 require repair, the VLA contacts various craftspeople of TU Darmstadt
 by creating tickets in the according ticketing systems via Mail.
 These systems are operated by the Hochschulrechenzentrum (HRZ).
 
-The aforementioned linus is also not being maintained by the VLA directly
-but an external IT administator.
+Linus is also not directly maintained by the VLA but by their IT administrator.
 
 ### Current State
 
-Following a prior project that allowed the VLA to store and manage information about their experiments
-within a database via the aforementioned linus (see link above), the VLA requested us to further simplify their processes regarding experiment preparation and communication.
+Following a project that allows the VLA to store and manage information about their experiments
+within a database via linus, the VLA requested us to further simplify their processes regarding experiment preparation and communication.
 Unreliable on-the-fly communication and miscommunication have also favored this decision.
 
-As of now a large chunk of organization is done using this whiteboard, printed mediums and hand-written notes.
+A large chunk of organization is done using this whiteboard, printed mediums and hand-written notes.
 
 ![Current planning whiteboard of the VLA](../../hessenbox/img/vlawhiteboard-full.jpg){width=70%}
 
-Furthermore, the VLA is, as of now, hindered from doing their work efficiently
+Furthermore, the VLA is hindered from doing their work efficiently
 as E-Mails are distributed on a per person basis instead of one central instance.
-This causes further effort in communicating what already has been worked on and what is still unread.
+This causes further effort in communicating what already has been worked on and what is still unread,
 making room for misinterpretations and errors.
 
 ### Vision
@@ -58,21 +58,21 @@ making room for misinterpretations and errors.
 With this project we aim at tackling those organizational bottlenecks
 by creating a web application.
 
-An easy-to-use digital overview in the form of a central calendar with clickable time slots
+An easy-to-use digital overview in the form of a calendar with clickable time slots
 that represent certain appointments, such as planned experiments,
-should replace the necessity for hand-written notes and printed out timetables.
+should replace hand-written notes and printed out timetables.
 
-This calendar will not only serve its purpose in clearly displaying the different appointments in a unified and easy-to-read format.
-All of this will also greatly lessen the possibility for misscommunication between members of the VLA and improve upon the current workflow.
-Anyone with appropriate access to the calendar will be able to see the latest modifications
+This calendar will not only serve its purpose in clearly displaying different appointments in a unified and easy-to-read format.
+It will also greatly lessen the possibility for miscommunication between members of the VLA and improve upon the current workflow.
+Anyone with access to the calendar will be able to see the latest modifications
 and an up-to-date view of the current organizational status on their device.
 
-The workflow of the VLA will also benefit from many quality-of-life improvements that will not only increase efficiency,
-but make certain tasks such as checking the current state of a specific experiment component
-or moving certain experiments between lectures much less of a hassle.
+The VLA will also benefit from many quality-of-life improvements that will not only increase efficiency,
+but streamline tasks such as checking the current state of a specific experiment component
+or moving experiments between lectures.
 
 Furthermore, this software should be maintainable, so that other development teams
-can continue developing it from where we left off. 
+can continue developing it. 
 
 ### Diagram of architecture
 
