@@ -58,14 +58,13 @@ making room for misinterpretations and errors.
 
 With this project we aim at tackling those organizational bottlenecks
 by creating a web application.
-This will greatly lessen miscommunication and improve on the VLA workflow for years to come.
 
 An easy-to-use digital overview in the form of a central calendar with clickable time slots
 that represent certain appointments, such as planned experiments,
 should replace the necessity for hand-written notes and printed out timetables.
 
 This calendar will not only serve its purpose in clearly displaying the different appointments in a unified and easy-to-read format.
-It will also greatly lessen the possibility for further misscommunication between members of the VLA.
+All of this will also greatly lessen the possibility for misscommunication between members of the VLA and improve upon the current workflow.
 Anyone with appropriate access to the calendar will be able to see the latest modifications
 and an up-to-date view of the current organizational status on their device.
 
