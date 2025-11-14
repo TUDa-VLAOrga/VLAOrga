@@ -1,1 +1,31 @@
+
+# Environment
 .env
+*.env.local
+
+# Logs
+*.log
+logs/
+
+# Frontend (Node, Vite)
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# Backend (Spring Boot, Gradle)
+build/
+.gradle/
+target/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Misc
+*.tmp
+*.swp

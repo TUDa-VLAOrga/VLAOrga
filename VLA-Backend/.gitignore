@@ -39,3 +39,16 @@ out/
 ### VS Code ###
 .env
 
+
+
+# Logs
+*.log
+
+# Java compiled classes
+*.class
+
+# JVM crash files
+hs_err_pid*
+
+
+
