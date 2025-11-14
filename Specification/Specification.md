@@ -81,58 +81,58 @@ can continue developing it.
 ## Deliverables
 
 VLAOrga will be developed as a fully fledged web application.
-This includes the client being able to interact with the program via our device-adapting user interface that can be viewed using any modern browser.
+This includes the client being able to interact with the program via our device-adapting user interface using any modern browser.
 The main processing and synchronization will happen in the backend, a part of our software that will handle most of our program logic.
-This backend will run on a server like the Synology NAS of the VLA but is in general not limited by the used server as long as it meets the minimum requirements.
+This backend will at least run on servers like the Synology NAS or comparable alternatives.
 Furthermore, this software will be easy to set up at TU Darmstadt 
-using a guide that we'll provide near the end of our development.
+using a guide that we'll provide.
 
 The backend will be compatible with any modern operating system that has a reliable internet connection due to the usage of the containerization standard Docker.
 
 The frontend will use well established tools like a frontend framework, e.g. React, and TypeScript.
 The backend will be written in a Java Framework, e.g. Spring Boot, allowing for object oriented programming and the definition of clear module interfaces.
 
-The development of this project will take place on GitHub and is publically accessible
+The development of this project will take place on GitHub and is accessible
 via <https://github.com/TUDa-VLAOrga/VLAOrga>.
-This repository will contain all of the source code as well as documentation for
-anyone, especially the VLA, that is interested in setting up this project in a
+This repository will contain the source code as well as documentation for
+anyone that is interested in setting up this project in a
 production environment. 
 
-GitHub will also be used as a the primary platform for project communication.
-This includes, among other things, the "Issues" tab where any interested person can see
-the current planning state of the project e.g. which features are targeted in a given iteration and much more.
+GitHub will also be used as the primary platform for project communication.
+This includes, among other features, the "Issues" tab where one can see
+the current state of the project e.g. which features are targeted in a given iteration and much more.
 
-Most of the implemented features will be tested thoroughly, especially the core functionality.
+Most of the implemented features will be tested thoroughly.
 This does explicitly not mean that we are aiming for 100% test coverage
-as we prioritize the quality of tests over the quanitity of tests.
+as we prioritize the quality of tests over their quanitity.
 Our testing data will either be made up by us and validated by the VLA
 or will be extracted from linus directly. 
 
 During development new feature requests will be discussed with the VLA
 yet we cannot guarantee that all discussed features will be implemented.
 If a feature should not make it into its scheduled release, we will inform the VLA beforehand.
-In case of feature triages we'll coordinate our prioritization plan directly with the VLA.
+In case of feature triages we'll coordinate our prioritizations directly with the VLA.
 
-We hereby guarantee that core functionality will be part of the final release of this software.
+We hereby guarantee that the final release will contain the core functionality.
 This functionality can only be guaranteed when a stable internet connection is available.
-The core functionalities that we have identified will be listed below.
+We have identified the following core functionalities.
 
 ### Calendar
 The calendar will visualize booked slots that are related to lectures with experiments. 
-Upon clicking on such a slot, the user will receive additional information about that slot
-such as the experiments that were requested for that lecture.
+The user will receive additional information about a slot after clicking on it.
+This includes experiments that were requested for that lecture.
 
 Time slots will be displayed in time-dependent parts of their respective day-specific column.
 
 The calendar will have an option to go forward or backward in time.
 
-The calendar will sync to the existing database and will display only the latest of information.
+The calendar will sync to the existing database and will display the latest of information.
 
 ### Experiments
-For any given experiment that is listed in one of the aforementioned slots, we will provide
+For any given experiment that is listed within the aforementioned slots, we will provide
 a method of accessing additional information about that experiment.
 
-The status of the experiment, e.g. if it has been prepared, will be viewable via the
+The status of the experiment, e.g. if it has been prepared, will be viewable via an
 additional information page.
 
 There will be an option to reschedule experiments.
