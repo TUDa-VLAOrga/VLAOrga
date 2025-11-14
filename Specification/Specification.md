@@ -9,7 +9,7 @@ geometry: right=2cm,left=2cm,top=2cm,bottom=2c
 
 The project VLAOrga is part of a practical lecture held at the Technical University of Darmstadt
 which teaches agile software development by working on projects
-that aim at improving already existing systems or constructing new solutions.
+that arise within the university.
 
 ### Domain
 
