@@ -91,7 +91,7 @@ using a guide that we'll provide near the end of our development.
 
 The backend will be compatible with any modern operating system that has a reliable internet connection due to the usage of the containerization standard Docker.
 
-Development of the frontend will use well established tools like a frontend framework, e.g. React, and TypeScript.
+The frontend will use well established tools like a frontend framework, e.g. React, and TypeScript.
 The backend will be written in a Java Framework, e.g. Spring Boot, allowing for object oriented programming and the definition of clear module interfaces.
 
 The development of this project will take place on GitHub and is publically accessible
