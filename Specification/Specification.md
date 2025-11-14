@@ -51,7 +51,7 @@ As of now a large chunk of organizational communication is done using this white
 
 Furthermore, the VLA is, as of now, hindered from doing their work efficiently
 as E-Mails are distributed on a per person basis instead of one central instance.
-This causes further effort in communicating what already has been worked on and what has not even been looked at yet
+This causes further effort in communicating what already has been worked on and what is still unread.
 making room for misinterpretations and errors.
 
 ### Vision
