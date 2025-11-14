@@ -140,49 +140,42 @@ There will be an option to reschedule experiments.
 ## Risks
 In general we will focus on a quick adaption in our prioritization if any major problem were to happen.
 Independent of the problem at hand we will first discuss further actions within the confines of our team.
-Afterwards we will inform and discuss our plans with the VLA.
+Afterwards we will inform and discuss our plans with the VLA and our supervisor.
 Most importantly certain nice-to-have features will possibly be postponed to later iterations
 of the development cycles in favor of the core features.
-
 A delay in core functionality cannot be ruled out and will be communicated as soon as possible.
 
-If the actions of a team member results in a time deficit at the time of any given iteration,
-we will soon inform them about their working time deficit.
-For that we have set up time tracking, allowing us to compare if everyone is working on their features as expected.
-In addition to that we will also work with certain techniques allowing a gross estimation of problem complexity.
-This scenario could, for example, be caused by a long extended sickness.
-Such cases will be handled as described above.
+Unless explicitly stated otherwise, we will follow this described procedure in every case.
+
+If a team member does not contribute enough in an iteration,
+we will soon inform them about their working deficit, unless they are excused.
+For that we have set up time tracking.
+In addition to that we will also work with problem complexity and time estimation techniques.
+This scenario could, e.g. be caused by a long extended sickness.
 There is a possibility that this might happen but we do not think that will occur.
 
-If external interfaces, such as connecting to the existing linus database or fetching of appointments out of third-party calendars, turn out to be unreachable or nonexistent,
-we will inform the VLA of our findings and try to find alternative solutions, which
-might cause a delay.
+If external interfaces, such as the endpoint to linus or the connection to third-party calendars, turn out to be unreachable or nonexistent,
+we will try to find alternative solutions with the VLA, which might cause a delay.
 This scenario cannot be ruled out and will, especially in the beginning, be considered
-as a potential problem.  
-
-If the infrastructure of one person fails, the university provides multiple backup methods such as power,
-eduroam or even a borrowable laptop.
-If a fault like this happens we will communicate this situation to the VLA as soon as possible.
-This could lead to some delay and with that missing features in the future.
-A long collapse of home infrastructure is also quite unlikely, so we will not expect this circumstance.
+as a potential problem.
 
 If the E-Mail communication with the VLA suddenly comes to a halt, we will try to contact you via alternative means
 e.g. other mails, telephone, etc. and communicate this to our supervisor.
 As communication has proven to be great and reliable until now we do not expect to run into this problem.
 
 If GitHub proves to be unreliable,
-we will communicate our problems with our supervisor and the VLA.
+we will communicate this as soon as possible.
 We hereby allow ourself to migrate the codebase to another git hosting platform.
-As GitHub has proven to be reliable over many years, we doubt that this scenario could happen.
+As GitHub has proven to be reliable over many years, we doubt that this scenario will happen.
 
-If one of our team members gets hacked, we will tell our supervisor and the VLA as soon as we, as a team, are informed about such an occurence.
-Only a part of work that was done on that local machine might be lost during process.
-A recovery could possibly delay our plan a bit but this should not result in any major problems.
-We will make sure that safety precautions such as 2FA will be enabled on every account making such an attack quite unlikely.
-If it were to happen, we could recover the project within a few days at maximum.
+If one of our team members gets hacked, we will communicate this scenario immediately.
+Only work done on that local machine might be lost during this process.
+A recovery could cause a delay but should not result in any major setbacks.
+We will make sure that safety precautions are taken on every account making such an attack quite unlikely.
+In such a case we could recover the project within a few days at maximum.
 
-If our current stack of selected technologies (see Deliverables) proves to be unfitting
-for this project, we will inform our supervisor and the VLA about our migration intention.
+If our current stack of selected technologies (see Deliverables) proves to be unfitting,
+we will inform our supervisor and the VLA about our migration intention.
 The advantages of this switch will be carefully considered against possible delay beforehand.  
 This could potentially happen, but as most of our code will work framework independent,
 the expected time lost should be kept to at most a few days.
