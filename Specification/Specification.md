@@ -41,11 +41,10 @@ but an external IT administator.
 ### Current State
 
 Following a prior project that allowed the VLA to store and manage information about their experiments
-within a database via the aforementioned linus (see link above), the VLA requested us to further simplify
-the process of organizing the deployment of experiments as well as reducing uncertainties that may arise
-due to natural miscommunication or analog on-the-fly communication.
+within a database via the aforementioned linus (see link above), the VLA requested us to further simplify their processes regarding experiment preparation and communication.
+Unreliable on-the-fly communication and miscommunication have also favored this decision.
 
-As of now a large chunk of organizational communication is done using this whiteboard, printed mediums and hand-written notes.
+As of now a large chunk of organization is done using this whiteboard, printed mediums and hand-written notes.
 
 ![Current planning whiteboard of the VLA](../../hessenbox/img/vlawhiteboard-full.jpg){width=70%}
 
