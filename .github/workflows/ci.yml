@@ -1,0 +1,56 @@
+name: VLAOrga CI
+
+on:
+  # run on every commit to main
+  push:
+    branches: [ "main" ]
+  # run on every pull request targeting main
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  vlaorga-deployment-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out git repo
+        uses: actions/checkout@v4
+      - name: debug output
+        run: ls -lha && ls -lha ./*
+      - name: copy secrets file
+        run: cp .env.template .env
+      - name: build and start db container
+        run: docker compose up --build --detach db
+      - name: build and start backend container
+        run: docker compose up --build --detach backend
+
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          # this is not the JDK version we use in the docker container, but openJDK is not available for GitHub actions
+          # keep that in mind when debugging possible errors
+          # maybe a good future TODO is to build a docker container for Java testing?
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Build Backend with Gradle Wrapper
+        run: ./gradlew build
+
+  lint-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out git repo
+        uses: actions/checkout@v4
+      - run: npm install
+        working-directory: VLA-Frontend
+      - run: npm run lint
+        working-directory: VLA-Frontend
+      - run: npm run build
+        working-directory: VLA-Frontend
