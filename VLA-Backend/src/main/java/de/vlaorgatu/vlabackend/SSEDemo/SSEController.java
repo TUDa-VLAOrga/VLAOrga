@@ -1,6 +1,8 @@
 package de.vlaorgatu.vlabackend.SSEDemo;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
 * This is just a quick demo and should not be part of production
-* Open http://localhost:8080/sse/conpage in **new** tabs
+* Open http://localhost:5173 (our frontend) in **new** tabs and close old ones
 * In a terminal: curl -X POST localhost:8080/sse/notifyAll
 * All opened tabs should give you an alert
 * When tabs are left open, they will break as client side disconnection has not
@@ -21,10 +23,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController()
 @RequestMapping("/sse")
+@CrossOrigin("*")
 public class SSEController {
     private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
 
-    @GetMapping("/connect")
+    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect() {
         // Set timeout to never occur automatically
         SseEmitter connectionHandler = new SseEmitter(Long.MAX_VALUE);
@@ -52,15 +55,4 @@ public class SSEController {
         }
         return "Sent message to all connections!";
     }
-
-    @GetMapping("/conpage")
-    public String conpage(){
-        return "<!DOCTYPE html><html><body>Waiting for event<script>" +
-                "const eventSource = new EventSource('http://localhost:8080/sse/connect');" +
-                "eventSource.addEventListener('update', (e) => {\n" +
-                "        alert(e.data)\n" +
-                "    });" +
-                "</script></body></html>";
-    }
-
 }
