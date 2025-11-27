@@ -52,6 +52,9 @@ Attach to some container output:
     docker compose attach [db|backend|frontend]
 
 More control over (also past) log output is available using the `docker compose logs` command.
+Stop the detached containers using
+
+    docker compose stop
 
 
 ### Running backend directly
