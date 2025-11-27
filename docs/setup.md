@@ -1,6 +1,7 @@
 # Setup of VLAOrga
 
 For deployment, we ship preconfigured docker containers.
+The only requirements are having `docker` installed, which ships `docker compose` by default in recent versions.
 
 You can build and start them using
 
@@ -55,10 +56,22 @@ More control over (also past) log output is available using the `docker compose 
 
 ### Running backend directly
 
+#### Requirements
+
+> To do: Java, Gradle, Spring boot (?)
+
+#### Usage 
+
 > To do: write instructions about the right gradle commands to invoke.
 
 
 ### Running frontend directly
+
+#### Requirements
+
+> To do. Vite, react, type script, ... (?)
+
+#### Usage
 
 Start up the frontend development server using vite:
 
