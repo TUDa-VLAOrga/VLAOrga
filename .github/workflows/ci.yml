@@ -9,39 +9,45 @@ on:
     branches: [ "main" ]
 
 jobs:
-  vlaorga-deployment-ci:
+  vlaorga-ci:
     runs-on: ubuntu-latest
     steps:
       - name: check out git repo
         uses: actions/checkout@v4
-      - name: debug output
-        run: ls -lha && ls -lha ./*
       - name: copy secrets file
         run: cp .env.template .env
       - name: build and start db container
         run: docker compose up --build --detach db
       - name: build and start backend container
         run: docker compose up --build --detach backend
+      - name: tag backend test container
+        run: docker build --target build -t vlaorga-backend-gradle .
+        working-directory: VLA-Backend
+      - name: run backend tests
+        run: docker run vlaorga-backend-gradle ./gradlew check
+        working-directory: VLA-Backend
 
-  build-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          # this is not the JDK version we use in the docker container, but openJDK is not available for GitHub actions
-          # keep that in mind when debugging possible errors
-          # maybe a good future TODO is to build a docker container for Java testing?
-          java-version: '21'
-          distribution: 'temurin'
+  # this would work if we had the gradle project in our repo at root level
+  # since github actions with "uses" don't support working-directory change
+  #
+  # build-backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up JDK
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         # this is the JDK version we use in the docker container
+  #         # keep in mind to keep in sync
+  #         java-version: '21'
+  #         distribution: 'temurin'
 
-      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-      - name: Build Backend with Gradle Wrapper
-        run: ./gradlew build
+  #     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+  #     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+  #     - name: Setup Gradle
+  #       uses: gradle/actions/setup-gradle@v5
+  #     - name: Build Backend with Gradle Wrapper
+  #       run: ./gradlew build
 
   lint-frontend:
     runs-on: ubuntu-latest
