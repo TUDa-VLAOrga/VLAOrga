@@ -3,14 +3,14 @@ version: '3.8'
 services:
   db:
     image: postgres:16-alpine
-    container_name: postgres_db
+    container_name: vlaorga_postgres_db
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - vlaorga_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -23,7 +23,7 @@ services:
     build:
       context: ./VLA-Backend
       dockerfile: Dockerfile
-    container_name: springboot_backend
+    container_name: vlaorga_backend
     ports:
       - "8080:8080"
     environment:
@@ -37,11 +37,11 @@ services:
     build:
       context: ./VLA-Frontend
       dockerfile: Dockerfile
-    container_name: react_frontend
+    container_name: vlaorga_frontend
     ports:
       - "5173:80"
     depends_on:
       - backend
 
 volumes:
-  postgres_data:
+  vlaorga_postgres_data:
