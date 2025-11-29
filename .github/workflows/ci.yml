@@ -49,7 +49,7 @@ jobs:
   #     - name: Build Backend with Gradle Wrapper
   #       run: ./gradlew build
 
-  lint-frontend:
+  vlaorga-frontend-ci:
     runs-on: ubuntu-latest
     steps:
       - name: check out git repo
@@ -60,3 +60,4 @@ jobs:
         working-directory: VLA-Frontend
       - run: npm run build
         working-directory: VLA-Frontend
+        if: success() || failure()
