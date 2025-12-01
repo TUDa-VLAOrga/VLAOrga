@@ -8,8 +8,13 @@ You can build and start them using
     docker compose up --build
 
 Stop the containers with `Ctrl+C`.
+If you want to start the containers in detached mode, run the following for starting and stopping:
 
-The vite frontend server can be reached under http://localhost:5173/
+    docker compose up --build -d
+    docker compose stop
+
+The frontend server can be reached under http://localhost:5173/
+(In case of port conflicts, you can change the exposed ports in the `docker-compose.yml` file.)
 
 
 ## Backing up data
@@ -32,7 +37,7 @@ you can also just run and build the database container using
 
     docker compose [build|up] db
 
-We hewever strongly recommend using the `db` container for the postgres database,
+We however strongly recommend using the `db` container for the postgres database,
 as setting up and configuring postgres on a local machine is not straightforward.
 
 If you're running the backend inside a docker container, note that we build it including the Java binary,
