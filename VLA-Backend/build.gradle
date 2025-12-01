@@ -42,6 +42,8 @@ dependencies {
 
 checkstyle {
     toolVersion = "12.2.0"
+    ignoreFailures = false
+    maxWarnings = 0
 }
 
 tasks.named('test') {
