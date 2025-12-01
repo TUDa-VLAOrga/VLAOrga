@@ -1,5 +1,9 @@
 # Setup of VLAOrga
 
+## Setting environment variables
+Copy the `.env.template` file to file named `.env` in the same directory and adjust the usernames and passwords there.
+
+## Build and run
 For deployment, we ship preconfigured docker containers.
 The only requirements are having `docker` installed, which ships `docker compose` by default in recent versions.
 
