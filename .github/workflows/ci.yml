@@ -20,18 +20,18 @@ jobs:
         run: docker compose up --build --detach db
       - name: build and start backend container
         run: docker compose up --build --detach backend
-      - name: tag backend test container
-        run: docker build --target build -t vlaorga-backend-gradle .
-        working-directory: VLA-Backend
+      # - name: tag backend test container
+      #   run: docker build --target build -t vlaorga-backend-gradle .
+      #   working-directory: VLA-Backend
       - name: run backend tests
-        run: docker run vlaorga-backend-gradle ./gradlew check
+        run: ./gradlew check
         working-directory: VLA-Backend
       - name: lint backend
-        run: docker run vlaorga-backend-gradle ./gradlew checkstyleMain
+        run: ./gradlew checkstyleMain
         working-directory: VLA-Backend
         if: success() || failure()
       - name: lint backend tests
-        run: docker run vlaorga-backend-gradle ./gradlew checkstyleTest
+        run: ./gradlew checkstyleTest
         working-directory: VLA-Backend
         if: success() || failure()
 
