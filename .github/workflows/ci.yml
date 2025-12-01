@@ -26,6 +26,12 @@ jobs:
       - name: run backend tests
         run: docker run vlaorga-backend-gradle ./gradlew check
         working-directory: VLA-Backend
+      - name: lint backend
+        run: docker run vlaorga-backend-gradle ./gradlew checkstyleMain
+        working-directory: VLA-Backend
+      - name: lint backend tests
+        run: docker run vlaorga-backend-gradle ./gradlew checkstyleTest
+        working-directory: VLA-Backend
 
   # this would work if we had the gradle project in our repo at root level
   # since github actions with "uses" don't support working-directory change
