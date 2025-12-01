@@ -1,0 +1,54 @@
+name: VLAOrga CI
+
+on:
+  # run on every commit to main
+  push:
+    branches: [ "main" ]
+  # run on every pull request targeting main
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  vlaorga-build-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out git repo
+        uses: actions/checkout@v4
+      - name: copy secrets file
+        run: cp .env.template .env
+      - name: build and start db container
+        run: docker compose up --build --detach db
+      - name: build and start backend container
+        run: docker compose up --build --detach backend
+      - name: stop containers
+        run: docker compose stop
+
+  vlaorga-backend-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out git repo
+        uses: actions/checkout@v4
+      - name: run backend tests
+        run: ./gradlew check
+        working-directory: VLA-Backend
+      - name: lint backend
+        run: ./gradlew checkstyleMain
+        working-directory: VLA-Backend
+        if: success() || failure()
+      - name: lint backend tests
+        run: ./gradlew checkstyleTest
+        working-directory: VLA-Backend
+        if: success() || failure()
+
+  vlaorga-frontend-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out git repo
+        uses: actions/checkout@v4
+      - run: npm install
+        working-directory: VLA-Frontend
+      - run: npm run lint
+        working-directory: VLA-Frontend
+      - run: npm run build
+        working-directory: VLA-Frontend
+        if: success() || failure()

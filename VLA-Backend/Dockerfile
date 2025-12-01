@@ -1,3 +1,4 @@
+# remember to adjust CI java version when changing version here
 FROM gradle:8-jdk21 AS build
 WORKDIR /workspace
 COPY --chown=gradle:gradle . .
