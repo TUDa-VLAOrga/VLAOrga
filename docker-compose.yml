@@ -19,6 +19,8 @@ services:
       timeout: 5s
       retries: 5
 
+    # ========== BACKEND ==========
+
   backend:
     build:
       context: ./VLA-Backend
@@ -32,6 +34,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       - db
+
+# ========== FRONTEND ==========
 
   frontend:
     build:

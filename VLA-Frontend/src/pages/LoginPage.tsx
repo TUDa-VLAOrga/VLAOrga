@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/LoginPage.css";
+
 
 
 export default function LoginPage() {
@@ -12,29 +14,18 @@ export default function LoginPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    //TODO: Authentifizierung implementieren
     // Hier würde normalerweise die Authentifizierung stattfinden
       navigate("/calendar"); // Weiterleitung
   }
 
   return (
-    <div style={{
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }}>
-      <form 
-        onSubmit={onSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          width: "300px"
-        }}
-      >
-        <h2>Login</h2>
+    <div className="login-container">
+      <form onSubmit={onSubmit} className="login-form">
+        <h2 className="login-title">Login</h2>
 
         <input
+          className="login-input"
           type="text"
           placeholder="Benutzername"
           value={username}
@@ -43,6 +34,7 @@ export default function LoginPage() {
         />
 
         <input
+          className="login-input"
           type="password"
           placeholder="Passwort"
           value={password}
@@ -50,8 +42,9 @@ export default function LoginPage() {
           required
         />
 
-        <button type="submit">Login</button>
-        
+        <button type="submit" className="login-button">
+          Login
+        </button>
       </form>
     </div>
   );
