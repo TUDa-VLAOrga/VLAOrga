@@ -1,11 +1,11 @@
 import './App.css'
-import SSEHandler from './components/sse/SSEHandler';
+import SSEComponent from './components/sse/SSEComponent';
 
 function App() {
 
   return (
     <div className="App">
-      <SSEHandler></SSEHandler>
+      <SSEComponent></SSEComponent>
     </div>
   );
 }
