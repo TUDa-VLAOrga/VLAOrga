@@ -1,6 +1,5 @@
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import { SSEMessage } from "./SSEMessage";
-
-
 
 /**
  * Class for notification of components
@@ -8,23 +7,31 @@ import { SSEMessage } from "./SSEMessage";
  */
 export class SSEHandler {
     private static eventSource: EventSource;
+    private static setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>;
 
-    static initialize() {
+    static initialize(setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>) {
         if(this.eventSource) return;
 
-        this.eventSource = new EventSource(`/sse/connect`);
-        
-        this.configureEventSource();
+        this.setComponentStatus = setComponentStatus;
 
-        window.addEventListener("close", SSEHandler.closeConnection);
+        this.eventSource = new EventSource(`/sse/connect`);
+        this.eventSource.addEventListener("error", SSEHandler.handleSseError);
+        
+        this.addEventSourceEventHandlers();
+
+        window.addEventListener("beforeunload", SSEHandler.closeConnection);
     }
 
-    private static configureEventSource(){
-        this.eventSource.addEventListener(SSEMessage.DEBUG, this.handleDebugEvent);
+    private static addEventSourceEventHandlers(){
+        SSEHandler.eventSource.addEventListener(SSEMessage.DEBUG, SSEHandler.handleDebugEvent);
+    }
+
+    private static handleSseError(_: Event){
+        SSEHandler.setComponentStatus.current(true);
     }
 
     private static closeConnection(){
-        this.eventSource.close();
+        SSEHandler.eventSource.close();
     }
 
     private static handleDebugEvent(e: MessageEvent){

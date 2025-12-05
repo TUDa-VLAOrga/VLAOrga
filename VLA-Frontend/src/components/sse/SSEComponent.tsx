@@ -1,12 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SSEHandler } from "./SSEHandler";
 
 function SSEComponent(){
+    const [sseErrStatus, setSseErrStatus] = useState(false);
+    const refSetSseErrStatus = useRef(setSseErrStatus);
+
     useEffect(() => {
-        SSEHandler.initialize();
+        refSetSseErrStatus.current = setSseErrStatus;
+        SSEHandler.initialize(refSetSseErrStatus);
     }, []);
 
-    return "Waiting for event..";
+
+
+    return (
+        <>
+            Event source status: {sseErrStatus ? "Errored" : "Setting up / Ready"}
+        </>
+    );
 }
 
 export default SSEComponent;
