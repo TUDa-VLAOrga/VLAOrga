@@ -18,6 +18,7 @@ dist-ssr/
 build/
 .gradle/
 target/
+bin/
 
 # IDE / Editors
 .vscode/
