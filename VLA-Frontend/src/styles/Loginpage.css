@@ -1,0 +1,67 @@
+/* Container zentriert die Login-Karte */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f7fa;
+  font-family: "Inter", sans-serif;
+}
+
+/* Die Login-Karte */
+.login-card {
+  background: white;
+  padding: 2rem;
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Titel */
+.login-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* Inputs */
+.login-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus {
+  border-color: #0b5cff;
+  outline: none;
+  box-shadow: 0 0 0 3px #0b5cff22;
+}
+
+/* Button */
+.login-button {
+  background: #0b5cff;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-button:hover {
+  background: #004ecc;
+}
+
+/* Optional: kleiner Text unterhalb */
+.login-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+}
