@@ -1,7 +1,7 @@
 package de.vlaorgatu.vlabackend.sse;
 
 /**
- * Enumeration for MessageEvents that are sent to the frontend
+ * Enumeration for MessageEvents that are sent to the frontend.
  * Make sure that this list is always up-to-date!
  */
 public class SseMessage {

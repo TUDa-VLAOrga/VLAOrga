@@ -1,6 +1,5 @@
 package de.vlaorgatu.vlabackend.sse;
 
-import de.vlaorgatu.vlabackend.sse.SseMessage;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,20 +7,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.io.IOException;
 
+import java.io.IOException;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+/**
+ * Handles all logic for the SSE communication to the frontend.
+ */
 @RestController()
 @RequestMapping("/sse")
 @CrossOrigin("*")
-/**
- * Handles all logic for the SSE communication to the frontend
- */
 public class SseController {
     private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
 
     /**
-     * Configures the SSE Connection to the frontend
+     * Configures the SSE Connection to the frontend.
+     *
      * @return The SSE Connection for the frontend
      */
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -38,12 +39,13 @@ public class SseController {
     }
 
     /**
-     * Calls all connected sseHandlers with a Debug call
+     * Calls all connected sseHandlers with a Debug call.
+     *
      * @return Confirmation that methods was called
      */
     @PostMapping("/manualNotification")
-    public String notifyAllSSE(){
-        for(SseEmitter connection : sseHandlers){
+    public String notifyAllSse() {
+        for (SseEmitter connection : sseHandlers) {
             try {
                 connection.send(SseEmitter.event()
                         .name(SseMessage.DEBUG)
