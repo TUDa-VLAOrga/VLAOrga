@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { SSEHandler } from "./SseHandler";
+import SseError from "./SseError";
 
 function SSEComponent(){
     const [sseErrStatus, setSseErrStatus] = useState(false);
@@ -14,7 +15,7 @@ function SSEComponent(){
 
     return (
         <>
-            Event source status: {sseErrStatus ? "Errored" : "Setting up / Ready"}
+            {sseErrStatus ? <SseError></SseError> : ""}
         </>
     );
 }
