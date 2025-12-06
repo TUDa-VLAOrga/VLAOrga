@@ -1,5 +1,6 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import { SSEMessage } from "./SseMessage";
+import { SseMessage } from "./SseMessage";
+import type { SseObserver } from "./SseObserver";
 
 /**
  * Class for notification of components
@@ -8,6 +9,7 @@ import { SSEMessage } from "./SseMessage";
 export class SSEHandler {
     private static eventSource: EventSource;
     private static setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>;
+    private static registeredObservers: SseObserver[] = [];
 
     static initialize(setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>) {
         if(this.eventSource) return;
@@ -23,7 +25,7 @@ export class SSEHandler {
     }
 
     private static addEventSourceEventHandlers(){
-        SSEHandler.eventSource.addEventListener(SSEMessage.DEBUG, SSEHandler.handleDebugEvent);
+        SSEHandler.eventSource.addEventListener(SseMessage.DEBUG, SSEHandler.handleDebugEvent);
     }
 
     private static handleSseError(_: Event){
@@ -32,6 +34,22 @@ export class SSEHandler {
 
     private static closeConnection(){
         SSEHandler.eventSource.close();
+    }
+
+    public static registerObserver(observer: SseObserver){
+        SSEHandler.registeredObservers.push(observer);
+    }
+
+    public static removeObserver(observer: SseObserver){
+        const index = SSEHandler.registeredObservers.findIndex(element => element == observer);
+
+        if(index == -1) return
+
+        SSEHandler.registeredObservers.splice(index, 1);
+    }
+
+    private static notifyAllObserver(e: MessageEvent){
+        SSEHandler.registeredObservers.forEach(obs => obs.update(e));
     }
 
     private static handleDebugEvent(e: MessageEvent){
