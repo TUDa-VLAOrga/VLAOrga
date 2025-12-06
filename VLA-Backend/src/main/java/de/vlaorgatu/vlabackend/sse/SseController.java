@@ -1,5 +1,6 @@
-package de.vlaorgatu.vlabackend.SSE;
+package de.vlaorgatu.vlabackend.sse;
 
+import de.vlaorgatu.vlabackend.sse.SseMessage;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,25 +8,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-/*
-* This is just a quick demo and should not be part of production
-* Open http://localhost:5173 (our frontend) in **new** tabs and close old ones
-* In a terminal: curl -X POST localhost:8080/sse/notifyAll
-* All opened tabs should give you an alert
-* When tabs are left open, they will break as client side disconnection has not
-* been implemented in this demo
-* */
+import java.io.IOException;
 
 @RestController()
 @RequestMapping("/sse")
 @CrossOrigin("*")
-public class SSEController {
+/**
+ * Handles all logic for the SSE communication to the frontend
+ */
+public class SseController {
     private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
 
+    /**
+     * Configures the SSE Connection to the frontend
+     * @return The SSE Connection for the frontend
+     */
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect() {
         // Set timeout to never occur automatically
@@ -39,13 +37,17 @@ public class SSEController {
         return connectionHandler;
     }
 
-    @PostMapping("/notifyAll")
+    /**
+     * Calls all connected sseHandlers with a Debug call
+     * @return Confirmation that methods was called
+     */
+    @PostMapping("/manualNotification")
     public String notifyAllSSE(){
         for(SseEmitter connection : sseHandlers){
             try {
                 connection.send(SseEmitter.event()
-                        .name()
-                        .data("Someone posted again!")
+                        .name(SseMessage.DEBUG)
+                        .data("SSE Update to all registered connections!")
                 );
             } catch (IOException e) {
                 // Broken Pipe Error
