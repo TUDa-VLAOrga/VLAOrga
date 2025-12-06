@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { SSEHandler } from "./SSEHandler";
+import { SSEHandler } from "./SseHandler";
 
 function SSEComponent(){
     const [sseErrStatus, setSseErrStatus] = useState(false);

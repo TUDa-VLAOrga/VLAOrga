@@ -1,5 +1,5 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import { SSEMessage } from "./SSEMessage";
+import { SSEMessage } from "./SseMessage";
 
 /**
  * Class for notification of components

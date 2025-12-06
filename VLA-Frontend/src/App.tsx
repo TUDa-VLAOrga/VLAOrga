@@ -1,5 +1,5 @@
 import './App.css'
-import SSEComponent from './components/sse/SSEComponent';
+import SSEComponent from './components/sse/SseComponent';
 
 function App() {
 
