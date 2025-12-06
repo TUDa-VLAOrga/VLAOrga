@@ -1,10 +1,16 @@
 import Popup from "../popup/Popup";
 import { Button } from "../ui/button";
 
+/**
+ * Forces a reload of the current page
+ */
 function refreshPage(){
     window.location.reload();
 }
 
+/**
+ * Error message for the SseHandler if eventSource should error
+ */
 function SseError(){
     return (
         <Popup>
