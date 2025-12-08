@@ -23,6 +23,7 @@ function SseError(){
                 <>
                     Eine verlässliche Verbindung zu dem zentralen Datenserver konnte leider nicht hergestellt werden.<br></br><br></br>
                     Überprüfen Sie, ob Sie sich im richtigen Netzwerk befinden und eine stabile Internetverbindung haben <br></br><br></br>
+                    Bitte schließen Sie auch weitere Tabs, falls die obigen Schritte das Problem nicht beenden sollten <br></br><br></br>
                     Bitte laden Sie die Seite neu.
                 </>,
                 bottomComonent:
