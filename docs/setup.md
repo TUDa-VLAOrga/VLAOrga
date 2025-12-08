@@ -11,8 +11,11 @@ You can build and start them using
 
     docker compose up --build
 
+This keeps the containers running andblocking the current terminal.
 Stop the containers with `Ctrl+C`.
-If you want to start the containers in detached mode, run the following for starting and stopping:
+
+If you want to start the containers in detached mode, i.e. not blocking the terminal,
+run the following for starting and stopping:
 
     docker compose up --build -d
     docker compose stop
@@ -89,3 +92,7 @@ Start up the frontend development server using vite:
 
     cd VLA-Frontend
     npm run dev
+
+This by default runs the vite development server only locally. To expose it to the local network, run
+
+    npm run dev -- --host
