@@ -1,5 +1,5 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import { SseMessage } from "./SseMessage";
+import { SseMessageType } from "./SseMessage";
 import type { SseObserver } from "./SseObserver";
 
 /**
@@ -44,7 +44,7 @@ export class SSEHandler {
      * Do not forget to add a new handler if SseMessage is changed!
      */
     private static addEventSourceEventHandlers(){
-        SSEHandler.eventSource.addEventListener(SseMessage.DEBUG, SSEHandler.handleDebugEvent);
+        SSEHandler.eventSource.addEventListener(SseMessageType.DEBUG, SSEHandler.handleDebugEvent);
     }
 
     /**
