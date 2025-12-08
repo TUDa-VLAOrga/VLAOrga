@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.sse;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 @RestController()
 @RequestMapping("/sse")
-@CrossOrigin("*")
+@CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
     private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
 
@@ -43,6 +44,7 @@ public class SseController {
      * @return Confirmation that methods was called
      */
     @PostMapping("/manualNotification")
+    // TODO: Remove this endpoint after testing stage
     public String notifyAllSse() {
         for (SseEmitter connection : sseHandlers) {
             try {
