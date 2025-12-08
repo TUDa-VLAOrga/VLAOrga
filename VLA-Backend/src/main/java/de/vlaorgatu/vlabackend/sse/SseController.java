@@ -1,5 +1,7 @@
 package de.vlaorgatu.vlabackend.sse;
 
+import java.io.IOException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,9 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Handles all logic for the SSE communication to the frontend.
