@@ -19,20 +19,19 @@ function SseError(){
                 <>
                     Verbindungsfehler
                 </>,
-                text: 
+                body: 
                 <>
                     Die Verbindung zum Server wrude unterbrochen.<br></br><br></br>
                     Überprüfen Sie, ob Sie sich im richtigen Netzwerk befinden und eine stabile Internetverbindung haben <br></br><br></br>
                     Bitte schließen Sie auch weitere Tabs, falls die obigen Schritte das Problem nicht beenden sollten <br></br><br></br>
-                    Bitte laden Sie die Seite neu.
-                </>,
-                bottomComonent:
-                <Button>
+                    Bitte laden Sie die Seite neu.<br></br><br></br>
+                    <Button>
                     {{
                         onClickEvent: refreshPage,
                         text: <><u>Neuladen</u></>
                     }}
-                </Button>,
+                </Button>
+                </>,
             }}
         </Popup>
     )

@@ -6,8 +6,7 @@ import "./Popup.css"
  */
 interface PopupProps {
     title: ReactNode,
-    text: ReactNode,
-    bottomComonent?: ReactNode,
+    body: ReactNode,
 }
 
 /**
@@ -20,8 +19,7 @@ function Popup({children} : {children: PopupProps}){
             <div className="PopupContainer">
                 <div className="PopupTitle">{children.title}</div>
                 <div className="PopupText">
-                    {children.text} <br></br><br></br>
-                    {children.bottomComonent}
+                    {children.body}
                 </div>
             </div>
         </span>
