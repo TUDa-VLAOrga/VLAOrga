@@ -22,5 +22,10 @@ We use [ESLint](https://eslint.org/), which can be run locally via npm:
 
     npm run lint
 
+You can build the application at the same time using the following command.
+This possibly reveals some errors our linter does not recognize.
+
+    npm run lint-and-build
+
 Autoformatting and linting formatting is a future ToDo (ESLint has capabilities but not activated by default, have not looked into that yet).
 
