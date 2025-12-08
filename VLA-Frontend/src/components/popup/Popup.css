@@ -1,0 +1,35 @@
+.PopupBackground {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #00000099;
+    top: 0;
+    left: 0;
+    align-content: center;
+}
+
+.PopupContainer {
+    position: relative;
+    margin: auto;
+    width: 80vmin;
+    background-color: #FFFFFF;
+    top: 0;
+    left: 0;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.PopupTitle {
+    font-weight: 800;
+    font-size: 1.75em;
+    overflow-y: scroll;
+    word-wrap: break-word;
+    max-height: 15svh;
+}
+
+.PopupText {
+    font-size: 1.25em;
+    overflow-y: scroll;
+    padding: 5px;
+    max-height: 60svh;
+}
