@@ -1,5 +1,5 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import { SseMessageType } from "./SseMessage";
+import { SseMessageType } from "./SseMessageType";
 import type { SseObserver } from "./SseObserver";
 
 /**
