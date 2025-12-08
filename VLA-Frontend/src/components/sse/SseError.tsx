@@ -1,5 +1,5 @@
 import Popup from "../popup/Popup";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 
 /**
  * Forces a reload of the current page
@@ -25,7 +25,13 @@ function SseError(){
                     Überprüfen Sie, ob Sie sich im richtigen Netzwerk befinden und eine stabile Internetverbindung haben <br></br><br></br>
                     Bitte laden Sie die Seite neu.
                 </>,
-                bottomComonent: <Button onClick={refreshPage}>Neuladen</Button>,
+                bottomComonent:
+                <Button>
+                    {{
+                        onClickEvent: refreshPage,
+                        text: <><u>Neuladen</u></>
+                    }}
+                </Button>,
             }}
         </Popup>
     )
