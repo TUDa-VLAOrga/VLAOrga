@@ -49,7 +49,7 @@ public class SseController {
         for (SseEmitter connection : sseHandlers) {
             try {
                 connection.send(SseEmitter.event()
-                        .name(SseMessage.DEBUG)
+                        .name(SseMessageType.DEBUG)
                         .data("SSE Update to all registered connections!")
                 );
             } catch (IOException e) {
