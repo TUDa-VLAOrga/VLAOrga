@@ -1,4 +1,4 @@
-import React from "react";
+
 import DayColumn from "./DayColumn";
 import type { CalendarDay } from "./types";
 

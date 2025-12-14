@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import type { CalendarDay } from "./types";
@@ -84,7 +84,7 @@ return (
     </div>
   </div>
 );
-  
+
 
 
 }
