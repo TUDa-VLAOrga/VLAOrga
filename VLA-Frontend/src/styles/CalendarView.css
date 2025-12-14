@@ -1,34 +1,38 @@
 .cv-root {
-  max-width: 1200px;
+  max-width: 1600px;   /* größer als vorher */
+  width: 95vw;         /* fast volle Browserbreite */
   margin: 0 auto;
   padding: 16px;
 }
 
 .cv-title {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   font-size: 22px;
   font-weight: 700;
+  text-align: center;
 }
 
-.cv-headerRow {
+/* Pfeile stehen neben dem Frame, aber nur oben (nicht über volle Höhe) */
+.cv-weekRow {
   display: flex;
-  align-items: stretch;
-  gap: 10px;
+  align-items: flex-start; /* <- wichtig: verhindert "Seitenleisten"-Optik */
+  gap: 12px;
 }
 
-.cv-arrow {
-  width: 44px;
-  border: 1px solid #777;
-  background: #e6e6e6;
-  cursor: pointer;
-}
-
-.cv-header {
+/* Frame: gemeinsamer Block für Header + Grid */
+.cv-frame {
   flex: 1;
+  border: 1px solid #777;
+  background: #dcdcdc;
+}
+
+/* Header ist exakt so breit wie das Grid (beides im gleichen Frame) */
+.cv-header {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   background: #bdbdbd;
-  border: 1px solid #777;
+  border-bottom: 1px solid #777; /* <- die Linie, an der die Wochentage "aufhören" */
+  min-height: 64px; /* definiert Headerhöhe (für Pfeilhöhe) */
 }
 
 .cv-headerCell {
@@ -50,13 +54,15 @@
   font-size: 12px;
 }
 
+/* Grid ohne eigenen Außenrahmen (der Frame hat den Border) */
 .cv-grid {
-  margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  min-height: 420px;
-  border: 1px solid #777;
+  min-height: 70vh;
   background: #dcdcdc;
+
+  border: none;
+  margin-top: 0;
 }
 
 .cv-dayColumn {
@@ -66,4 +72,31 @@
 
 .cv-dayColumn:last-child {
   border-right: none;
+}
+
+/* Pfeil-Buttons: Höhe = Headerhöhe, damit "oben im Headerbereich" */
+.cv-navBox {
+  width: 44px;
+  height: 64px; /* muss zur cv-header min-height passen */
+  border: 1px solid #777;
+  background: #dcdcdc;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cv-navIcon {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #4a4a4a;
+  background: #6fa8ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 700;
 }

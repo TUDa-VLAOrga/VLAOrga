@@ -1,19 +1,20 @@
 import React from "react";
+import DayColumn from "./DayColumn";
+import type { CalendarDay } from "./types";
 
 type Props = {
-  weekDays: Date[]; // Mo–Fr
+  days: CalendarDay[]; // Mo–Fr
 };
 
-export default function WeekGrid({ weekDays }: Props) {
+/**
+ * WeekGrid rendert die Spalten für die Woche.
+ * Jede Spalte ist über day.iso eindeutig an einen Wochentag gekoppelt.
+ */
+export default function WeekGrid({ days }: Props) {
   return (
     <div className="cv-grid">
-      {weekDays.map((d) => (
-         
-        //Jede Spalte respräsentiert einen Tag
-
-        <div key={d.toISOString()} className="cv-dayColumn">
-          {/* Platzhalter – hier kommen später Events rein */}
-        </div>
+      {days.map((day) => (
+        <DayColumn key={day.iso} day={day} />
       ))}
     </div>
   );
