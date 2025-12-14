@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import type { CalendarDay } from "./types";
-import "../../styles/calendarView.css";
+import "../../styles/CalendarView.css";
 
 function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
