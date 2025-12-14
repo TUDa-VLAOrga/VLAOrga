@@ -1,0 +1,69 @@
+.cv-root {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.cv-title {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.cv-headerRow {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.cv-arrow {
+  width: 44px;
+  border: 1px solid #777;
+  background: #e6e6e6;
+  cursor: pointer;
+}
+
+.cv-header {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: #bdbdbd;
+  border: 1px solid #777;
+}
+
+.cv-headerCell {
+  padding: 10px;
+  text-align: center;
+  border-right: 1px solid #777;
+}
+
+.cv-headerCell:last-child {
+  border-right: none;
+}
+
+.cv-headerDay {
+  font-weight: 700;
+}
+
+.cv-headerDate {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.cv-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  min-height: 420px;
+  border: 1px solid #777;
+  background: #dcdcdc;
+}
+
+.cv-dayColumn {
+  border-right: 1px solid #777;
+  padding: 10px;
+}
+
+.cv-dayColumn:last-child {
+  border-right: none;
+}
