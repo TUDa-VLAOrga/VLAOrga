@@ -6,7 +6,7 @@ package de.vlaorgatu.vlabackend.sse;
  */
 public class SseMessageType {
     /**
-     * Used for sending Debug messages to the frontend
+     * Used for sending Debug messages to the frontend.
      */
     public static final String DEBUG = "DEBUG";
 
