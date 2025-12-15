@@ -1,6 +1,5 @@
 FROM node:14.12-alpine3.10
 WORKDIR /app
-COPY datenbank-physik .
 
 RUN apk add nodejs npm
 
@@ -8,6 +7,8 @@ RUN apk add python2 python3
 RUN ln -sf /usr/bin/python2 /usr/bin/python && npm config set python /usr/bin/python
 
 RUN apk add make g++ gcc linux-headers libstdc++
+
+COPY datenbank-physik .
 
 RUN npm install
 
