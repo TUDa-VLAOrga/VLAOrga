@@ -87,7 +87,7 @@ export class SSEHandler {
      * Notify all registered {@link SseObserver}s of new MessageEvent
      * @param e The Event to propagate
      */
-    // @ts-ignore method will be used in future feature implementations
+    // @ts-expect-error method will be used in future feature implementations
     private static notifyAllObserver(e: MessageEvent){
         SSEHandler.registeredObservers.forEach(obs => obs.update(e));
     }
