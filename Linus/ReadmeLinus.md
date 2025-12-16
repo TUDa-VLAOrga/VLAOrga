@@ -22,7 +22,7 @@
 
 5. Create an admin user by running
 
-        VLAOrga/Linus $ docker compose exec db mysql db_name --user=db_user --password=db_password -e 'INSERT INTO user (name, password, email, roles) VALUES ("admin", "", "vla@example.com", "[\"ROLE_VLA\"]")'
+        VLAOrga/Linus $ docker compose exec db mysql db_name --user=db_user --password=db_password -e 'INSERT INTO user (name, password, email, roles) VALUES ("admin", "", "vla@example.com", "[\"ROLE_ADMIN\"]")'
     
 6. Linus should now be accessible under http://localhost:8000, and you are able to log in with the username
     `admin` and any password.
