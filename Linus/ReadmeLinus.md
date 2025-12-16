@@ -3,7 +3,8 @@
 1. Clone linus as submodule by running (inside the Linus/ directory)
     
         VLAOrga/Linus $ git submodule init datenbank-physik
-   If the datenbank-physik folder is still empty:
+
+2. If the datenbank-physik folder is still empty:
    
         VLAOrga/Linus $ git submodule update --init
 
