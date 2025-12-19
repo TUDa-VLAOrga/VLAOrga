@@ -66,6 +66,5 @@ export class Logger {
     static overrideComponenentMessageSetterRef(setter: Dispatch<SetStateAction<LogMessage[]>>){
         Logger.loggerReferenceSetter = setter;
         Logger.info("Updating logger component setter");
-        setInterval(() => Logger.info("Test"), 1000);
     }
 }
