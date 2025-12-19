@@ -35,17 +35,5 @@ services:
     depends_on:
       - db
 
-# ========== FRONTEND ==========
-
-  frontend:
-    build:
-      context: ./VLA-Frontend
-      dockerfile: Dockerfile
-    container_name: vlaorga_frontend
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
-
 volumes:
   vlaorga_postgres_data:
