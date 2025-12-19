@@ -1,0 +1,78 @@
+.LoggerToggle > input {
+    appearance: none;
+}
+
+.LoggerContainer:not(:has(input:checked)) > .Logger {
+    display: none;
+}
+
+.LoggerToggle {
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: rgb(108, 108, 214);
+    border-radius: 10px;
+    min-width: 100px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+    cursor: pointer;
+}
+
+.Logger {
+    position: fixed;
+    top: 2.5%;
+    left: 2.5%;
+    width: 95%;
+    height: 95%;
+    max-width: 95%;
+    max-height: 95%;
+    opacity: .9;
+    background-color: #CCC;
+    resize: both;
+    overflow: scroll;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.LogEntry {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.LogDate {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.LogLevel {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.LogMessage {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    max-height: calc(95dvh / 5);
+    flex-grow: 1;
+    overflow-x: none;
+    overflow-y: scroll;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    font-weight: bold;
+}
