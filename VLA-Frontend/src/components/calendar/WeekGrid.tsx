@@ -1,6 +1,6 @@
 
 import DayColumn from "./DayColumn";
-import type { CalendarDay } from "./types";
+import type { CalendarDay } from "./CalendarTypes";
 
 type Props = {
   days: CalendarDay[]; // Mo–Fr
