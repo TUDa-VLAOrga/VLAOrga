@@ -4,6 +4,7 @@ import { LogEvent, LogLevel, type LogMessage } from "./LoggerTypes";
 export class Logger {
     /**
      * Contains all relevant log messages
+     * The first index is the latest message
      */
     private static logMessages: LogMessage[] = [];
     private static loggerReferenceSetter?: Dispatch<SetStateAction<LogMessage[]>>;
@@ -43,18 +44,17 @@ export class Logger {
      */
     static customLogMessage(level: LogLevel, message: string, event?: LogEvent){
         
-        
-        Logger.logMessages.push({
+        const newMessage: LogMessage = {
             date: new Date(),
             level: level,
             message: message,
             eventType: event,
-        });
+        }
 
-        let newMessages : LogMessage[] = [...Logger.logMessages];
-        Logger.logMessages = newMessages;
+        const newMessageHistory : LogMessage[] = [newMessage, ...Logger.logMessages];
+        Logger.logMessages = newMessageHistory;
 
-        Logger.updateComponent(newMessages);
+        Logger.updateComponent(newMessageHistory);
     }
 
     private static updateComponent(messages: LogMessage[]){
@@ -66,5 +66,6 @@ export class Logger {
     static overrideComponenentMessageSetterRef(setter: Dispatch<SetStateAction<LogMessage[]>>){
         Logger.loggerReferenceSetter = setter;
         Logger.info("Updating logger component setter");
+        setInterval(() => Logger.info("Test"), 1000);
     }
 }
