@@ -68,11 +68,23 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    max-height: calc(95dvh / 5);
+    max-height: calc(95dvh / 10);
     flex-grow: 1;
     overflow-x: none;
     overflow-y: scroll;
     overflow-wrap: break-word;
     word-break: break-all;
     font-weight: bold;
+}
+
+.LogEntry[data-log-level="Info"] {
+  background-color: #6c6cd677;
+}
+
+.LogEntry[data-log-level="Warn"] {
+  background-color: #FF05;
+}
+
+.LogEntry[data-log-level="Error"] {
+  background-color: #F007;
 }
