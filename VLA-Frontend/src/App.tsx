@@ -6,13 +6,13 @@ import CalendarPage from "./pages/CalendarPage";
 function App() {
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-        </Routes>
-      </div>
+      <BrowserRouter>
+          <div className="App">
+              <Routes>
+                  <Route path="/" element={<LoginPage/>}/>
+                  <Route path="/calendar" element={<CalendarPage/>}/>
+              </Routes>
+          </div>
     </BrowserRouter>
   );
 }
