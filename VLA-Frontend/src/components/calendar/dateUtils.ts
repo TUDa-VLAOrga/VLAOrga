@@ -13,6 +13,14 @@ export function toISODateLocal(d: Date) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+/** Formats a date as "dd.mm." (e.g., "19.12."). */
+export function formatDDMM(date: Date) {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}.${mm}.`;
+}
+
+
 /** Gibt ein neues Date zurück, das `days` Tage von `date` entfernt ist. */
 export function addDays(date: Date, days: number) {
   const d = new Date(date);

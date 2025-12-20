@@ -3,15 +3,7 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import type { CalendarDay } from "./CalendarTypes";
 import "../../styles/CalendarView.css";
-import {
-  WORKDAY_COUNT,
-  addDays,
-  addWorkdays,
-  formatRangeShortDE,
-  isWeekend,
-  normalizeToWorkdayStart,
-  toISODateLocal,
-} from "./dateUtils";
+import {WORKDAY_COUNT, addDays, addWorkdays, formatRangeShortDE, isWeekend, normalizeToWorkdayStart, toISODateLocal,} from "./dateUtils";
 
 
  export default function CalendarView() {

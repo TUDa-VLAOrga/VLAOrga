@@ -1,15 +1,10 @@
 
 import type { CalendarDay } from "./CalendarTypes";
+import { formatDDMM } from "./dateUtils";
 
 type Props = {
   days: CalendarDay[]; // Mo–Fr
 };
-
-function formatDDMM(date: Date) {
-  const dd = String(date.getDate()).padStart(2, "0");
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  return `${dd}.${mm}.`;
-}
 
 const weekdayFmt = new Intl.DateTimeFormat("de-DE", { weekday: "long" });
 

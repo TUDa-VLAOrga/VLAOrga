@@ -6,17 +6,17 @@ type DayColumnProps = {
 };
 
 /**
- * DayColumn repräsentiert genau EINEN Tag.
- * Später werden hier die Events gerendert, deren event.dateISO === day.iso.
+ * DayColumn represents exactly one day.
+ * Later, we will render all events where event.dateISO === day.iso.
  */
 export default function DayColumn({ day }: DayColumnProps) {
   return (
 
     //TODO: Events rendern
 
-    // data-date hilft beim Debuggen (DevTools) und später auch bei Tests
+     // data-date helps with debugging (DevTools) and later for tests
     <div className="cv-dayColumn" data-date={day.iso}>
-      {/* Platzhalter – hier kommen später Events rein */}
+      {/* Placeholder – events will be rendered here later */}
     </div>
   );
 }
