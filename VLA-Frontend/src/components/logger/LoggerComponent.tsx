@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { LogMessage } from "./LoggerTypes";
 import { Logger } from "./Logger";
-import "./Logger.css";
+import "./../../styles/Logger.css";
 
 function LoggerComponent(){
     const [logMessages, setLogMessages] = useState<LogMessage[]>([]);
