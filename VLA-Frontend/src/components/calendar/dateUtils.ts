@@ -1,7 +1,7 @@
 /**
  * dateUtils.ts
- * Sammlung von reinen Datums-/Format-Hilfsfunktionen für den Kalender.
- * Ziel: CalendarView bleibt schlank (State + UI), Logik liegt hier.
+ * Collection of pure date/formatting helper functions for the calendar.
+ * Goal: CalendarView stays lean (State + UI), logic is here.
  */
 
 export const WORKDAY_COUNT = 5;
@@ -21,22 +21,22 @@ export function formatDDMM(date: Date) {
 }
 
 
-/** Gibt ein neues Date zurück, das `days` Tage von `date` entfernt ist. */
+/** gives a new Date that is `days` days away from `date`. */
 export function addDays(date: Date, days: number) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return d;
 }
 
-/** True, wenn das Datum Samstag oder Sonntag ist. */
+/** True, if date is Saturday or Sunday. */
 export function isWeekend(date: Date) {
   const day = date.getDay(); // 0=So,6=Sa
   return day === 0 || day === 6;
 }
 
 /**
- * Normalisiert auf den Start eines Arbeitstags.
- * Falls Sa/So -> nächster Montag. Uhrzeit wird auf 00:00 gesetzt.
+ * Normalizes to the start of a workday.
+ * If Saturday or Sunday -> next Monday. Time is set to 00:00.
  */
 export function normalizeToWorkdayStart(date: Date) {
   const d = new Date(date);
@@ -50,14 +50,14 @@ export function normalizeToWorkdayStart(date: Date) {
 }
 
 /**
- * Addiert Arbeitstage (Mo–Fr). Überspringt Wochenende.
- * `n` kann negativ sein.
+ * adds workdays (Mo–Fr). Skips weekend.
+ * `n` can be negative.
  */
 export function addWorkdays(date: Date, n: number) {
   let d = new Date(date);
   d.setHours(0, 0, 0, 0);
 
-  // Falls jemand aus Versehen auf WE landet, erst normalisieren
+  // if someone accidentally lands on a weekend, normalize first
   d = normalizeToWorkdayStart(d);
 
   const step = n >= 0 ? 1 : -1;
@@ -78,7 +78,7 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
   month: "2-digit",
 });
 
-/** Formatiert z.B. "Fr 19.12 – Do 25.12" */
+/** formats a range like "Fr 19.12 – Do 25.12" */
 export function formatRangeShortDE(start: Date, end: Date) {
   return `${rangeFmt.format(start)} – ${rangeFmt.format(end)}`;
 }

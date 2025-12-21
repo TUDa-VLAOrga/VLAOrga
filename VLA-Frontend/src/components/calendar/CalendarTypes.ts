@@ -14,8 +14,12 @@ export type EventKind = string; /** e.g. "Aufbau", "VL" to distinguish different
  * - "warn": attention needed soon (e.g., missing info, pending confirmation)
  * - "critical": urgent / blocking issue (e.g., cannot be executed as planned)
  */
-export const EVENT_STATUSES = ["neutral", "ok", "warn", "critical"] as const;
-export type EventStatus = typeof EVENT_STATUSES[number];
+export enum EventStatus {
+  Neutral = "neutral",
+  Ok = "ok",
+  Warn = "warn",
+  Critical = "critical",
+}
 
 export type CalendarEvent = {
   id: string;

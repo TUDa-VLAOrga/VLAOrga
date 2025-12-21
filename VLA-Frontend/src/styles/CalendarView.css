@@ -25,7 +25,7 @@
   margin-bottom: 12px;
 }
 
-/* Pfeile stehen neben dem Frame, aber nur oben (nicht über volle Höhe) */
+
 .cv-weekRow {
   display: flex;
   align-items: flex-start; 
@@ -33,7 +33,7 @@
   width: 100%;
 }
 
-/* Frame: gemeinsamer Block für Header + Grid */
+/* Frame: Block for Header + Grid */
 .cv-frame {
   --cv-cols: repeat(5, minmax(160px, 1fr));
   --cv-gap: 0px; 
@@ -46,7 +46,7 @@
   background: #d9d9d9;
 }
 
-/* Header ist exakt so breit wie das Grid (beides im gleichen Frame) */
+/* Header is exactly as wide as the Grid (both in the same Frame) */
 .cv-header {
   display: grid;
   grid-template-columns: var(--cv-cols);
@@ -75,7 +75,7 @@
   font-size: 12px;
 }
 
-/* Grid ohne eigenen Außenrahmen (der Frame hat den Border) */
+/* Grid without own outer border (the Frame has the Border) */
 .cv-grid {
   display: grid;
   grid-template-columns: var(--cv-cols);
@@ -94,7 +94,7 @@
   border-right: none;
 }
 
-/* Pfeil-Buttons: Höhe = Headerhöhe, damit "oben im Headerbereich" */
+
 .cv-navBox {
   width: 44px;
   height: 44px; 
