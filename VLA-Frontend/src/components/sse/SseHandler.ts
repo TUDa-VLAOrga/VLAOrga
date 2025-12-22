@@ -1,6 +1,8 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import { SseMessageType } from "./SseMessageType";
 import type { SseObserver } from "./SseObserver";
+import { Logger } from "../logger/Logger";
+import { LogEvent } from "../logger/LoggerTypes";
 
 /**
  * Class for notification of components
@@ -28,6 +30,7 @@ export class SSEHandler {
      */
     static initialize(setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>) {
         if(this.eventSource) return;
+        Logger.info("Sse is initializing...", LogEvent.SseRelated)
 
         this.setComponentStatus = setComponentStatus;
 
@@ -49,9 +52,10 @@ export class SSEHandler {
 
     /**
      * Changes the status of component waiting for SSEStatus
-     * @param _ Received Errorevent
+     * @param _ Received Window event
      */
-    private static handleSseError(_: Event){
+    private static handleSseError(_: unknown){
+        Logger.error("Sse has errored", LogEvent.SseRelated);
         SSEHandler.setComponentStatus.current(true);
     }
 
@@ -60,6 +64,7 @@ export class SSEHandler {
      * Cannot be reopened without a reload
      */
     private static closeConnection(){
+        Logger.warn("Sse connection was closed", LogEvent.SseRelated);
         SSEHandler.eventSource.close();
     }
 

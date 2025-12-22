@@ -2,6 +2,7 @@ import './styles/App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import CalendarPage from "./pages/CalendarPage";
+import LoggerComponent from './components/logger/LoggerComponent';
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
                   <Route path="/calendar" element={<CalendarPage/>}/>
               </Routes>
           </div>
+          <LoggerComponent></LoggerComponent>
     </BrowserRouter>
   );
 }
