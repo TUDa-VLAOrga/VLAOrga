@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Loginpage.css";
+import Draggable from "@/components/draggableElement/Draggable";
 
 
 
@@ -46,6 +47,10 @@ export default function LoginPage() {
           Login
         </button>
       </form>
+
+      <Draggable>
+        Test!
+      </Draggable>
     </div>
   );
 }
