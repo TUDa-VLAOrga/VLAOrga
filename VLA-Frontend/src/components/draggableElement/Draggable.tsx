@@ -111,7 +111,7 @@ export default function Draggable(props: DraggableProps){
     }
 
     return (
-        <div 
+        <span 
         className="DragComponent"
         draggable 
         onDragStart={handleDragStart}
@@ -125,6 +125,6 @@ export default function Draggable(props: DraggableProps){
             top: position.y,
         }}>
             {props.children}
-        </div>
+        </span>
     );
 }

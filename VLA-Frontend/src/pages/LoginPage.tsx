@@ -49,7 +49,15 @@ export default function LoginPage() {
       </form>
 
       <Draggable>
-        Test!
+        <div style={{
+          backgroundColor: "#F00",
+          height: "100px",
+          width: "100px",
+          resize: "both",
+          overflow: "auto",
+        }}>
+          Test!
+        </div>
       </Draggable>
     </div>
   );
