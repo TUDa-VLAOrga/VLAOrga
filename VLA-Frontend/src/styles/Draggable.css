@@ -1,3 +1,8 @@
+/* Prevents the reloading swipe from top for mobile devices */
+html, body {
+    overscroll-behavior-y: none;
+}
+
 .DragComponent {
     position: fixed;
     height: 100px;
