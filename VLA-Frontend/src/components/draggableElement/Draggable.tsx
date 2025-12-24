@@ -64,8 +64,16 @@ export default function Draggable(props: DraggableProps){
         handleStart(e, e.clientX, e.clientY);
     }
 
-    // Dragging with a mouse automatically generates a preview
-    // That is why there is not handleDragMove() here
+    /**
+     * Handles mouse while dragging
+     * @param e The triggering window event
+     */
+    function handleDragMove(e: React.DragEvent<HTMLDivElement>){
+        e.preventDefault();
+        e.stopPropagation();
+
+        handleMove(e, e.clientX, e.clientY);
+    }
 
     /**
      * Handles mouse releasing the drag
@@ -115,6 +123,7 @@ export default function Draggable(props: DraggableProps){
         className="DragComponent"
         draggable 
         onDragStart={handleDragStart}
+        onDragOver={handleDragMove}
         onDragEnd={handleDragEnd}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouch}
