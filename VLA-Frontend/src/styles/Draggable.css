@@ -5,4 +5,5 @@ html, body {
 
 .DragComponent {
     position: fixed;
+    cursor: grab;
 }

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "../../styles/Draggable.css"
+import { Logger } from "../logger/Logger"
 
 type DraggableProps = {
     posX?: number
@@ -12,6 +13,9 @@ const defaultPosition = {
     posY: 10,
 }
 
+const transparentPixel = new Image(0, 0);
+transparentPixel.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
 export default function Draggable(props: DraggableProps){
     const [position, setPosition] = useState({ 
         x: props.posX == undefined ? defaultPosition.posX : props.posX,
@@ -21,13 +25,14 @@ export default function Draggable(props: DraggableProps){
     const [dragOffset, setDragOffset] = useState({ 
         xOffset: 0,
         yOffset: 0,
+        isBeingDragged: false,
     });
 
     /**
      * Determines the inital offset when dragging the component
      * @param e The window event used
      * @param clientX Initial input X position of the input modality
-     * @param clientY Initial input > position of the input modality
+     * @param clientY Initial input Y position of the input modality
      */
     function handleStart(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){
         const elementBoundingBox = e.currentTarget.getBoundingClientRect();
@@ -35,6 +40,7 @@ export default function Draggable(props: DraggableProps){
         setDragOffset({
             xOffset: elementBoundingBox.x - clientX,
             yOffset: elementBoundingBox.y - clientY,
+            isBeingDragged: true,
         });
     }
 
@@ -42,7 +48,7 @@ export default function Draggable(props: DraggableProps){
      * Determines the position while dragging the component
      * @param e The window event used
      * @param clientX Initial input X position of the input modality
-     * @param clientY Initial input > position of the input modality
+     * @param clientY Initial input Y position of the input modality
      */
     function handleMove(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){
         const elementBoundingBox = e.currentTarget.getBoundingClientRect();
@@ -55,11 +61,28 @@ export default function Draggable(props: DraggableProps){
     }
 
     /**
+     * Finalizes the dragging position of the component
+     * @param e The window event used
+     * @param clientX Initial input X position of the input modality
+     * @param clientY Initial input Y position of the input modality
+     */
+    function handleEnd(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){     
+        handleMove(e, clientX, clientY);
+
+        setDragOffset({
+            xOffset: 0,
+            yOffset: 0,
+            isBeingDragged: false,
+        });
+    }
+
+    /**
      * Handles mouse initiating dragging
      * @param e The triggering window event
      */
     function handleDragStart(e: React.DragEvent<HTMLDivElement>){
         e.stopPropagation();
+        e.dataTransfer.setDragImage(transparentPixel, 0, 0);
 
         handleStart(e, e.clientX, e.clientY);
     }
@@ -69,7 +92,6 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
     function handleDragMove(e: React.DragEvent<HTMLDivElement>){
-        e.preventDefault();
         e.stopPropagation();
 
         handleMove(e, e.clientX, e.clientY);
@@ -82,7 +104,7 @@ export default function Draggable(props: DraggableProps){
     function handleDragEnd(e: React.DragEvent<HTMLDivElement>){
         e.stopPropagation();
 
-        handleMove(e, e.clientX, e.clientY);
+        handleEnd(e, e.clientX, e.clientY);
     }
 
     /**
@@ -90,7 +112,6 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
     function handleTouchStart(e: React.TouchEvent<HTMLDivElement>){
-        e.stopPropagation();
 
         const relevantTouch = e.touches[0];
         handleStart(e, relevantTouch.clientX, relevantTouch.clientY);
@@ -101,7 +122,6 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
     function handleTouch(e: React.TouchEvent<HTMLDivElement>){
-        e.stopPropagation();
 
         const relevantTouch = e.touches[0];
         handleMove(e, relevantTouch.clientX, relevantTouch.clientY);
@@ -112,10 +132,9 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
     function handleTouchEnd(e: React.TouchEvent<HTMLDivElement>){
-        e.stopPropagation();
-
-        const relevantTouch = e.touches[0];
-        handleMove(e, relevantTouch.clientX, relevantTouch.clientY);
+        Logger.info("Touch end event")
+        const relevantTouch = e.changedTouches[0];
+        handleEnd(e, relevantTouch.clientX, relevantTouch.clientY);
     }
 
     return (
@@ -123,15 +142,18 @@ export default function Draggable(props: DraggableProps){
         className="DragComponent"
         draggable 
         onDragStart={handleDragStart}
-        onDragOver={handleDragMove}
+        // onDrag={handleDragMove}
         onDragEnd={handleDragEnd}
+
         onTouchStart={handleTouchStart}
-        onTouchMove={handleTouch}
+        // onTouchMove={handleTouch}
         onTouchEnd={handleTouchEnd}
+        // onTouchCancel should be used as supplement if errors arise
         
         style={{
             left: position.x,
             top: position.y,
+            opacity: dragOffset.isBeingDragged ? 0 : 1,
         }}>
             {props.children}
         </span>
