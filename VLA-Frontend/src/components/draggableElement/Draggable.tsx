@@ -91,7 +91,7 @@ export default function Draggable(props: DraggableProps){
      * Handles mouse while dragging
      * @param e The triggering window event
      */
-    function handleDragMove(e: React.DragEvent<HTMLDivElement>){
+    function _handleDragMove(e: React.DragEvent<HTMLDivElement>){
         e.stopPropagation();
 
         handleMove(e, e.clientX, e.clientY);
@@ -121,7 +121,7 @@ export default function Draggable(props: DraggableProps){
      * Handles touch dragging previewing
      * @param e The triggering window event
      */
-    function handleTouch(e: React.TouchEvent<HTMLDivElement>){
+    function _handleTouch(e: React.TouchEvent<HTMLDivElement>){
 
         const relevantTouch = e.touches[0];
         handleMove(e, relevantTouch.clientX, relevantTouch.clientY);
