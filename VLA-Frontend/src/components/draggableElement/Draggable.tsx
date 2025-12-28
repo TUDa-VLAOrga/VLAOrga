@@ -91,6 +91,7 @@ export default function Draggable(props: DraggableProps){
      * Handles mouse while dragging
      * @param e The triggering window event
      */
+    // @ts-expect-error - Deprecated as of now, we will maybe come back here at the end of development
     function _handleDragMove(e: React.DragEvent<HTMLDivElement>){
         e.stopPropagation();
 
@@ -121,6 +122,7 @@ export default function Draggable(props: DraggableProps){
      * Handles touch dragging previewing
      * @param e The triggering window event
      */
+    // @ts-expect-error - Deprecated as of now, we will maybe come back here at the end of development
     function _handleTouch(e: React.TouchEvent<HTMLDivElement>){
 
         const relevantTouch = e.touches[0];
