@@ -4,6 +4,7 @@ import WeekGrid from "./WeekGrid";
 import type { CalendarDay } from "./CalendarTypes";
 import "../../styles/CalendarView.css";
 import {WORKDAY_COUNT, addDays, addWorkdays, formatRangeShortDE, isWeekend, normalizeToWorkdayStart, toISODateLocal,} from "./dateUtils";
+import GoToMenu from "./GoToButton";
 
 
  export default function CalendarView() {
@@ -56,6 +57,8 @@ return (
         >
           <span className="cv-navIcon">▶</span>
         </button>
+
+          <GoToMenu currentWeekStart={weekStart} onDateSelect={setWeekStart} />
       </div>
 
       <div className="cv-frame">
