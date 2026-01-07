@@ -1,13 +1,13 @@
 services:
-  linus:
+  linus-app:
     build: .
     ports:
       - "8000:8080"
     depends_on:
-      db:
+      linus-db:
         condition: service_healthy
 
-  db:
+  linus-db:
     image: mariadb:10.5.29 # same version as in production
     environment:
       MYSQL_ROOT_PASSWORD: db_password
@@ -19,5 +19,5 @@ services:
       - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      timeout: 5s
+      retries: 20
