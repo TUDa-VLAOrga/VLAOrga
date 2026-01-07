@@ -218,3 +218,44 @@
 .cv-datePickerClose:hover {
   background: #dee2e6;
 }
+
+.cv-datePickerActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cv-datePickerBtn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cv-datePickerCancel {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.cv-datePickerCancel:hover {
+  background: #dee2e6;
+}
+
+.cv-datePickerConfirm {
+  background: #0d6efd;
+  color: white;
+}
+
+.cv-datePickerConfirm:hover {
+  background: #0b5ed7;
+}
+
+.cv-datePickerConfirm:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+}
+

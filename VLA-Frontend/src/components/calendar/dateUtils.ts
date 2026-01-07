@@ -76,6 +76,7 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
   weekday: "short",
   day: "2-digit",
   month: "2-digit",
+  year: "numeric",
 });
 
 /** formats a range like "Fr 19.12 – Do 25.12" */

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { normalizeToWorkdayStart, toISODateLocal } from "./dateUtils";
 
 type GoToMenuProps = {
@@ -13,23 +13,57 @@ type GoToMenuProps = {
  */
 export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuProps) {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (showDatePicker) {
+      setSelectedDate(toISODateLocal(currentWeekStart));
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    }
+  }, [showDatePicker , currentWeekStart]);
 
   function handleGoToToday() {
     onDateSelect(normalizeToWorkdayStart(new Date()));
   }
 
-  function handleDateChange(dateString: string) {
-    const selectedDate = new Date(dateString);
-    onDateSelect(normalizeToWorkdayStart(selectedDate));
+  function handleDateInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    // Just update the local state, don't navigate yet
+    setSelectedDate(e.target.value);
+  }
+
+   function handleConfirm() {
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+      onDateSelect(normalizeToWorkdayStart(date));
+      setShowDatePicker(false);
+    }
+  }
+
+   function handleCancel() {
     setShowDatePicker(false);
   }
 
   function handleOverlayClick() {
     setShowDatePicker(false);
   }
-
-  function handleBoxClick(e: React.MouseEvent) {
+   function handleBoxClick(e: React.MouseEvent) {
     e.stopPropagation();
+  }
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter") {
+      handleConfirm();
+    } else if (e.key === "Escape") {
+      handleCancel();
+    }
+  }
+
+  function handleDateChange(dateString: string) {
+    const selectedDate = new Date(dateString);
+    onDateSelect(normalizeToWorkdayStart(selectedDate));
+    setShowDatePicker(false);
   }
 
   return (
@@ -41,7 +75,7 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
           aria-label="Gehe zu heute"
           type="button"
         >
-          Heute
+          Jetzt
         </button>
         
         <button
@@ -59,20 +93,31 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
           <div className="cv-datePickerBox" onClick={handleBoxClick}>
             <h3 className="cv-datePickerTitle">Datum auswählen</h3>
             <input
+             ref={inputRef}
               type="date"
               className="cv-datePickerInput"
-              defaultValue={toISODateLocal(currentWeekStart)}
-              onChange={(e) => handleDateChange(e.target.value)}
-              autoFocus
+              value={selectedDate}
+              onChange={handleDateInputChange}
+              onKeyDown={handleKeyDown}
             />
+            <div className="cv-datePickerActions">
             <button
-              className="cv-datePickerClose"
-              onClick={() => setShowDatePicker(false)}
+              className="cv-datePickerBtn cv-datePickerCancel"
+              onClick={handleCancel}
               type="button"
             >
               Abbrechen
             </button>
+            <button
+              className="cv-datePickerBtn cv-datePickerConfirm"
+              onClick={handleConfirm}
+              type="button"
+              disabled={!selectedDate}
+            >
+              Bestätigen
+            </button>
           </div>
+        </div>
         </div>
       )}
     </>
