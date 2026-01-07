@@ -98,32 +98,68 @@
 .cv-navBox {
   width: 44px;
   height: 44px; 
-  border: 1px solid #777;
-  background: #dcdcdc;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
   cursor: pointer;
-
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.cv-navBox:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
 
+.cv-navBox:first-child::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #495057;
+  border-bottom: 2px solid #495057;
+  transform: rotate(45deg);
+  transition: border-color 0.15s ease;
+}
+
+.cv-navBox:nth-child(3)::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #495057;
+  border-top: 2px solid #495057;
+  transform: rotate(45deg);
+  transition: border-color 0.15s ease;
+}
+
+.cv-navBox:hover::after {
+  border-color: #212529;
+}
+
+.cv-navBox:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: #e9ecef;
+}
 .cv-navIcon {
-  width: 18px;
-  height: 18px;
-  border: 1px solid #4a4a4a;
-  background: #6fa8ff;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 12px;
-  font-weight: 700;
+  display: none;
 }
 .cv-range {
-  padding: 6px 12px;
-  border: 1px solid #777;
-  background: #dcdcdc;
+  height: 44px;
+  padding: 0px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
 }
 
 .cv-quickNav {
@@ -132,6 +168,7 @@
 }
 
 .cv-quickNavBtn {
+  height: 44px;
   padding: 8px 16px;
   border: 1px solid #dee2e6;
   border-radius: 6px;
@@ -140,12 +177,21 @@
   font-weight: 500;
   color: #495057;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .cv-quickNavBtn:hover {
   background: #e9ecef;
   border-color: #adb5bd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.cv-quickNavBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: #e9ecef;
 }
 
 .cv-datePickerOverlay {

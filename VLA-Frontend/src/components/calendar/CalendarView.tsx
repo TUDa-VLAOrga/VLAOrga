@@ -42,7 +42,6 @@ return (
           aria-label="Vorherige 5 Arbeitstage"
           type="button"
         >
-          <span className="cv-navIcon">◀</span>
         </button>
 
          <div className="cv-range" aria-label="Datumsbereich">
@@ -55,7 +54,6 @@ return (
           aria-label="Nächste 5 Arbeitstage"
           type="button"
         >
-          <span className="cv-navIcon">▶</span>
         </button>
 
           <GoToMenu currentWeekStart={weekStart} onDateSelect={setWeekStart} />
