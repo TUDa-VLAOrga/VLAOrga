@@ -60,12 +60,6 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
     }
   }
 
-  function handleDateChange(dateString: string) {
-    const selectedDate = new Date(dateString);
-    onDateSelect(normalizeToWorkdayStart(selectedDate));
-    setShowDatePicker(false);
-  }
-
   return (
     <>
       <div className="cv-quickNav">
