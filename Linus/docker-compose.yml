@@ -8,7 +8,7 @@ services:
         condition: service_healthy
 
   db:
-    image: mysql:5.7
+    image: mariadb:10.5.29 # same version as in production
     environment:
       MYSQL_ROOT_PASSWORD: db_password
       MYSQL_DATABASE: db_name

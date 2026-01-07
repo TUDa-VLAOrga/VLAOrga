@@ -12,21 +12,15 @@
 
         DATABASE_URL=mysql://db_user:db_password@db:3306/db_name?serverVersion=5.7&charset=utf8mb4
 
-4. To be able to log in for testing, edit the file `Linus/datenbank-physik/src/security/LoginFormAuthenticator.php`
-    and change the function `checkCredentials` to a simple `return true;`.
-    
-    > ToDo: alternatively figure out how to execute the file `src/DataFixturesTestfixtures.php` from the command line, 
-    > Johannes had not enough PHP knowledge to find out whether and how that's possible.
-
-5. Now you can build and run the application using
+4. Now you can build and run the application using
 
         VLAOrga/Linus $ docker compose up --build
 
-    Wait a minute for linus to start as the mysql database needs to start first.
+    This command will take some time to build the images, and to start up linus web server as the mysql database needs to start first.
 
-6. Create an admin user by running
-
-        VLAOrga/Linus $ docker compose exec db mysql db_name --user=db_user --password=db_password -e 'INSERT INTO user (name, password, email, roles) VALUES ("admin", "", "vla@example.com", "[\"ROLE_ADMIN\"]")'
+5. To be able to log in for testing, insert a dummy user (its password is `Füsik!`) into the database by hand:
     
-7. Linus should now be accessible under http://localhost:8000, and you are able to log in with the username
-    `admin` and any password.
+        cat testdata.sql | docker compose exec -T db mysql db_name --user=db_user --password=db_password
+
+6. Linus should now be accessible under http://localhost:8000, and you are able to log in with the username
+    `admin` and password `Füsik!`.
