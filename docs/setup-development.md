@@ -20,7 +20,7 @@ The following container configurations are available:
 
 Additionally, for developing the interface to the external linus experiment application,
 inside the _Linus/_ directory there are containers for a development instance of that.
-For setup instructions, see <../Linus/Readme.md>
+For setup instructions, see [the README in the Linus directory](../Linus/Readme.md)
 
 
 ## Running backend directly

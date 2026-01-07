@@ -32,4 +32,4 @@ Figure out how to do that and write an instruction.
 
 ## Development
 
-See <./setup-development.md>.
+See [Development Setup](./setup-development.md).
