@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.User;
+package de.vlaorgatu.vlabackend.user;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,28 +11,55 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for user-related endpoints.
+ */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Returns a list of all users.
+     *
+     * @return list of users
+     */
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * Returns a user by its ID.
+     *
+     * @param id user ID
+     * @return the user
+     */
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userRepository.findById(id).get();
     }
 
+    /**
+     * Creates a new user.
+     *
+     * @param user user to create
+     * @return created user
+     */
     @PostMapping
     public User createUser(@RequestBody User user) {
         return userRepository.save(user);
     }
 
+    /**
+     * Updates an existing user.
+     *
+     * @param id user ID
+     * @param user updated user data
+     * @return updated user
+     */
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         User existingUser = userRepository.findById(id).get();
@@ -41,6 +68,12 @@ public class UserController {
         return userRepository.save(existingUser);
     }
 
+    /**
+     * Deletes a user by its ID.
+     *
+     * @param id user ID
+     * @return result message
+     */
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id) {
         try {
@@ -51,5 +84,4 @@ public class UserController {
             return "User not found";
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.User;
+package de.vlaorgatu.vlabackend.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * Represents a user in the system.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -21,7 +24,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    //getters and setters
+    // getters and setters
 
     public Long getId() {
         return id;
