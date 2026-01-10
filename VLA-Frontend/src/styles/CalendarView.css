@@ -33,9 +33,9 @@
   width: 100%;
 }
 
-/* Frame: Block for Header + Grid */
+/* Frame: Block for Header + Grid, only visible in the border */
 .cv-frame {
-  --cv-cols: repeat(5, minmax(160px, 1fr));
+  --cv-cols: repeat(auto-fit, minmax(160px, auto));
   --cv-gap: 0px; 
   flex: 1;      
   min-width: 0;
@@ -82,12 +82,13 @@
   gap: var(--cv-gap);
   min-height: 0;
   flex: 1; 
+  background: #d9d9d9;
 }
 
 .cv-dayColumn {
   border-right: 1px solid #777;
   padding: 10px;
-  background: #d9d9d9;
+  background: transparent;
 }
 
 .cv-dayColumn:last-child {
