@@ -15,7 +15,9 @@ public class VlaBackendApplication {
      * @param args arguments passed through to the spring application.
      */
     public static void main(final String[] args) {
+        System.out.println("Hello World!");
         SpringApplication.run(VlaBackendApplication.class, args);
     }
 
 }
+
