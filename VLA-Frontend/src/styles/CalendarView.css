@@ -33,9 +33,9 @@
   width: 100%;
 }
 
-/* Frame: Block for Header + Grid */
+/* Frame: Block for Header + Grid, only visible in the border */
 .cv-frame {
-  --cv-cols: repeat(5, minmax(160px, 1fr));
+  --cv-cols: repeat(auto-fit, minmax(160px, auto));
   --cv-gap: 0px; 
   flex: 1;      
   min-width: 0;
@@ -82,12 +82,13 @@
   gap: var(--cv-gap);
   min-height: 0;
   flex: 1; 
+  background: #d9d9d9;
 }
 
 .cv-dayColumn {
   border-right: 1px solid #777;
   padding: 10px;
-  background: #d9d9d9;
+  background: transparent;
 }
 
 .cv-dayColumn:last-child {
@@ -98,31 +99,210 @@
 .cv-navBox {
   width: 44px;
   height: 44px; 
-  border: 1px solid #777;
-  background: #dcdcdc;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
   cursor: pointer;
-
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.cv-navBox:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
 
+.cv-navBox:first-child::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #495057;
+  border-bottom: 2px solid #495057;
+  transform: rotate(45deg);
+  transition: border-color 0.15s ease;
+}
+
+.cv-navBox:nth-child(3)::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #495057;
+  border-top: 2px solid #495057;
+  transform: rotate(45deg);
+  transition: border-color 0.15s ease;
+}
+
+.cv-navBox:hover::after {
+  border-color: #212529;
+}
+
+.cv-navBox:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: #e9ecef;
+}
 .cv-navIcon {
-  width: 18px;
-  height: 18px;
-  border: 1px solid #4a4a4a;
-  background: #6fa8ff;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 12px;
-  font-weight: 700;
+  display: none;
 }
 .cv-range {
-  padding: 6px 12px;
-  border: 1px solid #777;
-  background: #dcdcdc;
+  height: 44px;
+  padding: 0px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.cv-quickNav {
+  display: flex;
+  gap: 8px;
+}
+
+.cv-quickNavBtn {
+  height: 44px;
+  padding: 8px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cv-quickNavBtn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.cv-quickNavBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: #e9ecef;
+}
+
+.cv-datePickerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cv-datePickerBox {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  animation: slideIn 0.2s;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.cv-datePickerTitle {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.cv-datePickerInput {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.cv-datePickerInput:focus {
+  outline: none;
+  border-color: #0d6efd;
+}
+
+.cv-datePickerClose {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #e9ecef;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cv-datePickerClose:hover {
+  background: #dee2e6;
+}
+
+.cv-datePickerActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cv-datePickerBtn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cv-datePickerCancel {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.cv-datePickerCancel:hover {
+  background: #dee2e6;
+}
+
+.cv-datePickerConfirm {
+  background: #0d6efd;
+  color: white;
+}
+
+.cv-datePickerConfirm:hover {
+  background: #0b5ed7;
+}
+
+.cv-datePickerConfirm:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
 }
 
