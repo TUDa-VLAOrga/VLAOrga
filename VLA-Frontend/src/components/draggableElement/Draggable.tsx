@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import "../../styles/Draggable.css"
 import { Logger } from "../logger/Logger"
 
@@ -17,10 +17,7 @@ const transparentPixel = new Image(0, 0);
 transparentPixel.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 export default function Draggable(props: DraggableProps){
-    const [position, setPosition] = useState({ 
-        x: props.posX == undefined ? defaultPosition.posX : props.posX,
-        y: props.posY == undefined ? defaultPosition.posY : props.posY,
-    });
+    const position = useContext(MouseContext)
 
     const [dragOffset, setDragOffset] = useState({ 
         xOffset: 0,
