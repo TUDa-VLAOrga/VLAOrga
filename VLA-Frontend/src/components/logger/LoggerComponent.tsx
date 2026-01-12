@@ -35,7 +35,7 @@ function LoggerComponent(){
       </div>
 
     </span>
-  )
+  );
 }
 
 export default LoggerComponent;

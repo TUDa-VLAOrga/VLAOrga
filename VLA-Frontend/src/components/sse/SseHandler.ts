@@ -30,7 +30,7 @@ export class SSEHandler {
      */
   static initialize(setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>,) {
     if(this.eventSource) return;
-    Logger.info("Sse is initializing...", LogEvent.SseRelated,)
+    Logger.info("Sse is initializing...", LogEvent.SseRelated,);
 
     this.setComponentStatus = setComponentStatus;
 
@@ -83,7 +83,7 @@ export class SSEHandler {
   public static removeObserver(observer: SseObserver,){
     const index = SSEHandler.registeredObservers.findIndex(element => element == observer,);
 
-    if(index == -1) return
+    if(index == -1) return;
 
     SSEHandler.registeredObservers.splice(index, 1,);
   }

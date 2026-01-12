@@ -1,5 +1,5 @@
 import type { ReactNode, } from "react";
-import "./Popup.css"
+import "./Popup.css";
 
 /**
  * Used for defining central components of the Popup

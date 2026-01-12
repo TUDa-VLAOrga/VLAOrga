@@ -71,11 +71,11 @@ export default defineConfig([
         },
       ],
 
-      // // Make statements explicit with a semicolon
-      // '@stylistic/semi': [
-      //   "error",
-      //   "always",
-      // ],
+      // Make statements explicit with a semicolon
+      '@stylistic/semi': [
+        "error",
+        "always",
+      ],
     }
   },
 ])

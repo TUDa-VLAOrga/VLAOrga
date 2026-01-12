@@ -1,4 +1,4 @@
-import './styles/App.css'
+import './styles/App.css';
 import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import CalendarPage from "./pages/CalendarPage";
@@ -19,4 +19,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

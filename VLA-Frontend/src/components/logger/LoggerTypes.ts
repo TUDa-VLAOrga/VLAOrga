@@ -23,4 +23,4 @@ export type LogMessage = {
   level : LogLevel,
   message : string,
   eventType? : LogEvent, 
-}
+};

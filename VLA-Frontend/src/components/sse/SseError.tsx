@@ -40,7 +40,7 @@ function SseError(){
                 </>,
       }}
     </Popup>
-  )
+  );
 }
 
 export default SseError;

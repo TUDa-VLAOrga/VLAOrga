@@ -49,7 +49,7 @@ export class Logger {
       level: level,
       message: message,
       eventType: event,
-    }
+    };
 
     const newMessageHistory : LogMessage[] = [newMessage, ...Logger.logMessages,];
     Logger.logMessages = newMessageHistory;
