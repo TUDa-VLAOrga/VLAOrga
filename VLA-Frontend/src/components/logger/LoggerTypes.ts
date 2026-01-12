@@ -2,9 +2,9 @@
  * Symbolizes the category of the log
  */
 export enum LogLevel {
-    INFO = "Info",
-    WARN = "Warn",
-    ERROR = "Error",
+  INFO = "Info",
+  WARN = "Warn",
+  ERROR = "Error",
 }
 
 /**
@@ -12,15 +12,15 @@ export enum LogLevel {
  * make the logging filter more granular.
  */
 export enum LogEvent {
-    SseRelated,
+  SseRelated,
 }
 
 /**
  * Defines the structure of a log message
  */
 export type LogMessage = {
-    date: Date,
-    level : LogLevel,
-    message : string,
-    eventType? : LogEvent, 
+  date: Date,
+  level : LogLevel,
+  message : string,
+  eventType? : LogEvent, 
 }

@@ -7,14 +7,14 @@ import LoggerComponent from './components/logger/LoggerComponent';
 function App() {
 
   return (
-      <BrowserRouter>
-          <div className="App">
-              <Routes>
-                  <Route path="/" element={<LoginPage/>}/>
-                  <Route path="/calendar" element={<CalendarPage/>}/>
-              </Routes>
-          </div>
-          <LoggerComponent></LoggerComponent>
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<LoginPage/>}/>
+          <Route path="/calendar" element={<CalendarPage/>}/>
+        </Routes>
+      </div>
+      <LoggerComponent></LoggerComponent>
     </BrowserRouter>
   );
 }

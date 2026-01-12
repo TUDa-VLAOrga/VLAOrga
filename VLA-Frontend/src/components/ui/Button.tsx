@@ -6,7 +6,7 @@ type ButtonConfig = {
 function Button({children} : {children: ButtonConfig}){
   return (
     <>
-    <button onClick={children.onClickEvent}>{children.text}</button>
+      <button onClick={children.onClickEvent}>{children.text}</button>
     </>
   )
 }
