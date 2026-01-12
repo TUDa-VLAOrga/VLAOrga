@@ -1,6 +1,7 @@
 import { useContext, useState } from "react"
 import "../../styles/Draggable.css"
 import { Logger } from "../logger/Logger"
+import { MouseContext } from "./DragContainer"
 
 type DraggableProps = {
     posX?: number
@@ -13,11 +14,10 @@ const defaultPosition = {
     posY: 10,
 }
 
-const transparentPixel = new Image(0, 0);
-transparentPixel.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
 export default function Draggable(props: DraggableProps){
-    const position = useContext(MouseContext)
+    const mousePosition = useContext(MouseContext);
+
+    const [position, setPosition] = useState(defaultPosition);
 
     const [dragOffset, setDragOffset] = useState({ 
         xOffset: 0,
@@ -31,14 +31,18 @@ export default function Draggable(props: DraggableProps){
      * @param clientX Initial input X position of the input modality
      * @param clientY Initial input Y position of the input modality
      */
-    function handleStart(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){
-        const elementBoundingBox = e.currentTarget.getBoundingClientRect();
-        
+    function handleStart(clientX: number, clientY: number, boundingBoxLeft: number, boundingBoxTop: number){
         setDragOffset({
-            xOffset: elementBoundingBox.x - clientX,
-            yOffset: elementBoundingBox.y - clientY,
+            xOffset: clientX - boundingBoxLeft,
+            yOffset: clientY - boundingBoxTop,
             isBeingDragged: true,
         });
+
+        Logger.info(JSON.stringify({
+            xOffset: clientX - boundingBoxLeft,
+            yOffset: clientY - boundingBoxTop,
+            isBeingDragged: true,
+        }));
     }
 
     /**
@@ -47,13 +51,13 @@ export default function Draggable(props: DraggableProps){
      * @param clientX Initial input X position of the input modality
      * @param clientY Initial input Y position of the input modality
      */
-    function handleMove(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){
+    function handleMove(e: React.PointerEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){
         const elementBoundingBox = e.currentTarget.getBoundingClientRect();
 
         setPosition({
             // Min and Max functions prevent note from going offscreen
-            x: Math.max(Math.min(clientX + dragOffset.xOffset, window.innerWidth - elementBoundingBox.width), 0),
-            y: Math.max(Math.min(clientY + dragOffset.yOffset, window.innerHeight - elementBoundingBox.height), 0),
+            posX: Math.max(Math.min(clientX - dragOffset.xOffset, window.innerWidth - elementBoundingBox.width), 0),
+            posY: Math.max(Math.min(clientY - dragOffset.yOffset, window.innerHeight - elementBoundingBox.height), 0),
         });
     }
 
@@ -63,7 +67,7 @@ export default function Draggable(props: DraggableProps){
      * @param clientX Initial input X position of the input modality
      * @param clientY Initial input Y position of the input modality
      */
-    function handleEnd(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){     
+    function handleEnd(e: React.PointerEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){     
         handleMove(e, clientX, clientY);
 
         setDragOffset({
@@ -77,32 +81,30 @@ export default function Draggable(props: DraggableProps){
      * Handles mouse initiating dragging
      * @param e The triggering window event
      */
-    function handleDragStart(e: React.DragEvent<HTMLDivElement>){
+    function handleDragStart(e: React.PointerEvent<HTMLDivElement>){
         e.stopPropagation();
-        e.dataTransfer.setDragImage(transparentPixel, 0, 0);
 
-        handleStart(e, e.clientX, e.clientY);
+        const elementBoundingBox = e.currentTarget.getBoundingClientRect();
+
+        handleStart(mousePosition.x, mousePosition.y, elementBoundingBox.left, elementBoundingBox.top);
     }
 
     /**
      * Handles mouse while dragging
      * @param e The triggering window event
      */
-    // @ts-expect-error - Deprecated as of now, we will maybe come back here at the end of development
-    function _handleDragMove(e: React.DragEvent<HTMLDivElement>){
-        e.stopPropagation();
-
-        handleMove(e, e.clientX, e.clientY);
+    function handleDragMove(e: React.PointerEvent<HTMLDivElement>){
+        if(dragOffset.isBeingDragged) handleMove(e, mousePosition.x, mousePosition.y);
     }
 
     /**
      * Handles mouse releasing the drag
      * @param e The triggering window event
      */
-    function handleDragEnd(e: React.DragEvent<HTMLDivElement>){
+    function handleDragEnd(e: React.PointerEvent<HTMLDivElement>){
         e.stopPropagation();
 
-        handleEnd(e, e.clientX, e.clientY);
+        handleEnd(e, mousePosition.x, mousePosition.y);
     }
 
     /**
@@ -110,18 +112,17 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
     function handleTouchStart(e: React.TouchEvent<HTMLDivElement>){
-
         const relevantTouch = e.touches[0];
-        handleStart(e, relevantTouch.clientX, relevantTouch.clientY);
+        const elementBoundingBox = e.currentTarget.getBoundingClientRect();
+
+        handleStart(relevantTouch.clientX, relevantTouch.clientY, elementBoundingBox.left, elementBoundingBox.top);
     }
 
     /**
      * Handles touch dragging previewing
      * @param e The triggering window event
      */
-    // @ts-expect-error - Deprecated as of now, we will maybe come back here at the end of development
-    function _handleTouch(e: React.TouchEvent<HTMLDivElement>){
-
+    function handleTouch(e: React.TouchEvent<HTMLDivElement>){
         const relevantTouch = e.touches[0];
         handleMove(e, relevantTouch.clientX, relevantTouch.clientY);
     }
@@ -131,7 +132,6 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
     function handleTouchEnd(e: React.TouchEvent<HTMLDivElement>){
-        Logger.info("Touch end event")
         const relevantTouch = e.changedTouches[0];
         handleEnd(e, relevantTouch.clientX, relevantTouch.clientY);
     }
@@ -139,20 +139,21 @@ export default function Draggable(props: DraggableProps){
     return (
         <span 
         className="DragComponent"
-        draggable 
-        onDragStart={handleDragStart}
-        // onDrag={handleDragMove}
-        onDragEnd={handleDragEnd}
+
+        // These have to be pointer events
+        onPointerDown={handleDragStart}
+        onPointerMove={handleDragMove}
+        onPointerUp={handleDragEnd}
 
         onTouchStart={handleTouchStart}
-        // onTouchMove={handleTouch}
+        onTouchMove={handleTouch}
         onTouchEnd={handleTouchEnd}
         // onTouchCancel should be used as supplement if errors arise
         
         style={{
-            left: position.x,
-            top: position.y,
-            opacity: dragOffset.isBeingDragged ? 0 : 1,
+            left: position.posX,
+            top: position.posY,
+            cursor: dragOffset.isBeingDragged ? "grabbing" : "grab",
         }}>
             {props.children}
         </span>
