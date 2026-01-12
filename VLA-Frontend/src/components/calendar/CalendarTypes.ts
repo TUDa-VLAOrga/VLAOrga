@@ -3,8 +3,10 @@ export type CalendarDay = {
   iso: string; /** Local date as yyyy-mm-dd (stable key). */
 };
 
-export type CalendarId = string; /** Calendar identifier, e.g. "vla" or "event-calendar", to distinguish multiple calendars/sources. */
-export type EventKind = string; /** e.g. "Aufbau", "VL" to distinguish different event types. */
+/** Calendar identifier, e.g. "vla" or "event-calendar", to distinguish multiple calendars/sources. */
+export type CalendarId = string; 
+/** e.g. "Aufbau", "VL" to distinguish different event types. */
+export type EventKind = string;
 
 /**
  * Visual/operational status of an event used for UI highlighting.

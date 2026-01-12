@@ -21,7 +21,12 @@ function LoggerComponent(){
       <div className="Logger">
 
         {logMessages.map((logMessage, index,) => 
-          <div key={"logEntry-" + index} className="LogEntry" data-log-event-type={logMessage.eventType} data-log-level={logMessage.level}>
+          <div 
+            key={"logEntry-" + index} 
+            className="LogEntry"
+            data-log-event-type={logMessage.eventType}
+            data-log-level={logMessage.level}
+          >
             <div className="LogDate">{logMessage.date.toLocaleTimeString()}</div>
             <div className="LogLevel">[{logMessage.level}]</div>
             <div className="LogMessage">{logMessage.message}</div>

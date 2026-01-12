@@ -32,19 +32,50 @@ export default defineConfig([
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+
       '@stylistic/eol-last': [
         "error", "always"
       ],
+
       // We are dealing with HTML, nesting will quickly become a line length problem
       '@stylistic/indent': [
         "error",
         2,
       ],
+
       // This ensures better git diffs as there is one line per addition
       '@stylistic/comma-dangle': [
         "error",
         "always",
-      ]
+      ],
+
+      // Forces param brackets to follow function name when calling / defining
+      '@stylistic/function-call-spacing': [
+        "error",
+        "never",
+      ],
+
+      // Ensure consistency between multiple OSes
+      '@stylistic/linebreak-style': [
+        "error",
+        "unix",
+      ],
+
+      // Maximum line length
+      '@stylistic/max-len': [
+        "error",
+        { 
+          "code": 120,
+          // Ignore import lines
+          ignorePattern: "^import.*"
+        },
+      ],
+
+      // // Make statements explicit with a semicolon
+      // '@stylistic/semi': [
+      //   "error",
+      //   "always",
+      // ],
     }
   },
 ])
