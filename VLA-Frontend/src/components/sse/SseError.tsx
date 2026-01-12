@@ -21,7 +21,7 @@ function SseError(){
                 </>,
                 body: 
                 <>
-                    Die Verbindung zum Server wrude unterbrochen.
+                    Die Verbindung zum Server wurde unterbrochen.
                     <br/>
                     <br/>
                     Überprüfen Sie, ob Sie sich im richtigen Netzwerk befinden und eine stabile Internetverbindung haben <br></br><br></br>
