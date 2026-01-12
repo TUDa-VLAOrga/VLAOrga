@@ -22,7 +22,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-container">
+    <DragContainer>
+      <div className="login-container">
       <form onSubmit={onSubmit} className="login-form">
         <h2 className="login-title">Login</h2>
 
@@ -49,7 +50,6 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <DragContainer>
         <Draggable>
           <div style={{
             backgroundColor: "#0F0",
@@ -73,8 +73,8 @@ export default function LoginPage() {
             Test!
           </div>
         </Draggable>
-      </DragContainer>
 
-    </div>
+      </div>
+    </DragContainer>
   );
 }

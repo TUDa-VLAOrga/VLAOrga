@@ -1,6 +1,5 @@
 import { useContext, useState } from "react"
 import "../../styles/Draggable.css"
-import { Logger } from "../logger/Logger"
 import { MouseContext } from "./DragContainer"
 
 type DraggableProps = {
@@ -157,6 +156,7 @@ export default function Draggable(props: DraggableProps){
         style={{
             left: position.posX,
             top: position.posY,
+            // Here we should disable the padding if wanted
             cursor: dragOffset.isBeingDragged ? "grabbing" : "grab",
         }}>
             {props.children}
