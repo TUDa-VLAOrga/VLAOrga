@@ -1,22 +1,35 @@
 
-import type { CalendarDay } from "./CalendarTypes";
+import type { CalendarDay, CalendarEvent , EventStatus } from "./CalendarTypes";
 
 type DayColumnProps = {
   day: CalendarDay;
+  events: CalendarEvent[];
+  onEventClick?: (event: CalendarEvent) => void;
 };
 
-/**
- * DayColumn represents exactly one day.
- * Later, we will render all events where event.dateISO === day.iso.
- */
-export default function DayColumn({ day }: DayColumnProps) {
+function getStatusClass(status?: EventStatus): string {
+  if (!status) return "";
+  return `cv-event-${status}`;
+}
+
+export default function DayColumn({ day, events, onEventClick }: DayColumnProps) {
   return (
-
-    //TODO: Events rendern
-
-     // data-date helps with debugging (DevTools) and later for tests
     <div className="cv-dayColumn" data-date={day.iso}>
-      {/* Placeholder – events will be rendered here later */}
+      {events.map((event) => (
+        <div
+          key={event.id}
+          className={`cv-event cv-event-${event.kind} ${getStatusClass(
+            event.status
+          )}`}
+          title={event.subtitle || event.title}
+          onClick={() => onEventClick && onEventClick(event)}
+        >
+          <div className="cv-eventTitle">{event.title}</div>
+          {event.subtitle && (
+            <div className="cv-eventSubtitle">{event.subtitle}</div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

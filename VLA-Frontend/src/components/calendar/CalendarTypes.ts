@@ -25,6 +25,8 @@ export type CalendarEvent = {
   id: string;
   title: string;
   dateISO: string;  /** yyyy-mm-dd (must match CalendarDay.iso). */
+  startTime?: string; 
+  endTime?: string;
   calendarId: CalendarId;
   kind: EventKind;
   status?: EventStatus;   /** Optional UI status indicator for highlighting the event in the calendar. */
