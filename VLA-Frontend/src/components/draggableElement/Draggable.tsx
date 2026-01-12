@@ -13,7 +13,7 @@ const defaultPosition = {
     posY: 10,
 }
 
-// On mobile no typing possibilities
+// This will error if there is no transitive parent that is of type DragContainer that implements the mouse movement!
 
 export default function Draggable(props: DraggableProps){
     const mousePosition = useContext(MouseContext);
