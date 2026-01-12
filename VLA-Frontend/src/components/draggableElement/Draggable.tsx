@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import "../../styles/Draggable.css"
-import { MouseContext } from "./DragContainer"
+import { MouseContext } from "./MouseContext"
 
 type DraggableProps = {
     posX?: number

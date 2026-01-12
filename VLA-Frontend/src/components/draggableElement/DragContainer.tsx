@@ -1,15 +1,8 @@
 import "../draggableElement/Draggable"
 import "../../styles/DragContainer.css"
-import { createContext, useRef, useState, type ReactElement } from "react";
-import { Logger } from "../logger/Logger";
+import { useState } from "react";
+import { MouseContext, type MousePosition } from "./MouseContext";
 
-export type MousePosition = {
-    x: number,
-    y: number,
-}
-
-export const MouseContext = createContext<MousePosition>({ x: 0, y: 0 });
-    
 export type DragContainerProps = {
     children: React.ReactNode,
 }
