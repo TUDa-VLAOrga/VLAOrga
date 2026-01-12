@@ -14,6 +14,8 @@ const defaultPosition = {
     posY: 10,
 }
 
+// On mobile no typing possibilities
+
 export default function Draggable(props: DraggableProps){
     const mousePosition = useContext(MouseContext);
 
@@ -25,24 +27,27 @@ export default function Draggable(props: DraggableProps){
         isBeingDragged: false,
     });
 
+    const noInteractionPadding = 20;
+
     /**
      * Determines the inital offset when dragging the component
      * @param e The window event used
      * @param clientX Initial input X position of the input modality
      * @param clientY Initial input Y position of the input modality
      */
-    function handleStart(clientX: number, clientY: number, boundingBoxLeft: number, boundingBoxTop: number){
+    function handleStart(clientX: number, clientY: number, boundingBox: DOMRect){
+
+        // Safety padding for dragging
+        if(clientX - boundingBox.left < noInteractionPadding) return;
+        if(boundingBox.right - clientX < noInteractionPadding) return;
+        if(clientY - boundingBox.top < noInteractionPadding) return;
+        if(boundingBox.bottom - clientY < noInteractionPadding) return;
+
         setDragOffset({
-            xOffset: clientX - boundingBoxLeft,
-            yOffset: clientY - boundingBoxTop,
+            xOffset: clientX - boundingBox.left,
+            yOffset: clientY - boundingBox.top,
             isBeingDragged: true,
         });
-
-        Logger.info(JSON.stringify({
-            xOffset: clientX - boundingBoxLeft,
-            yOffset: clientY - boundingBoxTop,
-            isBeingDragged: true,
-        }));
     }
 
     /**
@@ -68,7 +73,7 @@ export default function Draggable(props: DraggableProps){
      * @param clientY Initial input Y position of the input modality
      */
     function handleEnd(e: React.PointerEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, clientX: number, clientY: number){     
-        handleMove(e, clientX, clientY);
+        if(dragOffset.isBeingDragged) handleMove(e, clientX, clientY);
 
         setDragOffset({
             xOffset: 0,
@@ -86,7 +91,7 @@ export default function Draggable(props: DraggableProps){
 
         const elementBoundingBox = e.currentTarget.getBoundingClientRect();
 
-        handleStart(mousePosition.x, mousePosition.y, elementBoundingBox.left, elementBoundingBox.top);
+        handleStart(mousePosition.x, mousePosition.y, elementBoundingBox);
     }
 
     /**
@@ -115,7 +120,7 @@ export default function Draggable(props: DraggableProps){
         const relevantTouch = e.touches[0];
         const elementBoundingBox = e.currentTarget.getBoundingClientRect();
 
-        handleStart(relevantTouch.clientX, relevantTouch.clientY, elementBoundingBox.left, elementBoundingBox.top);
+        handleStart(relevantTouch.clientX, relevantTouch.clientY, elementBoundingBox);
     }
 
     /**
@@ -148,7 +153,6 @@ export default function Draggable(props: DraggableProps){
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouch}
         onTouchEnd={handleTouchEnd}
-        // onTouchCancel should be used as supplement if errors arise
         
         style={{
             left: position.posX,
