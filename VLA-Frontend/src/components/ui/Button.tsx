@@ -3,7 +3,7 @@ type ButtonConfig = {
   text?: React.ReactNode
 }
 
-function Button({children} : {children: ButtonConfig}){
+function Button({children,} : {children: ButtonConfig},){
   return (
     <>
       <button onClick={children.onClickEvent}>{children.text}</button>
@@ -11,4 +11,4 @@ function Button({children} : {children: ButtonConfig}){
   )
 }
 
-export { Button }
+export { Button, }

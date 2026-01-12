@@ -1,5 +1,5 @@
 import Popup from "../popup/Popup";
-import { Button } from "../ui/Button";
+import { Button, } from "../ui/Button";
 
 /**
  * Forces a reload of the current page
@@ -32,7 +32,7 @@ function SseError(){
                   <Button>
                     {{
                       onClickEvent: refreshPage,
-                      text: <><u>Neu laden</u></>
+                      text: <><u>Neu laden</u></>,
                     }}
                   </Button>
                 </>,

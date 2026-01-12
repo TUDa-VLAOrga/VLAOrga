@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
-import { normalizeToWorkdayStart, toISODateLocal } from "./dateUtils";
+import { useState, useRef, useEffect, } from "react";
+import { normalizeToWorkdayStart, toISODateLocal, } from "./dateUtils";
 
 type GoToMenuProps = {
   currentWeekStart: Date;
-  onDateSelect: (date: Date) => void;
+  onDateSelect: (date: Date,) => void;
 };
 
 /**
@@ -11,48 +11,48 @@ type GoToMenuProps = {
  * - "Jetzt" button to jump to current week
  * - "Datum" button to open date picker for specific date selection
  */
-export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuProps) {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+export default function GoToMenu({ currentWeekStart, onDateSelect, }: GoToMenuProps,) {
+  const [showDatePicker, setShowDatePicker,] = useState(false,);
+  const [selectedDate, setSelectedDate,] = useState("",);
+  const inputRef = useRef<HTMLInputElement>(null,);
 
   useEffect(() => {
     if (showDatePicker) {
-      setSelectedDate(toISODateLocal(currentWeekStart));
+      setSelectedDate(toISODateLocal(currentWeekStart,),);
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 50);
+      }, 50,);
     }
-  }, [showDatePicker , currentWeekStart]);
+  }, [showDatePicker , currentWeekStart,],);
 
   function handleGoToToday() {
-    onDateSelect(normalizeToWorkdayStart(new Date()));
+    onDateSelect(normalizeToWorkdayStart(new Date(),),);
   }
 
-  function handleDateInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleDateInputChange(e: React.ChangeEvent<HTMLInputElement>,) {
     // Just update the local state, don't navigate yet
-    setSelectedDate(e.target.value);
+    setSelectedDate(e.target.value,);
   }
 
   function handleConfirm() {
     if (selectedDate) {
-      const date = new Date(selectedDate);
-      onDateSelect(normalizeToWorkdayStart(date));
-      setShowDatePicker(false);
+      const date = new Date(selectedDate,);
+      onDateSelect(normalizeToWorkdayStart(date,),);
+      setShowDatePicker(false,);
     }
   }
 
   function handleCancel() {
-    setShowDatePicker(false);
+    setShowDatePicker(false,);
   }
 
   function handleOverlayClick() {
-    setShowDatePicker(false);
+    setShowDatePicker(false,);
   }
-  function handleBoxClick(e: React.MouseEvent) {
+  function handleBoxClick(e: React.MouseEvent,) {
     e.stopPropagation();
   }
-  function handleKeyDown(e: React.KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent,) {
     if (e.key === "Enter") {
       handleConfirm();
     } else if (e.key === "Escape") {
@@ -74,7 +74,7 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
         
         <button
           className="cv-quickNavBtn"
-          onClick={() => setShowDatePicker(!showDatePicker)}
+          onClick={() => setShowDatePicker(!showDatePicker,)}
           aria-label="Gehe zu Datum"
           type="button"
         >

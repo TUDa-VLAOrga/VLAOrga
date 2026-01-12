@@ -35,10 +35,16 @@ export default defineConfig([
       '@stylistic/eol-last': [
         "error", "always"
       ],
+      // We are dealing with HTML, nesting will quickly become a line length problem
       '@stylistic/indent': [
         "error",
-        2
+        2,
       ],
+      // This ensures better git diffs as there is one line per addition
+      '@stylistic/comma-dangle': [
+        "error",
+        "always",
+      ]
     }
   },
 ])

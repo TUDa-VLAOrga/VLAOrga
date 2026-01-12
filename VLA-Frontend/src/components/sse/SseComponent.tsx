@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { SSEHandler } from "./SseHandler";
+import { useEffect, useRef, useState, } from "react";
+import { SSEHandler, } from "./SseHandler";
 import SseError from "./SseError";
 
 function SSEComponent(){
-  const [sseErrStatus, setSseErrStatus] = useState(false);
-  const refSetSseErrStatus = useRef(setSseErrStatus);
+  const [sseErrStatus, setSseErrStatus,] = useState(false,);
+  const refSetSseErrStatus = useRef(setSseErrStatus,);
 
   /**
      * Initializes the SSE Communication
@@ -13,8 +13,8 @@ function SSEComponent(){
      */
   useEffect(() => {
     refSetSseErrStatus.current = setSseErrStatus;
-    SSEHandler.initialize(refSetSseErrStatus);
-  }, []);
+    SSEHandler.initialize(refSetSseErrStatus,);
+  }, [],);
 
 
   /**
