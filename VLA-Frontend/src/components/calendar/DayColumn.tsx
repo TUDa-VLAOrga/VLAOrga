@@ -1,5 +1,5 @@
 
-import type { CalendarDay, } from "./CalendarTypes";
+import type { CalendarDay } from "./CalendarTypes";
 
 type DayColumnProps = {
   day: CalendarDay;
@@ -9,7 +9,7 @@ type DayColumnProps = {
  * DayColumn represents exactly one day.
  * Later, we will render all events where event.dateISO === day.iso.
  */
-export default function DayColumn({ day, }: DayColumnProps,) {
+export default function DayColumn({ day }: DayColumnProps) {
   return (
 
   //TODO: Events rendern

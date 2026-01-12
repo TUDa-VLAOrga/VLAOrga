@@ -1,5 +1,5 @@
 import Popup from "../popup/Popup";
-import { Button, } from "../ui/Button";
+import { Button } from "../ui/Button";
 
 /**
  * Forces a reload of the current page

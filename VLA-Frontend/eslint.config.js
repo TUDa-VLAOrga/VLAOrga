@@ -46,7 +46,12 @@ export default defineConfig([
       // This ensures better git diffs as there is one line per addition
       '@stylistic/comma-dangle': [
         "error",
-        "always",
+        {
+          arrays: 'always-multiline',
+          objects: 'always-multiline',
+          enums: 'always-multiline',
+          functions: 'never',
+        },
       ],
 
       // Forces param brackets to follow function name when calling / defining

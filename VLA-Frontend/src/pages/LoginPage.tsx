@@ -1,22 +1,22 @@
-import { useState, } from "react";
-import { useNavigate, } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Loginpage.css";
 
 
 
 export default function LoginPage() {
-  const [username, setUsername,] = useState("",);
-  const [password, setPassword,] = useState("",);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   
   const navigate = useNavigate();
 
-  async function onSubmit(e: React.FormEvent,) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     //TODO: Authentifizierung implementieren
     // Hier würde normalerweise die Authentifizierung stattfinden
-    navigate("/calendar",); // Weiterleitung
+    navigate("/calendar"); // Weiterleitung
   }
 
   return (
@@ -29,7 +29,7 @@ export default function LoginPage() {
           type="text"
           placeholder="Benutzername"
           value={username}
-          onChange={(e,) => setUsername(e.target.value,)}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
 
@@ -38,7 +38,7 @@ export default function LoginPage() {
           type="password"
           placeholder="Passwort"
           value={password}
-          onChange={(e,) => setPassword(e.target.value,)}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
 

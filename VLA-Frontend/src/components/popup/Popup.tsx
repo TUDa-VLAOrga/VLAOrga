@@ -1,4 +1,4 @@
-import type { ReactNode, } from "react";
+import type { ReactNode } from "react";
 import "./Popup.css";
 
 /**
@@ -13,7 +13,7 @@ interface PopupProps {
  * Component for displaying responsive Popups
  * @param children Should be specified inside component according to {@link PopupProps}
  */
-function Popup({children,} : {children: PopupProps},){
+function Popup({children} : {children: PopupProps}){
   return (
     <span className="PopupBackground">
       <div className="PopupContainer">

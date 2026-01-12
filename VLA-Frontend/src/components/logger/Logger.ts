@@ -1,5 +1,5 @@
-import type { Dispatch, SetStateAction, } from "react";
-import { LogEvent, LogLevel, type LogMessage, } from "./LoggerTypes";
+import type { Dispatch, SetStateAction } from "react";
+import { LogEvent, LogLevel, type LogMessage } from "./LoggerTypes";
 
 export class Logger {
   /**
@@ -14,8 +14,8 @@ export class Logger {
      * @param message Message to log
      * @param event Optional event declaration for improved log filtering
      */
-  static info(message: string, event?: LogEvent,){
-    Logger.customLogMessage(LogLevel.INFO, message, event,);
+  static info(message: string, event?: LogEvent){
+    Logger.customLogMessage(LogLevel.INFO, message, event);
   }
 
   /**
@@ -23,8 +23,8 @@ export class Logger {
      * @param message Message to log
      * @param event Optional event declaration for improved log filtering
      */
-  static warn(message: string, event?: LogEvent,){
-    Logger.customLogMessage(LogLevel.WARN, message, event,);
+  static warn(message: string, event?: LogEvent){
+    Logger.customLogMessage(LogLevel.WARN, message, event);
   }
 
   /**
@@ -32,8 +32,8 @@ export class Logger {
      * @param message Message to log
      * @param event Optional event declaration for improved log filtering
      */
-  static error(message: string, event?: LogEvent,){
-    Logger.customLogMessage(LogLevel.ERROR, message, event,);
+  static error(message: string, event?: LogEvent){
+    Logger.customLogMessage(LogLevel.ERROR, message, event);
   }
 
   /**
@@ -42,7 +42,7 @@ export class Logger {
      * @param message The message to log
      * @param event Optional event declaration for improved log filtering
      */
-  static customLogMessage(level: LogLevel, message: string, event?: LogEvent,){
+  static customLogMessage(level: LogLevel, message: string, event?: LogEvent){
         
     const newMessage: LogMessage = {
       date: new Date(),
@@ -51,20 +51,20 @@ export class Logger {
       eventType: event,
     };
 
-    const newMessageHistory : LogMessage[] = [newMessage, ...Logger.logMessages,];
+    const newMessageHistory : LogMessage[] = [newMessage, ...Logger.logMessages];
     Logger.logMessages = newMessageHistory;
 
-    Logger.updateComponent(newMessageHistory,);
+    Logger.updateComponent(newMessageHistory);
   }
 
-  private static updateComponent(messages: LogMessage[],){
+  private static updateComponent(messages: LogMessage[]){
     // Only log if logging component is ready
     if(Logger.loggerReferenceSetter)
-      Logger.loggerReferenceSetter(messages,);
+      Logger.loggerReferenceSetter(messages);
   }
 
-  static overrideComponenentMessageSetterRef(setter: Dispatch<SetStateAction<LogMessage[]>>,){
+  static overrideComponenentMessageSetterRef(setter: Dispatch<SetStateAction<LogMessage[]>>){
     Logger.loggerReferenceSetter = setter;
-    Logger.info("Updating logger component setter",);
+    Logger.info("Updating logger component setter");
   }
 }
