@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
-import type { CalendarDay, CalendarEvent } from "./CalendarTypes";
+import type { CalendarDay, CalendarEvent, Lecture } from "./CalendarTypes";
 import "../../styles/CalendarView.css";
 import {WORKDAY_COUNT, addDays, addWorkdays, formatRangeShortDE, isWeekend, normalizeToWorkdayStart, toISODateLocal,} from "./dateUtils";
 import GoToMenu from "./GoToButton";
 import EventForm from "./EventForm";
 import { type EventFormData } from "./EventForm";
 import EventDetails from "./EventDetails";
+import type { EventKind } from "./CalendarTypes";
 
 
  export default function CalendarView() {
@@ -16,6 +17,8 @@ import EventDetails from "./EventDetails";
   const [events, setEvents] = useState<CalendarEvent[]>([]); 
   const [showEventForm,setShowEventForm] = useState(false);
   const [selectedEvent,setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [lectures,setLectures] = useState<Lecture[]>([]);
+  const [categories,setCategories] = useState<EventKind[]>([]);
 
   useEffect(() => {
     window.addEventListener("resize",updateDisplayDays);
@@ -92,6 +95,7 @@ import EventDetails from "./EventDetails";
             subtitle: formData.people.join(", "),
             startTime: startTime,
             endTime: endTime,
+            lectureId: formData.lectureId,
           });
         }
         currentDate = addDays(currentDate, 1);
@@ -107,6 +111,7 @@ import EventDetails from "./EventDetails";
         subtitle: formData.people.join(", "),
         startTime: startTime,
         endTime: endTime,
+        lectureId: formData.lectureId,
       });
     }
     // TODO: Backend - Replace this with API response data
@@ -127,6 +132,21 @@ import EventDetails from "./EventDetails";
     });
     return grouped;
   }, [events]);
+
+  const getEventColor = (event: CalendarEvent): string | undefined => {
+    if (!event.lectureId) return undefined;
+    return lectures.find(lec => lec.id === event.lectureId)?.color;
+  };
+
+  function handleAddLecture(lecture: Lecture) {
+    setLectures((prev) => [...prev, lecture]);
+  }
+
+  function handleAddCategory(category: EventKind) {
+    if (!categories.includes(category)) {
+      setCategories((prev) => [...prev, category]);
+    }
+  }
 
 
 return (
@@ -166,12 +186,16 @@ return (
 
       <div className="cv-frame">
         <WeekHeader days={days} />
-        <WeekGrid days={days}  eventsByDate={eventsByDate} onEventClick={handleEventClick}/>
+        <WeekGrid days={days}  eventsByDate={eventsByDate} onEventClick={handleEventClick} getEventColor={getEventColor}/>
       </div>
       {showEventForm && (
         <EventForm
           onSubmit={handleCreateEvent}
           onCancel={() => setShowEventForm(false)}
+          lectures={lectures}
+          categories={categories}
+          onAddLecture={handleAddLecture}
+          onAddCategory={handleAddCategory}
         />
       )}
 
@@ -179,6 +203,7 @@ return (
         <EventDetails
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          lectures={lectures}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { EventKind, EventStatus } from "./CalendarTypes";
+import type { EventKind, EventStatus, Lecture } from "./CalendarTypes";
 
 export type RecurrencePattern = {
   weekdays: number[]; // 0=So, 1=Mo, ..., 6=Sa
@@ -21,28 +21,24 @@ type EventFormProps = {
   initialDate?: string; // ISO date to pre-fill
   onSubmit: (data: EventFormData) => void;
   onCancel: () => void;
+  lectures? : Lecture[];
+  categories?: EventKind[];
+  onAddLecture?: (lecture: Lecture) => void;
+  onAddCategory?: (category: EventKind) => void;
 };
 
-// Mock data - später aus API/State laden
-const CATEGORIES: EventKind[] = [
-  "Vorlesung",
-  "Übung",
-  "Abnahmetermin",
-  "Ferien",
-  "Aufbau",
-  "Abbau",
+const COLOR_PALETTE = [
+  "#3b82f6", // Blau
+  "#10b981", // Grün
+  "#f59e0b", // Orange
+  "#8b5cf6", // Lila
+  "#ef4444", // Rot
+  "#06b6d4", // Cyan
+  "#f97316", // Orange-Rot
+  "#84cc16", // Lime
+  "#ec4899", // Pink
+  "#6366f1", // Indigo
 ];
-
-// Generate time options in 15-minute intervals
-const TIME_OPTIONS: string[] = [];
-for (let h = 0; h < 24; h++) {
-  for (let m = 0; m < 60; m += 15) {
-    const hour = String(h).padStart(2, '0');
-    const minute = String(m).padStart(2, '0');
-    TIME_OPTIONS.push(`${hour}:${minute}`);
-  }
-}
-
 const WEEKDAYS = [
   { value: 1, label: "Mo" },
   { value: 2, label: "Di" },
@@ -55,22 +51,56 @@ export default function EventForm({
   initialDate,
   onSubmit,
   onCancel,
+  lectures= [],
+  categories=[],
+  onAddLecture,
+  onAddCategory,
 }: EventFormProps) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<EventKind>("Vorlesung");
-  const [startDate, setStartDate] = useState(initialDate || "");
-  const [startTime, setStartTime] = useState("09:00");
-  const [endDate, setEndDate] = useState(initialDate || "");
-  const [endTime, setEndTime] = useState("10:00");
+  const [lectureId, setLectureId] = useState("");
+  const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
+  const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
   const [hasRecurrence, setHasRecurrence] = useState(false);
   const [recurrenceWeekdays, setRecurrenceWeekdays] = useState<number[]>([]);
   const [recurrenceEndDate, setRecurrenceEndDate] = useState("");
   const [peopleInput, setPeopleInput] = useState("");
+  const [showAddLecture, setShowAddLecture] = useState(false);
+  const [newLectureName, setNewLectureName] = useState("");
+  const [newLectureColor, setNewLectureColor] = useState(COLOR_PALETTE[0]);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
 
   function toggleWeekday(day: number) {
     setRecurrenceWeekdays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
+  }
+
+  function handleAddLecture() {
+    if (!newLectureName.trim() || !onAddLecture) return;
+
+    const newLecture: Lecture = {
+      id: `lecture-${Date.now()}`,
+      name: newLectureName.trim(),
+      color: newLectureColor,
+    };
+
+    onAddLecture(newLecture);
+    setLectureId(newLecture.id); // Automatisch auswählen
+    setNewLectureName("");
+    setNewLectureColor(COLOR_PALETTE[0]);
+    setShowAddLecture(false);
+  }
+
+  
+  function handleAddCategory() {
+    if (!newCategoryName.trim() || !onAddCategory) return;
+
+    onAddCategory(newCategoryName.trim());
+    setCategory(newCategoryName.trim()); // Automatisch auswählen
+    setNewCategoryName("");
+    setShowAddCategory(false);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -79,13 +109,17 @@ export default function EventForm({
     const formData: EventFormData = {
       title,
       category,
-      startDateTime: `${startDate}T${startTime}`,
-      endDateTime: `${endDate}T${endTime}`,
+      startDateTime,
+      endDateTime,
       people: peopleInput
         .split(",")
         .map((p) => p.trim())
         .filter(Boolean),
     };
+
+    if( lectureId) {
+      formData.lectureId= lectureId;
+    }
 
     if (hasRecurrence && recurrenceWeekdays.length > 0 && recurrenceEndDate) {
       formData.recurrence = {
@@ -97,7 +131,7 @@ export default function EventForm({
     onSubmit(formData);
   }
 
-  const isValid = title.trim() && startDate && startTime && endDate && endTime;
+  const isValid = title.trim() && category.trim() && startDateTime && endDateTime;
 
   return (
     <div className="cv-formOverlay">
@@ -121,16 +155,48 @@ export default function EventForm({
           </div>
 
           <div className="cv-formGroup">
-            <label htmlFor="category" className="cv-formLabel">
-              Kategorie *
-            </label>
+            <div className="cv-formLabelRow">
+              <label htmlFor="category" className="cv-formLabel">
+                Kategorie *
+              </label>
+              <button
+                type="button"
+                className="cv-addBtn"
+                onClick={() => setShowAddCategory(!showAddCategory)}
+              >
+                {showAddCategory ? "−" : "+"} Neue Kategorie
+              </button>
+            </div>
+
+            {showAddCategory && (
+              <div className="cv-addSection">
+                <input
+                  type="text"
+                  className="cv-formInput"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Kategorienamen eingeben"
+                />
+                <button
+                  type="button"
+                  className="cv-formBtn cv-formBtnSubmit"
+                  onClick={handleAddCategory}
+                  disabled={!newCategoryName.trim()}
+                >
+                  Hinzufügen
+                </button>
+              </div>
+            )}
+
             <select
               id="category"
               className="cv-formSelect"
               value={category}
               onChange={(e) => setCategory(e.target.value as EventKind)}
+              required
             >
-              {CATEGORIES.map((cat) => (
+              <option value="">Bitte wählen...</option>
+              {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -138,70 +204,100 @@ export default function EventForm({
             </select>
           </div>
 
-         <div className="cv-formGroup">
-            <label htmlFor="startDate" className="cv-formLabel">
-              Startdatum *
-            </label>
-            <input
-              id="startDate"
-              type="date"
-              className="cv-formInput"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-            />
-          </div>
+          <div className="cv-formGroup">
+            <div className="cv-formLabelRow">
+              <label htmlFor="lecture" className="cv-formLabel">
+                Vorlesung (optional)
+              </label>
+              <button
+                type="button"
+                className="cv-addBtn"
+                onClick={() => setShowAddLecture(!showAddLecture)}
+              >
+                {showAddLecture ? "−" : "+"} Neue Vorlesung
+              </button>
+            </div>
 
-         <div className="cv-formGroup">
-            <label htmlFor="startTime" className="cv-formLabel">
-              Startzeit *
-            </label>
+            {showAddLecture && (
+              <div className="cv-addSection">
+                <input
+                  type="text"
+                  className="cv-formInput"
+                  value={newLectureName}
+                  onChange={(e) => setNewLectureName(e.target.value)}
+                  placeholder="Vorlesungsname eingeben"
+                />
+                 <div className="cv-formLabel" style={{ marginBottom: "8px" }}>
+                  Farbe wählen:
+                </div>
+                <div className="cv-colorPicker" style={{ marginBottom: "8px" }}>
+                  {COLOR_PALETTE.map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      className={`cv-colorBtn ${
+                        newLectureColor === color ? "active" : ""
+                      }`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setNewLectureColor(color)}
+                      aria-label={`Farbe ${color}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  className="cv-formBtn cv-formBtnSubmit"
+                  onClick={handleAddLecture}
+                  disabled={!newLectureName.trim()}
+                >
+                  Hinzufügen
+                </button>
+              </div>
+            )}
+
             <select
-              id="startTime"
+              id="lecture"
               className="cv-formSelect"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              required
+              value={lectureId}
+              onChange={(e) => setLectureId(e.target.value)}
             >
-              {TIME_OPTIONS.map((time) => (
-                <option key={time} value={time}>
-                  {time}
+              <option value="">Keine Zuordnung</option>
+              {lectures.map((lec) => (
+                <option key={lec.id} value={lec.id}>
+                  {lec.name}
                 </option>
               ))}
             </select>
           </div>
 
+
           <div className="cv-formGroup">
-            <label htmlFor="endDate" className="cv-formLabel">
-              Enddatum *
+            <label htmlFor="startDateTime" className="cv-formLabel">
+              Start (Datum & Uhrzeit) *
             </label>
             <input
-              id="endDate"
-              type="date"
+              id="startDateTime"
+              type="datetime-local"
               className="cv-formInput"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              value={startDateTime}
+              onChange={(e) => setStartDateTime(e.target.value)}
               required
             />
           </div>
 
-          <div className="cv-formGroup">
-            <label htmlFor="endTime" className="cv-formLabel">
-              Endzeit *
+           <div className="cv-formGroup">
+            <label htmlFor="endDateTime" className="cv-formLabel">
+              Ende (Datum & Uhrzeit) *
             </label>
-            <select
-              id="endTime"
-              className="cv-formSelect"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
+            <input
+              id="endDateTime"
+              type="datetime-local"
+              className="cv-formInput"
+              value={endDateTime}
+              onChange={(e) => setEndDateTime(e.target.value)}
               required
-            >
-              {TIME_OPTIONS.map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="cv-formGroup">

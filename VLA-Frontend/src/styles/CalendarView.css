@@ -44,6 +44,7 @@
   flex-direction: column;
   border: 1px solid #777;
   background: #d9d9d9;
+  overflow: hidden;
 }
 
 /* Header is exactly as wide as the Grid (both in the same Frame) */
@@ -83,12 +84,14 @@
   min-height: 0;
   flex: 1; 
   background: #d9d9d9;
+  overflow-y: auto;
 }
 
 .cv-dayColumn {
   border-right: 1px solid #777;
   padding: 10px;
   background: transparent;
+  min-height: 100%;
 }
 
 .cv-dayColumn:last-child {
@@ -508,12 +511,12 @@
   border-left: 4px solid;
   background: #f9f9f9;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s, background-color 0.2s;
 }
 
 .cv-event:hover {
-  transform: translateX(2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: f0f0f0;
 }
 
 .cv-eventTitle {
@@ -599,4 +602,94 @@
 .cv-detailValue {
   color: #333;
   flex: 1;
+}
+
+.cv-detailRow {
+  align-items: center; /* sorgt für gleiche vertikale Ausrichtung wie andere Rows */
+}
+
+
+.cv-detailValueLecture {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 8px;
+}
+
+.cv-lectureSwatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex: 0 0 16px;
+}
+
+.cv-lectureName {
+  line-height: inherit;
+}
+
+/* ===== NEU: Label Row für Buttons neben Labels ===== */
+.cv-formLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* ===== NEU: Add Button ===== */
+.cv-addBtn {
+  background: none;
+  border: 1px solid #d1d5db;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cv-addBtn:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+  border-color: #9ca3af;
+}
+
+/* ===== NEU: Add Section (für Inline-Formulare) ===== */
+.cv-addSection {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.cv-addSection input {
+  margin-bottom: 8px;
+}
+
+/* ===== NEU: Color Picker ===== */
+.cv-colorPicker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cv-colorBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cv-colorBtn:hover {
+  transform: scale(1.1);
+  border-color: #000;
+}
+
+.cv-colorBtn.active {
+  border-color: #000;
+  border-width: 3px;
+  transform: scale(1.15);
 }

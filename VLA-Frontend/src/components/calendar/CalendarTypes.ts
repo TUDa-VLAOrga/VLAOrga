@@ -31,8 +31,15 @@ export type CalendarEvent = {
   kind: EventKind;
   status?: EventStatus;   /** Optional UI status indicator for highlighting the event in the calendar. */
   subtitle?: string;
+  lectureId?: string; /** Optional reference to associated lecture (if any). */
 };
-export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
+export type Lecture = {
+  id: string;
+  name: string;
+  color: string; 
+};
+
+export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
 
