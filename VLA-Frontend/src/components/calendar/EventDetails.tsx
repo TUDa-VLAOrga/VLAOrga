@@ -24,13 +24,15 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
            {lecture && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Vorlesung:</span>
+              <span className="cv-detailValue">
               <span className="cv-detailValueLecture ">
                 <span
                   className="cv-lectureSwatch"
                   style={{ backgroundColor: lecture.color }}
                 />
-                {lecture.name}
+                <span className="cv-lectureName">{lecture.name}</span>
               </span>
+            </span>
             </div>
           )}
 

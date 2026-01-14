@@ -591,12 +591,14 @@
   gap: 12px;
   padding: 8px 0;
   border-bottom: 1px solid #f0f0f0;
+  align-items: center;
 }
 
 .cv-detailLabel {
   font-weight: 600;
   color: #666;
   min-width: 120px;
+  flex-shrink: 0;
 }
 
 .cv-detailValue {
@@ -611,7 +613,6 @@
 
 .cv-detailValueLecture {
   display: inline-flex;
-
   align-items: center;
   gap: 8px;
 }
@@ -621,11 +622,11 @@
   height: 16px;
   border-radius: 3px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  flex: 0 0 16px;
+  flex-shrink: 0;
 }
 
 .cv-lectureName {
-  line-height: inherit;
+  line-height: 1.2;
 }
 
 /* ===== NEU: Label Row für Buttons neben Labels ===== */
