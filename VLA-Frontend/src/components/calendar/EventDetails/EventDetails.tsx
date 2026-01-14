@@ -7,6 +7,10 @@ type EventDetailsProps = {
   lectures?: Lecture[];
 };
 
+/**
+ * EventDetails renders a read-only modal with all relevant event information.
+ * If the event is assigned to a lecture, it shows the lecture color + name.
+ */
 export default function EventDetails({ event, onClose, lectures = [] }: EventDetailsProps) {
    const lecture = event.lectureId? lectures.find((lec ) => lec.id === event.lectureId) ?? null : null ;
   
@@ -21,6 +25,7 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
             <span className="cv-detailValue">{event.kind}</span>
           </div>
 
+           {/* Lecture details (only if lecture is assigned) */}
            {lecture && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Vorlesung:</span>
@@ -50,14 +55,14 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
         </div>
         )}
 
-
+           {/* Subtitle is typically the people list */}
           {event.subtitle && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Personen:</span>
               <span className="cv-detailValue">{event.subtitle}</span>
             </div>
           )}
-
+         {/* Status is optional; used for UI highlighting elsewhere */}
           {event.status && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Status:</span>

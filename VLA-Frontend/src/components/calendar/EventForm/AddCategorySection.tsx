@@ -8,6 +8,13 @@ type AddCategorySectionProps = {
   onAddCategory: (categoryName: string) => void;
 };
 
+
+/**
+ * AddCategorySection lets the user:
+ * - select an existing category (dropdown)
+ * - optionally add a new category
+ * The section does not store categories itself; it forwards changes to the parent.
+ */
 export default function AddCategorySection({
   categories,
   selectedCategory,

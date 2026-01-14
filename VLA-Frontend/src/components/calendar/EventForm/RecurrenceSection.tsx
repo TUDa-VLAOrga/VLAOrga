@@ -9,6 +9,13 @@ type RecurrenceSectionProps = {
   onEndDateChange: (date: string) => void;
 };
 
+/**
+ * RecurrenceSection provides UI for optional weekly recurrence:
+ * - checkbox to enable/disable
+ * - weekday selection
+ * - "repeat until" end date
+ * It does not generate events itself; it only collects recurrence inputs.
+ */
 export default function RecurrenceSection({
   isEnabled,
   onToggle,
@@ -19,6 +26,7 @@ export default function RecurrenceSection({
 }: RecurrenceSectionProps) {
   return (
     <>
+          {/* Enable/disable recurrence */}
       <div className="cv-formGroup">
         <label className="cv-formCheckbox">
           <input
@@ -29,7 +37,7 @@ export default function RecurrenceSection({
           <span>Wiederholung</span>
         </label>
       </div>
-
+    {/* Only show the configuration fields if recurrence is enabled */}
       {isEnabled && (
         <>
           <div className="cv-formGroup">

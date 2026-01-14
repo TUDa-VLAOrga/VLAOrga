@@ -30,6 +30,15 @@ type EventFormProps = {
   onAddCategory?: (category: EventKind) => void;
 };
 
+/**
+ * EventForm collects all user inputs needed to create a calendar event.
+ * It supports:
+ * - selecting/adding categories
+ * - selecting/adding lectures (with color)
+ * - start/end datetime
+ * - optional recurrence
+ * - optional people list
+ */
 export default function EventForm({
   initialDate,
   onSubmit,
@@ -39,6 +48,7 @@ export default function EventForm({
   onAddLecture,
   onAddCategory,
 }: EventFormProps) {
+   // Basic form fields.
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<EventKind>("Vorlesung");
   const [lectureId, setLectureId] = useState("");
@@ -47,16 +57,31 @@ export default function EventForm({
   const [peopleInput, setPeopleInput] = useState("");
   const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as number[], endDate: ""});
   
+ /**
+   * When a new lecture is created inside AddLectureSection:
+   * - forward it to the parent (so it ends up in the lecture list)
+   * - auto-select it for the current event
+   */
+
   const handleAddLecture = (lecture: Lecture) => {
     onAddLecture?.(lecture);
     setLectureId(lecture.id); 
   };
-
+  /**
+   * When a new category is created inside AddCategorySection:
+   * - forward it to the parent (so it ends up in the category list)
+   * - auto-select it for the current event
+   */
   const handleAddCategory = (categoryName: string) => {
     onAddCategory?.(categoryName);
     setCategory(categoryName);
   };
-
+  /**
+   * Transform UI state into EventFormData and submit to parent.
+   * - Parses peopleInput into a string array
+   * - Adds lectureId only if selected
+   * - Adds recurrence only if enabled and complete
+   */
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -84,7 +109,7 @@ export default function EventForm({
 
     onSubmit(formData);
   }
-
+  // Used to disable submit when required fields are missing
   const isValid = title.trim() && category.trim() && startDateTime && endDateTime;
 
   return (

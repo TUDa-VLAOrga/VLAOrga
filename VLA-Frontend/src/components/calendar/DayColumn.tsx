@@ -8,11 +8,19 @@ type DayColumnProps = {
   getEventColor?: (event: CalendarEvent) => string | undefined;
 };
 
+/**
+ * DayColumn represents exactly one day in the calendar.
+ * It receives the events for that day and renders them as clickable tiles.
+ */
+
 function getStatusClass(status?: EventStatus): string {
   if (!status) return "";
   return `cv-event-${status}`;
 }
-
+/**
+ * DayColumn renders all events for a single day.
+ * It is used inside the WeekGrid to build the calendar layout.
+ */
 export default function DayColumn({ day, events, onEventClick, getEventColor }: DayColumnProps) {
   return (
     <div className="cv-dayColumn" data-date={day.iso}>

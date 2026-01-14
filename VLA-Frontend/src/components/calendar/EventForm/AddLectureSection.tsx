@@ -9,6 +9,12 @@ type AddLectureSectionProps = {
   onAddLecture: (lecture: Lecture) => void;
 };
 
+/**
+ * AddLectureSection lets the user:
+ * - select an existing lecture (dropdown)
+ * - optionally create a new lecture with a custom color 
+ * The actual storage of lectures happens in the parent (via onAddLecture).
+ */
 export default function AddLectureSection({
   lectures,
   selectedLectureId,
@@ -19,15 +25,20 @@ export default function AddLectureSection({
   const [newLectureName, setNewLectureName] = useState("");
   const [newLectureColor, setNewLectureColor] = useState("#3b82f6");
 
+  /**
+   * Creates a new Lecture object and sends it to the parent.
+   * Afterwards, resets the local form state and closes the add-form UI.
+   */
   const handleAdd = () => {
     if (!newLectureName.trim()) return;
 
+    // Temporary id generation
     const newLecture: Lecture = {
       id: `lecture-${Date.now()}`,
       name: newLectureName.trim(),
       color: newLectureColor,
     };
-
+    // Reset inputs to the default state for the next creation.
     onAddLecture(newLecture);
     setNewLectureName("");
     setNewLectureColor("#3b82f6");
@@ -49,6 +60,7 @@ export default function AddLectureSection({
         </button>
       </div>
 
+{/* Inline section for creating a new lecture */}
       {showAddForm && (
         <div className="cv-addSection">
           <input
@@ -64,6 +76,7 @@ export default function AddLectureSection({
               }
             }}
           />
+
           <div className="cv-formLabel" style={{ marginBottom: "8px" }}>
             Farbe wählen:
           </div>
@@ -82,7 +95,7 @@ export default function AddLectureSection({
           </button>
         </div>
       )}
-
+        {/* Dropdown to select an existing lecture */}
       <select
         id="lecture"
         className="cv-formSelect"
