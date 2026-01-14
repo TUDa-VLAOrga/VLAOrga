@@ -93,7 +93,7 @@ export function formatRangeShortDE(start: Date, end: Date) {
 export function compareSameUTCDay(a: Date, b: Date){
   // Conversion to remove time zone dependenies
     
-  return a.getFullYear() == b.getFullYear() &&
+  return a.getDay() == b.getDay() &&
     a.getMonth() == b.getMonth() &&
-    a.getDay() == b.getDay();
+    a.getFullYear() == b.getFullYear();
 }
