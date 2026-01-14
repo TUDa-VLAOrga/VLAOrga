@@ -306,3 +306,10 @@
   cursor: not-allowed;
 }
 
+#todaysColumnHeader {
+  background-color: #9f9f9f;
+}
+
+#todaysColumn {
+  background-color: #b9b9b9;
+}

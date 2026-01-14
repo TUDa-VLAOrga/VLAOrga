@@ -83,3 +83,17 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
 export function formatRangeShortDE(start: Date, end: Date) {
   return `${rangeFmt.format(start)} – ${rangeFmt.format(end)}`;
 }
+
+/**
+ * Compares two days while ignoring the clock time on a given day
+ * @param a The first time to compare
+ * @param b The second time to compare
+ * Returns true iff a and b are on the same day in UTC
+ */
+export function compareSameUTCDay(a: Date, b: Date){
+  // Conversion to remove time zone dependenies
+    
+  return a.getFullYear() == b.getFullYear() &&
+    a.getMonth() == b.getMonth() &&
+    a.getDay() == b.getDay();
+}
