@@ -3,11 +3,11 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import type { CalendarDay } from "./CalendarTypes";
 import "../../styles/CalendarView.css";
-import {WORKDAY_COUNT, addDays, addWorkdays, formatRangeShortDE, isWeekend, normalizeToWorkdayStart, toISODateLocal,} from "./dateUtils";
+import {WORKDAY_COUNT, addDays, addWorkdays, formatRangeShortDE, isWeekend, normalizeToWorkdayStart, toISODateLocal} from "./dateUtils";
 import GoToMenu from "./GoToButton";
 
 
- export default function CalendarView() {
+export default function CalendarView() {
   const [weekStart, setWeekStart] = useState<Date>(() => normalizeToWorkdayStart(new Date()));
   const [displayDays,setDisplayDays] = useState<number>(() => WORKDAY_COUNT);
 
@@ -22,18 +22,18 @@ import GoToMenu from "./GoToButton";
   }
    
   const days: CalendarDay[] = useMemo(() => {
-      const result: CalendarDay[] = [];
-      let cursor = new Date(weekStart);
-      updateDisplayDays();
+    const result: CalendarDay[] = [];
+    let cursor = new Date(weekStart);
+    updateDisplayDays();
 
-      while (result.length < displayDays) {
-        if (!isWeekend(cursor)) {
-          result.push({ date: new Date(cursor), iso: toISODateLocal(cursor) });
-        }
-        cursor = addDays(cursor, 1);
+    while (result.length < displayDays) {
+      if (!isWeekend(cursor)) {
+        result.push({ date: new Date(cursor), iso: toISODateLocal(cursor) });
       }
-      return result;
-    }, [weekStart,displayDays]);
+      cursor = addDays(cursor, 1);
+    }
+    return result;
+  }, [weekStart,displayDays]);
 
   const rangeText = days.length >= 1 ? formatRangeShortDE(days[0].date, days[days.length-1].date) : "";
 
@@ -55,7 +55,7 @@ import GoToMenu from "./GoToButton";
     setWeekStart((d) => addWorkdays(d, 1));
   }
 
-return (
+  return (
     <div className="cv-root">
       <div className="cv-toolbar" aria-label="Zeitnavigation">
         <button
@@ -66,7 +66,7 @@ return (
         >
         </button>
 
-         <div className="cv-range" aria-label="Datumsbereich">
+        <div className="cv-range" aria-label="Datumsbereich">
           {rangeText}
         </div>
 
@@ -78,7 +78,7 @@ return (
         >
         </button>
 
-          <GoToMenu currentWeekStart={weekStart} onDateSelect={setWeekStart} />
+        <GoToMenu currentWeekStart={weekStart} onDateSelect={setWeekStart} />
       </div>
 
       <div className="cv-frame">

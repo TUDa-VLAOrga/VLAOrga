@@ -34,7 +34,7 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
     setSelectedDate(e.target.value);
   }
 
-   function handleConfirm() {
+  function handleConfirm() {
     if (selectedDate) {
       const date = new Date(selectedDate);
       onDateSelect(normalizeToWorkdayStart(date));
@@ -42,14 +42,14 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
     }
   }
 
-   function handleCancel() {
+  function handleCancel() {
     setShowDatePicker(false);
   }
 
   function handleOverlayClick() {
     setShowDatePicker(false);
   }
-   function handleBoxClick(e: React.MouseEvent) {
+  function handleBoxClick(e: React.MouseEvent) {
     e.stopPropagation();
   }
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -87,7 +87,7 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
           <div className="cv-datePickerBox" onClick={handleBoxClick}>
             <h3 className="cv-datePickerTitle">Datum auswählen</h3>
             <input
-             ref={inputRef}
+              ref={inputRef}
               type="date"
               className="cv-datePickerInput"
               value={selectedDate}
@@ -95,23 +95,23 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
               onKeyDown={handleKeyDown}
             />
             <div className="cv-datePickerActions">
-            <button
-              className="cv-datePickerBtn cv-datePickerCancel"
-              onClick={handleCancel}
-              type="button"
-            >
-              Abbrechen
-            </button>
-            <button
-              className="cv-datePickerBtn cv-datePickerConfirm"
-              onClick={handleConfirm}
-              type="button"
-              disabled={!selectedDate}
-            >
-              Bestätigen
-            </button>
+              <button
+                className="cv-datePickerBtn cv-datePickerCancel"
+                onClick={handleCancel}
+                type="button"
+              >
+                Abbrechen
+              </button>
+              <button
+                className="cv-datePickerBtn cv-datePickerConfirm"
+                onClick={handleConfirm}
+                type="button"
+                disabled={!selectedDate}
+              >
+                Bestätigen
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       )}
     </>

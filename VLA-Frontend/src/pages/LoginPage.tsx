@@ -16,7 +16,7 @@ export default function LoginPage() {
 
     //TODO: Authentifizierung implementieren
     // Hier würde normalerweise die Authentifizierung stattfinden
-      navigate("/calendar"); // Weiterleitung
+    navigate("/calendar"); // Weiterleitung
   }
 
   return (
