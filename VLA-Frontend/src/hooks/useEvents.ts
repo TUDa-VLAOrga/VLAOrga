@@ -19,7 +19,20 @@ export function useEvents(lectures: Lecture[]) {
     }
 
     if (formData.recurrence) {
-      let currentDate = new Date(startDate);
+        newEvents.push({
+        id: `event-${Date.now()}-0`,
+        title: formData.title,
+        dateISO: startDate,
+        calendarId: "user-events",
+        kind: formData.category,
+        status: formData.status,
+        subtitle: formData.people.join(", "),
+        startTime: startTime,
+        endTime: endTime,
+        lectureId: formData.lectureId,
+      });
+
+      let currentDate = addDays(new Date(startDate), 1);
       const endDate = new Date(formData.recurrence.endDate);
 
       while (currentDate <= endDate) {

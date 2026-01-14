@@ -3,7 +3,7 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
 import GoToMenu from "./GoToButton"; 
-import EventForm from "./EventForm/EventForm";
+import EventForm, { type EventFormData } from "./EventForm/EventForm";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
@@ -20,7 +20,7 @@ import { useCategories } from "@/hooks/useCategories";
 
   const {selectedEvent, eventsByDate, handleCreateEvent, handleEventClick,closeEventDetails, getEventColor  }= useEvents(lectures);
 
-  function onEventSubmit(formData: any) {
+  function onEventSubmit(formData: EventFormData) {
     handleCreateEvent(formData);
     setShowEventForm(false);
   }
