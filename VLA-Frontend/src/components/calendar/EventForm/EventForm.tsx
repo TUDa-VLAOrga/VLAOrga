@@ -110,7 +110,7 @@ export default function EventForm({
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
-  const isValid = title.trim() && category.trim() && startDateTime && endDateTime;
+  const isValid = title.trim() && category.trim() && startDateTime && endDateTime && endDateTime > startDateTime;
 
   return (
     <div className="cv-formOverlay">

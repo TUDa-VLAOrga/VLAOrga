@@ -10,7 +10,7 @@ export function useEventForm(initialDate?: string) {
     // Main form fields (excluding recurrence fields).
   const [formData, setFormData] = useState({
     title: "",
-    category: "Vorlesung" as EventKind,
+    category: "" as EventKind,
     lectureId: "",
     startDateTime: initialDate ? `${initialDate}T09:00` : "",
     endDateTime: initialDate ? `${initialDate}T10:00` : "",
