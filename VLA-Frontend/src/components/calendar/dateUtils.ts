@@ -83,3 +83,20 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
 export function formatRangeShortDE(start: Date, end: Date) {
   return `${rangeFmt.format(start)} – ${rangeFmt.format(end)}`;
 }
+/** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */
+export function parseISODateLocal(iso: string): Date {
+  const [datePart] = iso.split("T"); // in case you ever store timestamps
+  const [y, m, d] = datePart.split("-").map(Number);
+  return new Date(y, (m ?? 1) - 1, d ?? 1);
+}
+
+const dateFmtDE = new Intl.DateTimeFormat("de-DE", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+
+/** Formats yyyy-mm-dd -> dd.mm.yyyy */
+export function formatISODateDE(iso: string): string {
+  return dateFmtDE.format(parseISODateLocal(iso));
+}
