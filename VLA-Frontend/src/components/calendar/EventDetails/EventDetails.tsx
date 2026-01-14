@@ -1,5 +1,5 @@
-import type { CalendarEvent, Lecture } from "./CalendarTypes";
-import { formatISODateDE } from "./dateUtils";
+import type { CalendarEvent, Lecture } from "../CalendarTypes";
+import { formatISODateDE } from "../dateUtils";
 
 type EventDetailsProps = {
   event: CalendarEvent;

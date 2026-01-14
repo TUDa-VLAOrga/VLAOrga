@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
-import type { EventFormData } from "../components/calendar/EventForm";
+import type { EventFormData } from "../components/calendar/EventForm/EventForm";
 import { addDays, toISODateLocal } from "../components/calendar/dateUtils";
 
 export function useEvents(lectures: Lecture[]) {
