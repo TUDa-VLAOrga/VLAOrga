@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Loginpage.css";
+import Draggable from "@/components/draggableElement/Draggable";
+import DragContainer from "@/components/draggableElement/DragContainer";
 
 
 
@@ -20,7 +22,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-container">
+    <DragContainer>
+      <div className="login-container">
       <form onSubmit={onSubmit} className="login-form">
         <h2 className="login-title">Login</h2>
 
@@ -46,6 +49,32 @@ export default function LoginPage() {
           Login
         </button>
       </form>
-    </div>
+
+        <Draggable>
+          <div style={{
+            backgroundColor: "#0F0",
+            height: "100px",
+            width: "100px",
+            resize: "both",
+            overflow: "auto",
+          }}>
+            Test!
+          </div>
+        </Draggable>
+
+        <Draggable>
+          <div style={{
+            backgroundColor: "#F00",
+            height: "100px",
+            width: "100px",
+            resize: "both",
+            overflow: "auto",
+          }}>
+            Test!
+          </div>
+        </Draggable>
+
+      </div>
+    </DragContainer>
   );
 }
