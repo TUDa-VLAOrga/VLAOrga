@@ -12,7 +12,11 @@ export default function WeekHeader({ days }: Props) {
   return (
     <div className="cv-header">
       {days.map((day) => (
-        <div id={compareSameUTCDay(day.date, new Date()) ? "todaysColumnHeader" : ""} key={day.iso} className="cv-headerCell">
+        <div
+          id={compareSameUTCDay(day.date, new Date()) ? "todaysColumnHeader" : ""}
+          key={day.iso} 
+          className="cv-headerCell"
+        >
           <div className="cv-headerDay">{weekdayFmt.format(day.date)}</div>
           <div className="cv-headerDate">{formatDDMM(day.date)}</div>
         </div>
