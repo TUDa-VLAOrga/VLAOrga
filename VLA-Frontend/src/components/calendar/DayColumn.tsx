@@ -13,7 +13,7 @@ type DayColumnProps = {
 export default function DayColumn({ day }: DayColumnProps) {
   return (
 
-    //TODO: Events rendern
+  //TODO: Events rendern
 
      // data-date helps with debugging (DevTools) and later for tests
     <div id={compareSameUTCDay(day.date, new Date()) ? "todaysColumn" : undefined} className="cv-dayColumn" data-date={day.iso}>
