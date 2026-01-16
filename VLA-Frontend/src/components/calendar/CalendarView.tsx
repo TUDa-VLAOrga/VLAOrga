@@ -66,7 +66,7 @@ return (
           aria-label="Neuen Termin erstellen"
           type="button"
         >
-          + Termin
+          + Neuer Termin
         </button>
       </div>
 

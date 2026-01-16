@@ -4,7 +4,8 @@ import type { Lecture } from "../components/calendar/CalendarTypes";
 /**
  * useLectures stores and manages the list of lectures that can be assigned to events.
  * Currently local-only state; later this can be replaced with backend persistence.
- */
+// TODO: Backend - integrate with API 
+*/
 
 export function useLectures() {
   const [lectures, setLectures] = useState<Lecture[]>([]);

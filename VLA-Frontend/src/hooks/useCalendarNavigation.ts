@@ -41,7 +41,7 @@ export function useCalendarNavigation() {
   useEffect(() => {
     window.addEventListener("resize", updateDisplayDays);
     return () => window.removeEventListener("resize", updateDisplayDays);
-  });
+  }, []);
 /**
    * Compute the list of CalendarDay objects from weekStart.
    * Only workdays are included (weekends are skipped).

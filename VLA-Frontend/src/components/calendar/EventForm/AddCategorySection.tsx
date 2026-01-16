@@ -24,13 +24,13 @@ export default function AddCategorySection({
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
 
-  const handleAdd = () => {
-    if (!newCategoryName.trim()) return;
+  function handleAdd() {
+    if (newCategoryName.trim() === "") return;
 
     onAddCategory(newCategoryName.trim());
     setNewCategoryName("");
     setShowAddForm(false);
-  };
+  }
 
   return (
     <div className="cv-formGroup">

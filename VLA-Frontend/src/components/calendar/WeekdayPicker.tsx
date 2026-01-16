@@ -1,21 +1,27 @@
+import type { Weekday } from "./EventForm/EventForm";
+
 type WeekdayPickerProps = {
-  selectedDays: number[];
-  onDaysChange: (days: number[]) => void;
+  selectedDays: Weekday[];
+  onDaysChange: (days: Weekday[]) => void;
 };
 
-const WEEKDAYS = [
-  { value: 1, label: "Mo" },
-  { value: 2, label: "Di" },
-  { value: 3, label: "Mi" },
-  { value: 4, label: "Do" },
-  { value: 5, label: "Fr" },
-];
+const All_WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5]; // Sunday to Saturday
 
+const WEEKDAY_LABELS: Record<Weekday, string> = {
+  0: "So",
+  1: "Mo",
+  2: "Di",
+  3: "Mi",
+  4: "Do",
+  5: "Fr",
+  6: "Sa",
+};
 export default function WeekdayPicker({
   selectedDays,
   onDaysChange,
 }: WeekdayPickerProps) {
-  const toggleWeekday = (day: number) => {
+
+  function toggleWeekday(day: Weekday) {
     if (selectedDays.includes(day)) {
       onDaysChange(selectedDays.filter((d) => d !== day));
     } else {
@@ -25,16 +31,16 @@ export default function WeekdayPicker({
 
   return (
     <div className="cv-weekdayPicker">
-      {WEEKDAYS.map((wd) => (
+      {All_WEEKDAYS.map((day) => (
         <button
-          key={wd.value}
+          key={day}
           type="button"
           className={`cv-weekdayBtn ${
-            selectedDays.includes(wd.value) ? "active" : ""
+            selectedDays.includes(day) ? "active" : ""
           }`}
-          onClick={() => toggleWeekday(wd.value)}
+          onClick={() => toggleWeekday(day)}
         >
-          {wd.label}
+          {WEEKDAY_LABELS[day]}
         </button>
       ))}
     </div>

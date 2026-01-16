@@ -1,5 +1,13 @@
 
 
+:root {
+ --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 1000;
+  --z-modal: 1100;
+  --z-tooltip: 1200;
+}
 .cv-root {   
   width: 100%;         
   margin: 0 auto;
@@ -84,13 +92,14 @@
   min-height: 0;
   flex: 1; 
   background: #d9d9d9;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .cv-dayColumn {
   border-right: 1px solid #777;
   padding: 10px;
   background: transparent;
+  overflow-y: auto;
   min-height: 100%;
 }
 
@@ -208,7 +217,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--z-overlay);
   animation: fadeIn 0.2s;
 }
 
@@ -320,7 +329,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--z-overlay);
 }
 
 .cv-formBox {

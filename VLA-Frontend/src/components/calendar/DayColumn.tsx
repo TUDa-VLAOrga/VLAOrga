@@ -5,7 +5,7 @@ type DayColumnProps = {
   day: CalendarDay;
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string | undefined;
+  getEventColor?: (event: CalendarEvent) => string ;
 };
 
 /**
@@ -26,25 +26,24 @@ export default function DayColumn({ day, events, onEventClick, getEventColor }: 
     <div className="cv-dayColumn" data-date={day.iso}>
       {events.map((event) => {
         const customColor = getEventColor?.(event);
+
+        const eventProps = {
+          key: event.id,
+          className: `cv-event cv-event-${event.kind} ${getStatusClass(event.status)}`,
+          style: customColor ? { backgroundColor: customColor, borderColor: customColor } : undefined,
+          title: event.shortTitle || event.title,
+          ...(onEventClick && { onClick: () => onEventClick(event) }),
+        };
+
         return (
-        <div
-          key={event.id}
-          className={`cv-event cv-event-${event.kind} ${getStatusClass(
-            event.status
-          )}`}
-          style={customColor ? { 
-              backgroundColor: customColor,
-              borderColor: customColor 
-            } : undefined}
-            title={event.subtitle || event.title}
-            onClick={() => onEventClick && onEventClick(event)}
-          >
-          <div className="cv-eventTitle">{event.title}</div>
-          {event.subtitle && (
-            <div className="cv-eventSubtitle">{event.subtitle}</div>
-          )}
-        </div>
-        );})}
+          <div {...eventProps}>
+            <div className="cv-eventTitle">{event.title}</div>
+            {event.shortTitle && (
+              <div className="cv-eventSubtitle">{event.shortTitle}</div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

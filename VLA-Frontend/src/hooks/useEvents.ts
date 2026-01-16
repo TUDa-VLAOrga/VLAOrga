@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
-import type { EventFormData } from "../components/calendar/EventForm/EventForm";
-import { addDays, toISODateLocal } from "../components/calendar/dateUtils";
+import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
+import { addDays, toISODateLocal, splitDateTime } from "../components/calendar/dateUtils";
 
 /**
  * useEvents manages:
@@ -15,20 +15,20 @@ import { addDays, toISODateLocal } from "../components/calendar/dateUtils";
 export function useEvents(lectures: Lecture[]) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
-
+  const MAX_RECURRENCE_DAYS = 365; // Limit recurrence expansion to 1 year
     //Creates one or many CalendarEvent objects from the EventForm submission
   function handleCreateEvent(formData: EventFormData) {
     // TODO: Backend - POST request to /api/events
-    const startDate = formData.startDateTime.split("T")[0];
-    const newEvents: CalendarEvent[] = [];
-    const startTime = formData.startDateTime.split("T")[1];
-    const endTime = formData.endDateTime.split("T")[1];
+    const { date: startDate, time: startTime } = splitDateTime(formData.startDateTime);
+    const { time: endTime } = splitDateTime(formData.endDateTime);
 
     if (formData.endDateTime <= formData.startDateTime) {
       return;
     }
 
-    if (formData.recurrence) {
+    const newEvents: CalendarEvent[] = [];
+
+    
         // Always create the base event on the explicitly chosen start date.
         newEvents.push({
         id: `event-${Date.now()}-0`,
@@ -37,17 +37,23 @@ export function useEvents(lectures: Lecture[]) {
         calendarId: "user-events",
         kind: formData.category,
         status: formData.status,
-        subtitle: formData.people.join(", "),
+        shortTitle: formData.people.join(", "),
         startTime: startTime,
         endTime: endTime,
         lectureId: formData.lectureId,
       });
 
+      if (formData.recurrence && formData.recurrence.weekdays.length > 0) {
+      const startDateObj = new Date(startDate);
+      const maxEndDate = addDays(startDateObj, MAX_RECURRENCE_DAYS);
+      const recurrenceEndDate = new Date(formData.recurrence.endDate);
+      const endDate =
+        recurrenceEndDate > maxEndDate ? maxEndDate : recurrenceEndDate;
+
       let currentDate = addDays(new Date(startDate), 1);
-      const endDate = new Date(formData.recurrence.endDate);
 
       while (currentDate <= endDate) {
-        const weekday = currentDate.getDay();
+        const weekday = currentDate.getDay() as Weekday;
         if (formData.recurrence.weekdays.includes(weekday)) {
           newEvents.push({
             id: `event-${Date.now()}-${newEvents.length}`,
@@ -56,7 +62,7 @@ export function useEvents(lectures: Lecture[]) {
             calendarId: "user-events",
             kind: formData.category,
             status: formData.status,
-            subtitle: formData.people.join(", "),
+            shortTitle: formData.people.join(", "),
             startTime: startTime,
             endTime: endTime,
             lectureId: formData.lectureId,
@@ -64,20 +70,7 @@ export function useEvents(lectures: Lecture[]) {
         }
         currentDate = addDays(currentDate, 1);
       }
-    } else {
-      newEvents.push({
-        id: `event-${Date.now()}`,
-        title: formData.title,
-        dateISO: startDate,
-        calendarId: "user-events",
-        kind: formData.category,
-        status: formData.status,
-        subtitle: formData.people.join(", "),
-        startTime: startTime,
-        endTime: endTime,
-        lectureId: formData.lectureId,
-      });
-    }
+    } 
      // Append newly created events to state
     setEvents((prev) => [...prev, ...newEvents]);
   }

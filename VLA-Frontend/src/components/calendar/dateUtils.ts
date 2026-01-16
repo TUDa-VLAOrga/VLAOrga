@@ -100,3 +100,15 @@ const dateFmtDE = new Intl.DateTimeFormat("de-DE", {
 export function formatISODateDE(iso: string): string {
   return dateFmtDE.format(parseISODateLocal(iso));
 }
+/**
+ * Splits a datetime-local string (yyyy-mm-ddTHH:mm) into date and time parts.
+ * @param dateTimeString - Format: "2024-01-15T09:00"
+ * @returns Object with date (yyyy-mm-dd) and time (HH:mm)
+ */
+export function splitDateTime(dateTimeString: string): {
+  date: string;
+  time: string;
+} {
+  const [date, time] = dateTimeString.split("T");
+  return { date, time };
+}

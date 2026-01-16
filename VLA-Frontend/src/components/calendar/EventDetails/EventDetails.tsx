@@ -12,7 +12,10 @@ type EventDetailsProps = {
  * If the event is assigned to a lecture, it shows the lecture color + name.
  */
 export default function EventDetails({ event, onClose, lectures = [] }: EventDetailsProps) {
-   const lecture = event.lectureId? lectures.find((lec ) => lec.id === event.lectureId) ?? null : null ;
+    let lecture = null;
+    if (event.lectureId) {
+      lecture = lectures.find(lec => lec.id === event.lectureId) || null;
+    }
   
     return (
     <div className="cv-formOverlay">
@@ -46,7 +49,7 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
             <span className="cv-detailValue">{formatISODateDE(event.dateISO)}</span>
           </div>
 
-            {event.startTime && event.endTime && (
+            {(event.startTime && event.endTime) && (
              <div className="cv-detailRow">
                 <span className="cv-detailLabel">Uhrzeit:</span>
                 <span className="cv-detailValue">
@@ -55,11 +58,11 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
         </div>
         )}
 
-           {/* Subtitle is typically the people list */}
-          {event.subtitle && (
+           {/* shortTitle is typically the people list */}
+          {event.shortTitle && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Personen:</span>
-              <span className="cv-detailValue">{event.subtitle}</span>
+              <span className="cv-detailValue">{event.shortTitle}</span>
             </div>
           )}
          {/* Status is optional; used for UI highlighting elsewhere */}

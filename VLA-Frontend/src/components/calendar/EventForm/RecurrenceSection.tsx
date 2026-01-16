@@ -1,10 +1,13 @@
 import WeekdayPicker from "../WeekdayPicker";
+import type { Weekday } from "./EventForm";
+
+
 
 type RecurrenceSectionProps = {
   isEnabled: boolean;
   onToggle: (enabled: boolean) => void;
-  weekdays: number[];
-  onWeekdaysChange: (weekdays: number[]) => void;
+  weekdays: Weekday[];
+  onWeekdaysChange: (weekdays: Weekday[]) => void;
   endDate: string;
   onEndDateChange: (date: string) => void;
 };

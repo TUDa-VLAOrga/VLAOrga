@@ -4,8 +4,10 @@ import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
 
+export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
+
 export type RecurrencePattern = {
-  weekdays: number[];
+  weekdays: Weekday[];
   endDate: string;
 };
 
@@ -16,7 +18,7 @@ export type EventFormData = {
   startDateTime: string;
   endDateTime: string;
   recurrence?: RecurrencePattern;
-  people: string[];
+  people: string[] | Person[];
   status?: EventStatus;
 };
 
@@ -29,6 +31,14 @@ type EventFormProps = {
   onAddLecture?: (lecture: Lecture) => void;
   onAddCategory?: (category: EventKind) => void;
 };
+
+type Person = {
+  id?: string;
+  name: string;
+  email?: string;
+  role?: string;
+};
+
 
 /**
  * EventForm collects all user inputs needed to create a calendar event.
@@ -55,7 +65,7 @@ export default function EventForm({
   const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
   const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
   const [peopleInput, setPeopleInput] = useState("");
-  const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as number[], endDate: ""});
+  const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
   
  /**
    * When a new lecture is created inside AddLectureSection:
@@ -93,7 +103,7 @@ export default function EventForm({
       people: peopleInput
         .split(",")
         .map((p) => p.trim())
-        .filter(Boolean),
+        .filter((p) =>p !== ""),
     };
 
     if( lectureId) {
@@ -110,7 +120,12 @@ export default function EventForm({
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
-  const isValid = title.trim() && category.trim() && startDateTime && endDateTime && endDateTime > startDateTime;
+  const hasTitle = title.trim() !== "";
+  const hasCategory = category.trim() !== "";
+  const hasStartDateTime = startDateTime !== "";
+  const hasEndDateTime = endDateTime !== "";
+  const isValidTimeRange = endDateTime > startDateTime;
+  const isValid = hasTitle && hasCategory && hasStartDateTime && hasEndDateTime && isValidTimeRange;
 
   return (
     <div className="cv-formOverlay">
