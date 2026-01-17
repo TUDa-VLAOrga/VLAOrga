@@ -18,6 +18,12 @@ services:
       timeout: 5s
       retries: 5
 
+  linus-db:
+    container_name: linus-db
+    extends: 
+      file: ./Linus/docker-compose.yml
+      service: linus-db
+
     # ========== BACKEND ==========
 
   backend:
@@ -33,6 +39,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       - db
+      - linus-db
 
 volumes:
   vlaorga_postgres_data:
