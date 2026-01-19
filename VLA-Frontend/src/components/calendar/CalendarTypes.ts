@@ -3,10 +3,15 @@ export type CalendarDay = {
   iso: string; /** Local date as yyyy-mm-dd (stable key). */
 };
 
-export type CalendarId = string; /** Calendar identifier, e.g. "vla" or "event-calendar", to distinguish multiple calendars/sources. */
-export type EventKind = string; /** e.g. "Aufbau", "VL" to distinguish different event types. */
-export type LectureId = string; /** Lecture identifier to link events to lectures. */
-export type EventId = string; /** Unique event identifier. */
+/** Calendar identifier, e.g. "vla" or "event-calendar", to distinguish multiple calendars/sources. */
+export type CalendarId = string;
+/** e.g. "Aufbau", "VL" to distinguish different event types. */
+export type EventKind = string;
+/** Lecture identifier to link events to lectures. */
+export type LectureId = string;
+/** Unique event identifier. */
+export type EventId = string;
+
 /**
  * Visual/operational status of an event used for UI highlighting.
  *

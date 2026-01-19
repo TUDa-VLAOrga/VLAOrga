@@ -23,6 +23,9 @@ function getStatusClass(status?: EventStatus): string {
  */
 export default function DayColumn({ day, events, onEventClick, getEventColor }: DayColumnProps) {
   return (
+  //TODO: Events rendern
+
+  // data-date helps with debugging (DevTools) and later for tests
     <div className="cv-dayColumn" data-date={day.iso}>
       {events.map((event) => {
         const customColor = getEventColor?.(event);

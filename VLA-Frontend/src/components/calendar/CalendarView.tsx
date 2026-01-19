@@ -2,7 +2,7 @@ import {useState } from "react";
 import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
-import GoToMenu from "./GoToButton"; 
+import GoToMenu from "./GoToButton";
 import EventForm, { type EventFormData } from "./EventForm/EventForm";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
@@ -34,7 +34,7 @@ import { useCategories } from "@/hooks/useCategories";
     setShowEventForm(false);
   }
 
-return (
+  return (
     <div className="cv-root">
       {/* Top toolbar: range navigation + date jump + "create event" */}
       <div className="cv-toolbar" aria-label="Zeitnavigation">
@@ -45,7 +45,7 @@ return (
           type="button"
         />
 
-         <div className="cv-range" aria-label="Datumsbereich">
+        <div className="cv-range" aria-label="Datumsbereich">
           {rangeText}
         </div>
 
