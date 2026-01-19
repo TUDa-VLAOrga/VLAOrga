@@ -1,11 +1,14 @@
 package de.vlaorgatu.vlabackend.calendar.person;
 
+import de.vlaorgatu.vlabackend.calendar.lecture.Lecture;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,4 +46,11 @@ public class Person {
      */
     @Column(name = "linus_user_id")
     private Long linusUserId;
+
+    /**
+     * Lectures held by this person.
+     */
+    // mappedBy indicates that m:n database relation is managed in person Entity
+    @ManyToMany(mappedBy = "persons")
+    private List<Lecture> lectures;
 }
