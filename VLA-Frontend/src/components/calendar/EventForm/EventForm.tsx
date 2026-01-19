@@ -58,7 +58,7 @@ export default function EventForm({
   onAddLecture,
   onAddCategory,
 }: EventFormProps) {
-   // Basic form fields.
+  // Basic form fields.
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<EventKind>("Vorlesung");
   const [lectureId, setLectureId] = useState("");
@@ -67,7 +67,7 @@ export default function EventForm({
   const [peopleInput, setPeopleInput] = useState("");
   const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
   
- /**
+  /**
    * When a new lecture is created inside AddLectureSection:
    * - forward it to the parent (so it ends up in the lecture list)
    * - auto-select it for the current event
@@ -176,7 +176,7 @@ export default function EventForm({
             />
           </div>
 
-           <div className="cv-formGroup">
+          <div className="cv-formGroup">
             <label htmlFor="endDateTime" className="cv-formLabel">
               Ende (Datum & Uhrzeit) *
             </label>

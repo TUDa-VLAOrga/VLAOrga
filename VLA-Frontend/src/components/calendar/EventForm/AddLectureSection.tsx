@@ -60,7 +60,7 @@ export default function AddLectureSection({
         </button>
       </div>
 
-{/* Inline section for creating a new lecture */}
+      {/* Inline section for creating a new lecture */}
       {showAddForm && (
         <div className="cv-addSection">
           <input
@@ -95,7 +95,7 @@ export default function AddLectureSection({
           </button>
         </div>
       )}
-        {/* Dropdown to select an existing lecture */}
+      {/* Dropdown to select an existing lecture */}
       <select
         id="lecture"
         className="cv-formSelect"

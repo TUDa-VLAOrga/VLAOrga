@@ -5,7 +5,7 @@ type DayColumnProps = {
   day: CalendarDay;
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string ;
+  getEventColor?: (event: CalendarEvent) => string | undefined;
 };
 
 /**

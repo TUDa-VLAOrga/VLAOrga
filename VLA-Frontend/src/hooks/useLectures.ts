@@ -10,13 +10,13 @@ import type { Lecture } from "../components/calendar/CalendarTypes";
 export function useLectures() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
 
-   /**
+  /**
    * Add a new lecture to the list.
    */
   function handleAddLecture(lecture: Lecture) {
     setLectures((prev) => [...prev, lecture]);
   }
-    /**
+  /**
    * Remove a lecture by id.
    */
   function handleDeleteLecture(id: string) {

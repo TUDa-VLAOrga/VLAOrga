@@ -16,7 +16,7 @@ export function useEvents(lectures: Lecture[]) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const MAX_RECURRENCE_DAYS = 365; // Limit recurrence expansion to 1 year
-    //Creates one or many CalendarEvent objects from the EventForm submission
+  //Creates one or many CalendarEvent objects from the EventForm submission
   function handleCreateEvent(formData: EventFormData) {
     // TODO: Backend - POST request to /api/events
     const { date: startDate, time: startTime } = splitDateTime(formData.startDateTime);
@@ -29,21 +29,21 @@ export function useEvents(lectures: Lecture[]) {
     const newEvents: CalendarEvent[] = [];
 
     
-        // Always create the base event on the explicitly chosen start date.
-        newEvents.push({
-        id: `event-${Date.now()}-0`,
-        title: formData.title,
-        dateISO: startDate,
-        calendarId: "user-events",
-        kind: formData.category,
-        status: formData.status,
-        shortTitle: formData.people.join(", "),
-        startTime: startTime,
-        endTime: endTime,
-        lectureId: formData.lectureId,
-      });
+    // Always create the base event on the explicitly chosen start date.
+    newEvents.push({
+      id: `event-${Date.now()}-0`,
+      title: formData.title,
+      dateISO: startDate,
+      calendarId: "user-events",
+      kind: formData.category,
+      status: formData.status,
+      shortTitle: formData.people.join(", "),
+      startTime: startTime,
+      endTime: endTime,
+      lectureId: formData.lectureId,
+    });
 
-      if (formData.recurrence && formData.recurrence.weekdays.length > 0) {
+    if (formData.recurrence && formData.recurrence.weekdays.length > 0) {
       const startDateObj = new Date(startDate);
       const maxEndDate = addDays(startDateObj, MAX_RECURRENCE_DAYS);
       const recurrenceEndDate = new Date(formData.recurrence.endDate);
@@ -71,7 +71,7 @@ export function useEvents(lectures: Lecture[]) {
         currentDate = addDays(currentDate, 1);
       }
     } 
-     // Append newly created events to state
+    // Append newly created events to state
     setEvents((prev) => [...prev, ...newEvents]);
   }
 
@@ -83,7 +83,7 @@ export function useEvents(lectures: Lecture[]) {
     setSelectedEvent(null);
   }
 
- /**
+  /**
    * Derived map for rendering:
    * dateISO -> list of events on that date.
    */

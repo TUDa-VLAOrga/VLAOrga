@@ -29,7 +29,7 @@ export default function RecurrenceSection({
 }: RecurrenceSectionProps) {
   return (
     <>
-          {/* Enable/disable recurrence */}
+      {/* Enable/disable recurrence */}
       <div className="cv-formGroup">
         <label className="cv-formCheckbox">
           <input
@@ -40,7 +40,7 @@ export default function RecurrenceSection({
           <span>Wiederholung</span>
         </label>
       </div>
-    {/* Only show the configuration fields if recurrence is enabled */}
+      {/* Only show the configuration fields if recurrence is enabled */}
       {isEnabled && (
         <>
           <div className="cv-formGroup">

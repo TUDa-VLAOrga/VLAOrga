@@ -17,7 +17,8 @@ export default function WeekGrid({ days, eventsByDate = {}, onEventClick, getEve
   return (
     <div className="cv-grid">
       {days.map((day) => (
-        <DayColumn key={day.iso} day={day} events={eventsByDate[day.iso] || []} onEventClick={onEventClick} getEventColor={getEventColor} />
+        <DayColumn key={day.iso} day={day} events={eventsByDate[day.iso] || []} onEventClick={onEventClick} 
+          getEventColor={getEventColor} />
       ))}
     </div>
   );

@@ -10,22 +10,22 @@ const DEFAULT_END_TIME = "10:00";
  */
 
 export function useEventForm(initialDate?: string) {
-    // Main form fields (excluding recurrence fields).
+  // Main form fields (excluding recurrence fields).
   const [formData, setFormData] = useState<{
-  title: string;
-  category: EventKind | ""; 
-  lectureId: string;
-  startDateTime: string;
-  endDateTime: string;
-  peopleInput: string;
-}>({
-  title: "",
-  category: "", 
-  lectureId: "",
-  startDateTime: initialDate ? `${initialDate}T${DEFAULT_START_TIME}` : "",
-  endDateTime: initialDate ? `${initialDate}T${DEFAULT_END_TIME}` : "",
-  peopleInput: "",
-});
+    title: string;
+    category: EventKind | ""; 
+    lectureId: string;
+    startDateTime: string;
+    endDateTime: string;
+    peopleInput: string;
+  }>({
+    title: "",
+    category: "", 
+    lectureId: "",
+    startDateTime: initialDate ? `${initialDate}T${DEFAULT_START_TIME}` : "",
+    endDateTime: initialDate ? `${initialDate}T${DEFAULT_END_TIME}` : "",
+    peopleInput: "",
+  });
   // Recurrence configuration is stored separately to keep concerns split.
   const [recurrence, setRecurrence] = useState({
     enabled: false,

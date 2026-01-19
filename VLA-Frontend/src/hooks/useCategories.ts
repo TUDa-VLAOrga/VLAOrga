@@ -7,7 +7,7 @@ import type { EventKind } from "../components/calendar/CalendarTypes";
  */
 export function useCategories() {
   const [categories, setCategories] = useState<EventKind[]>([]);
-    /**
+  /**
    * Adds a category if it doesn't exist yet.
    */
   function handleAddCategory(category: EventKind) {

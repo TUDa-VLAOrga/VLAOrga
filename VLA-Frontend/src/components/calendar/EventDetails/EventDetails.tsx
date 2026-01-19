@@ -12,12 +12,12 @@ type EventDetailsProps = {
  * If the event is assigned to a lecture, it shows the lecture color + name.
  */
 export default function EventDetails({ event, onClose, lectures = [] }: EventDetailsProps) {
-    let lecture = null;
-    if (event.lectureId) {
-      lecture = lectures.find(lec => lec.id === event.lectureId) || null;
-    }
+  let lecture = null;
+  if (event.lectureId) {
+    lecture = lectures.find(lec => lec.id === event.lectureId) || null;
+  }
   
-    return (
+  return (
     <div className="cv-formOverlay">
       <div className="cv-formBox">
         <h2 className="cv-formTitle">{event.title}</h2>
@@ -28,19 +28,19 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
             <span className="cv-detailValue">{event.kind}</span>
           </div>
 
-           {/* Lecture details (only if lecture is assigned) */}
-           {lecture && (
+          {/* Lecture details (only if lecture is assigned) */}
+          {lecture && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Vorlesung:</span>
               <span className="cv-detailValue">
-              <span className="cv-detailValueLecture ">
-                <span
-                  className="cv-lectureSwatch"
-                  style={{ backgroundColor: lecture.color }}
-                />
-                <span className="cv-lectureName">{lecture.name}</span>
+                <span className="cv-detailValueLecture ">
+                  <span
+                    className="cv-lectureSwatch"
+                    style={{ backgroundColor: lecture.color }}
+                  />
+                  <span className="cv-lectureName">{lecture.name}</span>
+                </span>
               </span>
-            </span>
             </div>
           )}
 
@@ -49,23 +49,23 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
             <span className="cv-detailValue">{formatISODateDE(event.dateISO)}</span>
           </div>
 
-            {(event.startTime && event.endTime) && (
-             <div className="cv-detailRow">
-                <span className="cv-detailLabel">Uhrzeit:</span>
-                <span className="cv-detailValue">
-            {event.startTime} – {event.endTime}
-            </span>
-        </div>
-        )}
+          {(event.startTime && event.endTime) && (
+            <div className="cv-detailRow">
+              <span className="cv-detailLabel">Uhrzeit:</span>
+              <span className="cv-detailValue">
+                {event.startTime} – {event.endTime}
+              </span>
+            </div>
+          )}
 
-           {/* shortTitle is typically the people list */}
+          {/* shortTitle is typically the people list */}
           {event.shortTitle && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Personen:</span>
               <span className="cv-detailValue">{event.shortTitle}</span>
             </div>
           )}
-         {/* Status is optional; used for UI highlighting elsewhere */}
+          {/* Status is optional; used for UI highlighting elsewhere */}
           {event.status && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Status:</span>
