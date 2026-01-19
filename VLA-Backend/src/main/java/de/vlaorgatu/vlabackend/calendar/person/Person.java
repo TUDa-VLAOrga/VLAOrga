@@ -27,10 +27,16 @@ public class Person {
     private Long id;
 
     /**
+     * Name of this person.
+     */
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    /**
      * Personal notes, specifying e.g. equipment preferences of this lecturer.
      */
-    @Column(name = "notes", nullable = false)
-    private String notes = "";
+    @Column(name = "note", nullable = false)
+    private String note = "";
 
     /**
      * ID of this user in Linus, if a corresponding user exists there.
