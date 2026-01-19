@@ -39,7 +39,7 @@ export default function Draggable(props: DraggableProps){
         // Safety padding for dragging
         if(clientX - boundingBox.left < noInteractionPadding) return;
         if(boundingBox.right - clientX < noInteractionPadding) return;
-        if(clientY - boundingBox.top < noInteractionPadding) return;
+        // if(clientY - boundingBox.top < noInteractionPadding) return;
         if(boundingBox.bottom - clientY < noInteractionPadding) return;
 
         setDragOffset({
