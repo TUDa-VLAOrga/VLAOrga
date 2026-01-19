@@ -1,13 +1,15 @@
+import CalendarView from "../components/calendar/CalendarView";
+
 import SSEComponent from "@/components/sse/SseComponent";
-import Calendar from "../components/calendar/Calendar";
+
 
 export default function CalendarPage() {
   return (
     <>
-    <div>
-      <Calendar />
-    </div>
-    <SSEComponent></SSEComponent>
+      <div>
+        <CalendarView />
+      </div>
+      <SSEComponent></SSEComponent>
     </>
   );
 }

@@ -1,9 +1,8 @@
 <comment on what this PR does>
 
-closes issue #<number>
+closes #<issue number>
 
 ---
-
 
 ## Code Review Checklist
 
