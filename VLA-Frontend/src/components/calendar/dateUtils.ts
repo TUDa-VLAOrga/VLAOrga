@@ -90,10 +90,10 @@ export function formatRangeShortDE(start: Date, end: Date) {
  * @param b The second time to compare
  * Returns true iff a and b are on the same day in UTC
  */
-export function compareSameUTCDay(a: Date, b: Date){
+export function compareSameDay(a: Date, b: Date){
   // Conversion to remove time zone dependenies
-    
-  return a.getDay() == b.getDay() &&
+
+  return a.getDate() == b.getDate() &&
     a.getMonth() == b.getMonth() &&
     a.getFullYear() == b.getFullYear();
 }

@@ -1,6 +1,6 @@
 
 import type { CalendarDay } from "./CalendarTypes";
-import { compareSameUTCDay } from "./dateUtils";
+import { compareSameDay } from "./dateUtils";
 
 type DayColumnProps = {
   day: CalendarDay;
@@ -17,7 +17,7 @@ export default function DayColumn({ day }: DayColumnProps) {
 
   // data-date helps with debugging (DevTools) and later for tests
     <div 
-      id={compareSameUTCDay(day.date, new Date()) ? "todaysColumn" : undefined}
+      id={compareSameDay(day.date, new Date()) ? "todaysColumn" : undefined}
       className="cv-dayColumn"
       data-date={day.iso}
     >

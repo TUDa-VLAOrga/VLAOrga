@@ -1,6 +1,6 @@
 
 import type { CalendarDay } from "./CalendarTypes";
-import { compareSameUTCDay, formatDDMM } from "./dateUtils";
+import { compareSameDay, formatDDMM } from "./dateUtils";
 
 type Props = {
   days: CalendarDay[]; // Mo–Fr
@@ -13,7 +13,7 @@ export default function WeekHeader({ days }: Props) {
     <div className="cv-header">
       {days.map((day) => (
         <div
-          id={compareSameUTCDay(day.date, new Date()) ? "todaysColumnHeader" : ""}
+          id={compareSameDay(day.date, new Date()) ? "todaysColumnHeader" : ""}
           key={day.iso} 
           className="cv-headerCell"
         >
