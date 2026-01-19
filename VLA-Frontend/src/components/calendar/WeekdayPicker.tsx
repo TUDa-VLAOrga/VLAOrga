@@ -5,7 +5,7 @@ type WeekdayPickerProps = {
   onDaysChange: (days: Weekday[]) => void;
 };
 
-const All_WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5]; // Sunday to Saturday
+const WORKDAYS: Weekday[] = [1, 2, 3, 4, 5]; // Sunday to Saturday
 
 const WEEKDAY_LABELS: Record<Weekday, string> = {
   0: "So",
@@ -31,7 +31,7 @@ export default function WeekdayPicker({
 
   return (
     <div className="cv-weekdayPicker">
-      {All_WEEKDAYS.map((day) => (
+      {WORKDAYS.map((day) => (
         <button
           key={day}
           type="button"

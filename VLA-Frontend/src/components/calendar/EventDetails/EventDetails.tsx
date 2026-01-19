@@ -49,11 +49,11 @@ export default function EventDetails({ event, onClose, lectures = [] }: EventDet
             <span className="cv-detailValue">{formatISODateDE(event.dateISO)}</span>
           </div>
 
-          {(event.startTime && event.endTime) && (
+          {(event.displayedStartTime && event.displayedEndTime) && (
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Uhrzeit:</span>
               <span className="cv-detailValue">
-                {event.startTime} – {event.endTime}
+                {event.displayedStartTime} – {event.displayedEndTime}
               </span>
             </div>
           )}

@@ -38,8 +38,8 @@ export function useEvents(lectures: Lecture[]) {
       kind: formData.category,
       status: formData.status,
       shortTitle: formData.people.join(", "),
-      startTime: startTime,
-      endTime: endTime,
+      displayedStartTime: startTime,
+      displayedEndTime: endTime,
       lectureId: formData.lectureId,
     });
 
@@ -63,8 +63,8 @@ export function useEvents(lectures: Lecture[]) {
             kind: formData.category,
             status: formData.status,
             shortTitle: formData.people.join(", "),
-            startTime: startTime,
-            endTime: endTime,
+            displayedStartTime: startTime,
+            displayedEndTime: endTime,
             lectureId: formData.lectureId,
           });
         }

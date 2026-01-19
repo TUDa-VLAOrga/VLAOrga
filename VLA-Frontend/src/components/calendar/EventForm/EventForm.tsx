@@ -171,7 +171,14 @@ export default function EventForm({
               type="datetime-local"
               className="cv-formInput"
               value={startDateTime}
-              onChange={(e) => setStartDateTime(e.target.value)}
+              onChange={(e) => {
+                const newStart = e.target.value;
+                setStartDateTime(newStart);
+                // Auto-adjust end time if it's before new start time
+                if (!endDateTime || endDateTime < newStart) {
+                  setEndDateTime(newStart);
+                }
+              }}
               required
             />
           </div>
