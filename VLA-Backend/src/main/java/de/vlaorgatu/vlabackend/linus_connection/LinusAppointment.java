@@ -6,13 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
 
 /**
  * Represents a lecture in a certain semester. For example "Physik I, WS 25/26".
  */
+@Getter
 @Entity
 @Table(name = "reservation")
-public class Appointment {
+public class LinusAppointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -52,62 +54,4 @@ public class Appointment {
      */
     @Column(name = "name")
     private String name;
-
-    //getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public String getOrdertime() {
-        return ordertime;
-    }
-
-    public Long getStatus() {
-        return status;
-    }
-
-    public String getDate_time() {
-        return date_time;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public void setOrdertime(String ordertime) {
-        this.ordertime = ordertime;
-    }
-
-    public void setStatus(Long status) {
-        this.status = status;
-    }
-
-    public void setDate_time(String date_time) {
-        this.date_time = date_time;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

@@ -15,7 +15,7 @@ import javax.sql.DataSource;
         basePackages = "de.vlaorgatu.vlabackend.linus_connection",
         entityManagerFactoryRef = "appointmentEntityManager",
         transactionManagerRef = "appointmentTransactionManager")
-public class AppointmentAutoConfiguration {
+public class LinusAppointmentAutoConfiguration {
     @Bean
     @ConfigurationProperties(prefix="spring.second-datasource")
     public DataSource productDataSource() {

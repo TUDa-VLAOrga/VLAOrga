@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 /**
- * REST endpoints for managing {@link Appointment} entities.
+ * REST endpoints for managing {@link LinusAppointment} entities.
  */
 @Controller
 @RequestMapping("/api/linus/appointment")
-class AppointmentController {
+class LinusAppointmentController {
 
-    private final AppointmentRepository appointmentRepository;
+    private final LinusAppointmentRepository appointmentRepository;
 
-    public AppointmentController(AppointmentRepository appointmentRepository) {
+    public LinusAppointmentController(LinusAppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
     }
 
@@ -25,7 +25,7 @@ class AppointmentController {
      * List all lectures.
      */
     @GetMapping()
-    public List<Appointment> listAppointments() {
+    public List<LinusAppointment> listAppointments() {
         return appointmentRepository.findAll();
     }
 
@@ -33,7 +33,7 @@ class AppointmentController {
      * Get a lecture by id.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) {
+    public ResponseEntity<LinusAppointment> getAppointmentById(@PathVariable Long id) {
         return appointmentRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
