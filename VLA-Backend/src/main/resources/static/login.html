@@ -1,1 +1,19 @@
 Hello, I am a sophisticated login form
+
+<button onclick="tryAuth();">Auth</button>
+
+<script>
+    function tryAuth() {
+        const formData = new FormData();
+        formData.append("username", "user");
+        formData.append("password", prompt("Input secret CLI password"));
+
+        fetch("http://localhost:8080/loginProcessing", {
+            method: "POST",
+            body: formData,
+            redirect: "manual",
+        }).then(res => {
+            alert("Try another page")
+        })
+    }
+</script>
