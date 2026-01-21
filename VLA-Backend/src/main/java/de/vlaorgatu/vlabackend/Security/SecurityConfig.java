@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,11 +20,12 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private UserRepository userRepository;
-
     @Bean
     @Profile("prod")
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,13 +33,12 @@ public class SecurityConfig {
                 // TODO: Should be enabled
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login.html")
-                        .loginProcessingUrl("/loginProcessing")
                         .permitAll()
+                        .defaultSuccessUrl("/calendar", true)
                 );
 
         return http.build();
@@ -47,6 +48,12 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails dev = new User("dev", passwordEncoder.encode("dev"), new LinkedList<GrantedAuthority>());
+        return new InMemoryUserDetailsManager(dev);
     }
 
     // Unsecure Profile for testing
