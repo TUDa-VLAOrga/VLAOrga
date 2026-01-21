@@ -37,7 +37,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("prod")
+    @Profile({"prod", "dev"})
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(Customizer.withDefaults())
