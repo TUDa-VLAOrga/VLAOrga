@@ -35,7 +35,11 @@ public class SecurityConfig {
     @Profile("unsecure")
     SecurityFilterChain unsecureFilterChain(HttpSecurity http) throws Exception {
         http.
-                authorizeHttpRequests(auth -> auth
+                /*
+                Do not use this in production!
+                This disables **all** authentication and authorization
+                */
+                        authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 );
         return http.build();
