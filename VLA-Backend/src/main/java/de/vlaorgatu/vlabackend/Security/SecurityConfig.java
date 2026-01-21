@@ -57,7 +57,7 @@ public class SecurityConfig {
     // dev user with password dev
     @Bean
     @Profile("dev")
-    UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+    UserDetailsService userDetailsServiceDevelopment(PasswordEncoder passwordEncoder) {
         return new InMemoryUserDetailsManager(User.builder()
                 .username("dev")
                 .password(passwordEncoder.encode("dev")).build()
@@ -67,13 +67,14 @@ public class SecurityConfig {
     // Unsecure Profile for testing
     @Bean
     @Profile("unsecure")
-    SecurityFilterChain unsecureFilterChain(HttpSecurity http) throws Exception {
-        http.
+    SecurityFilterChain securityFilterChainUnsecure(HttpSecurity http) throws Exception {
+        http
                 /*
                 Do not use this in production!
                 This disables **all** authentication and authorization
                 */
-                        authorizeHttpRequests(auth -> auth
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 );
         return http.build();
