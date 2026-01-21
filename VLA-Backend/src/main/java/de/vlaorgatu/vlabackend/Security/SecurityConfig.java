@@ -30,11 +30,16 @@ import java.util.LinkedList;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    // BCrypt seems to be the accepted default, so we are choosing it here as well.
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Bean
     @Profile("prod")
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // TODO: Should be enabled
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/csrf").permitAll()
@@ -49,16 +54,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // BCrypt seems to be the accepted default, so we are choosing it here as well.
+    // dev user with password dev
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
+    @Profile("dev")
     UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails dev = new User("dev", passwordEncoder.encode("dev"), new LinkedList<GrantedAuthority>());
-        return new InMemoryUserDetailsManager(dev);
+        return new InMemoryUserDetailsManager(User.builder()
+                .username("dev")
+                .password(passwordEncoder.encode("dev")).build()
+        );
     }
 
     // Unsecure Profile for testing
