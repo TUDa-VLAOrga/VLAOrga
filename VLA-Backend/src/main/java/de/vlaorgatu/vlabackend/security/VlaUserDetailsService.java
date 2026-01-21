@@ -1,15 +1,13 @@
-package de.vlaorgatu.vlabackend.Security;
+package de.vlaorgatu.vlabackend.security;
 
 import de.vlaorgatu.vlabackend.user.User;
 import de.vlaorgatu.vlabackend.user.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,18 +24,26 @@ public class VlaUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        long userID;
+        long userId;
 
         try {
-            userID = Long.parseLong(username);
-        } catch (NumberFormatException _e) {
+            userId = Long.parseLong(username);
+        } catch (NumberFormatException e) {
             log.error("Invalid username format provided");
-            throw new UsernameNotFoundException("Username must be convertable to a long, id: " + username);
+            throw new UsernameNotFoundException(
+                    "Username must be convertable to a long, id: " + username
+            );
         }
 
-        Optional<User> loginUser = userRepository.findById(userID);
-        if (loginUser.isEmpty()) log.error("User not found");
-        loginUser.orElseThrow(() -> new UsernameNotFoundException("Username not found: " + username));
+        Optional<User> loginUser = userRepository.findById(userId);
+
+        if (loginUser.isEmpty()) {
+            log.error("User not found");
+        }
+
+        loginUser.orElseThrow(() -> new UsernameNotFoundException(
+                "Username not found: " + username)
+        );
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(loginUser.get().getId() + "")
