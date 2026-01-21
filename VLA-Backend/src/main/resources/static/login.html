@@ -4,10 +4,19 @@ Hello, I am a sophisticated login form
     <br>
     <input type="text" name="username" placeholder="User"><br><br>
     <input type="text" name="password" placeholder="Password"><br><br>
+    <input type="hidden" name="_csrf" id="csrf">
     <button type="submit">Submit</button>
 </form>
 
 <script>
+    fetch('/csrf', {
+        credentials: 'same-origin'
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('csrf').value = data.token;
+        });
+
     if (new URLSearchParams(document.location.search).has("error")) {
         document.body.innerHTML +=
             (
