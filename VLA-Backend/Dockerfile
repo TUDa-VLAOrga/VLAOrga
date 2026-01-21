@@ -1,8 +1,17 @@
 # remember to adjust CI java version when changing version here
 FROM gradle:8-jdk21 AS build
 WORKDIR /workspace
-COPY --chown=gradle:gradle . .
-RUN gradle --no-daemon clean bootJar
+
+# Checksytle configs for testing later
+COPY --chown=gradle:gradle config config
+
+# Download all dependencies needed for the entire build process once
+COPY --chown=gradle:gradle gradle gradlew build.gradle settings.gradle ./
+RUN gradle --no-daemon dependencies
+
+# Copy only the minimum to container
+COPY --chown=gradle:gradle src src
+RUN gradle --no-daemon bootJar
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
