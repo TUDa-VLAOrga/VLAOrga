@@ -3,6 +3,11 @@
 To make the managment of environment variables easiser and more scalable,
 you should only introduce new environment variables in the top-level .env.
 
+.env.template should always container the docker configuration
+.env has to be modified!
+Do not forget e.g. to change the host from db to localhost!
+
+
 The variable of the top-level should be delegated in the following Dockerfiles.
 
 ## Inteliji integration
@@ -39,3 +44,6 @@ correctness of an environment variable!
 
 Some environment variables depend on each other, check which other
 environment variables depend on the one you are modifying.
+
+Always keep an eye on which .env file you are editing
+Changes in .env.template won't help you if you registered .env in inteliji!
