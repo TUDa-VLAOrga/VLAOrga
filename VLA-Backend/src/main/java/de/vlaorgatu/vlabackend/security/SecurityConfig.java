@@ -13,6 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * This class configures the basic authentication schema.
+ * The retrieval of the object that is used for password checking in prod
+ * can be found at {@link VlaUserDetailsService}.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -22,6 +27,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Creates the security mechanism behind our authentication in all secured profiles.
+     * Any unauthenticated request will be forwarded to the static login.html.
+     * Authentication is CSRF protected.
+     * Forces a forward to /calendar on successful authentication.
+     */
     @Bean
     @Profile({"prod", "dev"})
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,17 +51,24 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // dev user with password dev
+    /**
+     * This is an insecure profile for testing.
+     * Only the user dev with password dev can authenticate in this profile.
+     */
     @Bean
     @Profile("dev")
     UserDetailsService userDetailsServiceDevelopment(PasswordEncoder passwordEncoder) {
         return new InMemoryUserDetailsManager(User.builder()
             .username("dev")
-            .password(passwordEncoder.encode("dev")).build()
+            .password(passwordEncoder.encode("dev"))
+            .build()
         );
     }
 
-    // Unsecure Profile for testing
+    /**
+     * This is an unsecure profile that may be used for debugging.
+     * It disables all authentication and security measures!
+     */
     @Bean
     @Profile("unsecure")
     SecurityFilterChain securityFilterChainUnsecure(HttpSecurity http) throws Exception {
