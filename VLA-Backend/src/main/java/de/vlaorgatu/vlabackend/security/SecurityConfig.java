@@ -26,16 +26,16 @@ public class SecurityConfig {
     @Profile({"prod", "dev"})
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(Customizer.withDefaults())
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/csrf").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login.html")
-                        .permitAll()
-                        .defaultSuccessUrl("/calendar", true)
-                );
+            .csrf(Customizer.withDefaults())
+            .authorizeHttpRequests(requests -> requests
+                .requestMatchers("/csrf").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login.html")
+                .permitAll()
+                .defaultSuccessUrl("/calendar", true)
+            );
 
         return http.build();
     }
@@ -45,8 +45,8 @@ public class SecurityConfig {
     @Profile("dev")
     UserDetailsService userDetailsServiceDevelopment(PasswordEncoder passwordEncoder) {
         return new InMemoryUserDetailsManager(User.builder()
-                .username("dev")
-                .password(passwordEncoder.encode("dev")).build()
+            .username("dev")
+            .password(passwordEncoder.encode("dev")).build()
         );
     }
 
@@ -55,14 +55,14 @@ public class SecurityConfig {
     @Profile("unsecure")
     SecurityFilterChain securityFilterChainUnsecure(HttpSecurity http) throws Exception {
         http
-                /*
-                Do not use this in production!
-                This disables **all** authentication and authorization
-                */
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
+            /*
+            Do not use this in production!
+            This disables **all** authentication and authorization
+            */
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()
+            );
         return http.build();
     }
 }

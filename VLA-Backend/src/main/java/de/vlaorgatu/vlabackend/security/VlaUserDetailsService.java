@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.security;
 
 import de.vlaorgatu.vlabackend.user.User;
 import de.vlaorgatu.vlabackend.user.UserRepository;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -9,8 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @Profile("prod")
@@ -31,7 +30,7 @@ public class VlaUserDetailsService implements UserDetailsService {
         } catch (NumberFormatException e) {
             log.error("Invalid username format provided");
             throw new UsernameNotFoundException(
-                    "Username must be convertable to a long, id: " + username
+                "Username must be convertable to a long, id: " + username
             );
         }
 
@@ -42,12 +41,12 @@ public class VlaUserDetailsService implements UserDetailsService {
         }
 
         loginUser.orElseThrow(() -> new UsernameNotFoundException(
-                "Username not found: " + username)
+            "Username not found: " + username)
         );
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(loginUser.get().getId() + "")
-                .password(loginUser.get().getPassword())
-                .build();
+            .username(loginUser.get().getId() + "")
+            .password(loginUser.get().getPassword())
+            .build();
     }
 }
