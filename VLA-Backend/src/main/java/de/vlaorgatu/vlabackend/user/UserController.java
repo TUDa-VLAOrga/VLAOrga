@@ -2,7 +2,12 @@ package de.vlaorgatu.vlabackend.user;
 
 import java.util.List;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,18 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
-
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
-    /**
-     * Creates a new {@code UserController}.
-     *
-     * @param userRepository repository used for user persistence operations
-     */
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     /**
      * Returns a list of all users.
@@ -61,13 +58,14 @@ public class UserController {
      */
     @PostMapping
     public User createUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     /**
      * Updates an existing user.
      *
-     * @param id user ID
+     * @param id   user ID
      * @param user updated user data
      * @return updated user if found, otherwise 404
      */
