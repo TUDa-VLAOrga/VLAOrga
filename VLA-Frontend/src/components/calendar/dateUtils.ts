@@ -111,7 +111,7 @@ export function splitDateTime(dateTimeString: string): {
 } {
   const [date, time] = dateTimeString.split("T");
   return { date, time };
-
+}
 
 /**
  * Compares two days while ignoring the clock time on a given day
@@ -125,5 +125,4 @@ export function compareSameDay(a: Date, b: Date){
   return a.getDate() == b.getDate() &&
     a.getMonth() == b.getMonth() &&
     a.getFullYear() == b.getFullYear();
-
 }

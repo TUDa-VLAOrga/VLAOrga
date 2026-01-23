@@ -42,21 +42,22 @@ export default function DayColumn({ day, events, onEventClick, getEventColor }: 
         };
 
         return (
-          <div {...eventProps}>
+          <><div {...eventProps}>
             <div className="cv-eventTitle">{event.title}</div>
             {event.shortTitle && (
               <div className="cv-eventSubtitle">{event.shortTitle}</div>
             )}
-          </div>
-           <div 
-      id={compareSameDay(day.date, new Date()) ? "todaysColumn" : undefined}
-      className="cv-dayColumn"
-      data-date={day.iso}
-    >
-      {/* Placeholder – events will be rendered here later */}
-    </div>
+          </div><div
+            id={compareSameDay(day.date, new Date()) ? "todaysColumn" : undefined}
+            className="cv-dayColumn"
+            data-date={day.iso}
+          >
+              {/* Placeholder – events will be rendered here later */}
+            </div></>
         );
       })}
    
+    </div>
   );
-}
+} 
+
