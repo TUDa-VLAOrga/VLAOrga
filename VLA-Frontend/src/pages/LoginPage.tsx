@@ -49,31 +49,6 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-
-        <Draggable>
-          <div style={{
-            backgroundColor: "#0F0",
-            height: "100px",
-            width: "100px",
-            resize: "both",
-            overflow: "auto",
-          }}>
-            Test!
-          </div>
-        </Draggable>
-
-        <Draggable>
-          <div style={{
-            backgroundColor: "#F00",
-            height: "100px",
-            width: "100px",
-            resize: "both",
-            overflow: "auto",
-          }}>
-            Test!
-          </div>
-        </Draggable>
-
       </div>
     </DragContainer>
   );
