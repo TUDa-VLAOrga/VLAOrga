@@ -319,6 +319,7 @@
   cursor: not-allowed;
 }
 
+
 /* Event Form Overlay */
 .cv-formOverlay {
   position: fixed;
@@ -704,3 +705,12 @@
   border-width: 3px;
   transform: scale(1.15);
 }
+
+#todaysColumnHeader {
+  background-color: #9f9f9f;
+}
+
+#todaysColumn {
+  background-color: #b9b9b9;
+}
+

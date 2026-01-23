@@ -1,5 +1,8 @@
 
+
 import type { CalendarDay, CalendarEvent , EventStatus } from "./CalendarTypes";
+import { compareSameDay } from "./dateUtils";
+
 
 type DayColumnProps = {
   day: CalendarDay;
@@ -45,8 +48,15 @@ export default function DayColumn({ day, events, onEventClick, getEventColor }: 
               <div className="cv-eventSubtitle">{event.shortTitle}</div>
             )}
           </div>
+           <div 
+      id={compareSameDay(day.date, new Date()) ? "todaysColumn" : undefined}
+      className="cv-dayColumn"
+      data-date={day.iso}
+    >
+      {/* Placeholder – events will be rendered here later */}
+    </div>
         );
       })}
-    </div>
+   
   );
 }

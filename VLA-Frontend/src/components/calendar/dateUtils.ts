@@ -111,4 +111,19 @@ export function splitDateTime(dateTimeString: string): {
 } {
   const [date, time] = dateTimeString.split("T");
   return { date, time };
+
+
+/**
+ * Compares two days while ignoring the clock time on a given day
+ * @param a The first time to compare
+ * @param b The second time to compare
+ * Returns true iff a and b are on the same day in UTC
+ */
+export function compareSameDay(a: Date, b: Date){
+  // Conversion to remove time zone dependenies
+
+  return a.getDate() == b.getDate() &&
+    a.getMonth() == b.getMonth() &&
+    a.getFullYear() == b.getFullYear();
+
 }
