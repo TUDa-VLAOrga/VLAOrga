@@ -52,8 +52,8 @@ export default function DayColumn({ day, events, onEventClick, getEventColor }: 
             className="cv-dayColumn"
             data-date={day.iso}
           >
-              {/* Placeholder – events will be rendered here later */}
-            </div></>
+            {/* Placeholder – events will be rendered here later */}
+          </div></>
         );
       })}
    
