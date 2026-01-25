@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { EventKind, EventStatus , Lecture } from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
+import { addMinutesToDateTime } from "../dateUtils";
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 
@@ -67,6 +68,12 @@ export default function EventForm({
   const [peopleInput, setPeopleInput] = useState("");
   const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
   
+  useEffect(() => {
+  // Wenn startDateTime gesetzt ist, aber endDateTime fehlt oder davor liegt
+  if (startDateTime ) {
+    setEndDateTime(addMinutesToDateTime(startDateTime, 100));
+  }
+}, [startDateTime]);
   /**
    * When a new lecture is created inside AddLectureSection:
    * - forward it to the parent (so it ends up in the lecture list)
@@ -86,6 +93,7 @@ export default function EventForm({
     onAddCategory?.(categoryName);
     setCategory(categoryName);
   };
+
   /**
    * Transform UI state into EventFormData and submit to parent.
    * - Parses peopleInput into a string array
@@ -172,12 +180,7 @@ export default function EventForm({
               className="cv-formInput"
               value={startDateTime}
               onChange={(e) => {
-                const newStart = e.target.value;
-                setStartDateTime(newStart);
-                // Auto-adjust end time if it's before new start time
-                if (!endDateTime || endDateTime < newStart) {
-                  setEndDateTime(newStart);
-                }
+                setStartDateTime(e.target.value);
               }}
               required
             />

@@ -126,3 +126,27 @@ export function compareSameDay(a: Date, b: Date){
     a.getMonth() == b.getMonth() &&
     a.getFullYear() == b.getFullYear();
 }
+
+/**
+ * Adds minutes to a datetime-local string (yyyy-mm-ddTHH:mm)
+ * and returns the result in the same format.
+ * Handles local time correctly without UTC conversion.
+ * @param dateTimeString - Format: "2024-01-15T09:00"
+ * @param minutes - Number of minutes to add (can be negative)
+ * @returns datetime-local string in format "yyyy-mm-ddTHH:mm"
+ */
+export function addMinutesToDateTime(dateTimeString: string, minutes: number): string {
+  if (!dateTimeString) return "";
+  
+  const date = new Date(dateTimeString);
+  date.setMinutes(date.getMinutes() + minutes);
+  
+  // Format as YYYY-MM-DDTHH:mm for datetime-local input
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const mins = String(date.getMinutes()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}T${hours}:${mins}`;
+}
