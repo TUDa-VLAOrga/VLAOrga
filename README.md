@@ -5,3 +5,5 @@ Dashboard web application for Organization of the Vorlesungsassistenz Physik, TU
 
 For setup, please refer to the [setup guide](./docs/setup.md), where you can also find useful commands for development.
 
+## Windows linter run : 
+npx eslint . --fix
