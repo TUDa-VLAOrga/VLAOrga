@@ -70,10 +70,10 @@ export default function EventForm({
   
   useEffect(() => {
   // Wenn startDateTime gesetzt ist, aber endDateTime fehlt oder davor liegt
-  if (startDateTime ) {
-    setEndDateTime(addMinutesToDateTime(startDateTime, 100));
-  }
-}, [startDateTime]);
+    if (startDateTime ) {
+      setEndDateTime(addMinutesToDateTime(startDateTime, 100));
+    }
+  }, [startDateTime]);
   /**
    * When a new lecture is created inside AddLectureSection:
    * - forward it to the parent (so it ends up in the lecture list)
