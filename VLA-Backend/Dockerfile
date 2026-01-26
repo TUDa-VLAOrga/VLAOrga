@@ -1,4 +1,4 @@
-# remember to adjust CI java version when changing version here
+# Adjust the CI java version of the overarching project if you change the image
 FROM gradle:8-jdk21 AS build
 WORKDIR /workspace
 

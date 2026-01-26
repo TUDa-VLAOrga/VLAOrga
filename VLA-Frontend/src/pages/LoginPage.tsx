@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Loginpage.css";
+import DragContainer from "@/components/draggableElement/DragContainer";
 
 
 
@@ -20,32 +21,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-container">
-      <form onSubmit={onSubmit} className="login-form">
-        <h2 className="login-title">Login</h2>
+    <DragContainer>
+      <div className="login-container">
+        <form onSubmit={onSubmit} className="login-form">
+          <h2 className="login-title">Login</h2>
 
-        <input
-          className="login-input"
-          type="text"
-          placeholder="Benutzername"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
+          <input
+            className="login-input"
+            type="text"
+            placeholder="Benutzername"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
 
-        <input
-          className="login-input"
-          type="password"
-          placeholder="Passwort"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <input
+            className="login-input"
+            type="password"
+            placeholder="Passwort"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <button type="submit" className="login-button">
-          Login
-        </button>
-      </form>
-    </div>
+          <button type="submit" className="login-button">
+            Login
+          </button>
+        </form>
+      </div>
+    </DragContainer>
   );
 }
