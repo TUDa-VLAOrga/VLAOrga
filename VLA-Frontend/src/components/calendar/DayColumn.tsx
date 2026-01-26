@@ -1,5 +1,6 @@
 
 import type { CalendarDay } from "./CalendarTypes";
+import { compareSameDay } from "./dateUtils";
 
 type DayColumnProps = {
   day: CalendarDay;
@@ -15,7 +16,11 @@ export default function DayColumn({ day }: DayColumnProps) {
   //TODO: Events rendern
 
   // data-date helps with debugging (DevTools) and later for tests
-    <div className="cv-dayColumn" data-date={day.iso}>
+    <div 
+      id={compareSameDay(day.date, new Date()) ? "todaysColumn" : undefined}
+      className="cv-dayColumn"
+      data-date={day.iso}
+    >
       {/* Placeholder – events will be rendered here later */}
     </div>
   );
