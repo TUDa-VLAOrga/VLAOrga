@@ -10,12 +10,13 @@ Do not forget e.g. to change the host from db to localhost!
 
 The variable of the top-level should be delegated in the following Dockerfiles.
 
-## Inteliji integration
+## IntelliJ integration
 
 If you want to run e.g. the backend locally (for caching purposes) when
 e.g. executing test, you should register the environment variables there.
 
 Download the plugin EnvFile
+
 - Hamburger menu in top left
 - Settings
 - Plugins
@@ -23,6 +24,7 @@ Download the plugin EnvFile
 - Restart your IDE
 
 Apply the EnvFile to the Backend Application
+
 - Hamburger menu in top left
 - Run tab in the toolbar
 - Edit Configuration
@@ -39,9 +41,14 @@ You can then start a service we depend on like the db (docker compose up --build
 You can add more services if there are any requirements.
 
 ## Pitfalls
+When making fundamental production changes to the .env file,
+remember that they will only apply to your local system and not be committed.
+If you want to change an environment variable, do so in .env.template first.
+
 Be aware that changing a docker container name might influence the
 correctness of an environment variable!
- - E.g. The URL of the database might have to be modified to localhost instead of db
+
+- E.g. The URL of the database might have to be modified to localhost instead of db
 
 Some environment variables depend on each other, check which other
 environment variables depend on the one you are modifying.
