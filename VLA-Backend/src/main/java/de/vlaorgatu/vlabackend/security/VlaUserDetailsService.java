@@ -28,18 +28,7 @@ public class VlaUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        long userId;
-
-        try {
-            userId = Long.parseLong(username);
-        } catch (NumberFormatException e) {
-            log.error("Invalid username format provided");
-            throw new UsernameNotFoundException(
-                "Username must be convertable to a long, id: " + username
-            );
-        }
-
-        Optional<User> loginUser = userRepository.findById(userId);
+        Optional<User> loginUser = userRepository.findUserByName(username);
 
         if (loginUser.isEmpty()) {
             log.error("User not found");
