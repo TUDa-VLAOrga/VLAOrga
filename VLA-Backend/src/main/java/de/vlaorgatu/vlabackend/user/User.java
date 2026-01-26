@@ -6,8 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Represents a user in the system.
@@ -26,6 +24,9 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    /**
+     * Represents the *hashed* password of the user
+     */
     @Column(name = "password")
     private String password;
 
