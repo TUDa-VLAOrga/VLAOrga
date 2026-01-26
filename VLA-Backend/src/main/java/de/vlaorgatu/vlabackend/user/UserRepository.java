@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Retrieve a user by their username.
+     *
      * @param name The unique name to search for
      * @return The User (if exists) based on the name that is provided
      */
