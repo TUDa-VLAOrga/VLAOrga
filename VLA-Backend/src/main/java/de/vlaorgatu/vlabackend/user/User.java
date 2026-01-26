@@ -25,7 +25,7 @@ public class User {
     private String email;
 
     /**
-     * Represents the *hashed* password of the user
+     * Represents the *hashed* password of the user.
      */
     @Column(name = "password")
     private String password;

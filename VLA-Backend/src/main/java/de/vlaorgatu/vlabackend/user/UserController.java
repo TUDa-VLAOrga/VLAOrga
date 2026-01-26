@@ -53,6 +53,7 @@ public class UserController {
     /**
      * Creates a new user.
      * Encrypts the password using the password encoder injected by the security configuration
+     *
      * @param user user to create
      * @return created user
      */
