@@ -2,9 +2,6 @@
 FROM gradle:8-jdk21 AS build
 WORKDIR /workspace
 
-# Checksytle configs for testing later
-COPY --chown=gradle:gradle config config
-
 # Download all dependencies needed for the entire build process once
 COPY --chown=gradle:gradle gradle gradlew build.gradle settings.gradle ./
 RUN gradle --no-daemon dependencies
