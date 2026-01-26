@@ -41,6 +41,7 @@ You can add more services if there are any requirements.
 ## Pitfalls
 Be aware that changing a docker container name might influence the
 correctness of an environment variable!
+ - E.g. The URL of the database might have to be modified to localhost instead of db
 
 Some environment variables depend on each other, check which other
 environment variables depend on the one you are modifying.
