@@ -3,8 +3,14 @@ export type CalendarDay = {
   iso: string; /** Local date as yyyy-mm-dd (stable key). */
 };
 
-export type CalendarId = string; /** Calendar identifier, e.g. "vla" or "event-calendar", to distinguish multiple calendars/sources. */
-export type EventKind = string; /** e.g. "Aufbau", "VL" to distinguish different event types. */
+/** Calendar identifier, e.g. "vla" or "event-calendar", to distinguish multiple calendars/sources. */
+export type CalendarId = string;
+/** e.g. "Aufbau", "VL" to distinguish different event types. */
+export type EventKind = string;
+/** Lecture identifier to link events to lectures. */
+export type LectureId = string;
+/** Unique event identifier. */
+export type EventId = string;
 
 /**
  * Visual/operational status of an event used for UI highlighting.
@@ -22,15 +28,24 @@ export enum EventStatus {
 }
 
 export type CalendarEvent = {
-  id: string;
+  id: EventId;
   title: string;
   dateISO: string;  /** yyyy-mm-dd (must match CalendarDay.iso). */
+  displayedStartTime?: string; 
+  displayedEndTime?: string;
   calendarId: CalendarId;
   kind: EventKind;
   status?: EventStatus;   /** Optional UI status indicator for highlighting the event in the calendar. */
-  subtitle?: string;
+  shortTitle?: string;
+  lectureId?: LectureId; /** Optional reference to associated lecture (if any). */
 };
-export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
+export type Lecture = {
+  id: LectureId;
+  name: string;
+  color: string; 
+};
+
+export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
 
