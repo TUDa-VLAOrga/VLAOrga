@@ -17,19 +17,19 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories(
         basePackages = "de.vlaorgatu.vlabackend.linus_connection",
-        entityManagerFactoryRef = "linusAppointmentEntityManager",
-        transactionManagerRef = "linusAppointmentTransactionManager")
-public class LinusAppointmentAutoConfiguration {
+        entityManagerFactoryRef = "linusEntityManager",
+        transactionManagerRef = "linusTransactionManager")
+public class LinusAutoConfiguration {
     @Bean
     @ConfigurationProperties(prefix="spring.second-datasource")
-    public DataSource linusAppointmentDataSource() {
+    public DataSource linusDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean linusAppointmentEntityManager() {
+    public LocalContainerEntityManagerFactoryBean linusEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(linusAppointmentDataSource());
+        em.setDataSource(linusDataSource());
         em.setPackagesToScan("de.vlaorgatu.vlabackend.linus_connection");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
@@ -37,9 +37,9 @@ public class LinusAppointmentAutoConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager linusAppointmentTransactionManager() {
+    public PlatformTransactionManager linusTransactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(linusAppointmentEntityManager().getObject());
+        transactionManager.setEntityManagerFactory(linusEntityManager().getObject());
         return transactionManager;
     }
 }

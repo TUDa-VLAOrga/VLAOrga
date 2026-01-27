@@ -22,7 +22,7 @@ class LinusAppointmentController {
     }
 
     /**
-     * List all lectures.
+     * List all appointments.
      */
     @GetMapping()
     public List<LinusAppointment> listAppointments() {
@@ -30,7 +30,7 @@ class LinusAppointmentController {
     }
 
     /**
-     * Get a lecture by id.
+     * Get an appointment by id.
      */
     @GetMapping("/{id}")
     public ResponseEntity<LinusAppointment> getAppointmentById(@PathVariable Long id) {

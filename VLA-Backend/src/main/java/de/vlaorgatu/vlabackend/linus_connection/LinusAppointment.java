@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 
 /**
- * Represents a lecture in a certain semester. For example "Physik I, WS 25/26".
+ * Represents a single appointment.
  */
 @Getter
 @Entity
@@ -20,16 +20,16 @@ public class LinusAppointment {
     private Long id;
 
     /**
-     * linus-user id
+     * linus user id
      */
     @Column(name = "user_id")
-    private Long user_id;
+    private Long linusUserId;
 
     /**
-     * time when the reservation of the appointment was made in linus
+     * date and time when the reservation of the appointment was made in linus
      */
     @Column(name = "ordertime")
-    private String ordertime;
+    private String orderTime;
 
     /**
      * status of the appointment
@@ -38,10 +38,10 @@ public class LinusAppointment {
     private Long status;
 
     /**
-     * Linus-user id
+     * date and time when the appointment takes place
      */
     @Column(name = "lecture_date")
-    private String date_time; //todo datentyp
+    private String appointmentTime;
 
     /**
      * comment from the linus order
