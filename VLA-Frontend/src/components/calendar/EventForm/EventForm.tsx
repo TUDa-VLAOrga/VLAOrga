@@ -4,6 +4,7 @@ import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
 import { addMinutesToDateTime } from "../dateUtils";
+import AddPeopleSection, {type Person} from "./AddPeopleSection";
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 
@@ -31,15 +32,9 @@ type EventFormProps = {
   categories?: EventKind[];
   onAddLecture?: (lecture: Lecture) => void;
   onAddCategory?: (category: EventKind) => void;
+  people?: Person[];
+  onAddPerson?: (person: Person) => void;
 };
-
-type Person = {
-  id?: string;
-  name: string;
-  email?: string;
-  role?: string;
-};
-
 
 /**
  * EventForm collects all user inputs needed to create a calendar event.
@@ -58,6 +53,8 @@ export default function EventForm({
   categories=[],
   onAddLecture,
   onAddCategory,
+  people= [],
+  onAddPerson,
 }: EventFormProps) {
   // Basic form fields.
   const [title, setTitle] = useState("");
@@ -65,7 +62,7 @@ export default function EventForm({
   const [lectureId, setLectureId] = useState("");
   const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
   const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
-  const [peopleInput, setPeopleInput] = useState("");
+  const [selectedPeople,setSelectedPeople] = useState<string[]>([]);
   const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
   
   useEffect(() => {
@@ -84,6 +81,7 @@ export default function EventForm({
     onAddLecture?.(lecture);
     setLectureId(lecture.id); 
   };
+  
   /**
    * When a new category is created inside AddCategorySection:
    * - forward it to the parent (so it ends up in the category list)
@@ -93,6 +91,12 @@ export default function EventForm({
     onAddCategory?.(categoryName);
     setCategory(categoryName);
   };
+
+  const handleAddPerson = (person: Person) => {
+    onAddPerson?.(person);
+    setSelectedPeople([...selectedPeople, person.id]);
+  };
+
 
   /**
    * Transform UI state into EventFormData and submit to parent.
@@ -108,10 +112,7 @@ export default function EventForm({
       category,
       startDateTime,
       endDateTime,
-      people: peopleInput
-        .split(",")
-        .map((p) => p.trim())
-        .filter((p) =>p !== ""),
+      people: selectedPeople
     };
 
     if( lectureId) {
@@ -209,22 +210,12 @@ export default function EventForm({
             onEndDateChange={(endDate) => setRecurrence({ ...recurrence, endDate })}
           />
 
-          <div className="cv-formGroup">
-            <label htmlFor="people" className="cv-formLabel">
-              Personen (kommagetrennt)
-            </label>
-            <input
-              id="people"
-              type="text"
-              className="cv-formInput"
-              value={peopleInput}
-              onChange={(e) => setPeopleInput(e.target.value)}
-              placeholder="z.B. Prof. Müller, Dr. Schmidt"
-            />
-            <small className="cv-formHint">
-              Mehrere Personen mit Komma trennen
-            </small>
-          </div>
+          <AddPeopleSection
+            people={people}
+            selectedPeople={selectedPeople}
+            onPeopleChange={setSelectedPeople}
+            onAddPerson={handleAddPerson}
+          />
 
           <div className="cv-formActions">
             <button
