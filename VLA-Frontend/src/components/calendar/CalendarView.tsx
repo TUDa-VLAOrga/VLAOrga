@@ -9,6 +9,7 @@ import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
 import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
+import { usePeople } from "@/hooks/usePeople";
 
 
 /**
@@ -22,9 +23,10 @@ export default function CalendarView() {
   const {days,weekStart,rangeText,prevDay,nextDay,goToDate}= useCalendarNavigation();
   const {lectures,handleAddLecture}= useLectures();
   const {categories,handleAddCategory}= useCategories();
+  const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
 
   const {selectedEvent, eventsByDate, handleCreateEvent, handleEventClick,closeEventDetails, getEventColor  }= 
-    useEvents(lectures);
+    useEvents(lectures, people);
  
   /**
    * Called by EventForm when the user submits.
@@ -86,6 +88,8 @@ export default function CalendarView() {
           categories={categories}
           onAddLecture={handleAddLecture}
           onAddCategory={handleAddCategory}
+          people={people}
+          onAddPerson={handleAddPerson}
         />
       )}
       {/* Modal overlay: event details */}
@@ -94,6 +98,8 @@ export default function CalendarView() {
           event={selectedEvent}
           onClose={closeEventDetails}
           lectures={lectures}
+          people={people}
+          onUpdatePersonNotes={handleUpdatePersonNotes}
         />
       )}
     </div>
