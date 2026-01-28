@@ -11,14 +11,14 @@ type PersonDetailsProps = {
  * PersonDetails shows detailed information about a person in a modal.
  */
 export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDetailsProps) {
-const [notes, setNotes] = useState(person.notes || "");
-const handleSave = () => {
-  if (onSaveNotes) {
+  const [notes, setNotes] = useState(person.notes || "");
+  const handleSave = () => {
+    if (onSaveNotes) {
     //TODO: Backend - PUT request to save notes
-    onSaveNotes(person.id, notes);
-  }
-  onClose();
-}
+      onSaveNotes(person.id, notes);
+    }
+    onClose();
+  };
 
   return (
     <div className="cv-formOverlay cv-personDetailsOverlay" onClick={onClose}>
@@ -49,30 +49,30 @@ const handleSave = () => {
           )}
         </div>
 
-         <div className="cv-formGroup cv-personNotesGroup">
-            <label htmlFor="personNotes" className="cv-formLabel">
-              Notizen:
-            </label>
-            <textarea
-              id="personNotes"
-              className="cv-formInput cv-personNotesTextarea"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notizen zu dieser Person..."
-              rows={4}
-            />
-          </div>
+        <div className="cv-formGroup cv-personNotesGroup">
+          <label htmlFor="personNotes" className="cv-formLabel">
+            Notizen:
+          </label>
+          <textarea
+            id="personNotes"
+            className="cv-formInput cv-personNotesTextarea"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Notizen zu dieser Person..."
+            rows={4}
+          />
         </div>
+      </div>
 
-        <div className="cv-formActions">
-          <button
-            type="button"
-            className="cv-formBtn cv-formBtnCancel"
-            onClick={onClose}
-          >
-            Abbrechen
-          </button>
-          {onSaveNotes && (
+      <div className="cv-formActions">
+        <button
+          type="button"
+          className="cv-formBtn cv-formBtnCancel"
+          onClick={onClose}
+        >
+          Abbrechen
+        </button>
+        {onSaveNotes && (
           <button
             type="button"
             className="cv-formBtn cv-formBtnSubmit"
@@ -80,8 +80,8 @@ const handleSave = () => {
           >
             Speichern
           </button>
-          )}
-        </div>
+        )}
       </div>
+    </div>
   );
 }

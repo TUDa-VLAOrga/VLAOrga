@@ -112,7 +112,7 @@ export default function EventForm({
       category,
       startDateTime,
       endDateTime,
-      people: selectedPeople
+      people: selectedPeople,
     };
 
     if( lectureId) {
