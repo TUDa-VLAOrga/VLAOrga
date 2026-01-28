@@ -16,7 +16,6 @@ import javax.sql.DataSource;
 
 
 @Configuration
-@PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories(
         basePackages = "de.vlaorgatu.vlabackend.linus_connection",
         entityManagerFactoryRef = "linusEntityManagerFactory",
@@ -40,8 +39,6 @@ public class LinusAutoConfiguration {
 
     @Bean (name = "linusTransactionManager")
     public PlatformTransactionManager linusTransactionManager(@Qualifier("linusEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager(entityManagerFactory);
-        //transactionManager.setEntityManagerFactory(entityManagerFactory);
-        return transactionManager;
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }
