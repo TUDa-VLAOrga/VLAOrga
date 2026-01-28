@@ -1,5 +1,7 @@
 package de.vlaorgatu.vlabackend.user;
 
+import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,21 +19,21 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories(
         basePackages = "de.vlaorgatu.vlabackend.user",
-        entityManagerFactoryRef = "userEntityManager",
+        entityManagerFactoryRef = "userEntityManagerFactory",
         transactionManagerRef = "userTransactionManager")
 public class UserAutoConfiguration {
     @Primary
-    @Bean
+    @Bean (name = "userDataSource")
     @ConfigurationProperties(prefix="spring.datasource")
     public DataSource userDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Primary
-    @Bean
-    public LocalContainerEntityManagerFactoryBean userEntityManager() {
+    @Bean (name = "userEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean userEntityManager(@Qualifier("userDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(userDataSource());
+        em.setDataSource(dataSource);
         em.setPackagesToScan("de.vlaorgatu.vlabackend.user");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
@@ -39,11 +41,9 @@ public class UserAutoConfiguration {
     }
 
     @Primary
-    @Bean
-    public PlatformTransactionManager userTransactionManager() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(userEntityManager().getObject());
-        return transactionManager;
+    @Bean (name = "userTransactionManager")
+    public PlatformTransactionManager userTransactionManager(@Qualifier("userEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }
 
