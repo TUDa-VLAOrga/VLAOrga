@@ -18,11 +18,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "email")
     private String email;
+
+    /**
+     * Represents the *hashed* password of the user.
+     */
+    @Column(name = "password")
+    private String password;
 
     // getters and setters
 
@@ -44,5 +50,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
