@@ -1,5 +1,7 @@
 package de.vlaorgatu.vlabackend.linus_connection;
 
+import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,29 +19,29 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories(
         basePackages = "de.vlaorgatu.vlabackend.linus_connection",
-        entityManagerFactoryRef = "linusEntityManager",
+        entityManagerFactoryRef = "linusEntityManagerFactory",
         transactionManagerRef = "linusTransactionManager")
 public class LinusAutoConfiguration {
-    @Bean
+    @Bean (name = "linusDataSource")
     @ConfigurationProperties(prefix="spring.second-datasource")
     public DataSource linusDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean linusEntityManager() {
+    @Bean (name = "linusEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean linusEntityManager(@Qualifier("linusDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(linusDataSource());
+        em.setDataSource(dataSource);
         em.setPackagesToScan("de.vlaorgatu.vlabackend.linus_connection");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         return em;
     }
 
-    @Bean
-    public PlatformTransactionManager linusTransactionManager() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(linusEntityManager().getObject());
+    @Bean (name = "linusTransactionManager")
+    public PlatformTransactionManager linusTransactionManager(@Qualifier("linusEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager(entityManagerFactory);
+        //transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
     }
 }
