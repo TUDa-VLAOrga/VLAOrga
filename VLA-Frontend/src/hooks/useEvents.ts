@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
 import { addDays, toISODateLocal, splitDateTime } from "../components/calendar/dateUtils";
+import type { Person } from "@/components/calendar/EventForm/AddPeopleSection";
 
 /**
  * useEvents manages:
@@ -12,10 +13,20 @@ import { addDays, toISODateLocal, splitDateTime } from "../components/calendar/d
  * - color lookup based on lecture assignment
  */
 
-export function useEvents(lectures: Lecture[]) {
+export function useEvents(lectures: Lecture[] , people: Person[] ) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const MAX_RECURRENCE_DAYS = 365; // Limit recurrence expansion to 1 year
+
+  function getPersonNames(personIds: string[]): string {
+    return personIds
+      .map(id => {
+        const person = people.find(p => p.id === id);
+        return person?.name || id;
+      })
+      .join(", ");
+  }
+
   //Creates one or many CalendarEvent objects from the EventForm submission
   function handleCreateEvent(formData: EventFormData) {
     // TODO: Backend - POST request to /api/events
@@ -25,6 +36,10 @@ export function useEvents(lectures: Lecture[]) {
     if (formData.endDateTime <= formData.startDateTime) {
       return;
     }
+
+    const peopleNames = Array.isArray(formData.people) 
+      ? getPersonNames(formData.people as string[])
+      : "";
 
     const newEvents: CalendarEvent[] = [];
 
@@ -37,7 +52,8 @@ export function useEvents(lectures: Lecture[]) {
       calendarId: "user-events",
       kind: formData.category,
       status: formData.status,
-      shortTitle: formData.people.join(", "),
+      shortTitle: peopleNames,
+      people: formData.people,
       displayedStartTime: startTime,
       displayedEndTime: endTime,
       lectureId: formData.lectureId,
@@ -62,7 +78,8 @@ export function useEvents(lectures: Lecture[]) {
             calendarId: "user-events",
             kind: formData.category,
             status: formData.status,
-            shortTitle: formData.people.join(", "),
+            shortTitle: peopleNames,
+            people: formData.people,
             displayedStartTime: startTime,
             displayedEndTime: endTime,
             lectureId: formData.lectureId,

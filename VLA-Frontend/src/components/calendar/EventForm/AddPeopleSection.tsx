@@ -5,6 +5,7 @@ export type Person = {
   name: string;
   email?: string;
   role?: string;
+  notes?: string;
 };
 
 type AddPeopleSectionProps = {
@@ -32,6 +33,7 @@ export default function AddPeopleSection({
         name: newPersonName.trim(),
         email: newPersonEmail.trim() || undefined,
         role: newPersonRole.trim() || undefined,
+        notes: "",
       };
       onAddPerson(newPerson);
       setNewPersonName("");
@@ -111,6 +113,18 @@ export default function AddPeopleSection({
               </span>
             </label>
           ))}
+        </div>
+      )}
+
+
+      {selectedPeople.length > 0 && (
+        <div className="cv-selectedPeoplePreview">
+          <small className="cv-formHint">
+            Ausgewählt: {selectedPeople.map(id => {
+              const person = people.find(p => p.id === id);
+              return person?.name || id;
+            }).join(", ")}
+          </small>
         </div>
       )}
 

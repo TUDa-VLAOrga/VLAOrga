@@ -762,3 +762,158 @@
   color: #6b7280;
   font-size: 0.85rem;
 }
+
+
+
+/* Add this to your CalendarView.css - UPDATED VERSION */
+
+/* Event Form Overlay */
+.cv-formOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-overlay);
+}
+
+/* Higher z-index for PersonDetails modal when it appears over EventDetails */
+.cv-personDetailsOverlay {
+  z-index: 1200 !important;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Rest of your existing styles... */
+
+/* Clickable person names in event details */
+.cv-peopleLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cv-personLink {
+  background: none;
+  border: none;
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  transition: color 0.2s ease;
+}
+
+.cv-personLink:hover {
+  color: #1d4ed8;
+}
+
+.cv-personLink:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Person details modal */
+.cv-personDetailsBox {
+  max-width: 500px;
+}
+
+.cv-personDetailsTitle {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.cv-personDetailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cv-personDetailRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.cv-personDetailRow .cv-detailLabel {
+  min-width: 80px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.cv-personDetailRow .cv-detailValue {
+  flex: 1;
+  max-width: 300px;
+  text-align: left;
+}
+
+/* Notes section */
+.cv-personNotesGroup {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cv-personNotesGroup .cv-formLabel {
+  display: block;
+  text-align: center;
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.cv-personNotesTextarea {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cv-personNotesTextarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.cv-personNotesTextarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Email link */
+.cv-personEmail {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cv-personEmail:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.cv-personEmail:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Button layout for person details */
+.cv-personDetailsBox .cv-formActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}

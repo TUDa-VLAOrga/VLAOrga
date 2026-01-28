@@ -1,3 +1,5 @@
+import type { Person } from "./EventForm/AddPeopleSection";
+
 export type CalendarDay = {
   date: Date;
   iso: string; /** Local date as yyyy-mm-dd (stable key). */
@@ -37,7 +39,8 @@ export type CalendarEvent = {
   kind: EventKind;
   status?: EventStatus;   /** Optional UI status indicator for highlighting the event in the calendar. */
   shortTitle?: string;
-  lectureId?: LectureId; /** Optional reference to associated lecture (if any). */
+  lectureId?: LectureId;
+  people?: string[] | Person[];
 };
 
 export type Lecture = {
