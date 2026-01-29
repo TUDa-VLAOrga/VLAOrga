@@ -35,5 +35,17 @@ services:
     depends_on:
       - db
 
+  # prod:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.prod
+  #   container_name: vlaorga_prod
+  #   ports:
+  #     - "8080:8080"
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - db
+
 volumes:
   vlaorga_postgres_data:
