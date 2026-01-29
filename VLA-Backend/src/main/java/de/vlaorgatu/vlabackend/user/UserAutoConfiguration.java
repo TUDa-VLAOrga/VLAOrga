@@ -15,6 +15,9 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
+/**
+ * Configuration for the postgres db. Affects all repository classes in the package.
+ */
 @Configuration
 @EnableJpaRepositories(
         basePackages = "de.vlaorgatu.vlabackend.user",
