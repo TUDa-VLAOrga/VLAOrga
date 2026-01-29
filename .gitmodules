@@ -1,0 +1,3 @@
+[submodule "Linus/datenbank-physik"]
+	path = Linus/datenbank-physik
+	url = https://git.rwth-aachen.de/datenbank-physik/datenbank-physik.git
