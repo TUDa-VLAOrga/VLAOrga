@@ -9,7 +9,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/calendar" element={<CalendarPage/>}/>
+          <Route path="/" element={<CalendarPage/>}/>
         </Routes>
       </div>
       <LoggerComponent></LoggerComponent>
