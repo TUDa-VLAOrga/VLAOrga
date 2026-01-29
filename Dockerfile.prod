@@ -1,0 +1,39 @@
+# Lines with !!! mark critical regions that must be potentially adapted when changing something in either Dockerfile
+
+# Frontend build process
+FROM node:25-alpine AS frontendbuild
+WORKDIR /workspace
+
+COPY VLA-Frontend/package.json VLA-Frontend/package-lock.json ./
+RUN npm install
+
+COPY VLA-Frontend ./
+RUN npm run build
+
+# Backend build process
+# !!! Keep this in sync (see line below) with VLA-Backend/Dockerfile !!!
+# !!! Beware of directory changed as this should be build from top level !!!
+FROM gradle:8-jdk21 AS build
+WORKDIR /workspace
+
+# Download all dependencies needed for the entire build process once
+# !!! Directories are prefxied by VLA-Backend here !!!
+COPY --chown=gradle:gradle VLA-Backend/gradle VLA-Backend/gradlew VLA-Backend/build.gradle VLA-Backend/settings.gradle ./
+RUN gradle --no-daemon dependencies
+
+# Copy only the minimum to container
+# !!! Directories are prefxied by VLA-Backend here !!!
+COPY --chown=gradle:gradle VLA-Backend/src src
+
+# !!! The next line should only appear in the production Dockerfile !!!
+COPY --from=frontendBuild /workspace/dist/ src/main/resources/static/
+
+RUN gradle --no-daemon bootJar
+
+# Final backend start container
+# !!! Keep this synced exactly !!!
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /workspace/build/libs/*.jar /app/app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app/app.jar"]

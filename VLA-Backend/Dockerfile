@@ -1,3 +1,5 @@
+# !!! When changing something here, adjust the Dockerfile.prod in the root directory as well !!!
+
 # Adjust the CI java version of the overarching project if you change the image
 FROM gradle:8-jdk21 AS build
 WORKDIR /workspace
