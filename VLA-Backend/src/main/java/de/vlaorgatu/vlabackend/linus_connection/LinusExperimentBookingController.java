@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.linus_connection;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +15,11 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/api/linus/experiment-booking")
+@AllArgsConstructor
 class LinusExperimentBookingController {
 
     private final LinusExperimentBookingRepository bookingRepository;
-
-    public LinusExperimentBookingController(LinusExperimentBookingRepository experimentBookingRepository) {
-        this.bookingRepository = experimentBookingRepository;
-    }
-
+    
     /**
      * List all experiment bookings.
      */
