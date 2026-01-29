@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 @RestController()
 @RequestMapping("/sse")
-@CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
     private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
 
@@ -48,8 +47,8 @@ public class SseController {
         for (SseEmitter connection : sseHandlers) {
             try {
                 connection.send(SseEmitter.event()
-                        .name(SseMessageType.DEBUG)
-                        .data("SSE Update to all registered connections!")
+                    .name(SseMessageType.DEBUG)
+                    .data("SSE Update to all registered connections!")
                 );
             } catch (IOException e) {
                 // Broken Pipe Error
