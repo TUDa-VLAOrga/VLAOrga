@@ -35,6 +35,7 @@ services:
     depends_on:
       - db
 
+  # Comment the lines below in if you want the option to build prod
   # prod:
   #   build:
   #     context: .
