@@ -50,7 +50,7 @@ public class LinusAppointment {
     private String comment;
 
     /**
-     * todo
+     * name of the person/lecture
      */
     @Column(name = "name")
     private String name;
