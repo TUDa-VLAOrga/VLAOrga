@@ -61,26 +61,26 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
             placeholder="Notizen zu dieser Person..."
             rows={4}
           />
-      </div>
+        </div>
 
-      <div className="cv-formActions">
-        <button
-          type="button"
-          className="cv-formBtn cv-formBtnCancel"
-          onClick={onClose}
-        >
-          Abbrechen
-        </button>
-        {onSaveNotes && (
+        <div className="cv-formActions">
           <button
             type="button"
-            className="cv-formBtn cv-formBtnSubmit"
-            onClick={handleSave}
+            className="cv-formBtn cv-formBtnCancel"
+            onClick={onClose}
           >
-            Speichern
+            Abbrechen
           </button>
-        )}
-      </div>
+          {onSaveNotes && (
+            <button
+              type="button"
+              className="cv-formBtn cv-formBtnSubmit"
+              onClick={handleSave}
+            >
+              Speichern
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

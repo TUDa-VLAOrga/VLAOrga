@@ -28,38 +28,38 @@ function getStatusClass(status?: EventStatus): string {
 export default function DayColumn({ day, events, onEventClick, getEventColor , lectures =[]}: DayColumnProps) {
   const isToday = compareSameDay(day.date, new Date());
        
+  return (
+    <div
+      id={isToday ? "todaysColumn" : undefined}
+      className="cv-dayColumn"
+      data-date={day.iso}
+    >
+      {events.map((event) => {
+        const customColor = getEventColor?.(event);
+        const lecture = event.lectureId ? 
+          lectures.find(lec => lec.id === event.lectureId)
+          : null;
+
+        const eventProps = {
+          key: event.id,
+          className: `cv-event cv-event-${event.kind} ${getStatusClass(event.status)}`,
+          style: customColor ? { backgroundColor: customColor, borderColor: customColor } : undefined,
+          title: event.shortTitle || event.title,
+          ...(onEventClick && { onClick: () => onEventClick(event) }),
+        };
+
         return (
-          <div
-            id={isToday ? "todaysColumn" : undefined}
-            className="cv-dayColumn"
-            data-date={day.iso}
-          >
-            {events.map((event) => {
-              const customColor = getEventColor?.(event);
-              const lecture = event.lectureId ? 
-              lectures.find(lec => lec.id === event.lectureId)
-              : null;
-
-              const eventProps = {
-                key: event.id,
-                className: `cv-event cv-event-${event.kind} ${getStatusClass(event.status)}`,
-                style: customColor ? { backgroundColor: customColor, borderColor: customColor } : undefined,
-                title: event.shortTitle || event.title,
-                ...(onEventClick && { onClick: () => onEventClick(event) }),
-              };
-
-              return (
-                <div {...eventProps}>
-                  <div className="cv-eventTitle">{event.title}</div>
-                  {lecture && (
-                    <div className="cv-eventSubtitle">{lecture.name}</div>
-                  )}
-                  {!lecture && event.shortTitle && (
-                    <div className="cv-eventSubtitle">{event.shortTitle}</div>
-                  )}
-                </div>
-              );
-            })} 
+          <div {...eventProps}>
+            <div className="cv-eventTitle">{event.title}</div>
+            {lecture && (
+              <div className="cv-eventSubtitle">{lecture.name}</div>
+            )}
+            {!lecture && event.shortTitle && (
+              <div className="cv-eventSubtitle">{event.shortTitle}</div>
+            )}
           </div>
         );
-      }
+      })} 
+    </div>
+  );
+}
