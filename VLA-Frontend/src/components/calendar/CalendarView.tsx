@@ -76,8 +76,9 @@ export default function CalendarView() {
       {/* Main frame: header row (weekdays) + grid with day columns */}
       <div className="cv-frame">
         <WeekHeader days={days} />
-        <WeekGrid days={days}  eventsByDate={eventsByDate} onEventClick={handleEventClick} 
-          getEventColor={getEventColor}/>
+        <WeekGrid days={days}  
+        eventsByDate={eventsByDate} onEventClick={handleEventClick} 
+          getEventColor={getEventColor} lectures={lectures}/>
       </div>
       {/* Modal overlay: create new event */}
       {showEventForm && (

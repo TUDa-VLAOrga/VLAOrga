@@ -21,7 +21,7 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
   };
 
   return (
-    <div className="cv-formOverlay cv-personDetailsOverlay" onClick={onClose}>
+    <div className="cv-formOverlay cv-personDetailsOverlay" >
       <div className="cv-formBox cv-personDetailsBox" onClick={(e) => e.stopPropagation()}>
         <h2 className="cv-formTitle cv-personDetailsTitle">{person.name}</h2>
         <div className="cv-detailsContent cv-personDetailsContent">
@@ -61,7 +61,6 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
             placeholder="Notizen zu dieser Person..."
             rows={4}
           />
-        </div>
       </div>
 
       <div className="cv-formActions">
@@ -81,6 +80,7 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
             Speichern
           </button>
         )}
+      </div>
       </div>
     </div>
   );
