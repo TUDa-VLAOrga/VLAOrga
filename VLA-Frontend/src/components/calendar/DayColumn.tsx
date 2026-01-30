@@ -1,6 +1,6 @@
 
 
-import type { CalendarDay, CalendarEvent , EventStatus } from "./CalendarTypes";
+import type { CalendarDay, CalendarEvent , EventStatus, Lecture } from "./CalendarTypes";
 import { compareSameDay } from "./dateUtils";
 
 
@@ -9,6 +9,7 @@ type DayColumnProps = {
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   getEventColor?: (event: CalendarEvent) => string | undefined;
+  lectures? : Lecture[];
 };
 
 /**
@@ -24,14 +25,20 @@ function getStatusClass(status?: EventStatus): string {
  * DayColumn renders all events for a single day.
  * It is used inside the WeekGrid to build the calendar layout.
  */
-export default function DayColumn({ day, events, onEventClick, getEventColor }: DayColumnProps) {
+export default function DayColumn({ day, events, onEventClick, getEventColor , lectures =[]}: DayColumnProps) {
+  const isToday = compareSameDay(day.date, new Date());
+       
   return (
-  //TODO: Events rendern
-
-  // data-date helps with debugging (DevTools) and later for tests
-    <div className="cv-dayColumn" data-date={day.iso}>
+    <div
+      id={isToday ? "todaysColumn" : undefined}
+      className="cv-dayColumn"
+      data-date={day.iso}
+    >
       {events.map((event) => {
         const customColor = getEventColor?.(event);
+        const lecture = event.lectureId ? 
+          lectures.find(lec => lec.id === event.lectureId)
+          : null;
 
         const eventProps = {
           key: event.id,
@@ -42,22 +49,17 @@ export default function DayColumn({ day, events, onEventClick, getEventColor }: 
         };
 
         return (
-          <><div {...eventProps}>
+          <div {...eventProps}>
             <div className="cv-eventTitle">{event.title}</div>
-            {event.shortTitle && (
+            {lecture && (
+              <div className="cv-eventSubtitle">{lecture.name}</div>
+            )}
+            {!lecture && event.shortTitle && (
               <div className="cv-eventSubtitle">{event.shortTitle}</div>
             )}
-          </div><div
-            id={compareSameDay(day.date, new Date()) ? "todaysColumn" : undefined}
-            className="cv-dayColumn"
-            data-date={day.iso}
-          >
-            {/* Placeholder – events will be rendered here later */}
-          </div></>
+          </div>
         );
-      })}
-   
+      })} 
     </div>
   );
-} 
-
+}
