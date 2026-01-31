@@ -4,6 +4,7 @@
  */
 export enum SseMessageType {
   DEBUG = "DEBUG",
+  LECTURE_CREATED = "LECTURE_CREATED",
   EXPERIMENT = "experiment",
   CALENDAR = "calendar",
   APPROVEDELETION = "approveDeletion",
