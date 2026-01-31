@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "lectures")
 class Lecture {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;  // may not be final, see https://stackoverflow.com/a/76986804
 
     /**
