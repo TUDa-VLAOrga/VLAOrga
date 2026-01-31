@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 class Lecture {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long id;
+    private Long id;  // may not be final, see https://stackoverflow.com/a/76986804
 
     /**
      * name of the lecture, e.g. "Physik I"
