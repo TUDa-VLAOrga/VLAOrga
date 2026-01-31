@@ -17,7 +17,25 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse")
 @CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
-    private static final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<SseEmitter> sseHandlers =
+        new CopyOnWriteArrayList<>();
+
+    /**
+     * Sends a Debug message with specified text to all connected clients.
+     *
+     * @param message the text to include in the message.
+     */
+    public static void notifyDebugTest(final String message) {
+        for (SseEmitter connection : sseHandlers) {
+            try {
+                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
+                    .data("! Change Notification ! Message: " + message));
+            } catch (IOException e) {
+                // Broken Pipe Error
+                sseHandlers.remove(connection);
+            }
+        }
+    }
 
     /**
      * Configures the SSE Connection to the frontend.
@@ -47,29 +65,13 @@ public class SseController {
     public String notifyAllSse() {
         for (SseEmitter connection : sseHandlers) {
             try {
-                connection.send(SseEmitter.event()
-                        .name(SseMessageType.DEBUG)
-                        .data("SSE Update to all registered connections!")
-                );
+                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
+                    .data("SSE Update to all registered connections!"));
             } catch (IOException e) {
                 // Broken Pipe Error
                 sseHandlers.remove(connection);
             }
         }
         return "Sent message to all connections!";
-    }
-
-    public static void notifyDebugTest(final String message) {
-        for (SseEmitter connection : sseHandlers) {
-            try {
-                connection.send(SseEmitter.event()
-                    .name(SseMessageType.DEBUG)
-                    .data("Debug post. Something changed!!! message was: " + message)
-                );
-            } catch (IOException e) {
-                // Broken Pipe Error
-                sseHandlers.remove(connection);
-            }
-        }
     }
 }

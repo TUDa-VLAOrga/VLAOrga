@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * Overrides to the default REST handlers generatey by Spring Data REST.
+ * The override is needed mainly to trigger SSE events on update operations.
+ */
 @AllArgsConstructor
 @RepositoryRestController
 class LectureController {
