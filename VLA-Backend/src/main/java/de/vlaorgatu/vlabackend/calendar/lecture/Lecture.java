@@ -20,14 +20,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "lectures")
 class Lecture {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
 
     /**
-     * title of the lecture, e.g. "Physik I"
+     * name of the lecture, e.g. "Physik I"
      */
-    @Column(name = "title", nullable = false)
-    private String title = "";
+    @Column(name = "name", nullable = false)
+    private String name = "";
 
     /**
      * semester of the lecture, e.g. "WS 25/26"
