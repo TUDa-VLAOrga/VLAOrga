@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Lecture } from "../components/calendar/CalendarTypes";
+import type {Lecture, LectureId} from "../components/calendar/CalendarTypes";
 
 // TODO: move to some central file
 const BASE_URL = "http://localhost:8080/api";
@@ -14,7 +14,7 @@ export function useLectures() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
 
   /**
-   * Add a new lecture to the list.
+   * Tell the backend to create a new lecture..
    */
   function handleAddLecture(lecture: Lecture) {
     // unset ID, backend will generate one
@@ -33,10 +33,21 @@ export function useLectures() {
       console.log("response from adding lecture:");
       res.json().then(data => {
         console.log(data);
+        // setLectures done in separate function, to be triggered by SSE on all clients
+      });
+    });
+  }
+
+  function handleNewLecture(lectureId: LectureId) {
+    fetch(API_URL + "/" + lectureId).then(res => {
+      res.json().then(data => {
+        console.log("fetched new lecture from server:");
+        console.log(data);
         setLectures((prev) => [...prev, data as Lecture]);
       });
     });
   }
+
   /**
    * Remove a lecture by id.
    */
@@ -47,6 +58,7 @@ export function useLectures() {
   return {
     lectures,
     handleAddLecture,
+    handleNewLecture,
     handleDeleteLecture,
   };
 }

@@ -4,6 +4,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import de.vlaorgatu.vlabackend.sse.SseController;
+import de.vlaorgatu.vlabackend.sse.SseMessageType;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,8 @@ class LectureController {
         }
 
         Lecture savedLecture = lectureRepository.save(lecture);
-        SseController.notifyDebugTest("Lecture created: " + savedLecture);
+        SseController.notifyDebugTest(SseMessageType.LECTURE_CREATED,
+            savedLecture.getId().toString());
 
         EntityModel<Lecture> lectureModel = EntityModel.of(savedLecture, linkTo(
             methodOn(LectureController.class).updateLecture(lecture.getId(),
@@ -53,7 +55,7 @@ class LectureController {
         }
 
         Lecture updatedLecture = lectureRepository.save(lecture);
-        SseController.notifyDebugTest("Lecture updated: " + updatedLecture);
+        SseController.notifyDebugTest(SseMessageType.DEBUG, "Lecture updated: " + updatedLecture);
 
         EntityModel<Lecture> lectureModel = EntityModel.of(updatedLecture,
             linkTo(methodOn(LectureController.class).updateLecture(id, lecture)).withSelfRel());
@@ -68,7 +70,8 @@ class LectureController {
         }
 
         lectureRepository.deleteById(id);
-        SseController.notifyDebugTest("Lecture deleted: " + lectureOptional.get());
+        SseController.notifyDebugTest(SseMessageType.DEBUG,
+            "Lecture deleted: " + lectureOptional.get());
 
         EntityModel<Lecture> lectureModel = EntityModel.of(lectureOptional.get(),
             linkTo(methodOn(LectureController.class).deleteLecture(id)).withSelfRel());

@@ -3,6 +3,7 @@ import { SseMessageType } from "./SseMessageType";
 import type { SseObserver } from "./SseObserver";
 import { Logger } from "../logger/Logger";
 import { LogEvent } from "../logger/LoggerTypes";
+import {useLectures} from "@/hooks/useLectures.ts";
 
 /**
  * Class for notification of components
@@ -48,6 +49,7 @@ export class SSEHandler {
      */
   private static addEventSourceEventHandlers(){
     SSEHandler.eventSource.addEventListener(SseMessageType.DEBUG, SSEHandler.handleDebugEvent);
+    SSEHandler.eventSource.addEventListener(SseMessageType.LECTURE_CREATED, SSEHandler.handleLectureCreatedEvent);
   }
 
   /**
@@ -103,5 +105,10 @@ export class SSEHandler {
      */
   private static handleDebugEvent(e: MessageEvent){
     alert(e.data);
+  }
+
+  private static handleLectureCreatedEvent(e: MessageEvent){
+    // TODO: trigger this handler (or implement otherwise)
+    // useLectures().handleNewLecture(e.data);
   }
 }

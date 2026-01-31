@@ -10,6 +10,7 @@ public class SseMessageType {
      */
     public static final String DEBUG = "DEBUG";
 
+    public static final String LECTURE_CREATED = "LECTURE_CREATED";  // TODO: only proof of concept
     // TODO: Decide on important SseMessageTypes and think of the syncing events in more detail
     public static final String EXPERIMENT = "experiment";
     public static final String CALENDAR = "calendar";

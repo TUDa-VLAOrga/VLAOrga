@@ -25,11 +25,18 @@ public class SseController {
      *
      * @param message the text to include in the message.
      */
-    public static void notifyDebugTest(final String message) {
+    public static void notifyDebugTest(final String messageType, final String message) {
         for (SseEmitter connection : sseHandlers) {
             try {
-                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
-                    .data("! Change Notification ! Message: " + message));
+                String body;
+                if (messageType.equals(SseMessageType.DEBUG)) {
+                    body = "! Change Notification ! Message: " + message;
+                } else if (messageType.equals(SseMessageType.LECTURE_CREATED)) {
+                    body = message;
+                } else {
+                    throw new UnsupportedOperationException("Message type not implemented");
+                }
+                connection.send(SseEmitter.event().name(messageType).data(body));
             } catch (IOException e) {
                 // Broken Pipe Error
                 sseHandlers.remove(connection);
