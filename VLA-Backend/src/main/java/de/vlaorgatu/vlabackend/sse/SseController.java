@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse")
 @CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
-    private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
 
     /**
      * Configures the SSE Connection to the frontend.
@@ -57,5 +57,19 @@ public class SseController {
             }
         }
         return "Sent message to all connections!";
+    }
+
+    public static void notifyDebugTest(final String message) {
+        for (SseEmitter connection : sseHandlers) {
+            try {
+                connection.send(SseEmitter.event()
+                    .name(SseMessageType.DEBUG)
+                    .data("Debug post. Something changed!!! message was: " + message)
+                );
+            } catch (IOException e) {
+                // Broken Pipe Error
+                sseHandlers.remove(connection);
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package de.vlaorgatu.vlabackend.calendar.lecture;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -26,7 +27,7 @@ class LectureController {
             return ResponseEntity.badRequest().build();
         }
         Lecture updatedLecture = lectureRepository.save(lecture);
-        // TODO: sse notification
+        SseController.notifyDebugTest("Lecture updated: " + updatedLecture.toString());
 
         EntityModel<Lecture> lectureModel = EntityModel.of(updatedLecture);
         lectureModel.add(
