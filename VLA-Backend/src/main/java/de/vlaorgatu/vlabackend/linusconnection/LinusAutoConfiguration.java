@@ -40,7 +40,7 @@ public class LinusAutoConfiguration {
             @Qualifier("linusDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("de.vlaorgatu.vlabackend.linus_connection");
+        em.setPackagesToScan("de.vlaorgatu.vlabackend.linusconnection");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         return em;
