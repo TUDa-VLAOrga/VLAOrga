@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -13,15 +12,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    String generateLogMessage(final String displayMessage, final Exception e) {
+        return String.format("%s: %s",
+            e.getClass().getSimpleName(),
+            e.getMessage() == null ? displayMessage : e.getMessage()
+        );
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFound(UserNotFoundException e) {
-        final String defaultMessage = "Requested user could not be found\n";
+        final String defaultDisplayMessage =
+            "User could not be found with the provided credentials\n";
 
-        final String message = e.getMessage() == null ? defaultMessage : e.getMessage();
-        logger.error(message);
+        final String message = e.getMessage() == null ? defaultDisplayMessage : e.getMessage();
+        logger.error(generateLogMessage(defaultDisplayMessage, e));
 
         return new ResponseEntity<>(
-            e.getMessage(),
+            message,
             HttpStatus.NOT_FOUND
         );
     }
