@@ -1,7 +1,7 @@
 package de.vlaorgatu.vlabackend.error;
 
-import de.vlaorgatu.vlabackend.error.exceptions.UserNotFoundException;
 import de.vlaorgatu.vlabackend.error.exceptions.UserNotFoundByIdException;
+import de.vlaorgatu.vlabackend.error.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
