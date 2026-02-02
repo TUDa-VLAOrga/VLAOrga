@@ -23,8 +23,12 @@ class LinusAppointmentController {
      * List all appointments.
      */
     @GetMapping()
-    public List<LinusAppointment> listAppointments() {
-        return appointmentRepository.findAll();
+    public ResponseEntity<List<LinusAppointment>> listAppointments() {
+        List<LinusAppointment> all = appointmentRepository.findAll();
+        if(all.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(all);
     }
 
     /**

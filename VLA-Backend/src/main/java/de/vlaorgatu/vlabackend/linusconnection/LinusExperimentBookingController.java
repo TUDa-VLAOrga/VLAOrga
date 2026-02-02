@@ -23,8 +23,12 @@ class LinusExperimentBookingController {
      * List all experiment bookings.
      */
     @GetMapping()
-    public List<LinusExperimentBooking> listExperimentBookings() {
-        return bookingRepository.findAll();
+    public ResponseEntity<List<LinusExperimentBooking>> listExperimentBookings() {
+        List<LinusExperimentBooking> all = bookingRepository.findAll();
+        if(all.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(all);
     }
 
     /**
