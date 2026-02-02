@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * REST endpoints for managing {@link LinusAppointment} entities.
  */
+// TODO after merging with entities/lecture: adjust to use RepositoryRestController and path relative to the basePath (/api) specified in application.properties
 @Controller
 @RequestMapping("/api/linus/appointment")
 @AllArgsConstructor

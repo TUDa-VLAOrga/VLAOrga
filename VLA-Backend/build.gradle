@@ -33,7 +33,7 @@ dependencies {
     implementation "org.flywaydb:flyway-mysql"
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.mariadb.jdbc:mariadb-java-client'
-    runtimeOnly 'mysql:mysql-connector-java:'
+    runtimeOnly 'mysql:mysql-connector-java'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
