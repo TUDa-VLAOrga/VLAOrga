@@ -15,7 +15,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Entity
 @Table(name = "lectures")
-class Lecture {
+public class Lecture {
     @Id
     @GeneratedValue
     private Long id;  // may not be final, see https://stackoverflow.com/a/76986804

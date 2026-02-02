@@ -23,11 +23,17 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @AllArgsConstructor
 @RepositoryRestController
-class LectureController {
+public class LectureController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LectureController.class);
     private final LectureRepository lectureRepository;
 
+    /**
+     * Creates a new lecture.
+     *
+     * @param lecture Dataset of the lecture to create.
+     * @return OK response with the created lecture, error response otherwise.
+     */
     @PostMapping("/lectures")
     public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
@@ -46,6 +52,13 @@ class LectureController {
         return ResponseEntity.ok(lectureModel);
     }
 
+    /**
+     * Updates an existing lecture.
+     *
+     * @param id      ID of the lecture to update.
+     * @param lecture Dataset of the lecture to update. Must contain all keys, ID may be omitted.
+     * @return OK response with the updated lecture, Error response otherwise.
+     */
     @PutMapping("/lectures/{id}")
     public ResponseEntity<?> updateLecture(@PathVariable Long id, @RequestBody Lecture lecture) {
         if (Objects.isNull(lecture.getId())) {
@@ -69,6 +82,12 @@ class LectureController {
         return ResponseEntity.ok(lectureModel);
     }
 
+    /**
+     * Deletes a lecture by its ID.
+     *
+     * @param id ID of the lecture to delete.
+     * @return OK response with the deleted lecture, Error response otherwise.
+     */
     @DeleteMapping("/lectures/{id}")
     public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
         Optional<Lecture> lectureOptional = lectureRepository.findById(id);
