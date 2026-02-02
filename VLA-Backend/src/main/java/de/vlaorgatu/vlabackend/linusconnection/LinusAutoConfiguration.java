@@ -23,12 +23,18 @@ import org.springframework.transaction.PlatformTransactionManager;
         entityManagerFactoryRef = "linusEntityManagerFactory",
         transactionManagerRef = "linusTransactionManager")
 public class LinusAutoConfiguration {
+    /**
+     * Constructs the datasource with the second-datasource configuration.
+     */
     @Bean (name = "linusDataSource")
     @ConfigurationProperties(prefix = "spring.second-datasource")
     public DataSource linusDataSource() {
         return DataSourceBuilder.create().build();
     }
-    
+
+    /**
+     * Constructs the EntityManagerFactory with the provided datasource.
+     */
     @Bean (name = "linusEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean linusEntityManager(
             @Qualifier("linusDataSource") DataSource dataSource) {
@@ -40,6 +46,9 @@ public class LinusAutoConfiguration {
         return em;
     }
 
+    /**
+     * Constructs the TransactionManager with the provided EntityManagerFactory.
+     */
     @Bean (name = "linusTransactionManager")
     public PlatformTransactionManager linusTransactionManager(
             @Qualifier("linusEntityManagerFactory") EntityManagerFactory entityManagerFactory) {

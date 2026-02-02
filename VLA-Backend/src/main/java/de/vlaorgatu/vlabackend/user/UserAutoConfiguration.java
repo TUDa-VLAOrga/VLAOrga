@@ -23,6 +23,9 @@ import org.springframework.transaction.PlatformTransactionManager;
         entityManagerFactoryRef = "userEntityManagerFactory",
         transactionManagerRef = "userTransactionManager")
 public class UserAutoConfiguration {
+    /**
+     * Constructs the datasource with the (first) datasource configuration.
+     */
     @Primary
     @Bean (name = "userDataSource")
     @ConfigurationProperties(prefix = "spring.datasource")
@@ -30,6 +33,9 @@ public class UserAutoConfiguration {
         return DataSourceBuilder.create().build();
     }
 
+    /**
+     * Constructs the EntityManagerFactory with the provided datasource.
+     */
     @Primary
     @Bean (name = "userEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean userEntityManager(
@@ -42,6 +48,9 @@ public class UserAutoConfiguration {
         return em;
     }
 
+    /**
+     * Constructs the TransactionManager with the provided EntityManagerFactory.
+     */
     @Primary
     @Bean (name = "userTransactionManager")
     public PlatformTransactionManager userTransactionManager(
