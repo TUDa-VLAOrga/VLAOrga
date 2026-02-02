@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.user;
 
+import de.vlaorgatu.vlabackend.error.exceptions.UserNotFoundByIdException;
 import de.vlaorgatu.vlabackend.error.exceptions.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
@@ -75,7 +76,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         Optional<User> existingOpt = userRepository.findById(id);
-        existingOpt.orElseThrow(UserNotFoundException::new);
+        existingOpt.orElseThrow(UserNotFoundByIdException::new);
 
         User existingUser = existingOpt.get();
         existingUser.setName(user.getName());
@@ -92,9 +93,8 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<User> existingOpt = userRepository.findById(id);
+        existingOpt.orElseThrow(UserNotFoundByIdException::new);
 
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
