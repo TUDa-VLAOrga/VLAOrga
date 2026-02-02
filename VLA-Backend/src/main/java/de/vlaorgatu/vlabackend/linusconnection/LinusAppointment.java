@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.linus_connection;
+package de.vlaorgatu.vlabackend.linusconnection;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,37 +20,37 @@ public class LinusAppointment {
     private Long id;
 
     /**
-     * linus user id
+     * Linus user id.
      */
     @Column(name = "user_id")
     private Long linusUserId;
 
     /**
-     * date and time when the reservation of the appointment was made in linus
+     * Date and time when the reservation of the appointment was made in linus.
      */
     @Column(name = "ordertime")
     private String orderTime;
 
     /**
-     * status of the appointment
+     * Status of the appointment.
      */
     @Column(name = "status")
     private Long status;
 
     /**
-     * date and time when the appointment takes place
+     * Date and time when the appointment takes place.
      */
     @Column(name = "lecture_date")
     private String appointmentTime;
 
     /**
-     * comment from the linus order
+     * Comment from the linus order.
      */
     @Column(name = "comment")
     private String comment;
 
     /**
-     * name of the person/lecture
+     * Name of the person/lecture.
      */
     @Column(name = "name")
     private String name;

@@ -1,6 +1,11 @@
-package de.vlaorgatu.vlabackend.linus_connection;
+package de.vlaorgatu.vlabackend.linusconnection;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 /**
@@ -15,32 +20,31 @@ public class LinusExperimentBooking {
     private Long id;
 
     /**
-     * linus appointment id
+     * Linus appointment id.
      */
     @Column(name = "reservation_id")
     private Long linusAppointmentId;
 
     /**
-     * linus experiment id
+     * Linus experiment id.
      */
     @Column(name = "experiment_id")
     private Long linusExperimentId;
 
     /**
-     * linus user id
+     * Linus user id.
      */
     @Column(name = "user_id")
     private Long linusUserId;
 
     /**
-     * status of the booking
+     * Status of the booking.
      */
     @Column(name = "status")
     private Long status;
 
     /**
-     * todo
-     * time of the booking?
+     * Time of the booking.
      */
     @Column(name = "pinned_on")
     private String pinnedOn;
