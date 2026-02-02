@@ -7,6 +7,7 @@ import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RepositoryRestController
 class LectureController {
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LectureController.class);
     private final LectureRepository lectureRepository;
 
     @PostMapping("/lectures")
     public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
+            LOGGER.warn("Received lecture with ID {} when creating a new lecture.",
+                lecture.getId());
             return ResponseEntity.badRequest().build();
         }
 
@@ -47,9 +51,12 @@ class LectureController {
         if (Objects.isNull(lecture.getId())) {
             lecture.setId(id);
         } else if (!lecture.getId().equals(id)) {
+            LOGGER.warn("Received inconsistent IDs on lecture modification." +
+                " ID from url: {} vs. ID from body data: {}.", id, lecture.getId());
             return ResponseEntity.badRequest().build();
         }
         if (!lectureRepository.existsById(id)) {
+            LOGGER.warn("Received lecture update for non-existing lecture with ID {}.", id);
             return ResponseEntity.notFound().build();
         }
 
@@ -66,6 +73,7 @@ class LectureController {
     public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
         Optional<Lecture> lectureOptional = lectureRepository.findById(id);
         if (lectureOptional.isEmpty()) {
+            LOGGER.warn("Received lecture deletion for non-existing lecture with ID {}.", id);
             return ResponseEntity.notFound().build();
         }
 
