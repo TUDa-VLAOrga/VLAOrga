@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.user;
 
+import de.vlaorgatu.vlabackend.error.exceptions.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,7 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userRepository.findById(id)
             .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+            .orElseThrow(UserNotFoundException::new);
     }
 
     /**
@@ -67,16 +68,14 @@ public class UserController {
     /**
      * Updates an existing user.
      *
-     * @param id user ID
+     * @param id   user ID
      * @param user updated user data
      * @return updated user if found, otherwise 404
      */
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         Optional<User> existingOpt = userRepository.findById(id);
-        if (existingOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        existingOpt.orElseThrow(UserNotFoundException::new);
 
         User existingUser = existingOpt.get();
         existingUser.setName(user.getName());
