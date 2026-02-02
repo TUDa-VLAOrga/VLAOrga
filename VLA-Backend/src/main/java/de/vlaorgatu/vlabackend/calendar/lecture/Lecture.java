@@ -36,7 +36,7 @@ class Lecture {
     private String semester = "";
 
     /**
-     * Color to represent appointments in the calendar view, RGB string.
+     * Color to represent appointments in the calendar view, RGB string, e.g. "#FFFF00".
      */
     @Column(name = "color", nullable = false)
     private String color = "";

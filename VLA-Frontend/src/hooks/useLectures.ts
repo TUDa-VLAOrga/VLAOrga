@@ -16,6 +16,7 @@ export function useLectures() {
   /**
    * Add a new lecture to the list.
    */
+  // TODO: refactor this, probably to a central helper method
   function handleAddLecture(lecture: Lecture) {
     // unset ID, backend will generate one
     lecture.id = "";
@@ -31,6 +32,7 @@ export function useLectures() {
     });
     fetch(request).then(res => {
       console.log("response from adding lecture:");
+      // TODO: this misses error handling if the backend fails
       res.json().then(data => {
         console.log(data);
         setLectures((prev) => [...prev, data as Lecture]);

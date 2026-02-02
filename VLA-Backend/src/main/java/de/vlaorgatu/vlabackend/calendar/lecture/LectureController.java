@@ -33,6 +33,7 @@ class LectureController {
         }
 
         Lecture savedLecture = lectureRepository.save(lecture);
+        // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture created: " + savedLecture);
 
         EntityModel<Lecture> lectureModel = EntityModel.of(savedLecture, linkTo(
@@ -53,6 +54,7 @@ class LectureController {
         }
 
         Lecture updatedLecture = lectureRepository.save(lecture);
+        // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture updated: " + updatedLecture);
 
         EntityModel<Lecture> lectureModel = EntityModel.of(updatedLecture,
@@ -68,6 +70,7 @@ class LectureController {
         }
 
         lectureRepository.deleteById(id);
+        // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture deleted: " + lectureOptional.get());
 
         EntityModel<Lecture> lectureModel = EntityModel.of(lectureOptional.get(),
