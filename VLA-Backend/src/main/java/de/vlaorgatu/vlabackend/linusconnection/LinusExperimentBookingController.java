@@ -25,7 +25,7 @@ class LinusExperimentBookingController {
     @GetMapping()
     public ResponseEntity<List<LinusExperimentBooking>> listExperimentBookings() {
         List<LinusExperimentBooking> all = bookingRepository.findAll();
-        if(all.isEmpty()){
+        if (all.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(all);

@@ -25,7 +25,7 @@ class LinusAppointmentController {
     @GetMapping()
     public ResponseEntity<List<LinusAppointment>> listAppointments() {
         List<LinusAppointment> all = appointmentRepository.findAll();
-        if(all.isEmpty()){
+        if (all.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(all);

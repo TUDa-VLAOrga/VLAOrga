@@ -13,6 +13,7 @@ import lombok.Getter;
  */
 @Getter
 @Entity
+// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
 @Table(name = "reservation")
 public class LinusAppointment {
     @Id
