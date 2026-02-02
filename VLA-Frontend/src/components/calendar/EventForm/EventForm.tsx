@@ -5,6 +5,7 @@ import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
 import { addMinutesToDateTime } from "../dateUtils";
 import AddPeopleSection, {type Person} from "./AddPeopleSection";
+import TimeRangeInput from "./TimeRangeInput";
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 
@@ -22,6 +23,7 @@ export type EventFormData = {
   recurrence?: RecurrencePattern;
   people: string[] | Person[];
   status?: EventStatus;
+  notes?: string;
 };
 
 type EventFormProps = {
@@ -63,14 +65,9 @@ export default function EventForm({
   const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
   const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
   const [selectedPeople,setSelectedPeople] = useState<string[]>([]);
+  const [notes, setNotes] = useState("");
   const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
   
-  useEffect(() => {
-  // Wenn startDateTime gesetzt ist, aber endDateTime fehlt oder davor liegt
-    if (startDateTime ) {
-      setEndDateTime(addMinutesToDateTime(startDateTime, 100));
-    }
-  }, [startDateTime]);
   /**
    * When a new lecture is created inside AddLectureSection:
    * - forward it to the parent (so it ends up in the lecture list)
@@ -126,6 +123,9 @@ export default function EventForm({
       };
     }
 
+    if (notes.trim() !== "") {
+      formData.notes = notes.trim();
+    }
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
@@ -171,35 +171,14 @@ export default function EventForm({
             onAddLecture={handleAddLecture}
           />
 
-          <div className="cv-formGroup">
-            <label htmlFor="startDateTime" className="cv-formLabel">
-              Start (Datum & Uhrzeit) *
-            </label>
-            <input
-              id="startDateTime"
-              type="datetime-local"
-              className="cv-formInput"
-              value={startDateTime}
-              onChange={(e) => {
-                setStartDateTime(e.target.value);
-              }}
-              required
-            />
-          </div>
-
-          <div className="cv-formGroup">
-            <label htmlFor="endDateTime" className="cv-formLabel">
-              Ende (Datum & Uhrzeit) *
-            </label>
-            <input
-              id="endDateTime"
-              type="datetime-local"
-              className="cv-formInput"
-              value={endDateTime}
-              onChange={(e) => setEndDateTime(e.target.value)}
-              required
-            />
-          </div>
+          <TimeRangeInput
+            startDateTime={startDateTime}
+            endDateTime={endDateTime}
+            onStartChange={setStartDateTime}
+            onEndChange={setEndDateTime}
+            autoCalculateEnd={true}
+            durationMinutes={100}
+           />
 
           <RecurrenceSection
             isEnabled={recurrence.enabled}
@@ -216,6 +195,20 @@ export default function EventForm({
             onPeopleChange={setSelectedPeople}
             onAddPerson={handleAddPerson}
           />
+
+          <div className="cv-formGroup">
+            <label htmlFor="eventNotes" className="cv-formLabel">
+              Notizen zum Termin
+            </label>
+            <textarea
+              id="eventNotes"
+              className="cv-formInput cv-eventNotesTextarea"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Notizen zu diesem Termin..."
+              rows={4}
+            />
+          </div>
 
           <div className="cv-formActions">
             <button

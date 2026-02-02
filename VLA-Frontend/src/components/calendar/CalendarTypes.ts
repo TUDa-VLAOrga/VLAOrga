@@ -41,6 +41,8 @@ export type CalendarEvent = {
   shortTitle?: string;
   lectureId?: LectureId;
   people?: string[] | Person[];
+  notes?: string;
+  recurrenceId?: string; /** If part of a series, the ID of the original event. */
 };
 
 export type Lecture = {

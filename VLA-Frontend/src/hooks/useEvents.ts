@@ -27,6 +27,56 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
       .join(", ");
   }
 
+function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
+    // TODO: Backend - PATCH request to /api/events/:eventId
+    setEvents((prev) =>
+      prev.map((event) =>
+        event.id === eventId ? { ...event, ...updates } : event
+      )
+    );
+
+    setSelectedEvent((prev) => {
+      if (prev?.id === eventId) {
+        return { ...prev, ...updates };
+      }
+      return prev;
+    });
+  }
+
+    function handleMoveEvent(
+    eventId: string,
+    newStartDateTime: string,
+    newEndDateTime: string
+  ) {
+    // TODO: Backend - POST request to /api/events/:eventId/move
+    const [newDateISO, newStartTime] = newStartDateTime.split("T");
+    const [_, newEndTime] = newEndDateTime.split("T");
+
+    setEvents((prev) =>
+      prev.map((event) =>
+        event.id === eventId
+          ? {
+              ...event,
+              dateISO: newDateISO,
+              displayedStartTime: newStartTime,
+              displayedEndTime: newEndTime,
+            }
+          : event
+      )
+    );
+
+    setSelectedEvent(null);
+  }
+
+  function handleMoveSeries(
+    eventId: string,
+    newStartDateTime: string,
+    newEndDateTime: string
+  ) {
+    // TODO: Implement when recurrenceId is added to CalendarEvent
+    console.log("Move series not yet implemented - add recurrenceId first");
+  }
+
   //Creates one or many CalendarEvent objects from the EventForm submission
   function handleCreateEvent(formData: EventFormData) {
     // TODO: Backend - POST request to /api/events
@@ -57,6 +107,7 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
       displayedStartTime: startTime,
       displayedEndTime: endTime,
       lectureId: formData.lectureId,
+      notes: formData.notes,
     });
 
     if (formData.recurrence && formData.recurrence.weekdays.length > 0) {
@@ -83,6 +134,7 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
             displayedStartTime: startTime,
             displayedEndTime: endTime,
             lectureId: formData.lectureId,
+            notes: formData.notes,
           });
         }
         currentDate = addDays(currentDate, 1);
@@ -131,5 +183,8 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
     handleEventClick,
     closeEventDetails,
     getEventColor,
+    handleUpdateEvent,
+    handleMoveEvent,
+    handleMoveSeries,
   };
 }

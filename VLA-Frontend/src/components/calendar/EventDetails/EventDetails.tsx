@@ -3,6 +3,10 @@ import type { CalendarEvent, Lecture } from "../CalendarTypes";
 import { formatISODateDE } from "../dateUtils";
 import type { Person } from "../EventForm/AddPeopleSection";
 import PersonDetails from "./PersonDetails";
+import EventEditForm from "./EventEditForm";
+import MoveEventDialog from "./MoveEventDialog";
+import "../../../styles/Event-details-styles.css";
+
 
 type EventDetailsProps = {
   event: CalendarEvent;
@@ -10,6 +14,10 @@ type EventDetailsProps = {
   lectures?: Lecture[];
   people?: Person[];
   onUpdatePersonNotes?: (personId: string, notes: string) => void;
+  onUpdateEvent?: (eventId: string, updates: Partial<CalendarEvent>) => void;
+  onMoveEvent?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
+  onMoveSeries?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
+
 };
 
 /**
@@ -17,9 +25,19 @@ type EventDetailsProps = {
  * If the event is assigned to a lecture, it shows the lecture color + name.
  */
 export default function EventDetails({ 
-  event, onClose, lectures = [], people = [], onUpdatePersonNotes, 
+  event, 
+  onClose,
+  lectures = [],
+  people = [], 
+  onUpdatePersonNotes, 
+  onUpdateEvent,
+  onMoveEvent,
+  onMoveSeries,
 }: EventDetailsProps) {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showMoveDialog, setShowMoveDialog] = useState(false);
+  const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   let lecture = null;
   if (event.lectureId) {
     lecture = lectures.find(lec => lec.id === event.lectureId) || null;
@@ -33,6 +51,13 @@ export default function EventDetails({
         setSelectedPerson({ ...selectedPerson, notes });
       }
     }
+  };
+
+  const handleUpdateEvent = (updates: Partial<CalendarEvent>) => {
+    if (onUpdateEvent) {
+      onUpdateEvent(event.id, updates);
+    }
+    setIsEditing(false);
   };
 
   const getEventPeople = (): Person[] => {
@@ -57,6 +82,38 @@ export default function EventDetails({
   const currentSelectedPerson = selectedPerson
     ? getCurrentPerson(selectedPerson.id)
     : null;
+
+    if (isEditing) {
+    return (
+      <EventEditForm
+        event={event}
+        lectures={lectures}
+        people={people}
+        onSave={handleUpdateEvent}
+        onCancel={() => setIsEditing(false)}
+      />
+    );
+  }
+  if (showMoveDialog) {
+    return (
+      <MoveEventDialog
+        event={event}
+        onMove={onMoveEvent}
+        onCancel={() => setShowMoveDialog(false)}
+        isSeries={false}
+      />
+    );
+  }
+  if (showMoveSeriesDialog) {
+    return (
+      <MoveEventDialog
+        event={event}
+        onMove={onMoveSeries}
+        onCancel={() => setShowMoveSeriesDialog(false)}
+        isSeries={true}
+      />
+    );
+  }
   
   return (
     <>
@@ -128,9 +185,39 @@ export default function EventDetails({
                 <span className="cv-detailValue">{event.status}</span>
               </div>
             )}
+
+            {event.notes && (
+              <div className="cv-detailRow cv-detailRowNotes">
+                <span className="cv-detailLabel">Notizen:</span>
+                <span className="cv-detailValue cv-detailValueNotes">{event.notes}</span>
+              </div>
+            )}
           </div>
 
           <div className="cv-formActions">
+            <button
+              type="button"
+              className="cv-formBtn cv-formBtnSecondary"
+              onClick={() => setShowMoveDialog(true)}
+            >
+              Verschieben
+            </button>
+            {event.recurrenceId && onMoveSeries && (
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnSecondary"
+                onClick={() => setShowMoveSeriesDialog(true)}
+              >
+                Serie verschieben
+              </button>
+            )}
+            <button
+              type="button"
+              className="cv-formBtn cv-formBtnSecondary"
+              onClick={() => setIsEditing(true)}
+            >
+              Bearbeiten
+            </button>
             <button
               type="button"
               className="cv-formBtn cv-formBtnCancel"

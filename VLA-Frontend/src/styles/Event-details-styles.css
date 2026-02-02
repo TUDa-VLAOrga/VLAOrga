@@ -1,0 +1,111 @@
+/* Additional styles for event notes and edit functionality */
+
+/* Event notes in details view */
+.cv-detailRowNotes {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cv-detailValueNotes {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  width: 100%;
+  line-height: 1.5;
+}
+
+/* Event notes textarea */
+.cv-eventNotesTextarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+/* Secondary button style for move/edit actions */
+.cv-formBtnSecondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.cv-formBtnSecondary:hover {
+  background-color: #5a6268;
+}
+
+.cv-formBtnSecondary:active {
+  background-color: #545b62;
+}
+
+/* Move dialog info text */
+.cv-moveDialogInfo {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background-color: #e7f3ff;
+  border-left: 4px solid #0066cc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #004085;
+}
+
+/* Form actions with multiple buttons */
+.cv-formActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+/* Ensure buttons in form actions are properly sized */
+.cv-formActions .cv-formBtn {
+  min-width: 100px;
+}
+
+/* Person link styling */
+.cv-personLink {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.cv-personLink:hover {
+  color: #004085;
+}
+
+/* Lecture swatch in details */
+.cv-lectureSwatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.cv-detailValueLecture {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .cv-formActions {
+    flex-direction: column;
+  }
+  
+  .cv-formActions .cv-formBtn {
+    width: 100%;
+  }
+}

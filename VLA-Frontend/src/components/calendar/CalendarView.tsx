@@ -25,7 +25,15 @@ export default function CalendarView() {
   const {categories,handleAddCategory}= useCategories();
   const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
 
-  const {selectedEvent, eventsByDate, handleCreateEvent, handleEventClick,closeEventDetails, getEventColor  }= 
+  const {selectedEvent, 
+    eventsByDate, 
+    handleCreateEvent, 
+    handleEventClick,
+    closeEventDetails, 
+    getEventColor, 
+    handleUpdateEvent,
+    handleMoveEvent,
+    handleMoveSeries  }= 
     useEvents(lectures, people);
  
   /**
@@ -101,6 +109,9 @@ export default function CalendarView() {
           lectures={lectures}
           people={people}
           onUpdatePersonNotes={handleUpdatePersonNotes}
+          onUpdateEvent={handleUpdateEvent}
+          onMoveEvent={handleMoveEvent}
+          onMoveSeries={handleMoveSeries}
         />
       )}
     </div>
