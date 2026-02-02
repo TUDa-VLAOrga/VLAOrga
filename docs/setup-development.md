@@ -8,9 +8,10 @@ In general you can build and start up the containers with the following commands
     docker compose build container_name  # build container
     docker compose up container_name  # start container. Will keep output blocking your current terminal session.
     docker compose up -d container_name  # start container, but do not output to terminal.
-    docker compose up --build -d  # all of the above at once
+    docker compose up --build -d  # builds all containers, starts them and does not output to the terminal
     
     docker compose stop container_name  # stop container(s)
+    docker compose down # Stop and remove container(s)
 
 If you leave out `container_name`, the command will affect all containers.
 The following container configurations are available:
