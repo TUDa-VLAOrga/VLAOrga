@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.user;
+package de.vlaorgatu.vlabackend.entities;
 
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -19,17 +19,17 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "de.vlaorgatu.vlabackend.user",
-        entityManagerFactoryRef = "userEntityManagerFactory",
-        transactionManagerRef = "userTransactionManager")
-public class UserAutoConfiguration {
+        basePackages = "de.vlaorgatu.vlabackend.entities",
+        entityManagerFactoryRef = "entitiesEntityManagerFactory",
+        transactionManagerRef = "entitiesTransactionManager")
+public class EntityAutoConfiguration {
     /**
      * Constructs the datasource with the (first) datasource configuration.
      */
     @Primary
-    @Bean (name = "userDataSource")
+    @Bean (name = "entitiesDataSource")
     @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource userDataSource() {
+    public DataSource entitiesDataSource() {
         return DataSourceBuilder.create().build();
     }
 
@@ -37,12 +37,12 @@ public class UserAutoConfiguration {
      * Constructs the EntityManagerFactory with the provided datasource.
      */
     @Primary
-    @Bean (name = "userEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean userEntityManager(
-            @Qualifier("userDataSource") DataSource dataSource) {
+    @Bean (name = "entitiesEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entitiesEntityManager(
+            @Qualifier("entitiesDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("de.vlaorgatu.vlabackend.user");
+        em.setPackagesToScan("de.vlaorgatu.vlabackend.entities");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         return em;
@@ -52,9 +52,9 @@ public class UserAutoConfiguration {
      * Constructs the TransactionManager with the provided EntityManagerFactory.
      */
     @Primary
-    @Bean (name = "userTransactionManager")
-    public PlatformTransactionManager userTransactionManager(
-            @Qualifier("userEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+    @Bean (name = "entitiesTransactionManager")
+    public PlatformTransactionManager entitiesTransactionManager(
+            @Qualifier("entitiesEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }
