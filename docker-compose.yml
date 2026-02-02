@@ -14,4 +14,3 @@ services:
 # !!! Changes in volumes must be applied in all docker-compose*.yml at this level !!!
 volumes:
   vlaorga_postgres_data:
-  
