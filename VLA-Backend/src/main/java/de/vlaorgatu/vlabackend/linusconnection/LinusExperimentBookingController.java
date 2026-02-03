@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * REST endpoints for managing {@link LinusExperimentBooking} entities.
  */
-// TODO after merging with entities/lecture: adjust to use RepositoryRestController and path relative to the basePath (/api) specified in application.properties
+// TODO: after merging with entities/lecture: adjust to use RepositoryRestController
+//  and path relative to the basePath (/api) specified in application.properties
 @Controller
 @RequestMapping("/api/linus/experiment-booking")
 @AllArgsConstructor
