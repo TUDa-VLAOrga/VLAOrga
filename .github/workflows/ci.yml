@@ -16,9 +16,9 @@ jobs:
       - name: copy secrets file
         run: cp .env.template .env
       - name: build and start db container
-        run: docker compose up --build --detach db
-      - name: build and start backend container
-        run: docker compose up --build --detach backend
+        run: docker compose --file docker-compose.prod.yml up --build --detach db
+      - name: build and start production container
+        run: docker compose --file docker-compose.prod.yml up --build --detach prod-app
       - name: stop containers
         run: docker compose stop
 

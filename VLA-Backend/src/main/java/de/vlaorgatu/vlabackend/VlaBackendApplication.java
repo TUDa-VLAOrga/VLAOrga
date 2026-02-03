@@ -19,6 +19,7 @@ public class VlaBackendApplication {
      * Necessary for exposing entity IDs in REST endpoints.
      * See Method {@link #repositoryRestConfigurer()} below.
      */
+    // TODO: move one level up to separate configuration class (introduced in LinusConnection PR)
     private final EntityManager entityManager;
 
     /**
