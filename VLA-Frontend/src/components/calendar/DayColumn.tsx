@@ -39,53 +39,33 @@ export default function DayColumn({
     ...(onEventClick ? { onClick: () => onEventClick(event) } : {}),
   });
 
-  if (timed.length > 0) {
-    return (
-      <div className="cv-dayColumn" data-date={day.iso}>
-        <div className="cv-dayColumn-inner">
-          <div className="cv-dayTimeline">
-            <Timeline
-              events={timed}
-              onEventClick={onEventClick}
-              getEventColor={getEventColor}
-            />
-          </div>
-
-          <div className="cv-dayMain">
-            {untimed.map((event) => {
-              const customColor = getEventColor?.(event);
-              const eventProps = buildEventProps(event, customColor);
-
-              return (
-                <div key={event.id} {...eventProps}>
-                  <div className="cv-eventTitle">{event.title}</div>
-                  {event.shortTitle && (
-                    <div className="cv-eventSubtitle">{event.shortTitle}</div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="cv-dayColumn" data-date={day.iso}>
-      {untimed.map((event) => {
-        const customColor = getEventColor?.(event);
-        const eventProps = buildEventProps(event, customColor);
+      <div className="cv-dayColumn-inner">
+        <div className="cv-dayTimeline">
+          <Timeline
+            events={timed}
+            onEventClick={onEventClick}
+            getEventColor={getEventColor}
+          />
+        </div>
 
-        return (
-          <div key={event.id} {...eventProps}>
-            <div className="cv-eventTitle">{event.title}</div>
-            {event.shortTitle && (
-              <div className="cv-eventSubtitle">{event.shortTitle}</div>
-            )}
-          </div>
-        );
-      })}
+        <div className="cv-dayMain">
+          {untimed.map((event) => {
+            const customColor = getEventColor?.(event);
+            const eventProps = buildEventProps(event, customColor);
+
+            return (
+              <div key={event.id} {...eventProps}>
+                <div className="cv-eventTitle">{event.title}</div>
+                {event.shortTitle && (
+                  <div className="cv-eventSubtitle">{event.shortTitle}</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
