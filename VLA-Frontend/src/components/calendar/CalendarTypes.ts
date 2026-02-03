@@ -43,7 +43,8 @@ export type CalendarEvent = {
 export type Lecture = {
   id: LectureId;
   name: string;
-  color: string; 
+  semester: string; /** e.g. "WS 25/26" */
+  color: string; /** RGB color code, as string starting with # and 6 chars. E.g. "#ffff00" */
 };
 
 export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
