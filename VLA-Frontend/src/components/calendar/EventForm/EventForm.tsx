@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { EventKind, EventStatus , Lecture } from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
-import { addMinutesToDateTime } from "../dateUtils";
 import AddPeopleSection, {type Person} from "./AddPeopleSection";
 import TimeRangeInput from "./TimeRangeInput";
 

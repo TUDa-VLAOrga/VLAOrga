@@ -13,11 +13,12 @@ type EventDetailsProps = {
   onClose: () => void;
   lectures?: Lecture[];
   people?: Person[];
+  categories?: string[];
   onUpdatePersonNotes?: (personId: string, notes: string) => void;
   onUpdateEvent?: (eventId: string, updates: Partial<CalendarEvent>) => void;
   onMoveEvent?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
   onMoveSeries?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
-
+  onAddCategory?: (category: string) => void;
 };
 
 /**
@@ -29,10 +30,12 @@ export default function EventDetails({
   onClose,
   lectures = [],
   people = [], 
+  categories = [],
   onUpdatePersonNotes, 
   onUpdateEvent,
   onMoveEvent,
   onMoveSeries,
+  onAddCategory,
 }: EventDetailsProps) {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -89,6 +92,8 @@ export default function EventDetails({
         event={event}
         lectures={lectures}
         people={people}
+        categories={categories}
+        onAddCategory={onAddCategory}
         onSave={handleUpdateEvent}
         onCancel={() => setIsEditing(false)}
       />
@@ -160,21 +165,24 @@ export default function EventDetails({
             {eventPeople.length > 0 && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Personen:</span>
-                <span className="cv-detailValue ">
-                  {eventPeople.map((person, index) => (
-                    <span
-                      key={person.id}>
+                <div className="cv-detailValue cv-detailValuePeople">
+                  <span className="cv-peopleList"> 
+                  {eventPeople.map((person) => (
+                    <span key={person.id} className="cv-personItem">
+                      <span className="cv-personName">{person.name}</span>
                       <button
                         type="button"
-                        className="cv-personLink"
+                        className="cv-personDetailsBtn"
                         onClick={() => setSelectedPerson(person)}
+                        aria-label={`Details zu ${person.name}`}
+                        title="Details anzeigen"
                       >
-                        {person.name}
+                        ⓘ
                       </button>
-                      {index < eventPeople.length - 1 ? ", " : ""}
-                    </span>
+                     </span>
                   ))}
-                </span>
+                  </span>
+              </div>
               </div>
             )}
 

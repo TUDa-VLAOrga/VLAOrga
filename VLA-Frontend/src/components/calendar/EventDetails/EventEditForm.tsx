@@ -10,8 +10,10 @@ type EventEditFormProps = {
   event: CalendarEvent;
   lectures?: Lecture[];
   people?: Person[];
+  categories?: string[];
   onSave: (updates: Partial<CalendarEvent>) => void;
   onCancel: () => void;
+  onAddCategory?: (category: string) => void;
 };
 
 /**
@@ -20,9 +22,11 @@ type EventEditFormProps = {
 export default function EventEditForm({
   event,
   lectures = [],
+  categories = [],
   people = [],
   onSave,
   onCancel,
+  onAddCategory,
 }: EventEditFormProps) {
   const [title, setTitle] = useState(event.title);
   const [category, setCategory] = useState<EventKind>(event.kind);
@@ -105,10 +109,10 @@ export default function EventEditForm({
           </div>
 
           <AddCategorySection
-            categories={["Vorlesung", "Übung", "Prüfung", "Abgabe", "Sonstiges"]}
+            categories={categories}
             selectedCategory={category}
             onCategoryChange={setCategory}
-            onAddCategory={(cat) => setCategory(cat)}
+            onAddCategory={onAddCategory || ((cat) => setCategory(cat))}
           />
 
           <AddLectureSection

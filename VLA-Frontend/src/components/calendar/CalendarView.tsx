@@ -108,10 +108,12 @@ export default function CalendarView() {
           onClose={closeEventDetails}
           lectures={lectures}
           people={people}
+          categories={categories}
           onUpdatePersonNotes={handleUpdatePersonNotes}
           onUpdateEvent={handleUpdateEvent}
           onMoveEvent={handleMoveEvent}
           onMoveSeries={handleMoveSeries}
+          onAddCategory={handleAddCategory}
         />
       )}
     </div>

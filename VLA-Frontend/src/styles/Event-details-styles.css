@@ -109,3 +109,85 @@
     width: 100%;
   }
 }
+/* ========================================
+   PERSONEN-LISTE MIT ICON-BUTTON
+   ======================================== */
+
+/* Container für Personen-Liste */
+.cv-peopleList {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+}
+
+/* Einzelne Person - Name + Button (inline, kein Block) */
+.cv-personItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Name der Person */
+.cv-personName {
+  color: inherit;
+  font-weight: normal;
+}
+
+/* Info-Button (ⓘ) - dezent und grau */
+.cv-personDetailsBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-left: 0.15rem;
+  background: none;
+  color: #6c757d;  /* Dezentes Grau */
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.7;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.cv-personDetailsBtn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  opacity: 1;
+  color: #495057;  /* Etwas dunkler beim Hover */
+}
+
+.cv-personDetailsBtn:active {
+  opacity: 0.6;
+}
+
+.cv-personDetailsBtn:focus {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+/* Komma nach Person (außer bei letzter) */
+.cv-personItem:not(:last-child)::after {
+  content: ",";
+  margin-left: 0.1rem;
+  color: inherit;
+}
+
+/* Responsive: Mobile */
+@media (max-width: 640px) {
+  .cv-personDetailsBtn {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+  }
+}
+/* Detail-Value ohne Input-Look nur für Personen */
+.cv-detailValuePeople {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: unset !important;
+}
