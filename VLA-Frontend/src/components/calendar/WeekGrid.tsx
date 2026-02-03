@@ -1,5 +1,6 @@
 
 import DayColumn from "./DayColumn";
+import TimeColumn from "./TimeColumn";
 import type { CalendarDay, CalendarEvent, CalendarEventsByDateISO } from "./CalendarTypes";
 
 type Props = {
@@ -15,11 +16,14 @@ type Props = {
  */
 export default function WeekGrid({ days, eventsByDate = {}, onEventClick, getEventColor }: Props) {
   return (
-    <div className="cv-grid">
-      {days.map((day) => (
-        <DayColumn key={day.iso} day={day} events={eventsByDate[day.iso] || []} onEventClick={onEventClick} 
-          getEventColor={getEventColor} />
-      ))}
+    <div className="cv-gridWithTime">
+      <TimeColumn />
+      <div className="cv-grid">
+        {days.map((day) => (
+          <DayColumn key={day.iso} day={day} events={eventsByDate[day.iso] || []} onEventClick={onEventClick} 
+            getEventColor={getEventColor} />
+        ))}
+      </div>
     </div>
   );
 }

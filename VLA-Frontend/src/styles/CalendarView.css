@@ -59,7 +59,7 @@
 /* Header is exactly as wide as the Grid (both in the same Frame) */
 .cv-header {
   display: grid;
-  grid-template-columns: var(--cv-cols);
+  grid-template-columns: 80px var(--cv-cols);
   gap: var(--cv-gap);
   background: #bfbfbf;     
   border-bottom: 1px solid #777;
@@ -86,6 +86,12 @@
 }
 
 /* Grid without own outer border (the Frame has the Border) */
+.cv-gridWithTime {
+  display: flex;
+  gap: 0;
+  min-height: 0;
+}
+
 .cv-grid {
   display: grid;
   grid-template-columns: var(--cv-cols);
@@ -95,6 +101,31 @@
   background: #d9d9d9;
   overflow: hidden;
 }
+
+.cv-timeColumn {
+  width: 80px;
+  background: #e9ecef;
+  border-right: 1px solid #777;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-timeCell {
+  flex: 1 1 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(0,0,0,0.06);
+}
+
+.cv-timeLabel {
+  font-size: 12px;
+  color: #333;
+}
+
+/* Dedicated timeline column (shows hour slots and event pills across the week) */
+/* timeline column styles removed — timeline column is not used */
 
 .cv-dayColumn {
   border-right: 1px solid #777;
@@ -107,6 +138,101 @@
 .cv-dayColumn:last-child {
   border-right: none;
 }
+
+.cv-dayColumn-inner {
+  display: flex;
+  gap: 8px;
+  height: 100%;
+}
+
+.cv-dayTimeline {
+  width: 160px;
+  min-width: 120px;
+  height: 100%;
+  position: relative;
+}
+
+.cv-dayMain {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Timeline view for day columns */
+.cv-timeline {
+  position: relative;
+  height: 100%;
+  min-height: 480px; /* allow scrolling if many hours */
+}
+
+.cv-timeline-grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-timeline-hour {
+  flex: 1 1 0;
+  position: relative;
+  border-top: 1px dashed rgba(0,0,0,0.06);
+}
+
+.cv-timeline-hour-label {
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  font-size: 11px;
+  color: #444;
+}
+
+/* When Timeline is embedded inside a day column we hide the hour labels so only positioned
+   event blocks are visible and avoid duplicate hour labels next to the left time column. */
+.cv-dayColumn .cv-timeline-hour-label {
+  display: none;
+}
+
+.cv-timeline-events {
+  position: absolute;
+  inset: 0 6px 0 6px;
+}
+
+.cv-timeline-event {
+  position: absolute;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cv-timeline-event-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cv-timeline-event-time {
+  font-size: 12px;
+  color: rgba(0,0,0,0.75);
+  text-align: center;
+  margin-top: 6px;
+}
+
+.cv-timeline-event-untimed {
+  padding: 6px 8px;
+}
+
 
 
 .cv-navBox {
