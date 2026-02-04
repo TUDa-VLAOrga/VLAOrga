@@ -3,7 +3,6 @@ package de.vlaorgatu.vlabackend.sse;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,25 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController()
 @RequestMapping("/sse")
 public class SseController {
-    private final CopyOnWriteArrayList<SseEmitter> sseHandlers = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<SseEmitter> sseHandlers =
+        new CopyOnWriteArrayList<>();
+
+    /**
+     * Sends a Debug message with specified text to all connected clients.
+     *
+     * @param message the text to include in the message.
+     */
+    public static void notifyDebugTest(final String message) {
+        for (SseEmitter connection : sseHandlers) {
+            try {
+                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
+                    .data("! Change Notification ! Message: " + message));
+            } catch (IOException e) {
+                // Broken Pipe Error
+                sseHandlers.remove(connection);
+            }
+        }
+    }
 
     /**
      * Configures the SSE Connection to the frontend.
@@ -46,10 +63,8 @@ public class SseController {
     public String notifyAllSse() {
         for (SseEmitter connection : sseHandlers) {
             try {
-                connection.send(SseEmitter.event()
-                    .name(SseMessageType.DEBUG)
-                    .data("SSE Update to all registered connections!")
-                );
+                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
+                    .data("SSE Update to all registered connections!"));
             } catch (IOException e) {
                 // Broken Pipe Error
                 sseHandlers.remove(connection);

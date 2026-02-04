@@ -346,6 +346,7 @@
       <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>
       <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>
     </module>
+    <module name="UnusedImports"/>
     <module name="MethodParamPad">
       <property name="tokens"
                value="CTOR_DEF, LITERAL_NEW, METHOD_CALL, METHOD_DEF, CTOR_CALL,
@@ -372,7 +373,7 @@
                     RECORD_DEF, RECORD_PATTERN_DEF"/>
     </module>
     <module name="OperatorWrap">
-      <property name="option" value="NL"/>
+      <property name="option" value="EOL"/>
       <property name="tokens"
                value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR,
                     LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR, METHOD_REF,
