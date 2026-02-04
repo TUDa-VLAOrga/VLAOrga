@@ -12,6 +12,8 @@ public class CsrfController {
 
     /**
      * Sends the internally generated CSRF JSON to the requesting process.
+     * <br>
+     * Spring internally takes care of binding the token to the Session ID.
      */
     @GetMapping("/csrf")
     public CsrfToken csrf(CsrfToken csrfToken) {

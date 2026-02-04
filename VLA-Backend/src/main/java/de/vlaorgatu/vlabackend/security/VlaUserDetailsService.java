@@ -30,6 +30,8 @@ public class VlaUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> loginUser = userRepository.findUserByName(username);
 
+        // TODO: after merging the PR with global exception handling, refactor this exception
+        //  (logging should be done centrally, then)
         if (loginUser.isEmpty()) {
             log.error("User not found");
         }
