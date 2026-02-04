@@ -45,7 +45,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login.html")
                 .permitAll()
-                .defaultSuccessUrl("/calendar", true)
+                .defaultSuccessUrl("/", true)
             );
 
         return http.build();

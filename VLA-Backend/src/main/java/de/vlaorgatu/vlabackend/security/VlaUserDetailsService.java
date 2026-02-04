@@ -41,7 +41,7 @@ public class VlaUserDetailsService implements UserDetailsService {
         );
 
         return org.springframework.security.core.userdetails.User.builder()
-            .username(loginUser.get().getId() + "")
+            .username(loginUser.get().getId().toString())
             .password(loginUser.get().getPassword())
             .build();
     }
