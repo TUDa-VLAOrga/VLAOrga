@@ -23,6 +23,7 @@ public class LinusAppointment {
     /**
      * Linus user id.
      */
+    // TODO: possible candidate for @JoinColumn
     @Column(name = "user_id")
     private Long linusUserId;
 

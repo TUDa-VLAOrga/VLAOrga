@@ -23,18 +23,21 @@ public class LinusExperimentBooking {
     /**
      * Linus appointment id.
      */
+    // TODO: possible candidate for @JoinColumn
     @Column(name = "reservation_id")
     private Long linusAppointmentId;
 
     /**
      * Linus experiment id.
      */
+    // TODO: possible candidate for @JoinColumn
     @Column(name = "experiment_id")
     private Long linusExperimentId;
 
     /**
      * Linus user id.
      */
+    // TODO: possible candidate for @JoinColumn
     @Column(name = "user_id")
     private Long linusUserId;
 
