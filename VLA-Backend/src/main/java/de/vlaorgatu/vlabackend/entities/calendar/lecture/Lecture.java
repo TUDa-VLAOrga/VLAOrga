@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.lecture;
+package de.vlaorgatu.vlabackend.entities.calendar.lecture;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
