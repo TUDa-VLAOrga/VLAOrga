@@ -19,6 +19,7 @@ type EventDetailsProps = {
   onMoveEvent?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
   onMoveSeries?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
   onAddCategory?: (category: string) => void;
+  onAddPerson?: (person: Person) => void;
 };
 
 /**
@@ -36,6 +37,7 @@ export default function EventDetails({
   onMoveEvent,
   onMoveSeries,
   onAddCategory,
+  onAddPerson,
 }: EventDetailsProps) {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -94,6 +96,7 @@ export default function EventDetails({
         people={people}
         categories={categories}
         onAddCategory={onAddCategory}
+        onAddPerson={onAddPerson}
         onSave={handleUpdateEvent}
         onCancel={() => setIsEditing(false)}
       />

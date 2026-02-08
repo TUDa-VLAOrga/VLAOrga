@@ -14,6 +14,7 @@ type EventEditFormProps = {
   onSave: (updates: Partial<CalendarEvent>) => void;
   onCancel: () => void;
   onAddCategory?: (category: string) => void;
+  onAddPerson?: (person: Person) => void;
 };
 
 /**
@@ -27,6 +28,7 @@ export default function EventEditForm({
   onSave,
   onCancel,
   onAddCategory,
+  onAddPerson,
 }: EventEditFormProps) {
   const [title, setTitle] = useState(event.title);
   const [category, setCategory] = useState<EventKind>(event.kind);
@@ -134,7 +136,12 @@ export default function EventEditForm({
             people={people}
             selectedPeople={selectedPeople}
             onPeopleChange={setSelectedPeople}
-            onAddPerson={(person) => setSelectedPeople([...selectedPeople, person.id])}
+            onAddPerson={(person) => {
+              if (onAddPerson) {
+                onAddPerson(person);
+              }
+              setSelectedPeople([...selectedPeople, person.id])}
+            }  
           />
 
           <div className="cv-formGroup">

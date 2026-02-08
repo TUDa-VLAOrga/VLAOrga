@@ -114,6 +114,7 @@ export default function CalendarView() {
           onMoveEvent={handleMoveEvent}
           onMoveSeries={handleMoveSeries}
           onAddCategory={handleAddCategory}
+          onAddPerson={handleAddPerson}
         />
       )}
     </div>
