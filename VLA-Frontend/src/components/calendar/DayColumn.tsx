@@ -7,6 +7,9 @@ type DayColumnProps = {
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   getEventColor?: (event: CalendarEvent) => string | undefined;
+  startHour?: number;
+  endHour?: number;
+  showAllDayRow?: boolean;
 };
 
 function getStatusClass(status?: EventStatus): string {
@@ -19,6 +22,9 @@ export default function DayColumn({
   events,
   onEventClick,
   getEventColor,
+  startHour = 7,
+  endHour = 22,
+  showAllDayRow = true,
 }: DayColumnProps) {
   const timed = events.filter(
     (e) => e.displayedStartTime && e.displayedEndTime
@@ -41,30 +47,38 @@ export default function DayColumn({
 
   return (
     <div className="cv-dayColumn" data-date={day.iso}>
-      <div className="cv-dayColumn-inner">
-        <div className="cv-dayTimeline">
-          <Timeline
-            events={timed}
-            onEventClick={onEventClick}
-            getEventColor={getEventColor}
-          />
-        </div>
+      {/* Render all-day row ONLY if enabled AND this week has any untimed events */}
+      {showAllDayRow && (
+        <div className="cv-allDayRow" aria-label="Ganztägige Termine">
+          {untimed.length === 0 ? (
+            <div className="cv-allDayEmpty" />
+          ) : (
+            untimed.map((event) => {
+              const customColor = getEventColor?.(event);
+              const eventProps = buildEventProps(event, customColor);
 
-        <div className="cv-dayMain">
-          {untimed.map((event) => {
-            const customColor = getEventColor?.(event);
-            const eventProps = buildEventProps(event, customColor);
-
-            return (
-              <div key={event.id} {...eventProps}>
-                <div className="cv-eventTitle">{event.title}</div>
-                {event.shortTitle && (
-                  <div className="cv-eventSubtitle">{event.shortTitle}</div>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={event.id}
+                  {...eventProps}
+                  className={`cv-allDayPill ${eventProps.className}`}
+                >
+                  <div className="cv-eventTitle">{event.title}</div>
+                </div>
+              );
+            })
+          )}
         </div>
+      )}
+
+      <div className="cv-dayTimeline">
+        <Timeline
+          events={timed}
+          onEventClick={onEventClick}
+          getEventColor={getEventColor}
+          startHour={startHour}
+          endHour={endHour}
+        />
       </div>
     </div>
   );

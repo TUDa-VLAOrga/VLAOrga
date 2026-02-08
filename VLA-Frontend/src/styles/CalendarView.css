@@ -1,15 +1,30 @@
-
-
 :root {
- --z-base: 1;
+  --z-base: 1;
   --z-dropdown: 100;
   --z-sticky: 200;
   --z-overlay: 1000;
   --z-modal: 1100;
   --z-tooltip: 1200;
+
+  /* Timeline sizing */
+  --cv-hour-height: 56px;
+  --cv-all-day-height: 56px;
+
+  /* Will be set inline from CalendarView.tsx */
+  --cv-day-count: 5;
+  /* Will be set inline from WeekGrid.tsx */
+  --cv-hour-count: 15;
 }
-.cv-root {   
-  width: 100%;         
+
+/* ✅ IMPORTANT: avoid box model mismatches (line alignment bugs) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.cv-root {
+  width: 100%;
   margin: 0 auto;
   padding: 50px 24px 24px 24px;
   height: 100vh;
@@ -32,37 +47,39 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
-
 
 .cv-weekRow {
   display: flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   gap: 12px;
   width: 100%;
 }
 
-/* Frame: Block for Header + Grid, only visible in the border */
+/* Frame: Header + Grid in one scrollable horizontal container */
 .cv-frame {
-  --cv-cols: repeat(auto-fit, minmax(160px, auto));
-  --cv-gap: 0px; 
-  flex: 1;      
+  flex: 1;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
   border: 1px solid #777;
   background: #d9d9d9;
-  overflow: hidden;
+
+  /* never wrap days; allow horizontal scroll */
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
-/* Header is exactly as wide as the Grid (both in the same Frame) */
+/* Header: 80px time column + N day columns */
 .cv-header {
   display: grid;
-  grid-template-columns: 80px var(--cv-cols);
-  gap: var(--cv-gap);
-  background: #bfbfbf;     
+  grid-template-columns: 80px repeat(var(--cv-day-count), minmax(220px, 1fr));
+  background: #bfbfbf;
   border-bottom: 1px solid #777;
+
+  min-width: max-content;
 }
 
 .cv-headerCell {
@@ -85,88 +102,127 @@
   font-size: 12px;
 }
 
-/* Grid without own outer border (the Frame has the Border) */
+/* Main grid area with shared vertical scrolling */
 .cv-gridWithTime {
-  display: flex;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 80px 1fr;
   min-height: 0;
-  flex: 1 1 0; /* allow grid area to grow and fill the frame */
+  flex: 1 1 0;
+  background: #d9d9d9;
+
+  /* shared vertical scroll for time + days */
+  overflow-y: auto;
+  overflow-x: visible;
+
+  min-width: max-content;
 }
 
+/* Left rail = all-day spacer (optional) + time column */
+.cv-leftRail {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #777;
+  background: #e9ecef;
+}
+
+.cv-allDaySpacer {
+  height: var(--cv-all-day-height);
+  border-bottom: 1px solid #777;
+  background: #e9ecef;
+}
+
+/* Day columns grid */
 .cv-grid {
   display: grid;
-  grid-template-columns: var(--cv-cols);
-  gap: var(--cv-gap);
+  grid-template-columns: repeat(var(--cv-day-count), minmax(220px, 1fr));
   min-height: 0;
-  flex: 1; 
+  flex: 1;
   background: #d9d9d9;
+
+  min-width: max-content;
   overflow: hidden;
 }
 
+/* Time column */
 .cv-timeColumn {
   width: 80px;
   background: #e9ecef;
-  border-right: 1px solid #777;
   display: flex;
   flex-direction: column;
 }
 
+/* ✅ FIX: line alignment. remove padding that offsets dashed line */
 .cv-timeCell {
-  flex: 1 1 0;
+  height: var(--cv-hour-height);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 6px;
-  border-top: 1px dashed rgba(0,0,0,0.06);
+
+  /* draw the hour separator exactly at the top */
+  border-top: 1px dashed rgba(0, 0, 0, 0.06);
+  padding: 0;
+  margin: 0;
 }
 
 .cv-timeLabel {
   font-size: 12px;
   color: #333;
+  line-height: 1;
 }
 
-/* Dedicated timeline column (shows hour slots and event pills across the week) */
-/* timeline column styles removed — timeline column is not used */
-
+/* Day column: no per-day scrolling */
 .cv-dayColumn {
   border-right: 1px solid #777;
-  padding: 10px;
+  padding: 0;
   background: transparent;
-  overflow-y: auto;
-  height: 100%;
+  overflow: hidden;
 }
 
 .cv-dayColumn:last-child {
   border-right: none;
 }
 
-.cv-dayColumn-inner {
+/* All-day / untimed row */
+.cv-allDayRow {
+  height: var(--cv-all-day-height);
   display: flex;
+  align-items: center;
   gap: 8px;
-  height: 100%;
+  padding: 8px 10px;
+  border-bottom: 1px solid #777;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
 }
 
+.cv-allDayEmpty {
+  flex: 1;
+}
+
+.cv-allDayPill {
+  max-width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: #f9f9f9;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Timeline */
 .cv-dayTimeline {
-  width: 160px;
-  min-width: 120px;
-  height: 100%;
-  position: relative;
+  padding: 0 10px;
 }
 
-.cv-dayMain {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Timeline view for day columns */
 .cv-timeline {
   position: relative;
-  height: 100%;
-  min-height: 480px; /* allow scrolling if many hours */
+
+  height: calc(var(--cv-hour-count) * var(--cv-hour-height));
+  min-height: calc(var(--cv-hour-count) * var(--cv-hour-height));
 }
 
+/* ✅ Avoid pixel rounding mismatches */
 .cv-timeline-grid {
   position: absolute;
   inset: 0;
@@ -175,9 +231,9 @@
 }
 
 .cv-timeline-hour {
-  flex: 1 1 0;
+  height: var(--cv-hour-height);
   position: relative;
-  border-top: 1px dashed rgba(0,0,0,0.06);
+  border-top: 1px dashed rgba(0, 0, 0, 0.06);
 }
 
 .cv-timeline-hour-label {
@@ -188,10 +244,16 @@
   color: #444;
 }
 
-/* When Timeline is embedded inside a day column we hide the hour labels so only positioned
-   event blocks are visible and avoid duplicate hour labels next to the left time column. */
+/* Timeline labels inside day column are hidden (we have left time column) */
 .cv-dayColumn .cv-timeline-hour-label {
   display: none;
+}
+
+.cv-timeline-hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
 }
 
 .cv-timeline-events {
@@ -201,20 +263,21 @@
 
 .cv-timeline-event {
   position: absolute;
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 6px;
-  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
   background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
 }
 
+/* ✅ Title + time under it (as you want) */
 .cv-timeline-event-title {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 700;
   color: #111;
   text-align: center;
@@ -224,21 +287,19 @@
 }
 
 .cv-timeline-event-time {
-  font-size: 12px;
-  color: rgba(0,0,0,0.75);
-  text-align: center;
   margin-top: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  line-height: 1.1;
 }
 
-.cv-timeline-event-untimed {
-  padding: 6px 8px;
-}
-
-
+/* ===== Toolbar / Navigation ===== */
 
 .cv-navBox {
   width: 44px;
-  height: 44px; 
+  height: 44px;
   border: 1px solid #dee2e6;
   border-radius: 6px;
   background: white;
@@ -250,6 +311,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .cv-navBox:hover {
   background: #f8f9fa;
   border-color: #adb5bd;
@@ -258,7 +320,7 @@
 }
 
 .cv-navBox:first-child::after {
-  content: '';
+  content: "";
   width: 10px;
   height: 10px;
   border-left: 2px solid #495057;
@@ -268,7 +330,7 @@
 }
 
 .cv-navBox:nth-child(3)::after {
-  content: '';
+  content: "";
   width: 10px;
   height: 10px;
   border-right: 2px solid #495057;
@@ -286,9 +348,11 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background: #e9ecef;
 }
+
 .cv-navIcon {
   display: none;
 }
+
 .cv-range {
   height: 44px;
   padding: 0px 16px;
@@ -335,6 +399,7 @@
   background: #e9ecef;
 }
 
+/* Date Picker */
 .cv-datePickerOverlay {
   position: fixed;
   top: 0;
@@ -350,8 +415,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .cv-datePickerBox {
@@ -364,8 +433,14 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .cv-datePickerTitle {
@@ -388,22 +463,6 @@
 .cv-datePickerInput:focus {
   outline: none;
   border-color: #0d6efd;
-}
-
-.cv-datePickerClose {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background: #e9ecef;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.cv-datePickerClose:hover {
-  background: #dee2e6;
 }
 
 .cv-datePickerActions {
@@ -445,7 +504,6 @@
   background: #adb5bd;
   cursor: not-allowed;
 }
-
 
 /* Event Form Overlay */
 .cv-formOverlay {
@@ -654,7 +712,7 @@
 
 .cv-event:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .cv-eventTitle {
@@ -667,37 +725,6 @@
 .cv-eventSubtitle {
   font-size: 0.8rem;
   color: #666;
-}
-
-/* Event Categories (Kind) */
-.cv-event-Vorlesung {
-  border-left-color: #0066cc;
-  background: #e6f2ff;
-}
-
-.cv-event-Übung {
-  border-left-color: #00aa66;
-  background: #e6fff2;
-}
-
-.cv-event-Abnahmetermin {
-  border-left-color: #ff6600;
-  background: #fff2e6;
-}
-
-.cv-event-Ferien {
-  border-left-color: #9933cc;
-  background: #f2e6ff;
-}
-
-.cv-event-Aufbau {
-  border-left-color: #ccaa00;
-  background: #fffae6;
-}
-
-.cv-event-Abbau {
-  border-left-color: #cc3300;
-  background: #ffe6e6;
 }
 
 /* Event Status Indicators */
@@ -716,6 +743,7 @@
   background: #ffe6e6 !important;
   border-left-color: #cc0000 !important;
 }
+
 /* Event Details */
 .cv-detailsContent {
   display: flex;
@@ -744,11 +772,6 @@
   flex: 1;
 }
 
-.cv-detailRow {
-  align-items: center; /* sorgt für gleiche vertikale Ausrichtung wie andere Rows */
-}
-
-
 .cv-detailValueLecture {
   display: inline-flex;
   align-items: center;
@@ -767,7 +790,7 @@
   line-height: 1.2;
 }
 
-/* ===== NEU: Label Row für Buttons neben Labels ===== */
+/* Label row */
 .cv-formLabelRow {
   display: flex;
   justify-content: space-between;
@@ -775,7 +798,7 @@
   margin-bottom: 8px;
 }
 
-/* ===== NEU: Add Button ===== */
+/* Add button */
 .cv-addBtn {
   background: none;
   border: 1px solid #d1d5db;
@@ -793,7 +816,7 @@
   border-color: #9ca3af;
 }
 
-/* ===== NEU: Add Section (für Inline-Formulare) ===== */
+/* Inline add section */
 .cv-addSection {
   background: #f9fafb;
   padding: 12px;
@@ -806,7 +829,7 @@
   margin-bottom: 8px;
 }
 
-/* ===== NEU: Color Picker ===== */
+/* Color picker */
 .cv-colorPicker {
   display: flex;
   gap: 8px;
@@ -840,4 +863,48 @@
 #todaysColumn {
   background-color: #b9b9b9;
 }
+
+/* Mobile: keep columns readable and avoid stacking */
+@media (max-width: 700px) {
+  .cv-header {
+    grid-template-columns: 80px repeat(var(--cv-day-count), minmax(260px, 1fr));
+  }
+  .cv-grid {
+    grid-template-columns: repeat(var(--cv-day-count), minmax(260px, 1fr));
+  }
+}
+
+/* =========================================
+   Hide event time when event is too narrow
+   (overlapping events)
+   ========================================= */
+
+/* Enable width-based container queries */
+.cv-timeline-event {
+  container-type: inline-size;
+}
+
+/* If event card becomes narrow, hide the time */
+@container (max-width: 140px) {
+  .cv-timeline-event-time {
+    display: none;
+  }
+
+  .cv-timeline-event-title {
+    font-size: 16px;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+}
+
+/* Even narrower */
+@container (max-width: 110px) {
+  .cv-timeline-event-title {
+    font-size: 14px;
+  }
+}
+
 
