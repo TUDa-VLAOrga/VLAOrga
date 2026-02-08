@@ -40,6 +40,7 @@ public class SecurityConfig {
             .csrf(Customizer.withDefaults())
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/csrf").permitAll()
+                .requestMatchers("/login.css").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
