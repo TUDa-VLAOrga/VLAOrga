@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
-import { addDays, toISODateLocal, splitDateTime } from "../components/calendar/dateUtils";
+import { addDays, toISODateLocal, splitDateTime, moveEventSeries } from "../components/calendar/dateUtils";
 import type { Person } from "@/components/calendar/EventForm/AddPeopleSection";
 
 /**
@@ -27,7 +27,7 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
       .join(", ");
   }
 
-function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
+  function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
     // TODO: Backend - PATCH request to /api/events/:eventId
     setEvents((prev) =>
       prev.map((event) =>
@@ -43,7 +43,7 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
     });
   }
 
-    function handleMoveEvent(
+  function handleMoveEvent(
     eventId: string,
     newStartDateTime: string,
     newEndDateTime: string
@@ -56,11 +56,11 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
       prev.map((event) =>
         event.id === eventId
           ? {
-              ...event,
-              dateISO: newDateISO,
-              displayedStartTime: newStartTime,
-              displayedEndTime: newEndTime,
-            }
+            ...event,
+            dateISO: newDateISO,
+            displayedStartTime: newStartTime,
+            displayedEndTime: newEndTime,
+          }
           : event
       )
     );
@@ -71,38 +71,16 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
   function handleMoveSeries(
     eventId: string,
     newStartDateTime: string,
-    newEndDateTime: string
+    _newEndDateTime: string
   ) {
     const event= events.find(e => e.id === eventId);
     if(!event?.recurrenceId){
       console.log("Event is not part of a series");
       return;
     }
-    const oldStart = new Date(`${event.dateISO}T${event.displayedStartTime }`);
-    const newStart = new Date(newStartDateTime);
-  const timeDiff = newStart.getTime() - oldStart.getTime();
-
-  // Verschiebe alle Events der Serie
-  setEvents((prev) =>
-    prev.map((e) => {
-      if (e.recurrenceId !== event.recurrenceId) return e;
-
-      const oldEventStart = new Date(`${e.dateISO}T${e.displayedStartTime}`);
-      const newEventStart = new Date(oldEventStart.getTime() + timeDiff);
-
-      const oldEventEnd = new Date(`${e.dateISO}T${e.displayedEndTime}`);
-      const newEventEnd = new Date(oldEventEnd.getTime() + timeDiff);
-
-      return {
-        ...e,
-        dateISO: newEventStart.toISOString().split('T')[0],
-        displayedStartTime: newEventStart.toTimeString().substring(0, 5),
-        displayedEndTime: newEventEnd.toTimeString().substring(0, 5),
-      };
-    })
-  );
-
-  setSelectedEvent(null);
+    // Verschiebe alle Events der Serie
+    setEvents((prev) => moveEventSeries(prev, event, newStartDateTime));
+    setSelectedEvent(null);
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
@@ -122,8 +100,8 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
     const newEvents: CalendarEvent[] = [];
 
     const recurrenceId = formData.recurrence && formData.recurrence.weekdays.length > 0
-    ? `recurrence-${Date.now()}`
-    : undefined;
+      ? `recurrence-${Date.now()}`
+      : undefined;
 
     // Always create the base event on the explicitly chosen start date.
     newEvents.push({

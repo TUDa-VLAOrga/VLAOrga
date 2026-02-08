@@ -4,6 +4,8 @@
  * Goal: CalendarView stays lean (State + UI), logic is here.
  */
 
+import type { CalendarEvent } from "./CalendarTypes";
+
 export const WORKDAY_COUNT = 5;
 
 export function toISODateLocal(d: Date) {
@@ -149,4 +151,37 @@ export function addMinutesToDateTime(dateTimeString: string, minutes: number): s
   const mins = String(date.getMinutes()).padStart(2, '0');
   
   return `${year}-${month}-${day}T${hours}:${mins}`;
+}
+/**
+ * Moves a series of events by calculating time difference
+ * @param events - Array of events to move
+ * @param referenceEvent - The event that was dragged
+ * @param newStartDateTime - New start datetime string
+ * @returns Updated events with new times
+ */
+export function moveEventSeries(
+  events: CalendarEvent[],
+  referenceEvent: CalendarEvent,
+  newStartDateTime: string
+): CalendarEvent[] {
+  const oldStart = new Date(`${referenceEvent.dateISO}T${referenceEvent.displayedStartTime}`);
+  const newStart = new Date(newStartDateTime);
+  const timeDiff = newStart.getTime() - oldStart.getTime();
+
+  return events.map((e) => {
+    if (e.recurrenceId !== referenceEvent.recurrenceId) return e;
+
+    const oldEventStart = new Date(`${e.dateISO}T${e.displayedStartTime}`);
+    const newEventStart = new Date(oldEventStart.getTime() + timeDiff);
+
+    const oldEventEnd = new Date(`${e.dateISO}T${e.displayedEndTime}`);
+    const newEventEnd = new Date(oldEventEnd.getTime() + timeDiff);
+
+    return {
+      ...e,
+      dateISO: newEventStart.toISOString().split('T')[0],
+      displayedStartTime: newEventStart.toTimeString().substring(0, 5),
+      displayedEndTime: newEventEnd.toTimeString().substring(0, 5),
+    };
+  });
 }

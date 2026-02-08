@@ -124,13 +124,13 @@ export default function EventEditForm({
             onAddLecture={(lecture) => setLectureId(lecture.id)}
           />
 
-            <TimeRangeInput
-              startDateTime={startDateTime}
-              endDateTime={endDateTime}
-              onStartChange={setStartDateTime}
-              onEndChange={setEndDateTime}
-              durationMinutes={100}
-            />
+          <TimeRangeInput
+            startDateTime={startDateTime}
+            endDateTime={endDateTime}
+            onStartChange={setStartDateTime}
+            onEndChange={setEndDateTime}
+            durationMinutes={100}
+          />
 
           <AddPeopleSection
             people={people}
@@ -140,7 +140,7 @@ export default function EventEditForm({
               if (onAddPerson) {
                 onAddPerson(person);
               }
-              setSelectedPeople([...selectedPeople, person.id])}
+              setSelectedPeople([...selectedPeople, person.id]);}
             }  
           />
 

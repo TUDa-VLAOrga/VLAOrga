@@ -26,9 +26,10 @@ export default function TimeRangeInput({
   // Auto-calculate end time when start time changes
   useEffect(() => {
     if (autoCalculateEnd && startDateTime) {
-      onEndChange(addMinutesToDateTime(startDateTime, durationMinutes));
+      const newEndDateTime = addMinutesToDateTime(startDateTime, durationMinutes);
+      onEndChange(newEndDateTime);
     }
-  }, [startDateTime, autoCalculateEnd, durationMinutes]);
+  }, [startDateTime, autoCalculateEnd, durationMinutes, onEndChange]);
 
   return (
     <>

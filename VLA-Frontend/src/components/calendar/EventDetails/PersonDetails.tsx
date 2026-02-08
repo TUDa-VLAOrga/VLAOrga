@@ -27,15 +27,15 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
        
         {/* Header mit Close-Button */}
         <div className="cv-personDetailsHeader">
-           <h2 className="cv-formTitle">{person.name}</h2>
-            <button 
-              type="button"
-              className="cv-closeBtn"
-              onClick={onClose}
-              aria-label="Schließen"
-            >
-              x
-            </button>
+          <h2 className="cv-formTitle">{person.name}</h2>
+          <button 
+            type="button"
+            className="cv-closeBtn"
+            onClick={onClose}
+            aria-label="Schließen"
+          >
+            x
+          </button>
         </div>
 
         {/* Kontakt-Informationen */}

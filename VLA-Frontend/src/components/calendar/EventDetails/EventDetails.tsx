@@ -90,7 +90,7 @@ export default function EventDetails({
     ? getCurrentPerson(selectedPerson.id)
     : null;
 
-    if (isEditing) {
+  if (isEditing) {
     return (
       <EventEditForm
         event={event}
@@ -186,22 +186,22 @@ export default function EventDetails({
                 <span className="cv-detailLabel">Personen:</span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
-                  {eventPeople.map((person) => (
-                    <span key={person.id} className="cv-personItem">
-                      <span className="cv-personName">{person.name}</span>
-                      <button
-                        type="button"
-                        className="cv-personDetailsBtn"
-                        onClick={() => setSelectedPerson(person)}
-                        aria-label={`Details zu ${person.name}`}
-                        title="Details anzeigen"
-                      >
-                        ⓘ
-                      </button>
-                     </span>
-                  ))}
+                    {eventPeople.map((person) => (
+                      <span key={person.id} className="cv-personItem">
+                        <span className="cv-personName">{person.name}</span>
+                        <button
+                          type="button"
+                          className="cv-personDetailsBtn"
+                          onClick={() => setSelectedPerson(person)}
+                          aria-label={`Details zu ${person.name}`}
+                          title="Details anzeigen"
+                        >
+                          ⓘ
+                        </button>
+                      </span>
+                    ))}
                   </span>
-              </div>
+                </div>
               </div>
             )}
 
@@ -232,7 +232,7 @@ export default function EventDetails({
                   setShowMoveDialog(true);
                 }
               }
-            }
+              }
             >
               Verschieben
             </button>

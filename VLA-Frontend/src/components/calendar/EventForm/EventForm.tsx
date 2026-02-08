@@ -177,7 +177,7 @@ export default function EventForm({
             onEndChange={setEndDateTime}
             autoCalculateEnd={true}
             durationMinutes={100}
-           />
+          />
 
           <RecurrenceSection
             isEnabled={recurrence.enabled}

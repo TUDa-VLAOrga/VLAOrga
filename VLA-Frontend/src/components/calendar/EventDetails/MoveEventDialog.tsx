@@ -16,7 +16,7 @@ export default function MoveEventDialog({
   event, 
   onMove, 
   onCancel, 
-  isSeries 
+  isSeries, 
 }: MoveEventDialogProps) {
   
   // Extract current date and time from event
