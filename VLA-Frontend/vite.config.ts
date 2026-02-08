@@ -14,6 +14,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/sse': 'http://localhost:8080',
+      '/csrf': 'http://localhost:8080',
+      '/login.html': 'http://localhost:8080',
     },
   },
 });
