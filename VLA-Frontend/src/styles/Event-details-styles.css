@@ -191,3 +191,163 @@
   padding: 0 !important;
   min-height: unset !important;
 }
+/* ========================================
+   PERSON DETAILS - MODERNES DESIGN
+   ======================================== */
+
+.cv-personDetailsBox {
+  max-width: 500px;
+}
+
+.cv-personDetailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.cv-personDetailsHeader .cv-formTitle {
+  margin: 0;
+}
+
+/* Close Button (X) */
+.cv-closeBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.cv-closeBtn:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* Content Container */
+.cv-personDetailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Info Cards (Email, Role) */
+.cv-personInfoCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #0066cc;
+}
+
+.cv-personInfoLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+.cv-personInfoValue {
+  font-size: 0.95rem;
+  color: #212529;
+}
+
+.cv-personEmail {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cv-personEmail:hover {
+  color: #0052a3;
+  text-decoration: underline;
+}
+
+/* Notizen Section */
+.cv-personNotesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cv-personNotesLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.cv-personNotesTextarea {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cv-personNotesTextarea:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.cv-personNotesTextarea::placeholder {
+  color: #adb5bd;
+}
+
+/* ========================================
+   MOVE CONFIRM DIALOG
+   ======================================== */
+
+.cv-confirmDialog {
+  max-width: 450px;
+}
+
+.cv-confirmMessage {
+  margin-bottom: 1rem;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.cv-confirmQuestion {
+  margin-bottom: 0;
+  color: #212529;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.cv-confirmActions {
+  gap: 0.75rem;
+}
+
+.cv-confirmActions .cv-formBtn {
+  flex: 1;
+  min-width: auto;
+}
+
+@media (max-width: 640px) {
+  .cv-confirmActions {
+    flex-direction: column;
+  }
+  
+  .cv-confirmActions .cv-formBtn {
+    width: 100%;
+  }
+}

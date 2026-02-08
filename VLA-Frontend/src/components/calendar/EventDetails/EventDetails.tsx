@@ -6,6 +6,7 @@ import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import MoveEventDialog from "./MoveEventDialog";
 import "../../../styles/Event-details-styles.css";
+import MoveConfirmDialog from "./MoveConfirmDialog";
 
 
 type EventDetailsProps = {
@@ -43,6 +44,7 @@ export default function EventDetails({
   const [isEditing, setIsEditing] = useState(false);
   const [showMoveDialog, setShowMoveDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
+  const [showMoveConfirm, setShowMoveConfirm] = useState(false);
   let lecture = null;
   if (event.lectureId) {
     lecture = lectures.find(lec => lec.id === event.lectureId) || null;
@@ -122,7 +124,21 @@ export default function EventDetails({
       />
     );
   }
-  
+  if (showMoveConfirm) {
+    return (
+      <MoveConfirmDialog
+        onMoveSingle={() => {
+          setShowMoveConfirm(false);
+          setShowMoveDialog(true);
+        }}
+        onMoveSeries={() => {
+          setShowMoveConfirm(false);
+          setShowMoveSeriesDialog(true);
+        }}
+        onCancel={() => setShowMoveConfirm(false)}
+      />
+    );
+  }
   return (
     <>
       <div className="cv-formOverlay">
@@ -209,19 +225,18 @@ export default function EventDetails({
             <button
               type="button"
               className="cv-formBtn cv-formBtnSecondary"
-              onClick={() => setShowMoveDialog(true)}
+              onClick={() => {
+                if (event.recurrenceId) {
+                  setShowMoveConfirm(true);
+                } else {
+                  setShowMoveDialog(true);
+                }
+              }
+            }
             >
               Verschieben
             </button>
-            {event.recurrenceId && onMoveSeries && (
-              <button
-                type="button"
-                className="cv-formBtn cv-formBtnSecondary"
-                onClick={() => setShowMoveSeriesDialog(true)}
-              >
-                Serie verschieben
-              </button>
-            )}
+            
             <button
               type="button"
               className="cv-formBtn cv-formBtnSecondary"

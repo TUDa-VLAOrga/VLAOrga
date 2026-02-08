@@ -73,8 +73,36 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
     newStartDateTime: string,
     newEndDateTime: string
   ) {
-    // TODO: Implement when recurrenceId is added to CalendarEvent
-    console.log("Move series not yet implemented - add recurrenceId first");
+    const event= events.find(e => e.id === eventId);
+    if(!event?.recurrenceId){
+      console.log("Event is not part of a series");
+      return;
+    }
+    const oldStart = new Date(`${event.dateISO}T${event.displayedStartTime }`);
+    const newStart = new Date(newStartDateTime);
+  const timeDiff = newStart.getTime() - oldStart.getTime();
+
+  // Verschiebe alle Events der Serie
+  setEvents((prev) =>
+    prev.map((e) => {
+      if (e.recurrenceId !== event.recurrenceId) return e;
+
+      const oldEventStart = new Date(`${e.dateISO}T${e.displayedStartTime}`);
+      const newEventStart = new Date(oldEventStart.getTime() + timeDiff);
+
+      const oldEventEnd = new Date(`${e.dateISO}T${e.displayedEndTime}`);
+      const newEventEnd = new Date(oldEventEnd.getTime() + timeDiff);
+
+      return {
+        ...e,
+        dateISO: newEventStart.toISOString().split('T')[0],
+        displayedStartTime: newEventStart.toTimeString().substring(0, 5),
+        displayedEndTime: newEventEnd.toTimeString().substring(0, 5),
+      };
+    })
+  );
+
+  setSelectedEvent(null);
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
@@ -93,7 +121,10 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
 
     const newEvents: CalendarEvent[] = [];
 
-    
+    const recurrenceId = formData.recurrence && formData.recurrence.weekdays.length > 0
+    ? `recurrence-${Date.now()}`
+    : undefined;
+
     // Always create the base event on the explicitly chosen start date.
     newEvents.push({
       id: `event-${Date.now()}-0`,
@@ -108,6 +139,7 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
       displayedEndTime: endTime,
       lectureId: formData.lectureId,
       notes: formData.notes,
+      recurrenceId: recurrenceId,
     });
 
     if (formData.recurrence && formData.recurrence.weekdays.length > 0) {
@@ -135,6 +167,7 @@ function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
             displayedEndTime: endTime,
             lectureId: formData.lectureId,
             notes: formData.notes,
+            recurrenceId: recurrenceId,
           });
         }
         currentDate = addDays(currentDate, 1);
