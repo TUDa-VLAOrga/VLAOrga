@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.lecture;
+package de.vlaorgatu.vlabackend.entities.calendar.lecture;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

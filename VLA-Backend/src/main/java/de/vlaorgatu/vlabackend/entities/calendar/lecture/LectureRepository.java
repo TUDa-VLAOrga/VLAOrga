@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.lecture;
+package de.vlaorgatu.vlabackend.entities.calendar.lecture;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
