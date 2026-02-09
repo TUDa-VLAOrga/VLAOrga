@@ -2,6 +2,9 @@ package de.vlaorgatu.vlabackend.sse;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse")
 @CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
+     Logger logger = LoggerFactory.getLogger(SseController.class);
+
+    // TODO: Think about synchronization of methods
     private static final CopyOnWriteArrayList<SseEmitter> sseHandlers =
         new CopyOnWriteArrayList<>();
 
@@ -48,9 +54,20 @@ public class SseController {
         SseEmitter connectionHandler = new SseEmitter(Long.MAX_VALUE);
 
         sseHandlers.add(connectionHandler);
-        connectionHandler.onCompletion(() -> sseHandlers.remove(connectionHandler));
-        connectionHandler.onTimeout(() -> sseHandlers.remove(connectionHandler));
-        connectionHandler.onError((e) -> sseHandlers.remove(connectionHandler));
+        connectionHandler.onCompletion(() -> {
+            sseHandlers.remove(connectionHandler);
+            logger.info("A connection to the SSE endpoint has closed intentionally");
+        });
+
+        connectionHandler.onTimeout(() -> {
+            sseHandlers.remove(connectionHandler);
+            logger.info("A connection to the SSE endpoint timed out");
+        });
+
+        connectionHandler.onError((e) -> {
+            sseHandlers.remove(connectionHandler);
+            logger.info("A connection to the SSE endpoint threw an error: {}", e.toString());
+        });
 
         return connectionHandler;
     }
