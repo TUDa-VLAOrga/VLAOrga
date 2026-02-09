@@ -1,4 +1,4 @@
-import type { Person } from "../EventForm/AddPeopleSection";
+import type { Person } from "../CalendarTypes";
 import {useState} from "react";
 
 type PersonDetailsProps = {
@@ -41,12 +41,14 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
             </div>
           )}
 
-          {person.role && (
-            <div className="cv-detailRow">
-              <span className="cv-detailLabel">Rolle:</span>
-              <span className="cv-detailValue">{person.role}</span>
-            </div>
-          )}
+          {/*
+  {person.role && (
+    <div className="cv-detailRow">
+      <span className="cv-detailLabel">Rolle:</span>
+      <span className="cv-detailValue">{person.role}</span>
+    </div>
+  )}
+  */}
         </div>
 
         <div className="cv-formGroup cv-personNotesGroup">
@@ -58,7 +60,7 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
             className="cv-formInput cv-personNotesTextarea"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Notizen zu dieser Person..."
+            placeholder="Notizen zu dieser Person"
             rows={4}
           />
         </div>

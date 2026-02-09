@@ -1,4 +1,4 @@
-import type { Person } from "./EventForm/AddPeopleSection";
+
 
 export type CalendarDay = {
   date: Date;
@@ -40,7 +40,7 @@ export type CalendarEvent = {
   status?: EventStatus;   /** Optional UI status indicator for highlighting the event in the calendar. */
   shortTitle?: string;
   lectureId?: LectureId;
-  people?: string[] | Person[];
+  people?: Person[];
 };
 
 export type Lecture = {
@@ -51,4 +51,10 @@ export type Lecture = {
 
 export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
-
+export type Person = {
+  id: string;
+  name: string;
+  email?: string;
+  role?: string;
+  notes?: string;
+};

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import type { EventKind, EventStatus , Lecture } from "../CalendarTypes";
+import type { EventKind, EventStatus , Lecture, Person } from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
 import { addMinutesToDateTime } from "../dateUtils";
-import AddPeopleSection, {type Person} from "./AddPeopleSection";
+import AddPeopleSection from "./AddPeopleSection";
+
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 

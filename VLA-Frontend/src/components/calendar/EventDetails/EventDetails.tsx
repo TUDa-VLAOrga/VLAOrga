@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { CalendarEvent, Lecture } from "../CalendarTypes";
 import { formatISODateDE } from "../dateUtils";
-import type { Person } from "../EventForm/AddPeopleSection";
+import type { Person } from "../CalendarTypes";
 import PersonDetails from "./PersonDetails";
+
 
 type EventDetailsProps = {
   event: CalendarEvent;
@@ -17,7 +18,7 @@ type EventDetailsProps = {
  * If the event is assigned to a lecture, it shows the lecture color + name.
  */
 export default function EventDetails({ 
-  event, onClose, lectures = [], people = [], onUpdatePersonNotes, 
+  event, onClose, lectures = [], people = [], onUpdatePersonNotes,
 }: EventDetailsProps) {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   let lecture = null;
@@ -25,29 +26,18 @@ export default function EventDetails({
     lecture = lectures.find(lec => lec.id === event.lectureId) || null;
   }
 
-  const handleUpdatePersonNotes = (personId: string, notes: string) => {
+  const handleUpdate = (personId: string, notes: string) => {
+    //TODO: Backend - PUT request to update person notes
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes);
-      // Update the selected person with the new notes
       if (selectedPerson && selectedPerson.id === personId) {
-        setSelectedPerson({ ...selectedPerson, notes });
+        setSelectedPerson({...selectedPerson, notes});
       }
     }
   };
 
   const getEventPeople = (): Person[] => {
-    if (!event.people || event.people.length === 0) {
-      return [];
-    }
-    return event.people
-      .map(item => {
-        if (typeof item === "string") {
-          return people.find(p => p.id === item);
-        }else {
-          return item;
-        }
-      })
-      .filter((p): p is Person => p !== undefined);
+    return event.people || [];
   };
 
   const eventPeople = getEventPeople();
@@ -146,7 +136,7 @@ export default function EventDetails({
         <PersonDetails
           person={currentSelectedPerson}
           onClose={() => setSelectedPerson(null)}
-          onSaveNotes={handleUpdatePersonNotes}
+          onSaveNotes={handleUpdate}
         />
       )}
     </>

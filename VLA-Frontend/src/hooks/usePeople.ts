@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Person } from "../components/calendar/EventForm/AddPeopleSection";
+import type { Person } from "../components/calendar/CalendarTypes";
 
 /**
  * usePeople manages the list of people that can be assigned to events.
