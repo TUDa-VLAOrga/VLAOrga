@@ -18,7 +18,7 @@ import lombok.Getter;
 @Table(name = "reservation_experiment")
 public class LinusExperimentBooking {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
