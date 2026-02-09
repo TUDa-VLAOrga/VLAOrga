@@ -3,6 +3,8 @@ package de.vlaorgatu.vlabackend.user;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+
+import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +52,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userRepository.findById(id).map(ResponseEntity::ok)
-            .orElseThrow(() -> new EntityNotFoundException("User with ID " + id + " not found."));
+            .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     /**
@@ -69,16 +71,13 @@ public class UserController {
      *
      * @param id   user ID
      * @param user updated user data
-     * @return updated user if found, otherwise 404
+     * @return updated user if found
      */
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        Optional<User> existingOpt = userRepository.findById(id);
-        if (existingOpt.isEmpty()) {
-            throw new EntityNotFoundException("User with ID " + id + " not found.");
-        }
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
 
-        User existingUser = existingOpt.get();
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
 
@@ -94,10 +93,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("User with ID " + id + " not found.");
+            throw new UserNotFoundException(id);
         }
 
         userRepository.deleteById(id);
+
         return ResponseEntity.noContent().build();
     }
 }
