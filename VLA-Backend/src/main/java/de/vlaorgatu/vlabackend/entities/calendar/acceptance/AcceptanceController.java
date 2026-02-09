@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.acceptance;
+package de.vlaorgatu.vlabackend.entities.calendar.acceptance;
 
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;

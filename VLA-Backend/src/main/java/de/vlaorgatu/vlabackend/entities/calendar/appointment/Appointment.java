@@ -1,6 +1,6 @@
-package de.vlaorgatu.vlabackend.calendar.appointment;
+package de.vlaorgatu.vlabackend.entities.calendar.appointment;
 
-import de.vlaorgatu.vlabackend.calendar.appointmentseries.AppointmentSeries;
+import de.vlaorgatu.vlabackend.entities.calendar.appointmentseries.AppointmentSeries;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.appointment;
+package de.vlaorgatu.vlabackend.entities.calendar.appointment;
 
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;

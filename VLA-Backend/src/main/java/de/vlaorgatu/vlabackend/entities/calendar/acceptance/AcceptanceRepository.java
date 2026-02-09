@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.acceptance;
+package de.vlaorgatu.vlabackend.entities.calendar.acceptance;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
