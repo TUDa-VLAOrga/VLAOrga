@@ -1,12 +1,7 @@
 import { useState } from "react";
+import type { Person } from "../CalendarTypes";
 
-export type Person = {
-  id: string;
-  name: string;
-  email?: string;
-  role?: string;
-  notes?: string;
-};
+
 
 type AddPeopleSectionProps = {
   people: Person[];
@@ -24,21 +19,22 @@ export default function AddPeopleSection({
   const [isAdding, setIsAdding] = useState(false);
   const [newPersonName, setNewPersonName] = useState("");
   const [newPersonEmail, setNewPersonEmail] = useState("");
-  const [newPersonRole, setNewPersonRole] = useState("");
+  //const [newPersonRole, setNewPersonRole] = useState("");
 
   const handleAdd = () => {
+    // TODO: Backend - POST request to create new person
     if (newPersonName.trim()) {
       const newPerson: Person = {
         id: `person_${Date.now()}`,
         name: newPersonName.trim(),
         email: newPersonEmail.trim() || undefined,
-        role: newPersonRole.trim() || undefined,
+        // role: newPersonRole.trim() || undefined,
         notes: "",
       };
       onAddPerson(newPerson);
       setNewPersonName("");
       setNewPersonEmail("");
-      setNewPersonRole("");
+      // setNewPersonRole("");
       setIsAdding(false);
     }
   };
@@ -80,6 +76,7 @@ export default function AddPeopleSection({
             value={newPersonEmail}
             onChange={(e) => setNewPersonEmail(e.target.value)}
           />
+          {/*}
           <input
             type="text"
             className="cv-formInput"
@@ -87,6 +84,7 @@ export default function AddPeopleSection({
             value={newPersonRole}
             onChange={(e) => setNewPersonRole(e.target.value)}
           />
+          {*/}
           <button
             type="button"
             className="cv-formBtn cv-formBtnSubmit"
@@ -109,7 +107,7 @@ export default function AddPeopleSection({
               />
               <span className="cv-personInfo">
                 <span className="cv-personName">{person.name}</span>
-                {person.role && <span className="cv-personRole">({person.role})</span>}
+                {/*}{person.role && <span className="cv-personRole">({person.role})</span>}{*/}
               </span>
             </label>
           ))}
@@ -131,6 +129,10 @@ export default function AddPeopleSection({
       <small className="cv-formHint">
         Wähle Personen aus oder erstelle neue
       </small>
+      <small className="cv-formHint">
+        Personenspezifische Notizen können nach dem Erstellen eines Termins in der Detailansicht hinzugefügt werden.
+      </small>
+      
     </div>
   );
 }

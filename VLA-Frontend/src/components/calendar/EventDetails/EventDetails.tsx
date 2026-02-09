@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { CalendarEvent, Lecture } from "../CalendarTypes";
 import { formatISODateDE } from "../dateUtils";
-import type { Person } from "../EventForm/AddPeopleSection";
+import type { Person } from "../CalendarTypes";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import MoveEventDialog from "./MoveEventDialog";
@@ -50,12 +50,12 @@ export default function EventDetails({
     lecture = lectures.find(lec => lec.id === event.lectureId) || null;
   }
 
-  const handleUpdatePersonNotes = (personId: string, notes: string) => {
+  const handleUpdate = (personId: string, notes: string) => {
+    //TODO: Backend - PUT request to update person notes
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes);
-      // Update the selected person with the new notes
       if (selectedPerson && selectedPerson.id === personId) {
-        setSelectedPerson({ ...selectedPerson, notes });
+        setSelectedPerson({...selectedPerson, notes});
       }
     }
   };
@@ -67,19 +67,15 @@ export default function EventDetails({
     setIsEditing(false);
   };
 
-  const getEventPeople = (): Person[] => {
-    if (!event.people || event.people.length === 0) {
-      return [];
+  const handleUpdateEvent = (updates: Partial<CalendarEvent>) => {
+    if (onUpdateEvent) {
+      onUpdateEvent(event.id, updates);
     }
-    return event.people
-      .map(item => {
-        if (typeof item === "string") {
-          return people.find(p => p.id === item);
-        }else {
-          return item;
-        }
-      })
-      .filter((p): p is Person => p !== undefined);
+    setIsEditing(false);
+  };
+
+  const getEventPeople = (): Person[] => {
+    return event.people || [];
   };
 
   const eventPeople = getEventPeople();
@@ -259,7 +255,7 @@ export default function EventDetails({
         <PersonDetails
           person={currentSelectedPerson}
           onClose={() => setSelectedPerson(null)}
-          onSaveNotes={handleUpdatePersonNotes}
+          onSaveNotes={handleUpdate}
         />
       )}
     </>

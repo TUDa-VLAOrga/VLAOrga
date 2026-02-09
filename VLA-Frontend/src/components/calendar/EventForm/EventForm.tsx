@@ -1,5 +1,5 @@
-import { useState } from "react";
-import type { EventKind, EventStatus , Lecture } from "../CalendarTypes";
+import { useEffect, useState } from "react";
+import type { EventKind, EventStatus , Lecture, Person } from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";

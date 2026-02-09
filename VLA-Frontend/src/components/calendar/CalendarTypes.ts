@@ -1,4 +1,4 @@
-import type { Person } from "./EventForm/AddPeopleSection";
+
 
 export type CalendarDay = {
   date: Date;
@@ -54,4 +54,10 @@ export type Lecture = {
 
 export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
-
+export type Person = {
+  id: string;
+  name: string;
+  email?: string;
+  role?: string;
+  notes?: string;
+};

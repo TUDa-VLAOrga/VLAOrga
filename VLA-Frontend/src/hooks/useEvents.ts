@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
 import { addDays, toISODateLocal, splitDateTime, moveEventSeries } from "../components/calendar/dateUtils";
-import type { Person } from "@/components/calendar/EventForm/AddPeopleSection";
+import type { Person } from "../components/calendar/CalendarTypes";
 
 /**
  * useEvents manages:
@@ -92,11 +92,12 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
     if (formData.endDateTime <= formData.startDateTime) {
       return;
     }
-
-    const peopleNames = Array.isArray(formData.people) 
-      ? getPersonNames(formData.people as string[])
-      : "";
-
+    const eventPeople: Person[] = Array.isArray(formData.people)
+      ? formData.people
+        .map(id=> people.find(p => p.id === id))
+        .filter((p): p is Person => p !== undefined) 
+      :[];
+      
     const newEvents: CalendarEvent[] = [];
 
     const recurrenceId = formData.recurrence && formData.recurrence.weekdays.length > 0
@@ -111,8 +112,8 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
       calendarId: "user-events",
       kind: formData.category,
       status: formData.status,
-      shortTitle: peopleNames,
-      people: formData.people,
+      shortTitle: "",
+      people: eventPeople,
       displayedStartTime: startTime,
       displayedEndTime: endTime,
       lectureId: formData.lectureId,
@@ -139,8 +140,8 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
             calendarId: "user-events",
             kind: formData.category,
             status: formData.status,
-            shortTitle: peopleNames,
-            people: formData.people,
+            shortTitle: "",
+            people: eventPeople,
             displayedStartTime: startTime,
             displayedEndTime: endTime,
             lectureId: formData.lectureId,
