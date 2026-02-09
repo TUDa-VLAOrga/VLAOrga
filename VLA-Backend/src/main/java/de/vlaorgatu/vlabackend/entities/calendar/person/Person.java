@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.person;
+package de.vlaorgatu.vlabackend.entities.calendar.person;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

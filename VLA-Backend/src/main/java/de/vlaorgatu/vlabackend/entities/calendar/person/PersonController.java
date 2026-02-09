@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.person;
+package de.vlaorgatu.vlabackend.entities.calendar.person;
 
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.user;
+package de.vlaorgatu.vlabackend.entities.user;
 
 import java.util.List;
 import java.util.Optional;

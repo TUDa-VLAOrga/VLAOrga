@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.user;
+package de.vlaorgatu.vlabackend.entities.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

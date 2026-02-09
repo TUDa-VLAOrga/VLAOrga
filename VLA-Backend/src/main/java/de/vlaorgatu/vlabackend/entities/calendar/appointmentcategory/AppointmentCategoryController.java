@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.appointmentcategory;
+package de.vlaorgatu.vlabackend.entities.calendar.appointmentcategory;
 
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
