@@ -1,15 +1,11 @@
 package de.vlaorgatu.vlabackend.calendar.appointmentseries;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,11 +44,7 @@ public class AppointmentSeriesController {
         AppointmentSeries saved = appointmentSeriesRepository.save(appointmentSeries);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Appointment series created: " + saved);
-
-        EntityModel<AppointmentSeries> entityModel = EntityModel.of(saved, linkTo(
-            methodOn(AppointmentSeriesController.class).updateAppointmentSeries(saved.getId(),
-                saved)).withSelfRel());
-        return ResponseEntity.ok(entityModel);
+        return ResponseEntity.ok(saved);
     }
 
     /**
@@ -80,10 +72,8 @@ public class AppointmentSeriesController {
 
         AppointmentSeries updated = appointmentSeriesRepository.save(appointmentSeries);
         // TODO: use a better method here instead of debug message
-        EntityModel<AppointmentSeries> entityModel = EntityModel.of(updated, linkTo(
-            methodOn(AppointmentSeriesController.class).updateAppointmentSeries(id,
-                updated)).withSelfRel());
-        return ResponseEntity.ok(entityModel);
+        SseController.notifyDebugTest("Appointment series updated: " + updated);
+        return ResponseEntity.ok(updated);
     }
 
     /**
@@ -104,11 +94,8 @@ public class AppointmentSeriesController {
 
         appointmentSeriesRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment series deleted: " + id);
-
-        EntityModel<AppointmentSeries> entityModel = EntityModel.of(appointmentSeriesOptional.get(),
-            linkTo(methodOn(AppointmentSeriesController.class).deleteAppointmentSeries(
-                id)).withSelfRel());
-        return ResponseEntity.ok(entityModel);
+        SseController.notifyDebugTest(
+            "Appointment series deleted: " + appointmentSeriesOptional.get());
+        return ResponseEntity.ok(appointmentSeriesOptional.get());
     }
 }
