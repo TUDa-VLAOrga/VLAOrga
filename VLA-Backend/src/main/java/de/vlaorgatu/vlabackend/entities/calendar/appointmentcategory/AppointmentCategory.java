@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.appointmentcategory;
+package de.vlaorgatu.vlabackend.entities.calendar.appointmentcategory;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

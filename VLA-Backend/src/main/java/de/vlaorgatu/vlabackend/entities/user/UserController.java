@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.user;
+package de.vlaorgatu.vlabackend.entities.user;
 
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import java.util.List;
