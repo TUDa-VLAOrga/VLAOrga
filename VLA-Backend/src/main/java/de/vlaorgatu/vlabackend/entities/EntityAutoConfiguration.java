@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.entities;
 
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.Type;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -56,6 +58,19 @@ public class EntityAutoConfiguration {
     public PlatformTransactionManager entitiesTransactionManager(
             @Qualifier("entitiesEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
+    }
+
+    /**
+     * Exposes entity IDs in REST endpoints.
+     */
+    @Bean
+    public RepositoryRestConfigurer repositoryRestConfigurer(
+        @Qualifier("entitiesEntityManagerFactory") EntityManagerFactory entityManager
+    ) {
+        // source: https://stackoverflow.com/a/70604872
+        return RepositoryRestConfigurer.withConfig(config -> config.exposeIdsFor(
+            entityManager.getMetamodel().getEntities().stream().map(Type::getJavaType)
+                .toArray(Class[]::new)));
     }
 }
 
