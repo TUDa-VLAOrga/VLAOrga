@@ -34,6 +34,7 @@ public class LinusAppointment {
     @Column(name = "ordertime")
     private LocalDateTime orderTime;
 
+    // TODO: enum for status?
     /**
      * Status of the appointment.
      */
