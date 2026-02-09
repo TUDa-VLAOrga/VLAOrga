@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.appointmentcategory;
+package de.vlaorgatu.vlabackend.entities.calendar.appointmentcategory;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
