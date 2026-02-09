@@ -1,15 +1,11 @@
 package de.vlaorgatu.vlabackend.calendar.lecture;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,11 +41,7 @@ public class LectureController {
         Lecture savedLecture = lectureRepository.save(lecture);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture created: " + savedLecture);
-
-        EntityModel<Lecture> lectureModel = EntityModel.of(savedLecture, linkTo(
-            methodOn(LectureController.class).updateLecture(lecture.getId(),
-                lecture)).withSelfRel());
-        return ResponseEntity.ok(lectureModel);
+        return ResponseEntity.ok(savedLecture);
     }
 
     /**
@@ -76,10 +68,7 @@ public class LectureController {
         Lecture updatedLecture = lectureRepository.save(lecture);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture updated: " + updatedLecture);
-
-        EntityModel<Lecture> lectureModel = EntityModel.of(updatedLecture,
-            linkTo(methodOn(LectureController.class).updateLecture(id, lecture)).withSelfRel());
-        return ResponseEntity.ok(lectureModel);
+        return ResponseEntity.ok(updatedLecture);
     }
 
     /**
@@ -99,9 +88,6 @@ public class LectureController {
         lectureRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture deleted: " + lectureOptional.get());
-
-        EntityModel<Lecture> lectureModel = EntityModel.of(lectureOptional.get(),
-            linkTo(methodOn(LectureController.class).deleteLecture(id)).withSelfRel());
-        return ResponseEntity.ok(lectureModel);
+        return ResponseEntity.ok(lectureOptional.get());
     }
 }

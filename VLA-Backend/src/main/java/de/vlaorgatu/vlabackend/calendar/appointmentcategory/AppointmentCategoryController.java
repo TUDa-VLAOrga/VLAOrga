@@ -1,15 +1,11 @@
 package de.vlaorgatu.vlabackend.calendar.appointmentcategory;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,11 +43,7 @@ public class AppointmentCategoryController {
             appointmentCategoryRepository.save(appointmentCategory);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Appointment category created: " + savedAppointmentCategory);
-
-        EntityModel<AppointmentCategory> appCatModel = EntityModel.of(savedAppointmentCategory,
-            linkTo(methodOn(AppointmentCategoryController.class).updateAppointmentCategory(
-                savedAppointmentCategory.getId(), savedAppointmentCategory)).withSelfRel());
-        return ResponseEntity.ok(appCatModel);
+        return ResponseEntity.ok(savedAppointmentCategory);
     }
 
     /**
@@ -64,8 +56,7 @@ public class AppointmentCategoryController {
      */
     @PutMapping("/appointmentCategory/{id}")
     public ResponseEntity<?> updateAppointmentCategory(
-        @PathVariable Long id, @RequestBody AppointmentCategory appointmentCategory
-    ) {
+        @PathVariable Long id, @RequestBody AppointmentCategory appointmentCategory) {
         if (Objects.isNull(appointmentCategory.getId())) {
             appointmentCategory.setId(id);
         } else if (!appointmentCategory.getId().equals(id)) {
@@ -84,11 +75,7 @@ public class AppointmentCategoryController {
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest(
             "Appointment category updated: " + updatedAppointmentCategory);
-
-        EntityModel<AppointmentCategory> appCatModel = EntityModel.of(updatedAppointmentCategory,
-            linkTo(methodOn(AppointmentCategoryController.class).updateAppointmentCategory(id,
-                updatedAppointmentCategory)).withSelfRel());
-        return ResponseEntity.ok(appCatModel);
+        return ResponseEntity.ok(updatedAppointmentCategory);
     }
 
     /**
@@ -109,11 +96,8 @@ public class AppointmentCategoryController {
 
         appointmentCategoryRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment category deleted: " + id);
-        EntityModel<AppointmentCategory> appCatModel =
-            EntityModel.of(appointmentCategoryOptional.get(), linkTo(
-                methodOn(AppointmentCategoryController.class).deleteAppointmentCategory(
-                    id)).withSelfRel());
-        return ResponseEntity.ok(appCatModel);
+        SseController.notifyDebugTest(
+            "Appointment category deleted: " + appointmentCategoryOptional.get());
+        return ResponseEntity.ok(appointmentCategoryOptional.get());
     }
 }

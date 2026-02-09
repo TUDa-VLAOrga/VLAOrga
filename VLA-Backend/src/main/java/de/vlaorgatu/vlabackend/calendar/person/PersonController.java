@@ -1,15 +1,11 @@
 package de.vlaorgatu.vlabackend.calendar.person;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +28,7 @@ public class PersonController {
      * A new person was born.
      *
      * @param person Dataset of the person to create.
-     * @return       OK response with the created person, Error response otherwise.
+     * @return OK response with the created person, Error response otherwise.
      */
     @PostMapping("/persons")
     public ResponseEntity<?> createPerson(@RequestBody Person person) {
@@ -44,10 +40,7 @@ public class PersonController {
         Person savedPerson = personRepository.save(person);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Person created: " + savedPerson);
-
-        EntityModel<Person> personModel = EntityModel.of(savedPerson, linkTo(
-            methodOn(PersonController.class).updatePerson(person.getId(), person)).withSelfRel());
-        return ResponseEntity.ok(personModel);
+        return ResponseEntity.ok(savedPerson);
     }
 
     /**
@@ -55,7 +48,7 @@ public class PersonController {
      *
      * @param id     ID of the person to update
      * @param person dataset for update. Must contain all keys, ID may be omitted.
-     * @return       OK response with updated person, Error response otherwise.
+     * @return OK response with updated person, Error response otherwise.
      */
     @PutMapping("/persons/{id}")
     public ResponseEntity<?> updatePerson(@PathVariable Long id, @RequestBody Person person) {
@@ -74,17 +67,14 @@ public class PersonController {
         Person updatedPerson = personRepository.save(person);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Person updated: " + updatedPerson);
-
-        EntityModel<Person> personModel = EntityModel.of(updatedPerson,
-            linkTo(methodOn(PersonController.class).updatePerson(id, person)).withSelfRel());
-        return ResponseEntity.ok(personModel);
+        return ResponseEntity.ok(updatedPerson);
     }
 
     /**
      * Deletes a person by its ID.
      *
      * @param id ID of the person to delete
-     * @return   OK response with deleted person, Error response otherwise.
+     * @return OK response with deleted person, Error response otherwise.
      */
     @DeleteMapping("/persons/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable Long id) {
@@ -97,9 +87,6 @@ public class PersonController {
         personRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Person deleted: " + personOptional.get());
-
-        EntityModel<Person> personModel = EntityModel.of(personOptional.get(),
-            linkTo(methodOn(PersonController.class).deletePerson(id)).withSelfRel());
-        return ResponseEntity.ok(personModel);
+        return ResponseEntity.ok(personOptional.get());
     }
 }
