@@ -23,6 +23,7 @@ export default function AddLectureSection({
 }: AddLectureSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newLectureName, setNewLectureName] = useState("");
+  const [newLectureSemester, setNewLectureSemester] = useState("");
   const [newLectureColor, setNewLectureColor] = useState("#3b82f6");
 
   /**
@@ -36,12 +37,14 @@ export default function AddLectureSection({
     const newLecture: Lecture = {
       id: `lecture-${Date.now()}`,
       name: newLectureName.trim(),
-      color: newLectureColor,
+      semester: newLectureSemester.trim(),
+      color: newLectureColor.trim(),
     };
     // Reset inputs to the default state for the next creation.
     onAddLecture(newLecture);
     setNewLectureName("");
     setNewLectureColor("#3b82f6");
+    setNewLectureSemester("");
     setShowAddForm(false);
   };
 
