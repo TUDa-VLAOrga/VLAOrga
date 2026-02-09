@@ -1,12 +1,8 @@
 package de.vlaorgatu.vlabackend;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.metamodel.Type;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 
 /**
  * Main Application class.

@@ -16,7 +16,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * Configuration for the postgres db. Affects all repository classes in the package.
+ * Configuration for the postgres vla db.
+ * Affects all repository classes in the package entities.
  */
 @Configuration
 @EnableTransactionManagement
@@ -25,6 +26,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     entityManagerFactoryRef = "vlaEntityManagerFactory",
     transactionManagerRef = "vlaTransactionManager")
 public class VlaDatabaseConfiguration {
+    /**
+     * Enables Configuration of vla via spring.datasource.vla.*.
+     *
+     * @return An object representing the configuration
+     */
     @Bean
     @Primary
     @ConfigurationProperties("spring.datasource.vla")
@@ -32,6 +38,11 @@ public class VlaDatabaseConfiguration {
         return new DataSourceProperties();
     }
 
+    /**
+     * Creates the DataSource bean for the vla db.
+     *
+     * @return Datasource object representing the connection to the db of vla
+     */
     @Bean
     @Primary
     public DataSource vlaDataSource() {
@@ -40,6 +51,13 @@ public class VlaDatabaseConfiguration {
             .build();
     }
 
+    /**
+     * Creates the Bean that manages VLA db entity creation.
+     *
+     * @param dataSource The vla db data source
+     * @param builder    A factory builder (usually injected by the spring boot)
+     * @return An object that manages entity creation
+     */
     @Bean
     @Primary
     public LocalContainerEntityManagerFactoryBean vlaEntityManagerFactory(
@@ -51,6 +69,12 @@ public class VlaDatabaseConfiguration {
             .build();
     }
 
+    /**
+     * Creates an object that manages transactional db interaction with the vla db.
+     *
+     * @param vlaEntityManagerFactory The factory that manages db entites
+     * @return Object that manages transactional interactions with the vla db
+     */
     @Bean
     @Primary
     public PlatformTransactionManager vlaTransactionManager(
