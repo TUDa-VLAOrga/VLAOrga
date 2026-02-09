@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.linusconnection;
 
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,6 @@ class LinusExperimentBookingController {
     @GetMapping()
     public ResponseEntity<List<LinusExperimentBooking>> listExperimentBookings() {
         List<LinusExperimentBooking> all = bookingRepository.findAll();
-        if (all.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(all);
     }
 
@@ -40,6 +38,10 @@ class LinusExperimentBookingController {
     public ResponseEntity<LinusExperimentBooking> getExperimentBookingById(@PathVariable Long id) {
         return bookingRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "The linus experiment booking with id=" + id + "could not be found"
+                        )
+                );
     }
 }
