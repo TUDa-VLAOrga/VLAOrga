@@ -13,7 +13,7 @@ public class ResourceNotFoundException extends ResponseStatusException {
      *
      * @param reason The error message.
      */
-    ResourceNotFoundException(@NonNull String reason){
+    ResourceNotFoundException(@NonNull String reason) {
         super(HttpStatus.NOT_FOUND, reason);
     }
 }

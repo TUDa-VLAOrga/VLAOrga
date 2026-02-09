@@ -1,9 +1,7 @@
 package de.vlaorgatu.vlabackend.linusconnection;
 
-import java.util.List;
-
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
-import de.vlaorgatu.vlabackend.exceptions.ResourceNotFoundException;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -40,6 +38,10 @@ class LinusExperimentBookingController {
     public ResponseEntity<LinusExperimentBooking> getExperimentBookingById(@PathVariable Long id) {
         return bookingRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new EntityNotFoundException("The linus experiment booking with id=" + id + "could not be found"));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "The linus experiment booking with id=" + id + "could not be found"
+                        )
+                );
     }
 }

@@ -1,10 +1,7 @@
 package de.vlaorgatu.vlabackend.entities.user;
 
-import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
-import java.util.List;
-import java.util.Optional;
-
 import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

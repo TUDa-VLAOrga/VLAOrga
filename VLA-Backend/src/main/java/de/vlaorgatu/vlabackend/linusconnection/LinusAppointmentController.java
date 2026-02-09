@@ -1,8 +1,7 @@
 package de.vlaorgatu.vlabackend.linusconnection;
 
-import java.util.List;
-
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,6 +38,10 @@ class LinusAppointmentController {
     public ResponseEntity<LinusAppointment> getAppointmentById(@PathVariable Long id) {
         return appointmentRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new EntityNotFoundException("Could not find a linus appointment with the id="+id));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Could not find a linus appointment with the id=" + id
+                        )
+                );
     }
 }

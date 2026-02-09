@@ -2,7 +2,6 @@ package de.vlaorgatu.vlabackend.sse;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -20,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse")
 @CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
-     Logger logger = LoggerFactory.getLogger(SseController.class);
+    Logger logger = LoggerFactory.getLogger(SseController.class);
 
     // TODO: Think about synchronization of methods
     private static final CopyOnWriteArrayList<SseEmitter> sseHandlers =

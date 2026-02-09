@@ -13,6 +13,11 @@ public class UserNotFoundException extends ResourceNotFoundException {
         super(reason);
     }
 
+    /**
+     * Constructor that generates a "user id is missing" error.
+     *
+     * @param id The id of the user that was not found.
+     */
     public UserNotFoundException(Long id) {
         super("User with id=" + id + " was not found");
     }
