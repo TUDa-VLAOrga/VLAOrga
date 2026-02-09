@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 /**
@@ -31,7 +32,7 @@ public class LinusAppointment {
      * Date and time when the reservation of the appointment was made in linus.
      */
     @Column(name = "ordertime")
-    private String orderTime;
+    private LocalDateTime orderTime;
 
     /**
      * Status of the appointment.
@@ -43,7 +44,7 @@ public class LinusAppointment {
      * Date and time when the appointment takes place.
      */
     @Column(name = "lecture_date")
-    private String appointmentTime;
+    private LocalDateTime appointmentTime;
 
     /**
      * Comment from the linus order.
