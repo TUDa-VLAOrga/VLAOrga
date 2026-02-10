@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.databaseconfigs;
 
+import jakarta.persistence.metamodel.Type;
 import java.util.Objects;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -83,6 +85,23 @@ public class VlaDatabaseConfiguration {
         return new JpaTransactionManager(
             Objects.requireNonNull(vlaEntityManagerFactory.getObject())
         );
+    }
+
+
+    /**
+     * Exposes entity IDs in REST endpoints.
+     */
+    @Bean
+    public RepositoryRestConfigurer repositoryRestConfigurer(
+        @Qualifier("vlaEntityManagerFactory") LocalContainerEntityManagerFactoryBean entityManager
+    ) {
+        // source: https://stackoverflow.com/a/70604872
+        return RepositoryRestConfigurer.withConfig(config -> {
+            assert entityManager.getObject() != null;
+            config.exposeIdsFor(
+                entityManager.getObject().getMetamodel().getEntities().stream().map(Type::getJavaType)
+                    .toArray(Class[]::new));
+        });
     }
 }
 
