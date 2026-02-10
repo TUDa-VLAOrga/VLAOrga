@@ -33,7 +33,7 @@ public class LinusDatabaseConfiguration {
     @Bean
     @ConfigurationProperties("spring.datasource.linus")
     public DataSourceProperties linusDataSourceProperties() {
-        return new DataSourceProperties();
+        return (new DataSourceProperties());
     }
 
     /**
