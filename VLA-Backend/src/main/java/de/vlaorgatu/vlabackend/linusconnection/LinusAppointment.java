@@ -36,7 +36,7 @@ public class LinusAppointment {
     /**
      * Status of the appointment.
      */
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private Integer status;
 
     /**

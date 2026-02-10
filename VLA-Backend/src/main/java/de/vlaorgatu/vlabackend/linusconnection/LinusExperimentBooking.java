@@ -43,7 +43,7 @@ public class LinusExperimentBooking {
     /**
      * Status of the booking.
      */
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private Integer status;
 
     /**
