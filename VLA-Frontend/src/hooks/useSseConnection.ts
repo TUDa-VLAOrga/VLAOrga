@@ -30,12 +30,15 @@ export default function useSseConnection<T>(
 
   /**
    * Initializes the observer and removes it on unmount
+   * Runs when the component is mounted
    */
   useEffect(() => {
     const obs: SseHookObserver = new SseHookObserver(handleSseMessage);
     SSEHandler.registerObserver(obs);
 
     return () => SSEHandler.removeObserver(obs);
+    // Empty dependency array as we only want to run it once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [value, setValue] as const;

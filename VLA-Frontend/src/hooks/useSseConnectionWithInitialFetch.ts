@@ -29,19 +29,23 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
         if(!response.ok) throw new Error();
         return response.json();
       })
+
       .then(parsedObj => {
         if (mounted){
           setsseDefaultValue(parsedObj);
         }
       })
+
       .catch(_ => 
         Logger.warn("Could not fetch data")
       );
 
-    return () => {mounted = false;};
+    return () => {
+      mounted = false;
+    };
+    // Empty dependency array as we only want to run it once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-    
 
   return sseDefaultValue;
 }
