@@ -18,15 +18,6 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const MAX_RECURRENCE_DAYS = 365; // Limit recurrence expansion to 1 year
 
-  function getPersonNames(personIds: string[]): string {
-    return personIds
-      .map(id => {
-        const person = people.find(p => p.id === id);
-        return person?.name || id;
-      })
-      .join(", ");
-  }
-
   function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
     // TODO: Backend - PATCH request to /api/events/:eventId
     setEvents((prev) =>
@@ -92,12 +83,7 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
     if (formData.endDateTime <= formData.startDateTime) {
       return;
     }
-    const eventPeople: Person[] = Array.isArray(formData.people)
-      ? formData.people
-        .map(id=> people.find(p => p.id === id))
-        .filter((p): p is Person => p !== undefined) 
-      :[];
-      
+
     const newEvents: CalendarEvent[] = [];
 
     const recurrenceId = formData.recurrence && formData.recurrence.weekdays.length > 0
@@ -113,7 +99,6 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
       kind: formData.category,
       status: formData.status,
       shortTitle: "",
-      people: eventPeople,
       displayedStartTime: startTime,
       displayedEndTime: endTime,
       lectureId: formData.lectureId,
@@ -141,7 +126,6 @@ export function useEvents(lectures: Lecture[] , people: Person[] ) {
             kind: formData.category,
             status: formData.status,
             shortTitle: "",
-            people: eventPeople,
             displayedStartTime: startTime,
             displayedEndTime: endTime,
             lectureId: formData.lectureId,

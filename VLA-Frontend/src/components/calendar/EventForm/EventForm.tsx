@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import type { EventKind, EventStatus , Lecture, Person } from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
-import AddPeopleSection, {type Person} from "./AddPeopleSection";
 import TimeRangeInput from "./TimeRangeInput";
+
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 
@@ -20,7 +20,6 @@ export type EventFormData = {
   startDateTime: string;
   endDateTime: string;
   recurrence?: RecurrencePattern;
-  people: string[] | Person[];
   status?: EventStatus;
   notes?: string;
 };
@@ -63,7 +62,6 @@ export default function EventForm({
   const [lectureId, setLectureId] = useState("");
   const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
   const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
-  const [selectedPeople,setSelectedPeople] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
   
@@ -88,12 +86,6 @@ export default function EventForm({
     setCategory(categoryName);
   };
 
-  const handleAddPerson = (person: Person) => {
-    onAddPerson?.(person);
-    setSelectedPeople([...selectedPeople, person.id]);
-  };
-
-
   /**
    * Transform UI state into EventFormData and submit to parent.
    * - Parses peopleInput into a string array
@@ -108,7 +100,6 @@ export default function EventForm({
       category,
       startDateTime,
       endDateTime,
-      people: selectedPeople,
     };
 
     if( lectureId) {
@@ -168,6 +159,8 @@ export default function EventForm({
             selectedLectureId={lectureId}
             onLectureChange={setLectureId}
             onAddLecture={handleAddLecture}
+            people={people}
+            onAddPerson={onAddPerson}
           />
 
           <TimeRangeInput
@@ -186,13 +179,6 @@ export default function EventForm({
             onWeekdaysChange={(weekdays) => setRecurrence({ ...recurrence, weekdays })}
             endDate={recurrence.endDate}
             onEndDateChange={(endDate) => setRecurrence({ ...recurrence, endDate })}
-          />
-
-          <AddPeopleSection
-            people={people}
-            selectedPeople={selectedPeople}
-            onPeopleChange={setSelectedPeople}
-            onAddPerson={handleAddPerson}
           />
 
           <div className="cv-formGroup">

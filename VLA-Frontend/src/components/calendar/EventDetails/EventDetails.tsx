@@ -67,15 +67,13 @@ export default function EventDetails({
     setIsEditing(false);
   };
 
-  const handleUpdateEvent = (updates: Partial<CalendarEvent>) => {
-    if (onUpdateEvent) {
-      onUpdateEvent(event.id, updates);
-    }
-    setIsEditing(false);
-  };
-
   const getEventPeople = (): Person[] => {
-    return event.people || [];
+    if (lecture && lecture.people) {
+      return lecture.people
+        .map(personId => people.find(p => p.id === personId))
+        .filter((p): p is Person => p !== undefined);
+    }
+    return [];
   };
 
   const eventPeople = getEventPeople();

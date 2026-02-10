@@ -1,9 +1,8 @@
 import { useState } from "react";
 import type { CalendarEvent, EventKind, Lecture } from "../CalendarTypes";
-import type { Person } from "../EventForm/AddPeopleSection";
+import type { Person } from "../CalendarTypes";
 import AddLectureSection from "../EventForm/AddLectureSection";
 import AddCategorySection from "../EventForm/AddCategorySection";
-import AddPeopleSection from "../EventForm/AddPeopleSection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
 
 type EventEditFormProps = {
@@ -53,14 +52,7 @@ export default function EventEditForm({
   const [startDateTime, setStartDateTime] = useState(getStartDateTime());
   const [endDateTime, setEndDateTime] = useState(getEndDateTime());
 
-  // Extract selected people IDs
-  const getSelectedPeopleIds = (): string[] => {
-    if (!event.people) return [];
-    return event.people.map(p => typeof p === "string" ? p : p.id);
-  };
-
-  const [selectedPeople, setSelectedPeople] = useState<string[]>(getSelectedPeopleIds());
-
+ 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -76,7 +68,6 @@ export default function EventEditForm({
       dateISO,
       displayedStartTime,
       displayedEndTime,
-      people: selectedPeople,
       notes,
     };
 
@@ -122,6 +113,8 @@ export default function EventEditForm({
             selectedLectureId={lectureId}
             onLectureChange={setLectureId}
             onAddLecture={(lecture) => setLectureId(lecture.id)}
+            people={people}
+            onAddPerson={onAddPerson}
           />
 
           <TimeRangeInput
@@ -130,18 +123,6 @@ export default function EventEditForm({
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
             durationMinutes={100}
-          />
-
-          <AddPeopleSection
-            people={people}
-            selectedPeople={selectedPeople}
-            onPeopleChange={setSelectedPeople}
-            onAddPerson={(person) => {
-              if (onAddPerson) {
-                onAddPerson(person);
-              }
-              setSelectedPeople([...selectedPeople, person.id]);}
-            }  
           />
 
           <div className="cv-formGroup">
