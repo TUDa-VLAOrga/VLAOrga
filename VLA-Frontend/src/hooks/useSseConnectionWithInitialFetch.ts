@@ -1,5 +1,5 @@
 import type { SseMessageType } from "@/components/sse/SseMessageType";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useSseConnection from "./useSseConnection";
 
 export default function useSseConnectionWithInitialFetch<T extends object>(defaultValue: T, apiResourceURL : string, eventHandlers: Map<SseMessageType, (event: MessageEvent) => T>){
@@ -12,7 +12,6 @@ export default function useSseConnectionWithInitialFetch<T extends object>(defau
         .then(res => {if(!res.ok) throw new Error() ;return res.json();})
         .then(parsedObj => {
             if (mounted){
-                console.log(parsedObj);
                 setsseDefaultValue(parsedObj);
             }
         })

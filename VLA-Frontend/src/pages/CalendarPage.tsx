@@ -11,7 +11,7 @@ export default function CalendarPage() {
       <div>
         <CalendarView />
       </div>
-      {/* <SseTestComponent></SseTestComponent> */}
+      <SseTestComponent></SseTestComponent>
       <SseFetchTestComponent></SseFetchTestComponent>
       <SSEComponent></SSEComponent>
     </>
