@@ -21,6 +21,7 @@ type EventDetailsProps = {
   onMoveSeries?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
   onAddCategory?: (category: string) => void;
   onAddPerson?: (person: Person) => void;
+  onAddLecture?: (lecture: Lecture) => void;
 };
 
 /**
@@ -39,6 +40,7 @@ export default function EventDetails({
   onMoveSeries,
   onAddCategory,
   onAddPerson,
+  onAddLecture,
 }: EventDetailsProps) {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -93,6 +95,7 @@ export default function EventDetails({
         categories={categories}
         onAddCategory={onAddCategory}
         onAddPerson={onAddPerson}
+        onAddLecture={onAddLecture}
         onSave={handleUpdateEvent}
         onCancel={() => setIsEditing(false)}
       />
@@ -158,6 +161,13 @@ export default function EventDetails({
                     <span className="cv-lectureName">{lecture.name}</span>
                   </span>
                 </span>
+              </div>
+            )}
+
+            {lecture?.semester && (
+              <div className="cv-detailRow">
+                <span className="cv-detailLabel">Semester:</span>
+                <span className="cv-detailValue">{lecture.semester}</span>
               </div>
             )}
 

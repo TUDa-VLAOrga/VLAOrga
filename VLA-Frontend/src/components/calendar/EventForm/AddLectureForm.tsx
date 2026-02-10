@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Lecture, Person } from "../CalendarTypes";
 import ColorPicker from "../ColorPicker";
+import {createPortal} from "react-dom";
 import AddPeopleSection from "./AddPeopleSection";
 
 type AddLectureFormProps = {
@@ -34,16 +35,17 @@ export default function AddLectureForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (!lectureName.trim()) return;
 
-    // ========== ÄNDERUNG: Lecture enthält jetzt people array ==========
+    
     const newLecture: Lecture = {
       id: `lecture-${Date.now()}`,
       name: lectureName.trim(),
-      semester: semester.trim() || "",
+      semester: semester.trim(),
       color: color.trim(),
-      people: selectedPeople, // Personen-IDs werden hier gespeichert
+      people: selectedPeople, 
     };
 
     onSubmit(newLecture);
@@ -56,10 +58,9 @@ export default function AddLectureForm({
 
   const isValid = lectureName.trim() !== "";
 
-  return (
-    // ========== MODAL OVERLAY (ähnlich wie EventForm) ==========
-    <div className="cv-formOverlay">
-      <div className="cv-formBox">
+  const madalContent = (
+    <div className="cv-formOverlay" onClick={(e)=> e.stopPropagation()}>
+      <div className="cv-formBox" onClick={(e)=> e.stopPropagation()}>
         <h2 className="cv-formTitle">Neue Vorlesung</h2>
 
         <form onSubmit={handleSubmit} className="cv-form">
@@ -78,8 +79,7 @@ export default function AddLectureForm({
               required
             />
           </div>
-
-          {/* ========== ÄNDERUNG: Semester-Feld hinzugefügt ========== */}
+          {/* Semester */}
           <div className="cv-formGroup">
             <label htmlFor="semester" className="cv-formLabel">
               Semester (optional)
@@ -103,7 +103,7 @@ export default function AddLectureForm({
             />
           </div>
 
-          {/* ========== ÄNDERUNG: Personen-Sektion von EventForm hierher verschoben ========== */}
+
           <AddPeopleSection
             people={people}
             selectedPeople={selectedPeople}
@@ -130,6 +130,7 @@ export default function AddLectureForm({
           </div>
         </form>
       </div>
-    </div>
-  );
+    </div>);
+
+  return createPortal(madalContent, document.body);
 }

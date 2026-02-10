@@ -14,6 +14,7 @@ type EventEditFormProps = {
   onCancel: () => void;
   onAddCategory?: (category: string) => void;
   onAddPerson?: (person: Person) => void;
+  onAddLecture?: (lecture: Lecture) => void;
 };
 
 /**
@@ -28,6 +29,7 @@ export default function EventEditForm({
   onCancel,
   onAddCategory,
   onAddPerson,
+  onAddLecture,
 }: EventEditFormProps) {
   const [title, setTitle] = useState(event.title);
   const [category, setCategory] = useState<EventKind>(event.kind);
@@ -52,6 +54,10 @@ export default function EventEditForm({
   const [startDateTime, setStartDateTime] = useState(getStartDateTime());
   const [endDateTime, setEndDateTime] = useState(getEndDateTime());
 
+  const handleAddLecture = (lecture: Lecture) => {
+    onAddLecture?.(lecture);
+    setLectureId(lecture.id); 
+  };
  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,7 +118,7 @@ export default function EventEditForm({
             lectures={lectures}
             selectedLectureId={lectureId}
             onLectureChange={setLectureId}
-            onAddLecture={(lecture) => setLectureId(lecture.id)}
+            onAddLecture={handleAddLecture}
             people={people}
             onAddPerson={onAddPerson}
           />

@@ -34,7 +34,7 @@ export default function CalendarView() {
     handleUpdateEvent,
     handleMoveEvent,
     handleMoveSeries  }= 
-    useEvents(lectures, people);
+    useEvents(lectures);
  
   /**
    * Called by EventForm when the user submits.
@@ -115,6 +115,7 @@ export default function CalendarView() {
           onMoveSeries={handleMoveSeries}
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
+          onAddLecture={handleAddLecture}
         />
       )}
     </div>

@@ -2,8 +2,8 @@ import { useState } from "react";
 import type { Lecture } from "../components/calendar/CalendarTypes";
 
 // TODO: move to some central file
-const BASE_URL = "http://localhost:8080/api";
-const API_URL = `${BASE_URL}/lectures`;
+//const BASE_URL = "http://localhost:8080/api";
+//const API_URL = `${BASE_URL}/lectures`;
 
 /**
  * useLectures stores and manages the list of lectures that can be assigned to events.
@@ -20,7 +20,7 @@ export function useLectures() {
   function handleAddLecture(lecture: Lecture) {
     // unset ID, backend will generate one
     
-        setLectures((prev) => [...prev, lecture]);
+    setLectures((prev) => [...prev, lecture]);
   }
   /**
    * Remove a lecture by id.

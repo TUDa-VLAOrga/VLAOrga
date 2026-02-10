@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
 import { addDays, toISODateLocal, splitDateTime, moveEventSeries } from "../components/calendar/dateUtils";
-import type { Person } from "../components/calendar/CalendarTypes";
+
 
 /**
  * useEvents manages:
@@ -13,7 +13,7 @@ import type { Person } from "../components/calendar/CalendarTypes";
  * - color lookup based on lecture assignment
  */
 
-export function useEvents(lectures: Lecture[] , people: Person[] ) {
+export function useEvents(lectures: Lecture[]  ) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const MAX_RECURRENCE_DAYS = 365; // Limit recurrence expansion to 1 year
