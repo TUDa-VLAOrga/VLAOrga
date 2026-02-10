@@ -1,26 +1,42 @@
-import { Logger } from "@/components/logger/Logger";
 import { SSEHandler } from "@/components/sse/SseHandler";
 import SseHookObserver from "@/components/sse/SseHookObserver";
 import type { SseMessageType } from "@/components/sse/SseMessageType";
 import { useEffect, useState } from "react";
 
-export default function useSseConnection<T>(initialValue: T, eventHandlers: Map<SseMessageType, (event: MessageEvent) => T>){
-    const [value, setValue] = useState<T>(initialValue);
+/**
+ * Creates a variable that may be updated by a handler.
+ * @param initialValue The inital value of that variable
+ * @param eventHandlers They take a messageEvent and the current value and return the new value
+ * @returns The reactive variable with its setter
+ */
+export default function useSseConnection<T>(
+  initialValue: T, 
+  eventHandlers: Map<SseMessageType, (event: MessageEvent, currentValue: T) => T>
+){
+  const [value, setValue] = useState<T>(initialValue);
 
-    function handleSseMessage(event: MessageEvent){
-        Logger.info("Received event");
-        if(!eventHandlers.has(event.type as SseMessageType)) return;
+  /**
+   * Delegates the SseEvent to the appropriate handler
+   * @param event The event that invoked the observer of the object
+   * @returns A trigger for rerendering
+   */
+  function handleSseMessage(event: MessageEvent){
+    // All SseMessagesType may or may not be supported
+    if(!eventHandlers.has(event.type as SseMessageType)) return;
 
-        setValue(eventHandlers.get(event.type as SseMessageType)!(event));
-    }
+    // This updates the trigger of the rendering function
+    setValue(eventHandlers.get(event.type as SseMessageType)!(event, value));
+  }
 
-    useEffect(() => {
-        const obs: SseHookObserver = new SseHookObserver(handleSseMessage);
-        SSEHandler.registerObserver(obs);
+  /**
+   * Initializes the observer and removes it on unmount
+   */
+  useEffect(() => {
+    const obs: SseHookObserver = new SseHookObserver(handleSseMessage);
+    SSEHandler.registerObserver(obs);
 
-        return () => SSEHandler.removeObserver(obs);
-    }, []);
+    return () => SSEHandler.removeObserver(obs);
+  }, []);
 
-    console.log(value)
-    return [value, setValue] as const;
+  return [value, setValue] as const;
 }
