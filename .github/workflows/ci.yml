@@ -18,7 +18,7 @@ jobs:
       - name: build and start db container
         run: docker compose --file docker-compose.prod.yml up --build --detach db
       - name: build and start production container
-        run: docker compose --file docker-compose.prod.yml up --build --detach prod-app
+        run: docker compose --file docker-compose.prod.yml up --build prod-app
       - name: stop containers
         run: docker compose stop
 
