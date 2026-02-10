@@ -99,8 +99,8 @@ public class VlaDatabaseConfiguration {
         return RepositoryRestConfigurer.withConfig(config -> {
             assert entityManager.getObject() != null;
             config.exposeIdsFor(
-                entityManager.getObject().getMetamodel().getEntities().stream().map(Type::getJavaType)
-                    .toArray(Class[]::new));
+                entityManager.getObject().getMetamodel().getEntities().stream()
+                    .map(Type::getJavaType).toArray(Class[]::new));
         });
     }
 }
