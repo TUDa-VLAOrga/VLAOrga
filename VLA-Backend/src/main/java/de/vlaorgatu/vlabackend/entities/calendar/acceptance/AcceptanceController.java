@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 @RepositoryRestController
 public class AcceptanceController {
-
+    /**
+     * Repository used for acceptance persistence operations.
+     */
     private final AcceptanceRepository acceptanceRepository;
 
     /**

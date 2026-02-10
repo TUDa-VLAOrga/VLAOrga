@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 @RepositoryRestController
 public class AppointmentCategoryController {
+    /**
+     * Repository used for appointment category persistence operations.
+     */
     private final AppointmentCategoryRepository appointmentCategoryRepository;
 
     /**

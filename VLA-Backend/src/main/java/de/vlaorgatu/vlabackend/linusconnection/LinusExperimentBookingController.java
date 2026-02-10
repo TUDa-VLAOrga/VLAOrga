@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @AllArgsConstructor
 class LinusExperimentBookingController {
 
+    /**
+     * Repository used for experiment booking persistence operations.
+     */
     private final LinusExperimentBookingRepository bookingRepository;
     
     /**

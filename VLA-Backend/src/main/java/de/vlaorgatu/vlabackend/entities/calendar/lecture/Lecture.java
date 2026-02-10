@@ -14,6 +14,9 @@ import lombok.Data;
 @Entity
 @Table(name = "lectures")
 public class Lecture {
+    /**
+     * Primary key.
+     */
     @Id
     @GeneratedValue
     private Long id;  // may not be final, see https://stackoverflow.com/a/76986804

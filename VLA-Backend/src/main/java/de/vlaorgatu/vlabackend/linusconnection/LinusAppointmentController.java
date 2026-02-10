@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @AllArgsConstructor
 class LinusAppointmentController {
 
+    /**
+     * Repository used for appointment persistence operations.
+     */
     private final LinusAppointmentRepository appointmentRepository;
 
     /**

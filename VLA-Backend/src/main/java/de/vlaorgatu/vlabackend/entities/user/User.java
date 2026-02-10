@@ -14,13 +14,22 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User {
 
+    /**
+     * Primary key.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    /**
+     * Name of the user.
+     */
     @Column(name = "name")
     private String name;
 
+    /**
+     * Email address of the user.
+     */
     @Column(name = "email")
     private String email;
 

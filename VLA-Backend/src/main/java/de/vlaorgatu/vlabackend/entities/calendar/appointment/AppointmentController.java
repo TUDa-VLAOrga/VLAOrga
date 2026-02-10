@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RepositoryRestController
 public class AppointmentController {
 
+    /**
+     * Repository used for appointment persistence operations.
+     */
     private final AppointmentRepository appointmentRepository;
 
     /**

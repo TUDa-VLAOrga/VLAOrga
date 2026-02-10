@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RepositoryRestController
 public class PersonController {
 
+    /**
+     * Repository used for person persistence operations.
+     */
     private final PersonRepository personRepository;
 
     /**

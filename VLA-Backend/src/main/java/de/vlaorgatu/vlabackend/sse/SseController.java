@@ -19,8 +19,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse")
 @CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
+    /**
+     * Logger for this class.
+     */
     Logger logger = LoggerFactory.getLogger(SseController.class);
 
+    /**
+     * List of all connected SSE Clients.
+     */
     // TODO: Think about synchronization of methods
     private static final CopyOnWriteArrayList<SseEmitter> sseHandlers =
         new CopyOnWriteArrayList<>();

@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 @RepositoryRestController
 public class AppointmentSeriesController {
+    /**
+     * Repository used for appointment series persistence operations.
+     */
     private final AppointmentSeriesRepository appointmentSeriesRepository;
 
     /**

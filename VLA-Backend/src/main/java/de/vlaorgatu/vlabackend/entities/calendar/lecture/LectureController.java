@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RepositoryRestController
 public class LectureController {
 
+    /**
+     * Repository used for lecture persistence operations.
+     */
     private final LectureRepository lectureRepository;
 
     /**

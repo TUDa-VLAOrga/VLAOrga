@@ -17,6 +17,9 @@ import lombok.Getter;
 // table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
 @Table(name = "reservation")
 public class LinusAppointment {
+    /**
+     * Primary key.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
