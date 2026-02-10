@@ -4,8 +4,8 @@ import SseHookObserver from "@/components/sse/SseHookObserver";
 import type { SseMessageType } from "@/components/sse/SseMessageType";
 import { useEffect, useState } from "react";
 
-export default function useSseConnection<T>(initalValue: T, eventHandlers: Map<SseMessageType, (event: MessageEvent) => T>){
-    const [value, setValue] = useState<T>(initalValue);
+export default function useSseConnection<T>(initialValue: T, eventHandlers: Map<SseMessageType, (event: MessageEvent) => T>){
+    const [value, setValue] = useState<T>(initialValue);
 
     function handleSseMessage(event: MessageEvent){
         Logger.info("Received event");
@@ -21,5 +21,6 @@ export default function useSseConnection<T>(initalValue: T, eventHandlers: Map<S
         return () => SSEHandler.removeObserver(obs);
     }, []);
 
-    return value;
+    console.log(value)
+    return [value, setValue] as const;
 }

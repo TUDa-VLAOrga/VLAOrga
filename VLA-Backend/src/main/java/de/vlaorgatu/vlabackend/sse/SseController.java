@@ -92,4 +92,9 @@ public class SseController {
         }
         return "Sent message to all connections!";
     }
+
+    @GetMapping("/getTestData")
+    public String getTestData() {
+        return "{\"message\":\"Something incredible has happened with this SSE request\"}";
+    }
 }
