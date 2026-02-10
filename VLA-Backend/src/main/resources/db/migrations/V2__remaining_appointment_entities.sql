@@ -4,9 +4,7 @@ CREATE SEQUENCE IF NOT EXISTS appointment_series_seq START WITH 1 INCREMENT BY 5
 
 CREATE SEQUENCE IF NOT EXISTS appointments_seq START WITH 1 INCREMENT BY 50;
 
-CREATE SEQUENCE IF NOT EXISTS reservation_experiment_seq START WITH 1 INCREMENT BY 50;
-
-CREATE SEQUENCE IF NOT EXISTS reservation_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE IF NOT EXISTS experiment_bookings_seq START WITH 1 INCREMENT BY 50;
 
 CREATE TABLE acceptances
 (
@@ -35,27 +33,14 @@ CREATE TABLE appointments
     CONSTRAINT pk_appointments PRIMARY KEY (id)
 );
 
-CREATE TABLE reservation
+CREATE TABLE experiment_bookings
 (
-    id           BIGINT NOT NULL,
-    user_id      BIGINT,
-    ordertime    TIMESTAMP WITHOUT TIME ZONE,
-    status       BIGINT,
-    lecture_date TIMESTAMP WITHOUT TIME ZONE,
-    comment      VARCHAR(255),
-    name         VARCHAR(255),
-    CONSTRAINT pk_reservation PRIMARY KEY (id)
-);
-
-CREATE TABLE reservation_experiment
-(
-    id             BIGINT NOT NULL,
-    reservation_id BIGINT,
-    experiment_id  BIGINT,
-    user_id        BIGINT,
-    status         BIGINT,
-    pinned_on      TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT pk_reservation_experiment PRIMARY KEY (id)
+    id                   BIGINT NOT NULL,
+    linus_experiment_id  BIGINT,
+    linus_reservation_id BIGINT,
+    person_id            BIGINT,
+    appointment_id       BIGINT,
+    CONSTRAINT pk_experiment_bookings PRIMARY KEY (id)
 );
 
 ALTER TABLE acceptances
@@ -69,3 +54,9 @@ ALTER TABLE appointment_series
 
 ALTER TABLE appointment_series
     ADD CONSTRAINT FK_APPOINTMENT_SERIES_ON_LECTURE FOREIGN KEY (lecture_id) REFERENCES lectures (id);
+
+ALTER TABLE experiment_bookings
+    ADD CONSTRAINT FK_EXPERIMENT_BOOKINGS_ON_APPOINTMENT FOREIGN KEY (appointment_id) REFERENCES appointments (id);
+
+ALTER TABLE experiment_bookings
+    ADD CONSTRAINT FK_EXPERIMENT_BOOKINGS_ON_PERSON FOREIGN KEY (person_id) REFERENCES persons (id);
