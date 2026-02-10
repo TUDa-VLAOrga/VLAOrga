@@ -104,7 +104,8 @@ export class SSEHandler {
      * Handle for the SseMessage.DEBUG event
      * @param e DEBUG Event from Backend
      */
-  private static _handleDebugEvent(e: MessageEvent){
+  // @ts-expect-error Only for testing while developing
+  private static handleDebugEvent(e: MessageEvent){
     alert(e.data);
   }
 }
