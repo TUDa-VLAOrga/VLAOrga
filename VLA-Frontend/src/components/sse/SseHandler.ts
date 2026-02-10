@@ -104,7 +104,7 @@ export class SSEHandler {
      * Handle for the SseMessage.DEBUG event
      * @param e DEBUG Event from Backend
      */
-  private static handleDebugEvent(e: MessageEvent){
+  private static _handleDebugEvent(e: MessageEvent){
     alert(e.data);
   }
 }
