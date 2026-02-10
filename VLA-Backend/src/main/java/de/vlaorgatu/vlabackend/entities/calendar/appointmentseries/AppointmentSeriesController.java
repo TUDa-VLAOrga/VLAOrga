@@ -1,10 +1,10 @@
 package de.vlaorgatu.vlabackend.entities.calendar.appointmentseries;
 
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
+import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,24 +21,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 @RepositoryRestController
 public class AppointmentSeriesController {
-    private static final Logger LOGGER =
-        org.slf4j.LoggerFactory.getLogger(AppointmentSeriesController.class);
     private final AppointmentSeriesRepository appointmentSeriesRepository;
 
     /**
      * Creates a new appointment series.
      *
-     * @param appointmentSeries The dataset for creation. Must not contain an ID.
+     * @param appointmentSeries The dataset for creation. Must not contain an ID (auto-generated).
      * @return OK response with the created appointment series, Error response otherwise.
      */
     @PostMapping("/appointmentSeries")
     public ResponseEntity<?> createAppointmentSeries(
         @RequestBody AppointmentSeries appointmentSeries) {
         if (Objects.nonNull(appointmentSeries.getId())) {
-            LOGGER.info(
-                "Received appointment series with ID {} when creating a new appointment series.",
-                appointmentSeries.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received appointment series with ID " + appointmentSeries.getId() +
+                    " when creating a new appointment series.");
         }
 
         AppointmentSeries saved = appointmentSeriesRepository.save(appointmentSeries);
@@ -57,17 +54,18 @@ public class AppointmentSeriesController {
      */
     @PutMapping("/appointmentSeries/{id}")
     public ResponseEntity<?> updateAppointmentSeries(
-        @PathVariable Long id, @RequestBody AppointmentSeries appointmentSeries) {
+        @PathVariable Long id, @RequestBody AppointmentSeries appointmentSeries
+    ) {
         if (Objects.isNull(appointmentSeries.getId())) {
             appointmentSeries.setId(id);
         } else if (!appointmentSeries.getId().equals(id)) {
-            LOGGER.warn("Received inconsistent IDs on appointment series update");
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received inconsistent IDs on appointment series update. ID from url: " + id +
+                    " vs. ID from body data: " + appointmentSeries.getId() + ".");
         }
         if (!appointmentSeriesRepository.existsById(id)) {
-            LOGGER.warn("Received appointment series update for non-existing" +
-                " appointment series with ID {}.", id);
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException(
+                "Appointment series with ID " + id + " not found for update.");
         }
 
         AppointmentSeries updated = appointmentSeriesRepository.save(appointmentSeries);
@@ -84,18 +82,13 @@ public class AppointmentSeriesController {
      */
     @DeleteMapping("/appointmentSeries/{id}")
     public ResponseEntity<?> deleteAppointmentSeries(@PathVariable Long id) {
-        Optional<AppointmentSeries> appointmentSeriesOptional =
-            appointmentSeriesRepository.findById(id);
-        if (appointmentSeriesOptional.isEmpty()) {
-            LOGGER.warn("Received appointment series deletion for non-existing" +
-                " appointment series with ID {}.", id);
-            return ResponseEntity.notFound().build();
-        }
+        AppointmentSeries deletedAppointmentSeries = appointmentSeriesRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Appointment series with ID " + id + " not found for deletion."));
 
         appointmentSeriesRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest(
-            "Appointment series deleted: " + appointmentSeriesOptional.get());
-        return ResponseEntity.ok(appointmentSeriesOptional.get());
+        SseController.notifyDebugTest("Appointment series deleted: " + deletedAppointmentSeries);
+        return ResponseEntity.ok(deletedAppointmentSeries);
     }
 }

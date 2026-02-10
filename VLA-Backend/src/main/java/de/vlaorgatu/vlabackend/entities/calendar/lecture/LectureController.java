@@ -1,10 +1,10 @@
 package de.vlaorgatu.vlabackend.entities.calendar.lecture;
 
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
+import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,22 +21,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RepositoryRestController
 public class LectureController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LectureController.class);
     private final LectureRepository lectureRepository;
 
     /**
      * Creates a new lecture.
      *
-     * @param lecture Dataset of the lecture to create.
+     * @param lecture Dataset of the lecture to create. Must not contain an ID (auto-generated).
      * @return OK response with the created lecture, error response otherwise.
      */
     @PostMapping("/lectures")
     public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
-            // TODO: use exception
-            LOGGER.warn("Received lecture with ID {} when creating a new lecture.",
-                lecture.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received lecture with ID " + lecture.getId() + " when creating a new lecture.");
         }
 
         Lecture savedLecture = lectureRepository.save(lecture);
@@ -57,13 +54,12 @@ public class LectureController {
         if (Objects.isNull(lecture.getId())) {
             lecture.setId(id);
         } else if (!lecture.getId().equals(id)) {
-            // TODO: use exception
-            LOGGER.warn("Received inconsistent IDs on lecture modification." +
-                " ID from url: {} vs. ID from body data: {}.", id, lecture.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received inconsistent IDs on lecture modification. ID from url: " + id +
+                    " vs. ID from body data: " + lecture.getId() + ".");
         }
         if (!lectureRepository.existsById(id)) {
-            throw new EntityNotFoundException("Lecture with ID " + id + " not found.");
+            throw new EntityNotFoundException("Lecture with ID " + id + " not found for update.");
         }
 
         Lecture updatedLecture = lectureRepository.save(lecture);
@@ -81,7 +77,8 @@ public class LectureController {
     @DeleteMapping("/lectures/{id}")
     public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
         Lecture deletedLecture = lectureRepository.findById(id).orElseThrow(
-            () -> new EntityNotFoundException("Lecture with ID " + id + " not found."));
+            () -> new EntityNotFoundException(
+                "Lecture with ID " + id + " not found for deletion."));
 
         lectureRepository.deleteById(id);
         // TODO: use a better method here instead of debug message

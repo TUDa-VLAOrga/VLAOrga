@@ -1,10 +1,10 @@
 package de.vlaorgatu.vlabackend.entities.calendar.acceptance;
 
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
+import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,22 +21,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 @RepositoryRestController
 public class AcceptanceController {
-    private static final Logger LOGGER =
-        org.slf4j.LoggerFactory.getLogger(AcceptanceController.class);
+
     private final AcceptanceRepository acceptanceRepository;
 
     /**
      * Creates a new acceptance.
      *
-     * @param acceptance Acceptance to create.
+     * @param acceptance Acceptance to create, must not contain an ID (auto-generated).
      * @return OK response with the created acceptance, Error response otherwise.
      */
     @PostMapping("/acceptances")
     public ResponseEntity<?> createAcceptance(@RequestBody Acceptance acceptance) {
         if (Objects.nonNull(acceptance.getId())) {
-            LOGGER.warn("Received acceptance with ID {} when creating a new acceptance.",
-                acceptance.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received acceptance with ID " + acceptance.getId() +
+                    " when creating a new acceptance.");
         }
         Acceptance savedAcceptance = acceptanceRepository.save(acceptance);
         // TODO: use a better method here instead of debug message
@@ -57,13 +56,13 @@ public class AcceptanceController {
         if (Objects.isNull(acceptance.getId())) {
             acceptance.setId(id);
         } else if (!acceptance.getId().equals(id)) {
-            LOGGER.warn("Received inconsistent IDs on acceptance modification." +
-                " ID from url: {} vs. ID from body data: {}.", id, acceptance.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received inconsistent IDs on acceptance modification. ID from url: " + id +
+                    " vs. ID from body data: " + acceptance.getId() + ".");
         }
         if (!acceptanceRepository.existsById(id)) {
-            LOGGER.warn("Received acceptance update for non-existing acceptance with ID {}.", id);
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException(
+                "Acceptance with ID " + id + " not found for update.");
         }
         Acceptance updatedAcceptance = acceptanceRepository.save(acceptance);
         // TODO: use a better method here instead of debug message
@@ -79,14 +78,12 @@ public class AcceptanceController {
      */
     @DeleteMapping("/acceptances/{id}")
     public ResponseEntity<?> deleteAcceptance(@PathVariable Long id) {
-        Optional<Acceptance> acceptanceOptional = acceptanceRepository.findById(id);
-        if (acceptanceOptional.isEmpty()) {
-            LOGGER.warn("Received acceptance deletion for non-existing acceptance with ID {}.", id);
-            return ResponseEntity.notFound().build();
-        }
+        Acceptance deletedAcceptance = acceptanceRepository.findById(id).orElseThrow(
+            () -> new EntityNotFoundException(
+                "Acceptance with ID " + id + " not found for deletion."));
         acceptanceRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Acceptance deleted: " + acceptanceOptional.get());
-        return ResponseEntity.ok(acceptanceOptional.get());
+        SseController.notifyDebugTest("Acceptance deleted: " + deletedAcceptance);
+        return ResponseEntity.ok(deletedAcceptance);
     }
 }

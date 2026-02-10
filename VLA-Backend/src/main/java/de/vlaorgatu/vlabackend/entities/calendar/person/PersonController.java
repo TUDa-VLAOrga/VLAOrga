@@ -1,10 +1,10 @@
 package de.vlaorgatu.vlabackend.entities.calendar.person;
 
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
+import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,20 +21,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RepositoryRestController
 public class PersonController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PersonController.class);
     private final PersonRepository personRepository;
 
     /**
      * A new person was born.
      *
-     * @param person Dataset of the person to create.
+     * @param person Dataset of the person to create. Must not contain an ID (auto-generated).
      * @return OK response with the created person, Error response otherwise.
      */
     @PostMapping("/persons")
     public ResponseEntity<?> createPerson(@RequestBody Person person) {
         if (Objects.nonNull(person.getId())) {
-            LOGGER.warn("Received person with ID {} when creating a new person.", person.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received person with ID " + person.getId() + " when creating a new person.");
         }
 
         Person savedPerson = personRepository.save(person);
@@ -55,13 +54,12 @@ public class PersonController {
         if (Objects.isNull(person.getId())) {
             person.setId(id);
         } else if (!person.getId().equals(id)) {
-            LOGGER.warn("Received inconsistent IDs on person modification." +
-                " ID from url: {} vs. ID from body data: {}.", id, person.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received inconsistent IDs on person modification. ID from url: " + id +
+                    " vs. ID from body data: " + person.getId() + ".");
         }
         if (!personRepository.existsById(id)) {
-            LOGGER.warn("Received person update for non-existing person with ID {}.", id);
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException("Person with ID " + id + " not found for update.");
         }
 
         Person updatedPerson = personRepository.save(person);
@@ -78,15 +76,12 @@ public class PersonController {
      */
     @DeleteMapping("/persons/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable Long id) {
-        Optional<Person> personOptional = personRepository.findById(id);
-        if (personOptional.isEmpty()) {
-            LOGGER.warn("Received person deletion for non-existing person with ID {}.", id);
-            return ResponseEntity.notFound().build();
-        }
+        Person deletedPerson = personRepository.findById(id).orElseThrow(
+            () -> new EntityNotFoundException("Person with ID " + id + " not found for deletion."));
 
         personRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Person deleted: " + personOptional.get());
-        return ResponseEntity.ok(personOptional.get());
+        SseController.notifyDebugTest("Person deleted: " + deletedPerson);
+        return ResponseEntity.ok(deletedPerson);
     }
 }

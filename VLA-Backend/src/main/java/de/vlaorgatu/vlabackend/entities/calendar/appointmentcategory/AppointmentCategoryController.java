@@ -1,10 +1,10 @@
 package de.vlaorgatu.vlabackend.entities.calendar.appointmentcategory;
 
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
+import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,23 +20,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 @RepositoryRestController
 public class AppointmentCategoryController {
-    private static final Logger LOGGER =
-        org.slf4j.LoggerFactory.getLogger(AppointmentCategoryController.class);
     private final AppointmentCategoryRepository appointmentCategoryRepository;
 
     /**
      * Creates a new appointment category.
      *
-     * @param appointmentCategory The dataset for creation. Must not contain an ID.
+     * @param appointmentCategory The dataset for creation. Must not contain an ID (auto-generated).
      * @return OK response with the created appointment category, Error response otherwise.
      */
     @PostMapping("/appointmentCategories")
     public ResponseEntity<?> createAppointmentCategory(
         @RequestBody AppointmentCategory appointmentCategory) {
         if (Objects.nonNull(appointmentCategory.getId())) {
-            LOGGER.warn("Received appointment category with ID {} when creating" +
-                " a new appointment category.", appointmentCategory.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received appointment category with ID " + appointmentCategory.getId() +
+                    " when creating a new appointment category.");
         }
 
         AppointmentCategory savedAppointmentCategory =
@@ -56,18 +54,18 @@ public class AppointmentCategoryController {
      */
     @PutMapping("/appointmentCategory/{id}")
     public ResponseEntity<?> updateAppointmentCategory(
-        @PathVariable Long id, @RequestBody AppointmentCategory appointmentCategory) {
+        @PathVariable Long id, @RequestBody AppointmentCategory appointmentCategory
+    ) {
         if (Objects.isNull(appointmentCategory.getId())) {
             appointmentCategory.setId(id);
         } else if (!appointmentCategory.getId().equals(id)) {
-            LOGGER.warn("Received inconsistent IDs on appointment category modification." +
-                " ID from url: {} vs. ID from body data: {}.", id, appointmentCategory.getId());
-            return ResponseEntity.badRequest().build();
+            throw new InvalidParameterException(
+                "Received inconsistent IDs on appointment category modification. ID from url: " +
+                    id + " vs. ID from body data: " + appointmentCategory.getId() + ".");
         }
         if (!appointmentCategoryRepository.existsById(id)) {
-            LOGGER.warn("Received appointment category update for non-existing" +
-                " appointment category with ID {}.", id);
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException(
+                "Appointment category with ID " + id + " not found for update.");
         }
 
         AppointmentCategory updatedAppointmentCategory =
@@ -86,18 +84,13 @@ public class AppointmentCategoryController {
      */
     @DeleteMapping("/appointmentCategory/{id}")
     public ResponseEntity<?> deleteAppointmentCategory(@PathVariable Long id) {
-        Optional<AppointmentCategory> appointmentCategoryOptional =
-            appointmentCategoryRepository.findById(id);
-        if (appointmentCategoryOptional.isEmpty()) {
-            LOGGER.warn("Received appointment category deletion for non-existing" +
-                " appointment category with ID {}.", id);
-            return ResponseEntity.notFound().build();
-        }
-
+        AppointmentCategory deletedAppointmentCategory = appointmentCategoryRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Appointment category with ID " + id + " not found for deletion."));
         appointmentCategoryRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest(
-            "Appointment category deleted: " + appointmentCategoryOptional.get());
-        return ResponseEntity.ok(appointmentCategoryOptional.get());
+            "Appointment category deleted: " + deletedAppointmentCategory);
+        return ResponseEntity.ok(deletedAppointmentCategory);
     }
 }
