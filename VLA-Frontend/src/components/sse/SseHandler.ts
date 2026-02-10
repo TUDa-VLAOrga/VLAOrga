@@ -47,7 +47,11 @@ export class SSEHandler {
      * Do not forget to add a new handler if SseMessage is changed!
      */
   private static addEventSourceEventHandlers(){
-    SSEHandler.eventSource.addEventListener(SseMessageType.DEBUG, SSEHandler.handleDebugEvent);
+    //SSEHandler.eventSource.addEventListener(SseMessageType.DEBUG, SSEHandler.handleDebugEvent);
+    
+    Object.values(SseMessageType).forEach((SseMessageType) => {
+      SSEHandler.eventSource.addEventListener(SseMessageType, SSEHandler.notifyAllObserver);
+    });
   }
 
   /**
@@ -91,10 +95,9 @@ export class SSEHandler {
   /**
      * Notify all registered {@link SseObserver}s of new MessageEvent
      * @param e The Event to propagate
-     */
-  // @ts-expect-error method will be used in future feature implementations
-  private static notifyAllObserver(e: MessageEvent){
-    SSEHandler.registeredObservers.forEach(obs => obs.update(e));
+  */
+  private static notifyAllObserver(event: MessageEvent){
+    SSEHandler.registeredObservers.forEach(obs => obs.update(event));
   }
 
   /**
