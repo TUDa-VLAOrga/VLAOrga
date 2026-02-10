@@ -1,8 +1,8 @@
 package de.vlaorgatu.vlabackend.entities.calendar.lecture;
 
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.sse.SseController;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -33,6 +33,7 @@ public class LectureController {
     @PostMapping("/lectures")
     public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
+            // TODO: use exception
             LOGGER.warn("Received lecture with ID {} when creating a new lecture.",
                 lecture.getId());
             return ResponseEntity.badRequest().build();
@@ -56,13 +57,13 @@ public class LectureController {
         if (Objects.isNull(lecture.getId())) {
             lecture.setId(id);
         } else if (!lecture.getId().equals(id)) {
+            // TODO: use exception
             LOGGER.warn("Received inconsistent IDs on lecture modification." +
                 " ID from url: {} vs. ID from body data: {}.", id, lecture.getId());
             return ResponseEntity.badRequest().build();
         }
         if (!lectureRepository.existsById(id)) {
-            LOGGER.warn("Received lecture update for non-existing lecture with ID {}.", id);
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException("Lecture with ID " + id + " not found.");
         }
 
         Lecture updatedLecture = lectureRepository.save(lecture);
@@ -79,15 +80,12 @@ public class LectureController {
      */
     @DeleteMapping("/lectures/{id}")
     public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
-        Optional<Lecture> lectureOptional = lectureRepository.findById(id);
-        if (lectureOptional.isEmpty()) {
-            LOGGER.warn("Received lecture deletion for non-existing lecture with ID {}.", id);
-            return ResponseEntity.notFound().build();
-        }
+        Lecture deletedLecture = lectureRepository.findById(id).orElseThrow(
+            () -> new EntityNotFoundException("Lecture with ID " + id + " not found."));
 
         lectureRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Lecture deleted: " + lectureOptional.get());
-        return ResponseEntity.ok(lectureOptional.get());
+        SseController.notifyDebugTest("Lecture deleted: " + deletedLecture);
+        return ResponseEntity.ok(deletedLecture);
     }
 }
