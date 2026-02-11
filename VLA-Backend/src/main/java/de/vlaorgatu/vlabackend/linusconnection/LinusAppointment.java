@@ -36,8 +36,8 @@ public class LinusAppointment {
     /**
      * Status of the appointment.
      */
-    @Column(name = "status", nullable = false)
-    private Integer status;
+    @Column(name = "status")
+    private int status;
 
     /**
      * Date and time when the appointment takes place.
