@@ -2,8 +2,6 @@ package de.vlaorgatu.vlabackend.linusconnection;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -15,18 +13,18 @@ import lombok.Getter;
 @Getter
 @Entity
 // table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
+// Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation")
 public class LinusAppointment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
 
     /**
      * Linus user id.
      */
     // TODO: possible candidate for @JoinColumn
     @Column(name = "user_id")
-    private Long linusUserId;
+    private int linusUserId;
 
     /**
      * Date and time when the reservation of the appointment was made in linus.
@@ -39,7 +37,7 @@ public class LinusAppointment {
      * Status of the appointment.
      */
     @Column(name = "status")
-    private Long status;
+    private int status;
 
     /**
      * Date and time when the appointment takes place.
