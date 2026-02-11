@@ -83,11 +83,18 @@ public class SseController {
             try {
                 connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
                     .data("SSE Update to all registered connections!"));
+                connection.send(SseEmitter.event().name(SseMessageType.SSEDEBUG)
+                    .data("Breaking news! We have received a SSEDEBUG event"));
             } catch (IOException e) {
                 // Broken Pipe Error
                 sseHandlers.remove(connection);
             }
         }
         return "Sent message to all connections!";
+    }
+
+    @GetMapping("/getTestData")
+    public String getTestData() {
+        return "{\"message\":\"Something incredible has happened with this SSE request\"}";
     }
 }
