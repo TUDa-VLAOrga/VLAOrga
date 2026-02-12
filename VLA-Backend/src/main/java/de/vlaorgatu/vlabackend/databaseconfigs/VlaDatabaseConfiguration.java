@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = "de.vlaorgatu.vlabackend.entities.vladb",
+    basePackages = "de.vlaorgatu.vlabackend.repositories.vladb",
     entityManagerFactoryRef = "vlaEntityManagerFactory",
     transactionManagerRef = "vlaTransactionManager")
 public class VlaDatabaseConfiguration {
