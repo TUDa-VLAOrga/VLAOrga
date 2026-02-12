@@ -62,7 +62,7 @@ public class PersonController {
                     " vs. ID from body data: " + person.getId() + ".");
         }
         if (!personRepository.existsById(id)) {
-            throw new EntityNotFoundException("Person with ID " + id + " not found for update.");
+            throw new EntityNotFoundException("Person with ID " + id + " not found.");
         }
 
         Person updatedPerson = personRepository.save(person);
@@ -80,7 +80,7 @@ public class PersonController {
     @DeleteMapping("/persons/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable Long id) {
         Person deletedPerson = personRepository.findById(id).orElseThrow(
-            () -> new EntityNotFoundException("Person with ID " + id + " not found for deletion."));
+            () -> new EntityNotFoundException("Person with ID " + id + " not found."));
 
         personRepository.deleteById(id);
         // TODO: use a better method here instead of debug message

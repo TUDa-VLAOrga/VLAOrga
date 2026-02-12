@@ -68,7 +68,7 @@ public class AppointmentCategoryController {
         }
         if (!appointmentCategoryRepository.existsById(id)) {
             throw new EntityNotFoundException(
-                "Appointment category with ID " + id + " not found for update.");
+                "Appointment category with ID " + id + " not found.");
         }
 
         AppointmentCategory updatedAppointmentCategory =
@@ -89,7 +89,7 @@ public class AppointmentCategoryController {
     public ResponseEntity<?> deleteAppointmentCategory(@PathVariable Long id) {
         AppointmentCategory deletedAppointmentCategory = appointmentCategoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Appointment category with ID " + id + " not found for deletion."));
+                "Appointment category with ID " + id + " not found."));
         appointmentCategoryRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest(
