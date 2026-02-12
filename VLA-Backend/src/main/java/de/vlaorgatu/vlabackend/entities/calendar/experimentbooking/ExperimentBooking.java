@@ -28,13 +28,13 @@ public class ExperimentBooking {
      * ID of the booked experiment in Linus.
      */
     @Column(name = "linus_experiment_id")
-    private Long linusExperimentId;
+    private Integer linusExperimentId;  // Integer instead of int to allow nullability
 
     /**
      * ID of this booking in linus.
      */
     @Column(name = "linus_reservation_id")
-    private Long linusExperimentBookingId;
+    private Integer linusExperimentBookingId;  // Integer instead of int to allow nullability
 
     /**
      * Person who booked the experiment.
@@ -47,4 +47,16 @@ public class ExperimentBooking {
      */
     @ManyToOne
     private Appointment appointment;
+
+    /**
+     * Notes for this booking, probably taken from linus reservation at init.
+     */
+    @Column(name = "notes", nullable = false)
+    private String notes = "";
+
+    /**
+     * Preparation status of the experiment..
+     */
+    @Column(name = "status")
+    private ExperimentPreparationStatus status = ExperimentPreparationStatus.PENDING;
 }

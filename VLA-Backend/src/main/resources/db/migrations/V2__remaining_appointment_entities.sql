@@ -1,3 +1,4 @@
+-- auto-generated definition by IntelliJ JPA Buddy addon via "generate flyway diff changes"
 CREATE SEQUENCE IF NOT EXISTS acceptances_seq START WITH 1 INCREMENT BY 50;
 
 CREATE SEQUENCE IF NOT EXISTS appointment_series_seq START WITH 1 INCREMENT BY 50;
@@ -35,11 +36,13 @@ CREATE TABLE appointments
 
 CREATE TABLE experiment_bookings
 (
-    id                   BIGINT NOT NULL,
-    linus_experiment_id  BIGINT,
-    linus_reservation_id BIGINT,
+    id                   BIGINT       NOT NULL,
+    linus_experiment_id  INTEGER,
+    linus_reservation_id INTEGER,
     person_id            BIGINT,
     appointment_id       BIGINT,
+    notes                VARCHAR(255) NOT NULL,
+    status               SMALLINT,
     CONSTRAINT pk_experiment_bookings PRIMARY KEY (id)
 );
 
