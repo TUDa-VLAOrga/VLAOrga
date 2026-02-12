@@ -66,9 +66,8 @@ tasks {
         dependsOn build
 
         classPatterns = [
-                "de.vlaorgatu.vlabackend.entities.*.**",
-                "de.vlaorgatu.vlabackend.linusConnection.**",
-                "de.vlaorgatu.vlabackend.sse.SseMessageType**"
+                "de.vlaorgatu.vlabackend.entities.**",
+                "de.vlaorgatu.vlabackend.enums.**"
         ]
 
         jsonLibrary = JsonLibrary.Jackson2
