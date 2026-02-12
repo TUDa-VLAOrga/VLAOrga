@@ -1,18 +1,31 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-12 09:04:03.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-12 11:55:45.
+
+export interface LinusAppointment {
+    id: number;
+    linusUserId: number;
+    orderTime: Date;
+    status: number;
+    appointmentTime: Date;
+    comment: string;
+    name: string;
+}
+
+export interface LinusExperimentBooking {
+    id: number;
+    linusAppointmentId: number;
+    linusExperimentId: number;
+    linusUserId: number;
+    status: number;
+    pinnedOn: Date;
+}
 
 export interface Acceptance {
     id: number;
     appointment: Appointment;
     start: Date;
     end: Date;
-}
-
-export interface AcceptanceController {
-}
-
-export interface AcceptanceRepository extends JpaRepository<Acceptance, number> {
 }
 
 export interface Appointment {
@@ -23,33 +36,15 @@ export interface Appointment {
     notes: string;
 }
 
-export interface AppointmentController {
-}
-
-export interface AppointmentRepository extends JpaRepository<Appointment, number> {
-}
-
 export interface AppointmentCategory {
     id: number;
     title: string;
-}
-
-export interface AppointmentCategoryController {
-}
-
-export interface AppointmentCategoryRepository extends JpaRepository<AppointmentCategory, number> {
 }
 
 export interface AppointmentSeries {
     id: number;
     lecture: Lecture;
     category: AppointmentCategory;
-}
-
-export interface AppointmentSeriesController {
-}
-
-export interface AppointmentSeriesRepository extends JpaRepository<AppointmentSeries, number> {
 }
 
 export interface ExperimentBooking {
@@ -60,23 +55,11 @@ export interface ExperimentBooking {
     appointment: Appointment;
 }
 
-export interface ExperimentBookingController {
-}
-
-export interface ExperimentBookingRepository extends JpaRepository<ExperimentBooking, number> {
-}
-
 export interface Lecture {
     id: number;
     name: string;
     semester: string;
     color: string;
-}
-
-export interface LectureController {
-}
-
-export interface LectureRepository extends JpaRepository<Lecture, number> {
 }
 
 export interface Person {
@@ -86,44 +69,10 @@ export interface Person {
     linusUserId: number;
 }
 
-export interface PersonController {
-}
-
-export interface PersonRepository extends JpaRepository<Person, number> {
-}
-
 export interface User {
     id: number;
     name: string;
     email: string;
-}
-
-export interface UserController {
-    allUsers: User[];
-}
-
-export interface UserRepository extends JpaRepository<User, number> {
-}
-
-export interface JpaRepository<T, ID> extends ListCrudRepository<T, ID>, ListPagingAndSortingRepository<T, ID>, QueryByExampleExecutor<T> {
-}
-
-export interface ListCrudRepository<T, ID> extends CrudRepository<T, ID> {
-}
-
-export interface ListPagingAndSortingRepository<T, ID> extends PagingAndSortingRepository<T, ID> {
-}
-
-export interface QueryByExampleExecutor<T> {
-}
-
-export interface CrudRepository<T, ID> extends Repository<T, ID> {
-}
-
-export interface PagingAndSortingRepository<T, ID> extends CrudRepository<T, ID> {
-}
-
-export interface Repository<T, ID> {
 }
 
 export const enum SseMessageType {
