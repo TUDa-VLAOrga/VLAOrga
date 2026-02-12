@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-12 07:44:58.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-12 09:04:03.
 
 export interface Acceptance {
     id: number;
@@ -124,4 +124,11 @@ export interface PagingAndSortingRepository<T, ID> extends CrudRepository<T, ID>
 }
 
 export interface Repository<T, ID> {
+}
+
+export const enum SseMessageType {
+    DEBUG = "DEBUG",
+    EXPERIMENT = "EXPERIMENT",
+    CALENDAR = "CALENDAR",
+    APPROVEDELETION = "APPROVEDELETION",
 }

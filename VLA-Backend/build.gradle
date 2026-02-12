@@ -1,3 +1,4 @@
+import cz.habarta.typescript.generator.EnumMapping
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptOutputKind
 
@@ -66,10 +67,13 @@ tasks {
 
         classPatterns = [
                 "de.vlaorgatu.vlabackend.entities.*.**",
-                "de.vlaorgatu.vlabackend.linusConnection.**"
+                "de.vlaorgatu.vlabackend.linusConnection.**",
+                "de.vlaorgatu.vlabackend.sse.SseMessageType**"
         ]
 
         jsonLibrary = JsonLibrary.Jackson2
+
+        mapEnum = EnumMapping.asEnum
 
         outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.d.ts")
         outputKind = TypeScriptOutputKind.Module

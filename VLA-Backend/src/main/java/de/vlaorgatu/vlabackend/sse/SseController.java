@@ -39,7 +39,7 @@ public class SseController {
     public static void notifyDebugTest(final String message) {
         for (SseEmitter connection : sseHandlers) {
             try {
-                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
+                connection.send(SseEmitter.event().name(SseMessageType.DEBUG.getValue())
                     .data("! Change Notification ! Message: " + message));
             } catch (IOException e) {
                 // Broken Pipe Error
@@ -87,7 +87,7 @@ public class SseController {
     public String notifyAllSse() {
         for (SseEmitter connection : sseHandlers) {
             try {
-                connection.send(SseEmitter.event().name(SseMessageType.DEBUG)
+                connection.send(SseEmitter.event().name(SseMessageType.DEBUG.getValue())
                     .data("SSE Update to all registered connections!"));
             } catch (IOException e) {
                 // Broken Pipe Error
