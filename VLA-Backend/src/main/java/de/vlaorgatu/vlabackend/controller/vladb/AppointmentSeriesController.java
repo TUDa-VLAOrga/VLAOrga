@@ -1,9 +1,9 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
+import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
-import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;

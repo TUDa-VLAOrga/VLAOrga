@@ -1,7 +1,7 @@
 package de.vlaorgatu.vlabackend.controller.linusdb;
 
-import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
+import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;

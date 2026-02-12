@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.enums;
+package de.vlaorgatu.vlabackend.enums.sse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

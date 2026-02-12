@@ -1,9 +1,9 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
+import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
-import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.repositories.vladb.PersonRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;

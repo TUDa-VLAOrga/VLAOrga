@@ -1,6 +1,6 @@
 package de.vlaorgatu.vlabackend.controller.sse;
 
-import de.vlaorgatu.vlabackend.enums.SseMessageType;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
