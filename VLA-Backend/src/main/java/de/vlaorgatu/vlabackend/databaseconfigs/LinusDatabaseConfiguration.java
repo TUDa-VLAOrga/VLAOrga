@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = "de.vlaorgatu.vlabackend.linusconnection",
+    basePackages = "de.vlaorgatu.vlabackend.repositories.linusdb",
     entityManagerFactoryRef = "linusEntityManagerFactory",
     transactionManagerRef = "linusTransactionManager")
 public class LinusDatabaseConfiguration {
@@ -61,7 +61,7 @@ public class LinusDatabaseConfiguration {
         EntityManagerFactoryBuilder builder) {
         return builder
             .dataSource(dataSource)
-            .packages("de.vlaorgatu.vlabackend.linusconnection")
+            .packages("de.vlaorgatu.vlabackend.entities.linusdb")
             .build();
     }
 
