@@ -5,11 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a person, that e.g. holds a lecture, in our calendar.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "persons")
