@@ -16,6 +16,9 @@ import lombok.Getter;
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation_experiment")
 public class LinusExperimentBooking {
+    /**
+     * Primary key.
+     */
     @Id
     private int id;
 

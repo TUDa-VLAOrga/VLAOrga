@@ -11,7 +11,16 @@ public class SseMessageType {
     public static final String DEBUG = "DEBUG";
 
     // TODO: Decide on important SseMessageTypes and think of the syncing events in more detail
+    /**
+     * TODO.
+     */
     public static final String EXPERIMENT = "experiment";
+    /**
+     * TODO.
+     */
     public static final String CALENDAR = "calendar";
+    /**
+     * TODO.
+     */
     public static final String APPROVEDELETION = "approveDeletion";
 }

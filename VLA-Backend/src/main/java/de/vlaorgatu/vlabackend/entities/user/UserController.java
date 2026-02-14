@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserController {
 
+    /**
+     * Repository used for user persistence operations.
+     */
     private final UserRepository userRepository;
 
     /**
