@@ -19,17 +19,17 @@ public enum SseMessageType {
     /**
      * TODO.
      */
-    EXPERIMENT("experiment"),
+    EXPERIMENT("EXPERIMENT"),
 
     /**
      * TODO.
      */
-    CALENDAR("calendar"),
+    CALENDAR("CALENDAR"),
 
     /**
      * TODO.
      */
-    APPROVEDELETION("approveDeletion");
+    APPROVEDELETION("APPROVEDELETION");
 
     /**
      * The actual value of the enum object.
