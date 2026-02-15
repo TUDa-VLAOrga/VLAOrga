@@ -1,3 +1,5 @@
+
+
 export type CalendarDay = {
   date: Date;
   iso: string; /** Local date as yyyy-mm-dd (stable key). */
@@ -20,12 +22,7 @@ export type EventId = string;
  * - "warn": attention needed soon (e.g., missing info, pending confirmation)
  * - "critical": urgent / blocking issue (e.g., cannot be executed as planned)
  */
-export enum EventStatus {
-  Neutral = "neutral",
-  Ok = "ok",
-  Warn = "warn",
-  Critical = "critical",
-}
+export type EventStatus = string;
 
 export type CalendarEvent = {
   id: EventId;
@@ -37,7 +34,9 @@ export type CalendarEvent = {
   kind: EventKind;
   status?: EventStatus;   /** Optional UI status indicator for highlighting the event in the calendar. */
   shortTitle?: string;
-  lectureId?: LectureId; /** Optional reference to associated lecture (if any). */
+  lectureId?: LectureId;
+  notes?: string;
+  recurrenceId?: string; /** If part of a series, the ID of the original event. */
 };
 
 export type Lecture = {
@@ -45,8 +44,15 @@ export type Lecture = {
   name: string;
   semester: string; /** e.g. "WS 25/26" */
   color: string; /** RGB color code, as string starting with # and 6 chars. E.g. "#ffff00" */
+  people?: string[]; /** Array of Person IDs associated with this lecture. */
 };
 
 export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
 
-
+export type Person = {
+  id: string;
+  name: string;
+  email?: string;
+  role?: string;
+  notes?: string;
+};

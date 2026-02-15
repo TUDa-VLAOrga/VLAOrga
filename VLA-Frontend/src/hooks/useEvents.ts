@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import type { CalendarEvent, Lecture } from "../components/calendar/CalendarTypes";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
-import { addDays, toISODateLocal, splitDateTime } from "../components/calendar/dateUtils";
+import { addDays, toISODateLocal, splitDateTime, moveEventSeries } from "../components/calendar/dateUtils";
+
 
 /**
  * useEvents manages:
@@ -12,10 +13,67 @@ import { addDays, toISODateLocal, splitDateTime } from "../components/calendar/d
  * - color lookup based on lecture assignment
  */
 
-export function useEvents(lectures: Lecture[]) {
+export function useEvents(lectures: Lecture[]  ) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const MAX_RECURRENCE_DAYS = 365; // Limit recurrence expansion to 1 year
+
+  function handleUpdateEvent(eventId: string, updates: Partial<CalendarEvent>) {
+    // TODO: Backend - PATCH request to /api/events/:eventId
+    setEvents((prev) =>
+      prev.map((event) =>
+        event.id === eventId ? { ...event, ...updates } : event
+      )
+    );
+
+    setSelectedEvent((prev) => {
+      if (prev?.id === eventId) {
+        return { ...prev, ...updates };
+      }
+      return prev;
+    });
+  }
+
+  function handleMoveEvent(
+    eventId: string,
+    newStartDateTime: string,
+    newEndDateTime: string
+  ) {
+    // TODO: Backend - POST request to /api/events/:eventId/move
+    const [newDateISO, newStartTime] = newStartDateTime.split("T");
+    const [_, newEndTime] = newEndDateTime.split("T");
+
+    setEvents((prev) =>
+      prev.map((event) =>
+        event.id === eventId
+          ? {
+            ...event,
+            dateISO: newDateISO,
+            displayedStartTime: newStartTime,
+            displayedEndTime: newEndTime,
+          }
+          : event
+      )
+    );
+
+    setSelectedEvent(null);
+  }
+
+  function handleMoveSeries(
+    eventId: string,
+    newStartDateTime: string,
+    _newEndDateTime: string
+  ) {
+    const event= events.find(e => e.id === eventId);
+    if(!event?.recurrenceId){
+      console.log("Event is not part of a series");
+      return;
+    }
+    // Verschiebe alle Events der Serie
+    setEvents((prev) => moveEventSeries(prev, event, newStartDateTime));
+    setSelectedEvent(null);
+  }
+
   //Creates one or many CalendarEvent objects from the EventForm submission
   function handleCreateEvent(formData: EventFormData) {
     // TODO: Backend - POST request to /api/events
@@ -28,7 +86,10 @@ export function useEvents(lectures: Lecture[]) {
 
     const newEvents: CalendarEvent[] = [];
 
-    
+    const recurrenceId = formData.recurrence && formData.recurrence.weekdays.length > 0
+      ? `recurrence-${Date.now()}`
+      : undefined;
+
     // Always create the base event on the explicitly chosen start date.
     newEvents.push({
       id: `event-${Date.now()}-0`,
@@ -37,10 +98,12 @@ export function useEvents(lectures: Lecture[]) {
       calendarId: "user-events",
       kind: formData.category,
       status: formData.status,
-      shortTitle: formData.people.join(", "),
+      shortTitle: "",
       displayedStartTime: startTime,
       displayedEndTime: endTime,
       lectureId: formData.lectureId,
+      notes: formData.notes,
+      recurrenceId: recurrenceId,
     });
 
     if (formData.recurrence && formData.recurrence.weekdays.length > 0) {
@@ -62,10 +125,12 @@ export function useEvents(lectures: Lecture[]) {
             calendarId: "user-events",
             kind: formData.category,
             status: formData.status,
-            shortTitle: formData.people.join(", "),
+            shortTitle: "",
             displayedStartTime: startTime,
             displayedEndTime: endTime,
             lectureId: formData.lectureId,
+            notes: formData.notes,
+            recurrenceId: recurrenceId,
           });
         }
         currentDate = addDays(currentDate, 1);
@@ -114,5 +179,8 @@ export function useEvents(lectures: Lecture[]) {
     handleEventClick,
     closeEventDetails,
     getEventColor,
+    handleUpdateEvent,
+    handleMoveEvent,
+    handleMoveSeries,
   };
 }
