@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -55,7 +56,7 @@ public class ExperimentBooking {
     private String notes = "";
 
     /**
-     * Preparation status of the experiment..
+     * Preparation status of the experiment.
      */
     @Column(name = "status")
     private ExperimentPreparationStatus status = ExperimentPreparationStatus.PENDING;
