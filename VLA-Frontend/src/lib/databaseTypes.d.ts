@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-16 14:21:07.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-16 15:33:28.
 
 export interface LinusAppointment {
     id: number;
@@ -62,13 +62,16 @@ export interface Lecture {
     name: string;
     semester: string;
     color: string;
+    persons: Person[];
 }
 
 export interface Person {
     id: number;
     name: string;
+    email: string;
     notes: string;
     linusUserId: number;
+    lectures: Lecture[];
 }
 
 export interface User {
