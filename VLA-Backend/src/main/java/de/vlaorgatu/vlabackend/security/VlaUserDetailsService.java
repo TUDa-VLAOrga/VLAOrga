@@ -1,7 +1,7 @@
 package de.vlaorgatu.vlabackend.security;
 
-import de.vlaorgatu.vlabackend.user.User;
-import de.vlaorgatu.vlabackend.user.UserRepository;
+import de.vlaorgatu.vlabackend.entities.vladb.User;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,7 +19,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor()
 @Profile("prod")
 public class VlaUserDetailsService implements UserDetailsService {
+    /**
+     * Logging.
+     */
     private final Logger log = LoggerFactory.getLogger(VlaUserDetailsService.class);
+
+    /**
+     * The repositories the users are stored in.
+     */
     private final UserRepository userRepository;
 
     /**

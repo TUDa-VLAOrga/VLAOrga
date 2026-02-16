@@ -31,7 +31,7 @@ public class User {
     /**
      * Email address of the user.
      */
-    @Column(name = "email", unique=true)
+    @Column(name = "email", unique = true)
     private String email;
 
     /**

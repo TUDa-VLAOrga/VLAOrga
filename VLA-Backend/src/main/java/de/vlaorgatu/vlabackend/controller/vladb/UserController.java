@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     /**
-     * Default injected Password Encoder defined by the SecurityConfig
+     * Default injected Password Encoder defined by the SecurityConfig.
      */
     private final PasswordEncoder passwordEncoder;
     /**
