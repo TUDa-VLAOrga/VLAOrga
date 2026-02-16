@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.user;
+package de.vlaorgatu.vlabackend.entities.vladb;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,14 +15,23 @@ import lombok.Data;
 @Table(name = "users")
 public class User {
 
+    /**
+     * Primary key.
+     */
     @Id
     @GeneratedValue
     private Long id;
 
+    /**
+     * Name of the user.
+     */
     @Column(name = "name", unique = true)
     private String name;
 
-    @Column(name = "email", unique = true)
+    /**
+     * Email address of the user.
+     */
+    @Column(name = "email", unique=true)
     private String email;
 
     /**

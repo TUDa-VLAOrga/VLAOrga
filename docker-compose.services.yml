@@ -18,6 +18,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      
+# Linus database dev build
+  linus-db:
+    container_name: linus-db
+    extends: 
+      file: ./Linus/docker-compose.yml
+      service: linus-db
 
   # Dev build of backend application for VLAOrga
   # Does not merge the frontend into the backend, seperated process for frontend is needed
@@ -28,11 +35,17 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      VLAORGA_DATASOURCE_URL: ${VLAORGA_DATASOURCE_URL}
+      VLAORGA_DATASOURCE_USERNAME: ${VLAORGA_DATASOURCE_USERNAME}
+      VLAORGA_DATASOURCE_PASSWORD: ${VLAORGA_DATASOURCE_PASSWORD}
+      LINUS_DATASOURCE_URL: ${LINUS_DATASOURCE_URL}
+      LINUS_DATASOURCE_USERNAME: ${LINUS_DATASOURCE_USERNAME}
+      LINUS_DATASOURCE_PASSWORD: ${LINUS_DATASOURCE_PASSWORD}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      linus-db:
+        condition: service_healthy
 
   # Prod build of backend application for VLAOrga
   # Combines everything into a single container

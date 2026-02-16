@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.calendar.lecture;
+package de.vlaorgatu.vlabackend.entities.vladb;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +14,9 @@ import lombok.Data;
 @Entity
 @Table(name = "lectures")
 public class Lecture {
+    /**
+     * Primary key.
+     */
     @Id
     @GeneratedValue
     private Long id;  // may not be final, see https://stackoverflow.com/a/76986804

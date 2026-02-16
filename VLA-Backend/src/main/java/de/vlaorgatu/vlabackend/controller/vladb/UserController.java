@@ -1,7 +1,9 @@
-package de.vlaorgatu.vlabackend.user;
+package de.vlaorgatu.vlabackend.controller.vladb;
 
+import de.vlaorgatu.vlabackend.entities.vladb.User;
+import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
+    /**
+     * Default injected Password Encoder defined by the SecurityConfig
+     */
     private final PasswordEncoder passwordEncoder;
+    /**
+     * Repository used for user persistence operations.
+     */
     private final UserRepository userRepository;
 
     /**
@@ -42,9 +50,8 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        return userRepository.findById(id).map(ResponseEntity::ok)
+            .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     /**
@@ -65,16 +72,13 @@ public class UserController {
      *
      * @param id   user ID
      * @param user updated user data
-     * @return updated user if found, otherwise 404
+     * @return updated user if found
      */
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        Optional<User> existingOpt = userRepository.findById(id);
-        if (existingOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        User existingUser = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
 
-        User existingUser = existingOpt.get();
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
 
@@ -90,10 +94,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new UserNotFoundException(id);
         }
 
         userRepository.deleteById(id);
+
         return ResponseEntity.noContent().build();
     }
 }
