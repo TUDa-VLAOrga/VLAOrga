@@ -62,7 +62,7 @@ tasks {
         useJUnitPlatform()
     }
 
-    generateTypeScript {
+    generateFrontendDataschema {
         dependsOn build
 
         classPatterns = [
