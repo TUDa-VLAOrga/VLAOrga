@@ -37,10 +37,13 @@ public class SecurityConfig {
     @Profile({"prod", "dev"})
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(Customizer.withDefaults())
+            .csrf(csrf ->
+                csrf.ignoringRequestMatchers("/userManagement/unauthenticated/**")
+            )
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/csrf").permitAll()
                 .requestMatchers("/login.css").permitAll()
+                .requestMatchers("/userManagement/unauthenticated/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

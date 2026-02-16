@@ -6,3 +6,13 @@ ALTER TABLE users
 
 ALTER TABLE users
     ADD CONSTRAINT uc_users_name UNIQUE (name);
+
+DROP SEQUENCE users_seq CASCADE;
+
+CREATE SEQUENCE IF NOT EXISTS users_id_seq;
+ALTER TABLE users
+    ALTER COLUMN id SET NOT NULL;
+ALTER TABLE users
+    ALTER COLUMN id SET DEFAULT nextval('users_id_seq');
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
