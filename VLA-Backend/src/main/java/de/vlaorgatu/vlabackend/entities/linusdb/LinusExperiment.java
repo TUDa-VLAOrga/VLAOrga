@@ -1,4 +1,4 @@
-package de.vlaorgatu.vlabackend.linusconnection;
+package de.vlaorgatu.vlabackend.entities.linusdb;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
