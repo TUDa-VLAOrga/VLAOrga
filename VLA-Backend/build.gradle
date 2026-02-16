@@ -57,22 +57,24 @@ checkstyle {
     maxWarnings = 0
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
+tasks {
+    test {
+        useJUnitPlatform()
+    }
 
-tasks.register("generateFrontendDataschema") {
-    dependsOn build
+    generateTypeScript {
+        dependsOn build
 
-    classPatterns = [
-            "de.vlaorgatu.vlabackend.entities.**",
-            "de.vlaorgatu.vlabackend.enums.**"
-    ]
+        classPatterns = [
+                "de.vlaorgatu.vlabackend.entities.**",
+                "de.vlaorgatu.vlabackend.enums.**"
+        ]
 
-    jsonLibrary = JsonLibrary.Jackson2
+        jsonLibrary = JsonLibrary.Jackson2
 
-    mapEnum = EnumMapping.asEnum
+        mapEnum = EnumMapping.asEnum
 
-    outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.d.ts")
-    outputKind = TypeScriptOutputKind.Module
+        outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.d.ts")
+        outputKind = TypeScriptOutputKind.Module
+    }
 }
