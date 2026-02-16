@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Lecture, Person } from "../CalendarTypes";
 import ColorPicker from "../ColorPicker";
 import {createPortal} from "react-dom";
 import AddPeopleSection from "./AddPeopleSection";
+import type {Lecture, Person} from "@/lib/databaseTypes";
 
 type AddLectureFormProps = {
   onSubmit: (lecture: Lecture) => void;
@@ -31,7 +31,7 @@ export default function AddLectureForm({
   const [lectureName, setLectureName] = useState("");
   const [semester, setSemester] = useState("");
   const [color, setColor] = useState("#3b82f6");
-  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,11 +41,11 @@ export default function AddLectureForm({
 
     
     const newLecture: Lecture = {
-      id: `lecture-${Date.now()}`,
+      id: -Date.now(),  // negative ID to signal not-yet-created entity
       name: lectureName.trim(),
       semester: semester.trim(),
       color: color.trim(),
-      people: selectedPeople, 
+      persons: selectedPeople,
     };
 
     onSubmit(newLecture);
@@ -53,7 +53,7 @@ export default function AddLectureForm({
 
   const handleAddPerson = (person: Person) => {
     onAddPerson?.(person);
-    setSelectedPeople([...selectedPeople, person.id]);
+    setSelectedPeople([...selectedPeople, person]);
   };
 
   const isValid = lectureName.trim() !== "";

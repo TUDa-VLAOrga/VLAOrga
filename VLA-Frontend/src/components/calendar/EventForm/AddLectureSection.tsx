@@ -1,11 +1,11 @@
 import { useState } from "react";
-import type { Lecture, Person } from "../CalendarTypes";
 import AddLectureForm from "./AddLectureForm";
+import type {Lecture, Person} from "@/lib/databaseTypes";
 
 type AddLectureSectionProps = {
   lectures: Lecture[];
-  selectedLectureId: string;
-  onLectureChange: (lectureId: string) => void;
+  selectedLecture: Lecture | undefined;
+  onLectureChange: (lecture: Lecture) => void;
   onAddLecture: (lecture: Lecture) => void;
   people?: Person[];
   onAddPerson?: (person: Person) => void; 
@@ -19,7 +19,7 @@ type AddLectureSectionProps = {
  */
 export default function AddLectureSection({
   lectures,
-  selectedLectureId,
+  selectedLecture,
   onLectureChange,
   onAddLecture,
   people = [],
@@ -67,8 +67,11 @@ export default function AddLectureSection({
       <select
         id="lecture"
         className="cv-formSelect"
-        value={selectedLectureId}
-        onChange={(e) => onLectureChange(e.target.value)}
+        value={selectedLecture ? selectedLecture.id : ""}
+        onChange={(e) => {
+          const newLecture = lectures.find((lec) => lec.id === Number(e.target.value));
+          if (newLecture) onLectureChange(newLecture);
+        }}
       >
         <option value="">Keine Zuordnung</option>
         {lectures.map((lec) => (

@@ -1,31 +1,22 @@
 
 
-import type { CalendarDay, CalendarEvent , EventStatus, Lecture } from "./CalendarTypes";
+import type { CalendarDay } from "./CalendarTypes";
 import { compareSameDay } from "./dateUtils";
+import type {Appointment} from "@/lib/databaseTypes";
+import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
 
 type DayColumnProps = {
   day: CalendarDay;
-  events: CalendarEvent[];
-  onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string | undefined;
-  lectures? : Lecture[];
+  events: Appointment[];
+  onEventClick?: (event: Appointment) => void;
 };
 
-/**
- * DayColumn represents exactly one day in the calendar.
- * It receives the events for that day and renders them as clickable tiles.
- */
-
-function getStatusClass(status?: EventStatus): string {
-  if (!status) return "";
-  return `cv-event-${status}`;
-}
 /**
  * DayColumn renders all events for a single day.
  * It is used inside the WeekGrid to build the calendar layout.
  */
-export default function DayColumn({ day, events, onEventClick, getEventColor , lectures =[]}: DayColumnProps) {
+export default function DayColumn({ day, events, onEventClick }: DayColumnProps) {
   const isToday = compareSameDay(day.date, new Date());
        
   return (
@@ -35,28 +26,21 @@ export default function DayColumn({ day, events, onEventClick, getEventColor , l
       data-date={day.iso}
     >
       {events.map((event) => {
-        const customColor = getEventColor?.(event);
-        const lecture = event.lectureId ? 
-          lectures.find(lec => lec.id === event.lectureId)
-          : null;
+        // TODO: default color for events without associated lecture?
+        const color = event.series.lecture?.color;
+        const name = getEventTitle(event);
 
         const eventProps = {
           key: event.id,
-          className: `cv-event cv-event-${event.kind} ${getStatusClass(event.status)}`,
-          style: customColor ? { backgroundColor: customColor, borderColor: customColor } : undefined,
-          title: event.shortTitle || event.title,
+          className: `cv-event cv-event-${event.series.category} cv-event-${getEventStatus(event)}`,
+          style: color ? { backgroundColor: color, borderColor: color } : undefined,
+          title: name,
           ...(onEventClick && { onClick: () => onEventClick(event) }),
         };
 
         return (
           <div {...eventProps}>
-            <div className="cv-eventTitle">{event.title}</div>
-            {lecture && (
-              <div className="cv-eventSubtitle">{lecture.name}</div>
-            )}
-            {!lecture && event.shortTitle && (
-              <div className="cv-eventSubtitle">{event.shortTitle}</div>
-            )}
+            <div className="cv-eventTitle">{name}</div>
           </div>
         );
       })} 

@@ -4,8 +4,6 @@
  * Goal: CalendarView stays lean (State + UI), logic is here.
  */
 
-import type { CalendarEvent } from "./CalendarTypes";
-
 export const WORKDAY_COUNT = 5;
 
 export function toISODateLocal(d: Date) {
@@ -102,18 +100,6 @@ const dateFmtDE = new Intl.DateTimeFormat("de-DE", {
 export function formatISODateDE(iso: string): string {
   return dateFmtDE.format(parseISODateLocal(iso));
 }
-/**
- * Splits a datetime-local string (yyyy-mm-ddTHH:mm) into date and time parts.
- * @param dateTimeString - Format: "2024-01-15T09:00"
- * @returns Object with date (yyyy-mm-dd) and time (HH:mm)
- */
-export function splitDateTime(dateTimeString: string): {
-  date: string;
-  time: string;
-} {
-  const [date, time] = dateTimeString.split("T");
-  return { date, time };
-}
 
 /**
  * Compares two days while ignoring the clock time on a given day
@@ -127,61 +113,4 @@ export function compareSameDay(a: Date, b: Date){
   return a.getDate() == b.getDate() &&
     a.getMonth() == b.getMonth() &&
     a.getFullYear() == b.getFullYear();
-}
-
-/**
- * Adds minutes to a datetime-local string (yyyy-mm-ddTHH:mm)
- * and returns the result in the same format.
- * Handles local time correctly without UTC conversion.
- * @param dateTimeString - Format: "2024-01-15T09:00"
- * @param minutes - Number of minutes to add (can be negative)
- * @returns datetime-local string in format "yyyy-mm-ddTHH:mm"
- */
-export function addMinutesToDateTime(dateTimeString: string, minutes: number): string {
-  if (!dateTimeString) return "";
-  
-  const date = new Date(dateTimeString);
-  date.setMinutes(date.getMinutes() + minutes);
-  
-  // Format as YYYY-MM-DDTHH:mm for datetime-local input
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const mins = String(date.getMinutes()).padStart(2, '0');
-  
-  return `${year}-${month}-${day}T${hours}:${mins}`;
-}
-/**
- * Moves a series of events by calculating time difference
- * @param events - Array of events to move
- * @param referenceEvent - The event that was dragged
- * @param newStartDateTime - New start datetime string
- * @returns Updated events with new times
- */
-export function moveEventSeries(
-  events: CalendarEvent[],
-  referenceEvent: CalendarEvent,
-  newStartDateTime: string
-): CalendarEvent[] {
-  const oldStart = new Date(`${referenceEvent.dateISO}T${referenceEvent.displayedStartTime}`);
-  const newStart = new Date(newStartDateTime);
-  const timeDiff = newStart.getTime() - oldStart.getTime();
-
-  return events.map((e) => {
-    if (e.recurrenceId !== referenceEvent.recurrenceId) return e;
-
-    const oldEventStart = new Date(`${e.dateISO}T${e.displayedStartTime}`);
-    const newEventStart = new Date(oldEventStart.getTime() + timeDiff);
-
-    const oldEventEnd = new Date(`${e.dateISO}T${e.displayedEndTime}`);
-    const newEventEnd = new Date(oldEventEnd.getTime() + timeDiff);
-
-    return {
-      ...e,
-      dateISO: newEventStart.toISOString().split('T')[0],
-      displayedStartTime: newEventStart.toTimeString().substring(0, 5),
-      displayedEndTime: newEventEnd.toTimeString().substring(0, 5),
-    };
-  });
 }

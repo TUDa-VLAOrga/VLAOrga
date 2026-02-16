@@ -1,25 +1,25 @@
 import { useState } from "react";
-import type { CalendarEvent, Lecture } from "../CalendarTypes";
-import { formatISODateDE } from "../dateUtils";
-import type { Person } from "../CalendarTypes";
+import {formatRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import MoveEventDialog from "./MoveEventDialog";
 import "../../../styles/Event-details-styles.css";
 import MoveConfirmDialog from "./MoveConfirmDialog";
+import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
 
 type EventDetailsProps = {
-  event: CalendarEvent;
+  event: Appointment;
   onClose: () => void;
   lectures?: Lecture[];
   people?: Person[];
-  categories?: string[];
-  onUpdatePersonNotes?: (personId: string, notes: string) => void;
-  onUpdateEvent?: (eventId: string, updates: Partial<CalendarEvent>) => void;
-  onMoveEvent?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
-  onMoveSeries?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
-  onAddCategory?: (category: string) => void;
+  categories?: AppointmentCategory[];
+  onUpdatePersonNotes?: (personId: number, notes: string) => void;
+  onUpdateEvent?: (eventId: number, updates: Partial<Appointment>) => void;
+  onMoveEvent?: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
+  onMoveSeries?: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
+  onAddCategory?: (category: AppointmentCategory) => void;
   onAddPerson?: (person: Person) => void;
   onAddLecture?: (lecture: Lecture) => void;
 };
@@ -31,8 +31,7 @@ type EventDetailsProps = {
 export default function EventDetails({ 
   event, 
   onClose,
-  lectures = [],
-  people = [], 
+  people = [],
   categories = [],
   onUpdatePersonNotes, 
   onUpdateEvent,
@@ -47,12 +46,9 @@ export default function EventDetails({
   const [showMoveDialog, setShowMoveDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   const [showMoveConfirm, setShowMoveConfirm] = useState(false);
-  let lecture = null;
-  if (event.lectureId) {
-    lecture = lectures.find(lec => lec.id === event.lectureId) || null;
-  }
+  const lecture = event.series.lecture;
 
-  const handleUpdate = (personId: string, notes: string) => {
+  const handleUpdate = (personId: number, notes: string) => {
     //TODO: Backend - PUT request to update person notes
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes);
@@ -62,7 +58,7 @@ export default function EventDetails({
     }
   };
 
-  const handleUpdateEvent = (updates: Partial<CalendarEvent>) => {
+  const handleUpdateEvent = (updates: Partial<Appointment>) => {
     if (onUpdateEvent) {
       onUpdateEvent(event.id, updates);
     }
@@ -70,16 +66,16 @@ export default function EventDetails({
   };
 
   const getEventPeople = (): Person[] => {
-    if (lecture && lecture.people) {
-      return lecture.people
-        .map(personId => people.find(p => p.id === personId))
+    if (lecture && lecture.persons) {
+      return lecture.persons
+        .map(person => people.find(p => p.id === person.id))
         .filter((p): p is Person => p !== undefined);
     }
     return [];
   };
 
   const eventPeople = getEventPeople();
-  const getCurrentPerson = (personId: string): Person | undefined => {
+  const getCurrentPerson = (personId: number): Person | undefined => {
     return people.find(p => p.id === personId);
   };
   const currentSelectedPerson = selectedPerson
@@ -90,7 +86,6 @@ export default function EventDetails({
     return (
       <EventEditForm
         event={event}
-        lectures={lectures}
         people={people}
         categories={categories}
         onAddCategory={onAddCategory}
@@ -140,12 +135,12 @@ export default function EventDetails({
     <>
       <div className="cv-formOverlay">
         <div className="cv-formBox">
-          <h2 className="cv-formTitle">{event.title}</h2>
+          <h2 className="cv-formTitle">{getEventTitle(event)}</h2>
 
           <div className="cv-detailsContent">
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Kategorie:</span>
-              <span className="cv-detailValue">{event.kind}</span>
+              <span className="cv-detailValue">{event.series.category.title}</span>
             </div>
 
             {/* Lecture details (only if lecture is assigned) */}
@@ -173,17 +168,10 @@ export default function EventDetails({
 
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Datum:</span>
-              <span className="cv-detailValue">{formatISODateDE(event.dateISO)}</span>
+              <span className="cv-detailValue">
+                {formatRangeShortDE(event.start, event.end)}
+              </span>
             </div>
-
-            {(event.displayedStartTime && event.displayedEndTime) && (
-              <div className="cv-detailRow">
-                <span className="cv-detailLabel">Uhrzeit:</span>
-                <span className="cv-detailValue">
-                  {event.displayedStartTime} – {event.displayedEndTime}
-                </span>
-              </div>
-            )}
 
             {eventPeople.length > 0 && (
               <div className="cv-detailRow">
@@ -210,10 +198,10 @@ export default function EventDetails({
             )}
 
             {/* Status is optional; used for UI highlighting elsewhere */}
-            {event.status && (
+            {getEventStatus(event) && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Status:</span>
-                <span className="cv-detailValue">{event.status}</span>
+                <span className="cv-detailValue">{getEventStatus(event)}</span>
               </div>
             )}
 
@@ -230,7 +218,8 @@ export default function EventDetails({
               type="button"
               className="cv-formBtn cv-formBtnSecondary"
               onClick={() => {
-                if (event.recurrenceId) {
+                if (event.series) {
+                  // TODO: replace with check that series has more than one event. This is always true currently
                   setShowMoveConfirm(true);
                 } else {
                   setShowMoveDialog(true);

@@ -1,38 +1,39 @@
 import {  useState } from "react";
-import type { EventKind, EventStatus , Lecture, Person } from "../CalendarTypes";
+import type {CalendarDay, EventStatus} from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
 import TimeRangeInput from "./TimeRangeInput";
+import type {AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import {DEFAULT_DURATION, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 
 export type RecurrencePattern = {
   weekdays: Weekday[];
-  endDate: string;
+  endDay?: CalendarDay;
 };
 
 export type EventFormData = {
   title: string;
-  lectureId?: string;
-  category: EventKind;
-  startDateTime: string;
-  endDateTime: string;
+  lecture?: Lecture;
+  category?: AppointmentCategory;
+  startDateTime?: Date;
+  endDateTime?: Date;
   recurrence?: RecurrencePattern;
   status?: EventStatus;
   notes?: string;
 };
 
 type EventFormProps = {
-  initialDate?: string;
   onSubmit: (data: EventFormData) => void;
   onCancel: () => void;
-  lectures?: Lecture[];
-  categories?: EventKind[];
-  onAddLecture?: (lecture: Lecture) => void;
-  onAddCategory?: (category: EventKind) => void;
-  people?: Person[];
+  lectures: Lecture[];
+  categories: AppointmentCategory[];
+  onAddLecture: (lecture: Lecture) => void;
+  onAddCategory: (category: AppointmentCategory) => void;
+  people: Person[];
   onAddPerson?: (person: Person) => void;
 };
 
@@ -46,7 +47,6 @@ type EventFormProps = {
  * - optional people list
  */
 export default function EventForm({
-  initialDate,
   onSubmit,
   onCancel,
   lectures= [],
@@ -58,12 +58,13 @@ export default function EventForm({
 }: EventFormProps) {
   // Basic form fields.
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<EventKind>("Vorlesung");
-  const [lectureId, setLectureId] = useState("");
-  const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
-  const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
+  const [category, setCategory] = useState<AppointmentCategory>();
+  const [lecture, setLecture] = useState<Lecture>();
+  const [startDateTime, setStartDateTime] = useState<Date | undefined>();
+  const [endDateTime, setEndDateTime] = useState<Date | undefined>();
   const [notes, setNotes] = useState("");
-  const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
+  const [recurrence, setRecurrence] = useState(
+    {enabled: false, weekdays: [] as Weekday[], endDay: undefined as CalendarDay | undefined});
   
   /**
    * When a new lecture is created inside AddLectureSection:
@@ -73,7 +74,7 @@ export default function EventForm({
 
   const handleAddLecture = (lecture: Lecture) => {
     onAddLecture?.(lecture);
-    setLectureId(lecture.id); 
+    setLecture(lecture);
   };
   
   /**
@@ -81,9 +82,9 @@ export default function EventForm({
    * - forward it to the parent (so it ends up in the category list)
    * - auto-select it for the current event
    */
-  const handleAddCategory = (categoryName: string) => {
-    onAddCategory?.(categoryName);
-    setCategory(categoryName);
+  const handleAddCategory = (category: AppointmentCategory) => {
+    onAddCategory?.(category);
+    setCategory(category);
   };
 
   /**
@@ -102,14 +103,14 @@ export default function EventForm({
       endDateTime,
     };
 
-    if( lectureId) {
-      formData.lectureId= lectureId;
+    if( lecture) {
+      formData.lecture= lecture;
     }
 
-    if (recurrence.enabled && recurrence.weekdays.length > 0 && recurrence.endDate) {
+    if (recurrence.enabled && recurrence.weekdays.length > 0 && recurrence.endDay) {
       formData.recurrence = {
         weekdays: recurrence.weekdays,
-        endDate: recurrence.endDate,
+        endDay: recurrence.endDay,
       };
     }
 
@@ -120,11 +121,8 @@ export default function EventForm({
   }
   // Used to disable submit when required fields are missing
   const hasTitle = title.trim() !== "";
-  const hasCategory = category.trim() !== "";
-  const hasStartDateTime = startDateTime !== "";
-  const hasEndDateTime = endDateTime !== "";
-  const isValidTimeRange = endDateTime > startDateTime;
-  const isValid = hasTitle && hasCategory && hasStartDateTime && hasEndDateTime && isValidTimeRange;
+  const isValid =
+    hasTitle && category && startDateTime && endDateTime && verifyValidTimeRange(startDateTime, endDateTime);
 
   return (
     <div className="cv-formOverlay">
@@ -156,8 +154,8 @@ export default function EventForm({
 
           <AddLectureSection
             lectures={lectures}
-            selectedLectureId={lectureId}
-            onLectureChange={setLectureId}
+            selectedLecture={lecture}
+            onLectureChange={setLecture}
             onAddLecture={handleAddLecture}
             people={people}
             onAddPerson={onAddPerson}
@@ -169,7 +167,7 @@ export default function EventForm({
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
             autoCalculateEnd={true}
-            durationMinutes={100}
+            durationMinutes={DEFAULT_DURATION}
           />
 
           <RecurrenceSection
@@ -177,8 +175,8 @@ export default function EventForm({
             onToggle={(enabled) => setRecurrence({ ...recurrence, enabled })}
             weekdays={recurrence.weekdays}
             onWeekdaysChange={(weekdays) => setRecurrence({ ...recurrence, weekdays })}
-            endDate={recurrence.endDate}
-            onEndDateChange={(endDate) => setRecurrence({ ...recurrence, endDate })}
+            endDay={recurrence.endDay}
+            onEndDayChange={(endDay) => setRecurrence({ ...recurrence, endDay })}
           />
 
           <div className="cv-formGroup">

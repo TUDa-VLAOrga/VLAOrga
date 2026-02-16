@@ -1,10 +1,10 @@
-import type { Person } from "../CalendarTypes";
 import {useState} from "react";
+import type {Person} from "@/lib/databaseTypes";
 
 type PersonDetailsProps = {
   person: Person;
   onClose: () => void;
-  onSaveNotes?: (personId: string, notes: string) => void;
+  onSaveNotes?: (personId: number, notes: string) => void;
 };
 
 /**

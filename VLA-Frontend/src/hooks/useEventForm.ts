@@ -1,29 +1,25 @@
 import { useState } from "react";
-import type { EventKind } from "../components/calendar/CalendarTypes";
-
-const DEFAULT_START_TIME = "09:00";
-const DEFAULT_END_TIME = "10:00";
+import type {AppointmentCategory} from "@/lib/databaseTypes";
 
 /**
  * useEventForm centralizes form state for EventForm.
  * This hook can be used to keep EventForm component lean and focused on UI rendering.
  */
-
-export function useEventForm(initialDate?: string) {
+export function useEventForm(initialDate?: Date) {
   // Main form fields (excluding recurrence fields).
   const [formData, setFormData] = useState<{
     title: string;
-    category: EventKind | ""; 
+    category: AppointmentCategory | undefined;
     lectureId: string;
-    startDateTime: string;
-    endDateTime: string;
+    startDateTime: Date | undefined;
+    endDateTime: Date | undefined;
     peopleInput: string;
   }>({
     title: "",
-    category: "", 
+    category: undefined,
     lectureId: "",
-    startDateTime: initialDate ? `${initialDate}T${DEFAULT_START_TIME}` : "",
-    endDateTime: initialDate ? `${initialDate}T${DEFAULT_END_TIME}` : "",
+    startDateTime: initialDate,
+    endDateTime: initialDate,
     peopleInput: "",
   });
   // Recurrence configuration is stored separately to keep concerns split.
@@ -34,7 +30,7 @@ export function useEventForm(initialDate?: string) {
   });
   // Basic validation used to disable the submit button.
   const isValid = formData.title.trim() && 
-                  formData.category.trim() && 
+                  formData.category &&
                   formData.startDateTime && 
                   formData.endDateTime;
 

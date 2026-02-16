@@ -1,12 +1,12 @@
 import { useState } from "react";
-import type { Person } from "../CalendarTypes";
+import type {Person} from "@/lib/databaseTypes";
 
 
 
 type AddPeopleSectionProps = {
   people: Person[];
-  selectedPeople: string[];
-  onPeopleChange: (personIds: string[]) => void;
+  selectedPeople: Person[];
+  onPeopleChange: (persons: Person[]) => void;
   onAddPerson: (person: Person) => void;
 };
 
@@ -25,11 +25,13 @@ export default function AddPeopleSection({
     // TODO: Backend - POST request to create new person
     if (newPersonName.trim()) {
       const newPerson: Person = {
-        id: `person_${Date.now()}`,
+        id: -Date.now(),  // negative ID signals a not-yet-saved entity
         name: newPersonName.trim(),
-        email: newPersonEmail.trim() || undefined,
+        email: newPersonEmail.trim(),
         // role: newPersonRole.trim() || undefined,
         notes: "",
+        lectures: [],
+        linusUserId: 0,  // ID zero represents a non-existing user
       };
       onAddPerson(newPerson);
       setNewPersonName("");
@@ -39,11 +41,11 @@ export default function AddPeopleSection({
     }
   };
 
-  const handleTogglePerson = (personId: string) => {
-    if (selectedPeople.includes(personId)) {
-      onPeopleChange(selectedPeople.filter(id => id !== personId));
+  const handleTogglePerson = (person: Person) => {
+    if (selectedPeople.includes(person)) {
+      onPeopleChange(selectedPeople.filter(currSelected => currSelected.id !== person.id));
     } else {
-      onPeopleChange([...selectedPeople, personId]);
+      onPeopleChange([...selectedPeople, person]);
     }
   };
 
@@ -102,8 +104,8 @@ export default function AddPeopleSection({
             <label key={person.id} className="cv-personCheckbox">
               <input
                 type="checkbox"
-                checked={selectedPeople.includes(person.id)}
-                onChange={() => handleTogglePerson(person.id)}
+                checked={selectedPeople.includes(person)}
+                onChange={() => handleTogglePerson(person)}
               />
               <span className="cv-personInfo">
                 <span className="cv-personName">{person.name}</span>
@@ -118,9 +120,9 @@ export default function AddPeopleSection({
       {selectedPeople.length > 0 && (
         <div className="cv-selectedPeoplePreview">
           <small className="cv-formHint">
-            Ausgewählt: {selectedPeople.map(id => {
-              const person = people.find(p => p.id === id);
-              return person?.name || id;
+            Ausgewählt: {selectedPeople.map(selectedPerson => {
+              const person = people.find(availablePerson => selectedPerson.id === availablePerson.id);
+              return person?.name || selectedPerson.name;
             }).join(", ")}
           </small>
         </div>

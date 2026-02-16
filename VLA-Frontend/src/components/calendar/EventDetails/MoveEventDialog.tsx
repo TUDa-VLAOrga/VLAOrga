@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import type { CalendarEvent } from "../CalendarTypes";
-import { addMinutesToDateTime } from "../dateUtils";
+import {useState, useEffect, useRef} from "react";
+import type {Appointment} from "@/lib/databaseTypes";
+import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 type MoveEventDialogProps = {
-  event: CalendarEvent;
-  onMove?: (eventId: string, newDateTime: string, newEndDateTime: string) => void;
+  event: Appointment;
+  onMove?: (eventID: number, newStart: Date, newEnd: Date) => void;
   onCancel: () => void;
   isSeries: boolean;
 };
@@ -18,34 +18,25 @@ export default function MoveEventDialog({
   onCancel, 
   isSeries, 
 }: MoveEventDialogProps) {
-  
-  // Extract current date and time from event
-  const getCurrentStartDateTime = () => {
-    if (event.displayedStartTime) {
-      // displayedStartTime ist bereits im Format "HH:MM"
-      return `${event.dateISO}T${event.displayedStartTime}`;
-    }
-    return `${event.dateISO}T09:00`;
-  };
+  const durationChanged = useRef(false);
+  const initialDuration = event.end.getTime() - event.start.getTime();
 
-  const getCurrentEndDateTime = () => {
-    if (event.displayedEndTime) {
-      // displayedEndTime ist bereits im Format "HH:MM"
-      return `${event.dateISO}T${event.displayedEndTime}`;
-    }
-    return `${event.dateISO}T10:00`;
-  };
-  
-  const [newStartDateTime, setNewStartDateTime] = useState(getCurrentStartDateTime());
-  const [newEndDateTime, setNewEndDateTime] = useState(getCurrentEndDateTime());
+  const [newStartDateTime, setNewStartDateTime] = useState(event.start);
+  const [newEndDateTime, setNewEndDateTime] = useState(event.end);
 
   // Auto-calculate end time when start time changes
   useEffect(() => {
-    if (newStartDateTime) {
-      // Automatisch 100 Minuten hinzufügen
-      setNewEndDateTime(addMinutesToDateTime(newStartDateTime, 100));
+    if (newStartDateTime && !durationChanged.current) {
+      // move end by the same span as start was moved
+      setNewEndDateTime(new Date(newStartDateTime.getTime() + initialDuration));
     }
-  }, [newStartDateTime]);
+  }, [newStartDateTime, durationChanged, initialDuration]);
+  // update internal duration when end time changes
+  useEffect(() => {
+    if (newEndDateTime) {
+      durationChanged.current = true;
+    }
+  }, [newEndDateTime, durationChanged]);
 
   const handleMove = () => {
     if (onMove && newStartDateTime && newEndDateTime) {
@@ -54,7 +45,7 @@ export default function MoveEventDialog({
     }
   };
 
-  const isValid = newStartDateTime && newEndDateTime && newEndDateTime > newStartDateTime;
+  const isValid = verifyValidTimeRange(newStartDateTime, newEndDateTime);
 
   return (
     <div className="cv-formOverlay">
@@ -78,8 +69,8 @@ export default function MoveEventDialog({
               id="newStartDateTime"
               type="datetime-local"
               className="cv-formInput"
-              value={newStartDateTime}
-              onChange={(e) => setNewStartDateTime(e.target.value)}
+              value={newStartDateTime.toISOString()}
+              onChange={(e) => setNewStartDateTime(new Date(e.target.value))}
               required
             />
           </div>
@@ -92,8 +83,8 @@ export default function MoveEventDialog({
               id="newEndDateTime"
               type="datetime-local"
               className="cv-formInput"
-              value={newEndDateTime}
-              onChange={(e) => setNewEndDateTime(e.target.value)}
+              value={newEndDateTime.toISOString()}
+              onChange={(e) => setNewEndDateTime(new Date(e.target.value))}
               required
             />
           </div>

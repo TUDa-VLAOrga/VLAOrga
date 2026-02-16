@@ -537,11 +537,6 @@
   margin-bottom: 2px;
 }
 
-.cv-eventSubtitle {
-  font-size: 0.8rem;
-  color: #666;
-}
-
 /* Event Categories (Kind) */
 .cv-event-Vorlesung {
   border-left-color: #0066cc;

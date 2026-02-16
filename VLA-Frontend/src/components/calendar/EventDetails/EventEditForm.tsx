@@ -1,18 +1,18 @@
-import { useState } from "react";
-import type { CalendarEvent, EventKind, Lecture } from "../CalendarTypes";
-import type { Person } from "../CalendarTypes";
+import {type FormEvent, useState} from "react";
 import AddLectureSection from "../EventForm/AddLectureSection";
 import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
+import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import {DEFAULT_DURATION, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
 type EventEditFormProps = {
-  event: CalendarEvent;
+  event: Appointment;
   lectures?: Lecture[];
   people?: Person[];
-  categories?: string[];
-  onSave: (updates: Partial<CalendarEvent>) => void;
+  categories?: AppointmentCategory[];
+  onSave: (updates: Partial<Appointment>) => void;
   onCancel: () => void;
-  onAddCategory?: (category: string) => void;
+  onAddCategory?: (category: AppointmentCategory) => void;
   onAddPerson?: (person: Person) => void;
   onAddLecture?: (lecture: Lecture) => void;
 };
@@ -31,59 +31,42 @@ export default function EventEditForm({
   onAddPerson,
   onAddLecture,
 }: EventEditFormProps) {
-  const [title, setTitle] = useState(event.title);
-  const [category, setCategory] = useState<EventKind>(event.kind);
-  const [lectureId, setLectureId] = useState(event.lectureId || "");
+  // TODO: proper copying, do not modify existing entity
+  const [title, setTitle] = useState(getEventTitle(event));
+  const [category, setCategory] = useState<AppointmentCategory | undefined>(event.series.category);
+  const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);
   const [notes, setNotes] = useState(event.notes || "");
-  
-  // Extract datetime from event
-  const getStartDateTime = () => {
-    if (event.displayedStartTime) {;
-      return `${event.dateISO}T${event.displayedStartTime}`;
-    }
-    return `${event.dateISO}T09:00`;
-  };
 
-  const getEndDateTime = () => {
-    if (event.displayedEndTime) {
-      return `${event.dateISO}T${event.displayedEndTime}`;
-    }
-    return `${event.dateISO}T10:00`;
-  };
+  const [startDateTime, setStartDateTime] = useState(event.start);
+  const [endDateTime, setEndDateTime] = useState(event.end);
 
-  const [startDateTime, setStartDateTime] = useState(getStartDateTime());
-  const [endDateTime, setEndDateTime] = useState(getEndDateTime());
+  const handleAddCategory = (category: AppointmentCategory) => {
+    onAddCategory?.(category);
+    setCategory(category);
+  };
 
   const handleAddLecture = (lecture: Lecture) => {
     onAddLecture?.(lecture);
-    setLectureId(lecture.id); 
+    setLecture(lecture);
   };
  
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    // Extract date and time from datetime-local inputs
-    const dateISO = startDateTime.split('T')[0];
-    const displayedStartTime = startDateTime.split('T')[1];
-    const displayedEndTime = endDateTime.split('T')[1];
-
-    const updates: Partial<CalendarEvent> = {
-      title,
-      kind: category,
-      lectureId: lectureId || undefined,
-      dateISO,
-      displayedStartTime,
-      displayedEndTime,
-      notes,
+    const updates: Partial<Appointment> = {
+      // TODO: series modification with category & lecture
+      start: startDateTime,
+      end: endDateTime,
+      notes: notes.trim(),
     };
 
     onSave(updates);
   };
 
   const hasTitle = title.trim() !== "";
-  const hasCategory = category.trim() !== "";
-  const hasStartDateTime = startDateTime !== "";
-  const hasEndDateTime = endDateTime !== "";
+  const hasCategory = category;
+  const hasStartDateTime = startDateTime;
+  const hasEndDateTime = endDateTime;
   const isValidTimeRange = endDateTime > startDateTime;
   const isValid = hasTitle && hasCategory && hasStartDateTime && hasEndDateTime && isValidTimeRange;
 
@@ -111,13 +94,13 @@ export default function EventEditForm({
             categories={categories}
             selectedCategory={category}
             onCategoryChange={setCategory}
-            onAddCategory={onAddCategory || ((cat) => setCategory(cat))}
+            onAddCategory={handleAddCategory}
           />
 
           <AddLectureSection
             lectures={lectures}
-            selectedLectureId={lectureId}
-            onLectureChange={setLectureId}
+            selectedLecture={lecture}
+            onLectureChange={setLecture}
             onAddLecture={handleAddLecture}
             people={people}
             onAddPerson={onAddPerson}
@@ -128,7 +111,7 @@ export default function EventEditForm({
             endDateTime={endDateTime}
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
-            durationMinutes={100}
+            durationMinutes={DEFAULT_DURATION}
           />
 
           <div className="cv-formGroup">

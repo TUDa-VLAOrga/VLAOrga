@@ -1,13 +1,13 @@
 import { useEffect } from "react";
-import { addMinutesToDateTime } from "../dateUtils";
+import {DEFAULT_DURATION} from "@/components/calendar/eventUtils.ts";
 
 type TimeRangeInputProps = {
-  startDateTime: string;
-  endDateTime: string;
-  onStartChange: (value: string) => void;
-  onEndChange: (value: string) => void;
+  startDateTime?: Date;
+  endDateTime?: Date;
+  onStartChange: (value: Date) => void;
+  onEndChange: (value: Date) => void;
   autoCalculateEnd?: boolean; // Ob End-Zeit automatisch berechnet werden soll
-  durationMinutes?: number;   // Standard: 100 Minuten
+  durationMinutes?: number;
 };
 
 /**
@@ -20,13 +20,16 @@ export default function TimeRangeInput({
   onStartChange,
   onEndChange,
   autoCalculateEnd = true,
-  durationMinutes = 100,
+  durationMinutes = DEFAULT_DURATION,
 }: TimeRangeInputProps) {
   
   // Auto-calculate end time when start time changes
   useEffect(() => {
     if (autoCalculateEnd && startDateTime) {
-      const newEndDateTime = addMinutesToDateTime(startDateTime, durationMinutes);
+      // TODO: do not re-calculate if end is already set and *not* durationMinutes far from start
+      //  (i.e. do not override custom user input)
+      const newEndDateTime = new Date(startDateTime);
+      newEndDateTime.setMinutes(newEndDateTime.getMinutes() + durationMinutes);
       onEndChange(newEndDateTime);
     }
   }, [startDateTime, autoCalculateEnd, durationMinutes, onEndChange]);
@@ -41,8 +44,8 @@ export default function TimeRangeInput({
           id="startDateTime"
           type="datetime-local"
           className="cv-formInput"
-          value={startDateTime}
-          onChange={(e) => onStartChange(e.target.value)}
+          value={startDateTime ? startDateTime.toISOString() : ""}
+          onChange={(e) => onStartChange(new Date(e.target.value))}
           required
         />
       </div>
@@ -55,8 +58,8 @@ export default function TimeRangeInput({
           id="endDateTime"
           type="datetime-local"
           className="cv-formInput"
-          value={endDateTime}
-          onChange={(e) => onEndChange(e.target.value)}
+          value={endDateTime ? endDateTime.toISOString() : ""}
+          onChange={(e) => onEndChange(new Date(e.target.value))}
           required
         />
       </div>

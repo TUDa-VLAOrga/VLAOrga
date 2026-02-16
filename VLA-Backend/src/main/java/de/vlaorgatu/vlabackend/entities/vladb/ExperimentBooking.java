@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,18 +34,21 @@ public class ExperimentBooking {
      * ID of this booking in linus.
      */
     @Column(name = "linus_reservation_id")
+    @Nullable
     private Integer linusExperimentBookingId;  // Integer instead of int to allow nullability
 
     /**
      * Person who booked the experiment.
      */
     @ManyToOne
+    @Nullable
     private Person person;
 
     /**
      * Appointment this experiment is booked for.
      */
     @ManyToOne
+    @Nullable
     private Appointment appointment;
 
     /**

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Lecture } from "../components/calendar/CalendarTypes";
+import type {Lecture} from "@/lib/databaseTypes";
 
 // TODO: move to some central file
 //const BASE_URL = "http://localhost:8080/api";
@@ -25,8 +25,8 @@ export function useLectures() {
   /**
    * Remove a lecture by id.
    */
-  function handleDeleteLecture(id: string) {
-    setLectures((prev) => prev.filter((lec) => lec.id !== id));
+  function handleDeleteLecture(lecture: Lecture) {
+    setLectures((prev) => prev.filter((prevLecture) => prevLecture.id !== lecture.id));
   }
 
   return {

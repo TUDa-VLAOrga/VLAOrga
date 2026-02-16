@@ -30,11 +30,10 @@ export default function CalendarView() {
     handleCreateEvent, 
     handleEventClick,
     closeEventDetails, 
-    getEventColor, 
     handleUpdateEvent,
     handleMoveEvent,
     handleMoveSeries  }= 
-    useEvents(lectures);
+    useEvents();
  
   /**
    * Called by EventForm when the user submits.
@@ -84,9 +83,9 @@ export default function CalendarView() {
       {/* Main frame: header row (weekdays) + grid with day columns */}
       <div className="cv-frame">
         <WeekHeader days={days} />
-        <WeekGrid days={days}  
-          eventsByDate={eventsByDate} onEventClick={handleEventClick} 
-          getEventColor={getEventColor} lectures={lectures}/>
+        <WeekGrid days={days}
+          eventsByDate={eventsByDate} onEventClick={handleEventClick}
+        />
       </div>
       {/* Modal overlay: create new event */}
       {showEventForm && (
