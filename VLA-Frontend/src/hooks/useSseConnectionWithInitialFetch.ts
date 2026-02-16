@@ -21,6 +21,7 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
    * Conducts the inital fetch and updates the component if it still exists.
    */
   useEffect(() => {
+    // If component does still exist and state can be changed
     let mounted = true;
 
     fetch(apiResourceURL)

@@ -49,8 +49,8 @@ export class SSEHandler {
   private static addEventSourceEventHandlers(){
     //SSEHandler.eventSource.addEventListener(SseMessageType.DEBUG, SSEHandler.handleDebugEvent);
     
-    Object.values(SseMessageType).forEach((SseMessageType) => {
-      SSEHandler.eventSource.addEventListener(SseMessageType, SSEHandler.notifyAllObserver);
+    Object.values(SseMessageType).forEach((SseMessage) => {
+      SSEHandler.eventSource.addEventListener(SseMessage, SSEHandler.notifyAllObserver);
     });
   }
 
