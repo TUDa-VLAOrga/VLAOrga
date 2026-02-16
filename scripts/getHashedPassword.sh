@@ -5,5 +5,5 @@ if [ $# -ne 1 ]; then
 fi
 
 curl "http://localhost:8080/userManagement/unauthenticated/passwordConversion" \
-     -d "$1" || \
+     -d "password=$1" || \
 (echo "The server must be running for this script to operate" && exit 1)

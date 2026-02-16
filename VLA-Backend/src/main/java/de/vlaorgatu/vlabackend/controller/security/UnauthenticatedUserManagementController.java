@@ -13,9 +13,11 @@ public class UnauthenticatedUserManagementController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("passwordConversion")
-    public ResponseEntity<String> generateBCryptPassword(@RequestBody String password){
-        if(password.isEmpty())
+    public ResponseEntity<String> generateBCryptPassword(@RequestParam String password) {
+
+        if (password.isEmpty()) {
             throw new InvalidParameterException("Passwords may not be empty");
+        }
 
         return ResponseEntity.ok(passwordEncoder.encode(password));
     }
