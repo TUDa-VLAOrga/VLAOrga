@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-12 11:55:45.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-16 13:31:04.
 
 export interface LinusAppointment {
     id: number;
@@ -53,6 +53,8 @@ export interface ExperimentBooking {
     linusExperimentBookingId: number;
     person: Person;
     appointment: Appointment;
+    notes: string;
+    status: ExperimentPreparationStatus;
 }
 
 export interface Lecture {
@@ -73,6 +75,12 @@ export interface User {
     id: number;
     name: string;
     email: string;
+}
+
+export const enum ExperimentPreparationStatus {
+    PENDING = "PENDING",
+    IN_PROGRESS = "IN_PROGRESS",
+    FINISHED = "FINISHED",
 }
 
 export const enum SseMessageType {

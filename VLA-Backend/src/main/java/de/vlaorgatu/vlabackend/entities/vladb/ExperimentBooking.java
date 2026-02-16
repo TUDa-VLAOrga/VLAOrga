@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
