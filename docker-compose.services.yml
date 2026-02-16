@@ -42,8 +42,10 @@ services:
       LINUS_DATASOURCE_USERNAME: ${LINUS_DATASOURCE_USERNAME}
       LINUS_DATASOURCE_PASSWORD: ${LINUS_DATASOURCE_PASSWORD}
     depends_on:
-      - db
-      - linus-db
+      db:
+        condition: service_healthy
+      linus-db:
+        condition: service_healthy
 
   # Prod build of backend application for VLAOrga
   # Combines everything into a single container
