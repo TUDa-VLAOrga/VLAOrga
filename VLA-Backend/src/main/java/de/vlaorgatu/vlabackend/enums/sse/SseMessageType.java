@@ -15,6 +15,11 @@ public enum SseMessageType {
      */
     DEBUG("DEBUG"),
 
+    /**
+     * Used for sending Debug messages to the frontend for SSE.
+     */
+    SSEDEBUG("SSEDEBUG"),
+
     // TODO: Decide on important SseMessageTypes and think of the syncing events in more detail
     /**
      * TODO.
