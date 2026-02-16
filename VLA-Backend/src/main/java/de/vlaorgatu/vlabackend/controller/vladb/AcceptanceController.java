@@ -66,7 +66,7 @@ public class AcceptanceController {
         }
         if (!acceptanceRepository.existsById(id)) {
             throw new EntityNotFoundException(
-                "Acceptance with ID " + id + " not found for update.");
+                "Acceptance with ID " + id + " not found.");
         }
         Acceptance updatedAcceptance = acceptanceRepository.save(acceptance);
         // TODO: use a better method here instead of debug message
@@ -84,7 +84,7 @@ public class AcceptanceController {
     public ResponseEntity<?> deleteAcceptance(@PathVariable Long id) {
         Acceptance deletedAcceptance = acceptanceRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
-                "Acceptance with ID " + id + " not found for deletion."));
+                "Acceptance with ID " + id + " not found."));
         acceptanceRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Acceptance deleted: " + deletedAcceptance);

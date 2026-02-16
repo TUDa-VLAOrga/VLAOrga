@@ -67,7 +67,7 @@ public class AppointmentController {
         }
         if (!appointmentRepository.existsById(id)) {
             throw new EntityNotFoundException(
-                "Appointment with ID " + id + " not found for update.");
+                "Appointment with ID " + id + " not found.");
         }
 
         Appointment updated = appointmentRepository.save(appointment);
@@ -86,7 +86,7 @@ public class AppointmentController {
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
         Appointment deletedAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
-                "Appointment with ID " + id + " not found for deletion."));
+                "Appointment with ID " + id + " not found."));
         appointmentRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Appointment deleted: " + deletedAppointment);

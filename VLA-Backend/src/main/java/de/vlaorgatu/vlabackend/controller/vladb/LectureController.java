@@ -64,7 +64,7 @@ public class LectureController {
                     " vs. ID from body data: " + lecture.getId() + ".");
         }
         if (!lectureRepository.existsById(id)) {
-            throw new EntityNotFoundException("Lecture with ID " + id + " not found for update.");
+            throw new EntityNotFoundException("Lecture with ID " + id + " not found.");
         }
 
         Lecture updatedLecture = lectureRepository.save(lecture);
@@ -83,7 +83,7 @@ public class LectureController {
     public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
         Lecture deletedLecture = lectureRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
-                "Lecture with ID " + id + " not found for deletion."));
+                "Lecture with ID " + id + " not found."));
 
         lectureRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
