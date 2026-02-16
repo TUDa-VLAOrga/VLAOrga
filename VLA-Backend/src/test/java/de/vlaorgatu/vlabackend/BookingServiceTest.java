@@ -20,11 +20,11 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@Import(TestConfiguration.class)
+@Import(TestcontainersConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BookingServiceTest {
-    @Autowired
-    private EntityManager ;
+    @PersistenceContext(unitName = "linusEntityManagerFactory")
+    private EntityManager linusEntityManager;
 
     @Autowired
     private LinusExperimentBookingRepository linusbookings;
@@ -38,6 +38,6 @@ public class BookingServiceTest {
 
     @Test
     void checkPresence(){
-        assertEquals(1, linusbookings.findAll().size());
+        assertEquals(1, linusbookings.findAll());
     }
 }
