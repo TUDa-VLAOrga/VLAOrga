@@ -33,7 +33,7 @@ public class PersonController {
      * @return OK response with the created person, Error response otherwise.
      */
     @PostMapping("/persons")
-    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
         if (Objects.nonNull(person.getId())) {
             throw new InvalidParameterException(
                 "Received person with ID " + person.getId() + " when creating a new person.");

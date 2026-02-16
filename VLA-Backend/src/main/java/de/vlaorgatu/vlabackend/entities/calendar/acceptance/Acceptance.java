@@ -8,13 +8,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents an acceptance meeting of an appointment.
  * <br>
  * This is the point where the lecturers check prepared experiments.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "acceptances")
@@ -36,13 +40,13 @@ public class Acceptance {
     /**
      * Start time of the acceptance.
      */
-    @Column(name = "start")
-    private LocalDateTime start;
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
 
     /**
      * End time of the acceptance.
      */
-    @Column(name = "end")
-    private LocalDateTime end;
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
 }
 

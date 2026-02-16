@@ -33,7 +33,7 @@ public class LectureController {
      * @return OK response with the created lecture, error response otherwise.
      */
     @PostMapping("/lectures")
-    public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
+    public ResponseEntity<Lecture> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
             throw new InvalidParameterException(
                 "Received lecture with ID " + lecture.getId() + " when creating a new lecture.");
