@@ -4,7 +4,7 @@ import type {Lecture, Person} from "@/lib/databaseTypes";
 
 type AddLectureSectionProps = {
   lectures: Lecture[];
-  selectedLecture: Lecture | undefined;
+  selectedLecture?: Lecture;
   onLectureChange: (lecture: Lecture) => void;
   onAddLecture: (lecture: Lecture) => void;
   people?: Person[];
@@ -32,7 +32,7 @@ export default function AddLectureSection({
    * Creates a new Lecture object and sends it to the parent.
    * Afterwards, resets the local form state and closes the add-form UI.
    */
-  const handleAdd = (lecture: Lecture) => {
+  function handleAdd(lecture: Lecture) {
     onAddLecture(lecture);
     
     setShowAddForm(false);

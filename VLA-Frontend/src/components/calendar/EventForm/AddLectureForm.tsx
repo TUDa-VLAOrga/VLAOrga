@@ -33,7 +33,7 @@ export default function AddLectureForm({
   const [color, setColor] = useState("#3b82f6");
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -51,7 +51,7 @@ export default function AddLectureForm({
     onSubmit(newLecture);
   };
 
-  const handleAddPerson = (person: Person) => {
+  function handleAddPerson(person: Person) {
     onAddPerson?.(person);
     setSelectedPeople([...selectedPeople, person]);
   };

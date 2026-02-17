@@ -48,7 +48,7 @@ export default function EventDetails({
   const [showMoveConfirm, setShowMoveConfirm] = useState(false);
   const lecture = event.series.lecture;
 
-  const handleUpdate = (personId: number, notes: string) => {
+  function handleUpdate(personId: number, notes: string) {
     //TODO: Backend - PUT request to update person notes
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes);
@@ -58,14 +58,14 @@ export default function EventDetails({
     }
   };
 
-  const handleUpdateEvent = (updates: Partial<Appointment>) => {
+  function handleUpdateEvent(updates: Partial<Appointment>) {
     if (onUpdateEvent) {
       onUpdateEvent(event.id, updates);
     }
     setIsEditing(false);
   };
 
-  const getEventPeople = (): Person[] => {
+  function getEventPeople(): Person[] {
     if (lecture && lecture.persons) {
       return lecture.persons
         .map(person => people.find(p => p.id === person.id))
@@ -75,12 +75,11 @@ export default function EventDetails({
   };
 
   const eventPeople = getEventPeople();
-  const getCurrentPerson = (personId: number): Person | undefined => {
+  function getCurrentPerson(personId: number): Person | undefined {
     return people.find(p => p.id === personId);
   };
-  const currentSelectedPerson = selectedPerson
-    ? getCurrentPerson(selectedPerson.id)
-    : null;
+
+  const currentSelectedPerson = selectedPerson ? getCurrentPerson(selectedPerson.id) : null;
 
   if (isEditing) {
     return (

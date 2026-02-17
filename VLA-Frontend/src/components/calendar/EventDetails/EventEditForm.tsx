@@ -40,17 +40,17 @@ export default function EventEditForm({
   const [startDateTime, setStartDateTime] = useState(event.start);
   const [endDateTime, setEndDateTime] = useState(event.end);
 
-  const handleAddCategory = (category: AppointmentCategory) => {
+  function handleAddCategory(category: AppointmentCategory) {
     onAddCategory?.(category);
     setCategory(category);
   };
 
-  const handleAddLecture = (lecture: Lecture) => {
+  function handleAddLecture(lecture: Lecture) {
     onAddLecture?.(lecture);
     setLecture(lecture);
   };
  
-  const handleSubmit = (e: FormEvent) => {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     const updates: Partial<Appointment> = {
