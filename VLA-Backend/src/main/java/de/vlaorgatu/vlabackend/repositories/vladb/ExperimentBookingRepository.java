@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Repository
 public interface ExperimentBookingRepository extends JpaRepository<ExperimentBooking, Long> {
-    List<ExperimentBooking> findExperimentBookingsByLinusExperimentBookingId(Integer linusExperimentBookingId);
+    List<ExperimentBooking> findByLinusExperimentBookingId(Integer linusExperimentBookingId);
 }
