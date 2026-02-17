@@ -1,11 +1,11 @@
 package de.vlaorgatu.vlabackend;
 
-import de.vlaorgatu.vlabackend.linusconnection.LinusExperimentBooking;
-import de.vlaorgatu.vlabackend.linusconnection.LinusExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.entities.linusdb.LinusExperimentBooking;
+import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -21,23 +22,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BookingServiceTest {
-    @PersistenceContext(unitName = "linusEntityManagerFactory")
-    private EntityManager linusEntityManager;
-
     @Autowired
     private LinusExperimentBookingRepository linusbookings;
 
-    @BeforeAll
-    void setup(){
-        LinusExperimentBooking booking = new LinusExperimentBooking(0,0,0,0,0, LocalDateTime.MIN);
+    @PersistenceContext(unitName = "linusEntityManagerFactory")
+    private EntityManager linusEntityManager;
+
+    @Transactional("linusTransactionManager")
+    @BeforeEach
+    void setup() {
+        LinusExperimentBooking booking = new LinusExperimentBooking(0, 0, 0, 0, 0, LocalDateTime.of(2026, 1, 1, 0, 0, 0));
         linusEntityManager.persist(booking);
-        linusEntityManager.flush();
     }
 
+    @Transactional("linusTransactionManager")
     @Test
-    void checkPresence(){
-        assertEquals(1, linusbookings.findAll());
+    void checkCorrectSetup(){
+        assertEquals(1, linusbookings.findAll().size());
+    }
+
+    @Transactional("linusTransactionManager")
+    @Test
+    void checkCorrectAfterSecondCall(){
+        assertEquals(1, linusbookings.findAll().size());
+        assertEquals(0, linusbookings.findAll().getFirst().getId());
+        assertEquals(LocalDateTime.of(2026, 1, 1, 0, 0, 0), linusbookings.findAll().getFirst().getPinnedOn());
     }
 }

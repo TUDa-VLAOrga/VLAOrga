@@ -1,13 +1,11 @@
 package de.vlaorgatu.vlabackend.databaseSync;
 
-import de.vlaorgatu.vlabackend.entities.calendar.experimentbooking.ExperimentBooking;
-import de.vlaorgatu.vlabackend.entities.calendar.experimentbooking.ExperimentBookingRepository;
-import de.vlaorgatu.vlabackend.linusconnection.LinusExperimentBooking;
-import de.vlaorgatu.vlabackend.linusconnection.LinusExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.entities.linusdb.LinusExperimentBooking;
+import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
