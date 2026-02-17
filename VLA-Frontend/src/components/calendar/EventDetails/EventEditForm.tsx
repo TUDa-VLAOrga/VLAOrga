@@ -3,7 +3,7 @@ import AddLectureSection from "../EventForm/AddLectureSection";
 import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {DEFAULT_DURATION, getEventTitle} from "@/components/calendar/eventUtils.ts";
+import {DEFAULT_DURATION, getEventTitle, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
@@ -65,10 +65,8 @@ export default function EventEditForm({
 
   const hasTitle = title.trim() !== "";
   const hasCategory = category;
-  const hasStartDateTime = startDateTime;
-  const hasEndDateTime = endDateTime;
-  const isValidTimeRange = endDateTime > startDateTime;
-  const isValid = hasTitle && hasCategory && hasStartDateTime && hasEndDateTime && isValidTimeRange;
+  const isValidTimeRange = verifyValidTimeRange(startDateTime, endDateTime);
+  const isValid = hasTitle && hasCategory && isValidTimeRange;
 
   return (
     <div className="cv-formOverlay">

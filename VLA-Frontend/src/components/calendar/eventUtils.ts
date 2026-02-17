@@ -42,15 +42,17 @@ export function verifyValidTimeRange(start?: Date, end?: Date) {
 export function moveEventSeries(
   events: Appointment[],
   referenceEvent: Appointment,
-  newStartDateTime: Date
+  newStartDateTime: Date,
+  newEndDateTime: Date
 ): Appointment[] {
-  const timeDiff = newStartDateTime.getTime() - referenceEvent.start.getTime();
+  const timeDiffStart = newStartDateTime.getTime() - referenceEvent.start.getTime();
+  const timeDiffEnd = newEndDateTime.getTime() - referenceEvent.end.getTime();
 
   return events.map((e) => {
     if (e.series.id !== referenceEvent.series.id) return e;
 
-    const newEventStart = new Date(e.start.getTime() + timeDiff);
-    const newEventEnd = new Date(e.end.getTime() + timeDiff);
+    const newEventStart = new Date(e.start.getTime() + timeDiffStart);
+    const newEventEnd = new Date(e.end.getTime() + timeDiffEnd);
 
     return {
       ...e,

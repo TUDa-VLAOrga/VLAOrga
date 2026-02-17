@@ -3,6 +3,7 @@ import type { EventFormData, Weekday } from "../components/calendar/EventForm/Ev
 import { addDays } from "../components/calendar/dateUtils";
 import type {Appointment, AppointmentSeries} from "@/lib/databaseTypes";
 import {getEventDateISO, moveEventSeries, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import {Logger} from "@/components/logger/Logger.ts";
 
 
 /**
@@ -33,18 +34,38 @@ export function useEvents() {
     });
   }
 
+  /**
+   * Moves a single event in time. Detaches it from its series.
+   */
   function handleMoveEvent(
     eventId: number,
     newStartDateTime: Date,
     newEndDateTime: Date
   ) {
-    // TODO: Backend - POST request to /api/events/:eventId/move
+    if (!verifyValidTimeRange(newStartDateTime, newEndDateTime)) {
+      Logger.error("Invalid time range for event");
+      return;
+    }
 
+    const oldEvent = events.find(e => e.id === eventId);
+    if (!oldEvent) {
+      Logger.error("Event not found");
+      return;
+    }
+    // create new appointment series on move
+    // TODO: determine if series already has just one event, do not create new one in this case
+    //  (see also the todo comment in EventDetails at showMoveConfirm vs showMoveDialog)
+    const newSeries: AppointmentSeries = {
+      ...oldEvent.series,
+      id: -Date.now(),  // negative ID signals a not-yet-created entity
+    };
+    // TODO: Backend - POST request to /api/events/:eventId/move
     setEvents((prev) =>
       prev.map((event) =>
         event.id === eventId
           ? {
             ...event,
+            series: newSeries,
             start: newStartDateTime,
             end: newEndDateTime,
           }
@@ -55,18 +76,25 @@ export function useEvents() {
     setSelectedEvent(null);
   }
 
+  /**
+   * Move all events in a series by a given offset.
+   */
   function handleMoveSeries(
     eventId: number,
     newStartDateTime: Date,
-    _newEndDateTime: Date
+    newEndDateTime: Date
   ) {
     const event= events.find(e => e.id === eventId);
     if(!event?.series){
-      console.log("Event is not part of a series");
+      Logger.error("Event not part of a series");
+      return;
+    }
+    if (!verifyValidTimeRange(newStartDateTime, newEndDateTime)) {
+      Logger.error("Invalid time range for event");
       return;
     }
     // Verschiebe alle Events der Serie
-    setEvents((prev) => moveEventSeries(prev, event, newStartDateTime));
+    setEvents((prev) => moveEventSeries(prev, event, newStartDateTime, newEndDateTime));
     setSelectedEvent(null);
   }
 
