@@ -6,6 +6,7 @@ import de.vlaorgatu.vlabackend.exceptions.InvalidColorParameterException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.GlobalNoteRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,8 +21,9 @@ public class GlobalNoteController {
     private final GlobalNoteRepository globalNoteRepository;
 
     @GetMapping
-    ResponseEntity<List<GlobalNote>> getAllGlobalNotes(){
-        return ResponseEntity.ok(globalNoteRepository.findAll());
+    public ResponseEntity<List<GlobalNote>> getAllGlobalNotes() {
+        List<GlobalNote> notes = globalNoteRepository.findAll();
+        return ResponseEntity.ok(notes);
     }
 
     @GetMapping("/{id}")
@@ -74,5 +76,18 @@ public class GlobalNoteController {
 
         GlobalNote savedNote = globalNoteRepository.save(note);
         return ResponseEntity.ok(savedNote);
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<GlobalNote> deleteGlobalNote(@PathVariable Long id){
+        GlobalNote note = globalNoteRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                        "No globalNote with id " + id + " was found"
+                )
+        );
+
+        globalNoteRepository.delete(note);
+
+        return ResponseEntity.ok(note);
     }
 }
