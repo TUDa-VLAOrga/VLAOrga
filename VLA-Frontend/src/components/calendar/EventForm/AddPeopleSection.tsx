@@ -70,6 +70,12 @@ export default function AddPeopleSection({
             placeholder="Name *"
             value={newPersonName}
             onChange={(e) => setNewPersonName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAdd();
+              }
+            }}
           />
           <input
             type="email"
@@ -77,6 +83,12 @@ export default function AddPeopleSection({
             placeholder="E-Mail (optional)"
             value={newPersonEmail}
             onChange={(e) => setNewPersonEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAdd();
+              }
+            }}
           />
           {/*}
           <input
