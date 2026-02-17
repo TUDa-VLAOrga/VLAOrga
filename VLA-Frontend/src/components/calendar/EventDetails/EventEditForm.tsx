@@ -2,8 +2,8 @@ import {type FormEvent, useState} from "react";
 import AddLectureSection from "../EventForm/AddLectureSection";
 import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
-import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {getEventTitle, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import type {Appointment, AppointmentCategory, AppointmentSeries, Lecture, Person} from "@/lib/databaseTypes";
+import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
@@ -32,8 +32,8 @@ export default function EventEditForm({
   onAddLecture,
 }: EventEditFormProps) {
   // TODO: proper copying, do not modify existing entity
-  const [title, setTitle] = useState(getEventTitle(event));
-  const [category, setCategory] = useState<AppointmentCategory | undefined>(event.series.category);
+  const [title, setTitle] = useState(event.series.name);
+  const [category, setCategory] = useState<AppointmentCategory>(event.series.category);
   const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);
   const [notes, setNotes] = useState(event.notes || "");
 
@@ -53,14 +53,20 @@ export default function EventEditForm({
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    const updates: Partial<Appointment> = {
-      // TODO: series modification with category & lecture
+    const updatedSeries: AppointmentSeries = {
+      ...event.series,
+      name: title,
+      category: category,
+      lecture: lecture,
+    };
+    const updatedEvent: Partial<Appointment> = {
       start: startDateTime,
       end: endDateTime,
       notes: notes.trim(),
+      series: updatedSeries,
     };
 
-    onSave(updates);
+    onSave(updatedEvent);
   };
 
   const hasTitle = title.trim() !== "";
@@ -76,7 +82,7 @@ export default function EventEditForm({
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">
             <label htmlFor="title" className="cv-formLabel">
-              Titel *
+              Titel (für Vorlesungen optional)
             </label>
             <input
               id="title"
@@ -84,7 +90,6 @@ export default function EventEditForm({
               className="cv-formInput"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
             />
           </div>
 

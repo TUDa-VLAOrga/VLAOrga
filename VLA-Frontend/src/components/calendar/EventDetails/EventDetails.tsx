@@ -31,6 +31,7 @@ type EventDetailsProps = {
 export default function EventDetails({ 
   event, 
   onClose,
+  lectures = [],
   people = [],
   categories = [],
   onUpdatePersonNotes, 
@@ -85,8 +86,9 @@ export default function EventDetails({
     return (
       <EventEditForm
         event={event}
-        people={people}
+        lectures={lectures}
         categories={categories}
+        people={people}
         onAddCategory={onAddCategory}
         onAddPerson={onAddPerson}
         onAddLecture={onAddLecture}

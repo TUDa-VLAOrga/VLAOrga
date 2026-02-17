@@ -120,7 +120,7 @@ export default function EventForm({
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
-  const hasTitle = title.trim() !== "";
+  const hasTitle = (title.trim() !== "") || lecture;
   const isValid =
     hasTitle && category && startDateTime && endDateTime && verifyValidTimeRange(startDateTime, endDateTime);
 
@@ -132,7 +132,7 @@ export default function EventForm({
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">
             <label htmlFor="title" className="cv-formLabel">
-              Titel *
+              Titel (für Vorlesungen optional)
             </label>
             <input
               id="title"
@@ -141,7 +141,6 @@ export default function EventForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="z.B. Vorlesung Physik I"
-              required
             />
           </div>
 

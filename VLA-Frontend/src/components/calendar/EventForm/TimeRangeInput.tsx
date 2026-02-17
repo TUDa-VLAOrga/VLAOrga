@@ -34,8 +34,6 @@ export default function TimeRangeInput({
     if (autoCalculateEnd && startDateTime) {
       onEndChange(new Date(startDateTime.getTime() + duration.current));
     }
-    // Consciously do not trigger effect for endDateTime. Ignore linter complaint.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDateTime, autoCalculateEnd, onEndChange]);
   useEffect(() => {
     if (autoCalculateEnd && startDateTime && endDateTime) {

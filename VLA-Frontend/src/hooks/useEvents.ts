@@ -102,7 +102,7 @@ export function useEvents() {
   function handleCreateEvent(formData: EventFormData) {
     // basic validation
     if (!(
-      formData.title && formData.category
+      (formData.title || formData.lecture) && formData.category
       && formData.startDateTime && formData.endDateTime
       && verifyValidTimeRange(formData.startDateTime, formData.endDateTime)
     )) {
@@ -116,7 +116,7 @@ export function useEvents() {
     const newAppSeries: AppointmentSeries = {
       id: -Date.now(),
       lecture: formData.lecture,
-      name: formData.lecture ? "" : formData.title,
+      name: formData.title.trim(),
       category: formData.category,
     };
     // TODO: Backend - POST request to /api/appointmentSeries (maybe later below together with POST to /api/appointments

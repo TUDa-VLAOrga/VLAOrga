@@ -12,7 +12,11 @@ export const DEFAULT_DURATION = 100;
  * In case both are present, the lecture name is appended in parentheses.
  */
 export function getEventTitle(event: Appointment) {
-  return event.series.lecture ? `${event.series.name} (${event.series.lecture.name})` : event.series.name;
+  if (!event.series.lecture)
+    return event.series.name;
+  if (!event.series.name)
+    return event.series.lecture.name;
+  return `${event.series.name} (${event.series.lecture.name})`;
 }
 
 /**
