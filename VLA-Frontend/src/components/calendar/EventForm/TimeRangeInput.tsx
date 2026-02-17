@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import {useEffect, useRef} from "react";
 import {DEFAULT_DURATION} from "@/components/calendar/eventUtils.ts";
+import {toDatetimeLocalString} from "@/components/calendar/dateUtils.ts";
 
 type TimeRangeInputProps = {
   startDateTime?: Date;
@@ -7,7 +8,7 @@ type TimeRangeInputProps = {
   onStartChange: (value: Date) => void;
   onEndChange: (value: Date) => void;
   autoCalculateEnd?: boolean; // Ob End-Zeit automatisch berechnet werden soll
-  durationMinutes?: number;
+  durationMilliseconds?: number;
 };
 
 /**
@@ -20,19 +21,32 @@ export default function TimeRangeInput({
   onStartChange,
   onEndChange,
   autoCalculateEnd = true,
-  durationMinutes = DEFAULT_DURATION,
+  durationMilliseconds = DEFAULT_DURATION * 60 * 1000,
 }: TimeRangeInputProps) {
-  
-  // Auto-calculate end time when start time changes
+
+  const initialDuration = (startDateTime && endDateTime)
+      ? endDateTime.getTime() - startDateTime.getTime()
+      : durationMilliseconds;
+  const duration = useRef(initialDuration);
+  const durationChangeable = useRef(true);
+
+  // Auto-calculate end time when start time changes, but only if end not changed by hand yet.
   useEffect(() => {
+    console.log("startDateTime changed: ", startDateTime);
     if (autoCalculateEnd && startDateTime) {
-      // TODO: do not re-calculate if end is already set and *not* durationMinutes far from start
-      //  (i.e. do not override custom user input)
-      const newEndDateTime = new Date(startDateTime);
-      newEndDateTime.setMinutes(newEndDateTime.getMinutes() + durationMinutes);
-      onEndChange(newEndDateTime);
+      durationChangeable.current = false;
+      onEndChange(new Date(startDateTime.getTime() + duration.current));
+      durationChangeable.current = true;
+      console.log("after startDateTime change set endDateTime to: ", endDateTime);
     }
-  }, [startDateTime, autoCalculateEnd, durationMinutes, onEndChange]);
+  }, [startDateTime, autoCalculateEnd]);
+  useEffect(() => {
+    console.log("endDateTime changed: ", endDateTime);
+    if (autoCalculateEnd && durationChangeable && startDateTime && endDateTime) {
+      duration.current = endDateTime.getTime() - startDateTime.getTime();
+      console.log("after endDateTime change set duration to: ", duration.current);
+    }
+  }, [endDateTime, autoCalculateEnd]);
 
   return (
     <>
@@ -44,7 +58,7 @@ export default function TimeRangeInput({
           id="startDateTime"
           type="datetime-local"
           className="cv-formInput"
-          value={startDateTime ? startDateTime.toISOString() : ""}
+          value={startDateTime ? toDatetimeLocalString(startDateTime) : ""}
           onChange={(e) => onStartChange(new Date(e.target.value))}
           required
         />
@@ -58,7 +72,7 @@ export default function TimeRangeInput({
           id="endDateTime"
           type="datetime-local"
           className="cv-formInput"
-          value={endDateTime ? endDateTime.toISOString() : ""}
+          value={endDateTime ? toDatetimeLocalString(endDateTime) : ""}
           onChange={(e) => onEndChange(new Date(e.target.value))}
           required
         />

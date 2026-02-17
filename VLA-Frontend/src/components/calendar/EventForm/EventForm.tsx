@@ -5,7 +5,7 @@ import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
 import TimeRangeInput from "./TimeRangeInput";
 import type {AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {DEFAULT_DURATION, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
@@ -167,7 +167,6 @@ export default function EventForm({
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
             autoCalculateEnd={true}
-            durationMinutes={DEFAULT_DURATION}
           />
 
           <RecurrenceSection

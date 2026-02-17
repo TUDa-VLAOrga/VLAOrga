@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {formatRangeShortDE} from "../dateUtils";
+import {formatTimeRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import MoveEventDialog from "./MoveEventDialog";
@@ -166,9 +166,9 @@ export default function EventDetails({
             )}
 
             <div className="cv-detailRow">
-              <span className="cv-detailLabel">Datum:</span>
+              <span className="cv-detailLabel">Zeit:</span>
               <span className="cv-detailValue">
-                {formatRangeShortDE(event.start, event.end)}
+                {formatTimeRangeShortDE(event.start, event.end)}
               </span>
             </div>
 

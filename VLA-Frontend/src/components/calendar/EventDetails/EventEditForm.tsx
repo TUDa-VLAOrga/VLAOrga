@@ -3,7 +3,7 @@ import AddLectureSection from "../EventForm/AddLectureSection";
 import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {DEFAULT_DURATION, getEventTitle, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import {getEventTitle, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
@@ -109,7 +109,6 @@ export default function EventEditForm({
             endDateTime={endDateTime}
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
-            durationMinutes={DEFAULT_DURATION}
           />
 
           <div className="cv-formGroup">

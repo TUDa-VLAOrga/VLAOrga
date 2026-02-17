@@ -13,6 +13,13 @@ export function toISODateLocal(d: Date) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+export function toDatetimeLocalString(d: Date) {
+    const hours = d.getHours().toString().padStart(2, "0");
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+
+    return `${toISODateLocal(d)}T${hours}:${minutes}`;
+}
+
 /** Formats a date as "dd.mm." (e.g., "19.12."). */
 export function formatDDMM(date: Date) {
   const dd = String(date.getDate()).padStart(2, "0");
@@ -72,7 +79,7 @@ export function addWorkdays(date: Date, n: number) {
   return d;
 }
 
-const rangeFmt = new Intl.DateTimeFormat("de-DE", {
+const dayFormat = new Intl.DateTimeFormat("de-DE", {
   weekday: "short",
   day: "2-digit",
   month: "2-digit",
@@ -80,9 +87,23 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
 });
 
 /** formats a range like "Fr 19.12 – Do 25.12" */
-export function formatRangeShortDE(start: Date, end: Date) {
-  return `${rangeFmt.format(start)} – ${rangeFmt.format(end)}`;
+export function formatDayRangeShortDE(start: Date, end: Date) {
+  return `${dayFormat.format(start)} – ${dayFormat.format(end)}`;
 }
+
+const timeFormat = new Intl.DateTimeFormat("de-DE", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+/** formats a time range like 11:30 - 13:10, includes days if spanning over multiple days */
+export function formatTimeRangeShortDE(start: Date, end: Date) {
+  if (compareSameDay(start, end)) {
+    return `${timeFormat.format(start)} - ${timeFormat.format(end)}`;
+  }
+  return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${dayFormat.format(end)}, ${timeFormat.format(end)}`
+}
+
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */
 export function parseISODateLocal(iso: string): Date {
   const [datePart] = iso.split("T"); // in case you ever store timestamps

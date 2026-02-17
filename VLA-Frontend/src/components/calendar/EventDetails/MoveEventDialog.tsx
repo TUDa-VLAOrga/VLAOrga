@@ -1,6 +1,7 @@
-import {useState, useEffect, useRef} from "react";
+import {useState} from "react";
 import type {Appointment} from "@/lib/databaseTypes";
 import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import TimeRangeInput from "@/components/calendar/EventForm/TimeRangeInput.tsx";
 
 type MoveEventDialogProps = {
   event: Appointment;
@@ -18,25 +19,9 @@ export default function MoveEventDialog({
   onCancel, 
   isSeries, 
 }: MoveEventDialogProps) {
-  const durationChanged = useRef(false);
-  const initialDuration = event.end.getTime() - event.start.getTime();
 
   const [newStartDateTime, setNewStartDateTime] = useState(event.start);
   const [newEndDateTime, setNewEndDateTime] = useState(event.end);
-
-  // Auto-calculate end time when start time changes
-  useEffect(() => {
-    if (newStartDateTime && !durationChanged.current) {
-      // move end by the same span as start was moved
-      setNewEndDateTime(new Date(newStartDateTime.getTime() + initialDuration));
-    }
-  }, [newStartDateTime, durationChanged, initialDuration]);
-  // update internal duration when end time changes
-  useEffect(() => {
-    if (newEndDateTime) {
-      durationChanged.current = true;
-    }
-  }, [newEndDateTime, durationChanged]);
 
   const handleMove = () => {
     if (onMove && newStartDateTime && newEndDateTime) {
@@ -61,33 +46,13 @@ export default function MoveEventDialog({
               : 'Nur dieser einzelne Termin wird verschoben.'}
           </p>
 
-          <div className="cv-formGroup">
-            <label htmlFor="newStartDateTime" className="cv-formLabel">
-              Neuer Start (Datum & Uhrzeit) *
-            </label>
-            <input
-              id="newStartDateTime"
-              type="datetime-local"
-              className="cv-formInput"
-              value={newStartDateTime.toISOString()}
-              onChange={(e) => setNewStartDateTime(new Date(e.target.value))}
-              required
-            />
-          </div>
-
-          <div className="cv-formGroup">
-            <label htmlFor="newEndDateTime" className="cv-formLabel">
-              Neues Ende (Datum & Uhrzeit) *
-            </label>
-            <input
-              id="newEndDateTime"
-              type="datetime-local"
-              className="cv-formInput"
-              value={newEndDateTime.toISOString()}
-              onChange={(e) => setNewEndDateTime(new Date(e.target.value))}
-              required
-            />
-          </div>
+          <TimeRangeInput
+              startDateTime={newStartDateTime}
+              endDateTime={newEndDateTime}
+              onStartChange={setNewStartDateTime}
+              onEndChange={setNewEndDateTime}
+              durationMilliseconds={event.end.getTime() - event.start.getTime()}
+          />
         </div>
 
         <div className="cv-formActions">
