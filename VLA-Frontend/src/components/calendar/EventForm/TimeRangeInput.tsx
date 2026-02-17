@@ -25,12 +25,12 @@ export default function TimeRangeInput({
 }: TimeRangeInputProps) {
 
   const initialDuration = (startDateTime && endDateTime)
-      ? endDateTime.getTime() - startDateTime.getTime()
-      : durationMilliseconds;
+    ? endDateTime.getTime() - startDateTime.getTime()
+    : durationMilliseconds;
   const duration = useRef(initialDuration);
   const durationChangeable = useRef(true);
 
-  // Auto-calculate end time when start time changes, but only if end not changed by hand yet.
+  // Auto-calculate end time when start time changes, but keep duration.
   useEffect(() => {
     console.log("startDateTime changed: ", startDateTime);
     if (autoCalculateEnd && startDateTime) {
@@ -39,13 +39,17 @@ export default function TimeRangeInput({
       durationChangeable.current = true;
       console.log("after startDateTime change set endDateTime to: ", endDateTime);
     }
-  }, [startDateTime, autoCalculateEnd]);
+    // Consciously do not trigger effect for endDateTime. Ignore linter complaint.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDateTime, autoCalculateEnd, onEndChange]);
   useEffect(() => {
     console.log("endDateTime changed: ", endDateTime);
     if (autoCalculateEnd && durationChangeable && startDateTime && endDateTime) {
       duration.current = endDateTime.getTime() - startDateTime.getTime();
       console.log("after endDateTime change set duration to: ", duration.current);
     }
+    // Consciously do not trigger effect for startDateTime. Ignore linter complaint.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDateTime, autoCalculateEnd]);
 
   return (

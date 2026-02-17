@@ -47,11 +47,11 @@ export default function MoveEventDialog({
           </p>
 
           <TimeRangeInput
-              startDateTime={newStartDateTime}
-              endDateTime={newEndDateTime}
-              onStartChange={setNewStartDateTime}
-              onEndChange={setNewEndDateTime}
-              durationMilliseconds={event.end.getTime() - event.start.getTime()}
+            startDateTime={newStartDateTime}
+            endDateTime={newEndDateTime}
+            onStartChange={setNewStartDateTime}
+            onEndChange={setNewEndDateTime}
+            durationMilliseconds={event.end.getTime() - event.start.getTime()}
           />
         </div>
 

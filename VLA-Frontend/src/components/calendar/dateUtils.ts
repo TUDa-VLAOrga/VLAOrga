@@ -14,10 +14,10 @@ export function toISODateLocal(d: Date) {
 }
 
 export function toDatetimeLocalString(d: Date) {
-    const hours = d.getHours().toString().padStart(2, "0");
-    const minutes = d.getMinutes().toString().padStart(2, "0");
+  const hours = d.getHours().toString().padStart(2, "0");
+  const minutes = d.getMinutes().toString().padStart(2, "0");
 
-    return `${toISODateLocal(d)}T${hours}:${minutes}`;
+  return `${toISODateLocal(d)}T${hours}:${minutes}`;
 }
 
 /** Formats a date as "dd.mm." (e.g., "19.12."). */
@@ -101,7 +101,8 @@ export function formatTimeRangeShortDE(start: Date, end: Date) {
   if (compareSameDay(start, end)) {
     return `${timeFormat.format(start)} - ${timeFormat.format(end)}`;
   }
-  return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${dayFormat.format(end)}, ${timeFormat.format(end)}`
+  return `${dayFormat.format(start)}, ${timeFormat.format(start)}`
+    + ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`;
 }
 
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */
