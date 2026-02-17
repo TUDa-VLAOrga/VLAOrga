@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @Entity
-// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
+// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Experiment.php
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "experiment")
 public class LinusExperiment {
@@ -46,7 +46,7 @@ public class LinusExperiment {
     private String comment;
 
     /**
-     * Preperation time of the experiment.
+     * Preparation time of the experiment in minutes.
      */
     @Column(name = "preparation_time")
     private Integer preparationTime;
@@ -58,7 +58,7 @@ public class LinusExperiment {
     private String status;
 
     /**
-     * Execution time of the experiment.
+     * Execution time of the experiment in minutes.
      */
     @Column(name = "execution_time")
     private Integer executionTime;
@@ -71,6 +71,8 @@ public class LinusExperiment {
 
     /**
      * Number of the experiment.
+     * Can be seen as the last Number of the path when navigating through linus.
+     * Example: Experiment with id 124 "Magische Glühlampen" with path M.A.1.3 has number 3
      */
     @Column(name = "experiment_number")
     private int experimentNumber;

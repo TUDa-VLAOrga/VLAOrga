@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @Entity
-// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
+// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/User.php
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "user")
 public class LinusUser {
@@ -40,7 +40,7 @@ public class LinusUser {
     private String password;
 
     /**
-     * Email adress of the user.
+     * Email address of the user.
      */
     @Column(name = "email")
     private String email;
