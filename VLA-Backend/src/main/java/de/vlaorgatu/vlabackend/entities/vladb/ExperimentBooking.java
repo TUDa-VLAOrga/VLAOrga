@@ -27,7 +27,7 @@ public class ExperimentBooking {
     /**
      * ID of the booked experiment in Linus.
      */
-    @Column(name = "linus_experiment_id")
+    @Column(name = "linus_experiment_id", nullable = false)
     private Integer linusExperimentId;  // Integer instead of int to allow nullability
 
     /**
@@ -60,6 +60,6 @@ public class ExperimentBooking {
     /**
      * Preparation status of the experiment..
      */
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private ExperimentPreparationStatus status = ExperimentPreparationStatus.PENDING;
 }

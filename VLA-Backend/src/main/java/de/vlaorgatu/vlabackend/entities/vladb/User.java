@@ -24,13 +24,13 @@ public class User {
     /**
      * Name of the user.
      */
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     /**
      * Email address of the user.
      */
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     // getters and setters

@@ -1,24 +1,24 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-16 17:16:31.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-17 21:39:47.
 
 export interface LinusAppointment {
     id: number;
     linusUserId: number;
-    orderTime: Date;
+    orderTime?: Date;
     status: number;
-    appointmentTime: Date;
-    comment: string;
-    name: string;
+    appointmentTime?: Date;
+    comment?: string;
+    name?: string;
 }
 
 export interface LinusExperimentBooking {
     id: number;
-    linusAppointmentId: number;
+    linusAppointmentId?: number;
     linusExperimentId: number;
     linusUserId: number;
     status: number;
-    pinnedOn: Date;
+    pinnedOn?: Date;
 }
 
 export interface Acceptance {
