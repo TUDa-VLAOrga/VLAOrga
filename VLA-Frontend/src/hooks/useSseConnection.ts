@@ -13,7 +13,7 @@ export default function useSseConnection<T>(
   initialValue: T, 
   eventHandlers: Map<SseMessageType, (event: MessageEvent, currentValue: T) => T>
 )
-: [T, React.Dispatch<React.SetStateAction<T>>]
+  : [T, React.Dispatch<React.SetStateAction<T>>]
 {
   const [value, setValue] = useState<T>(initialValue);
 

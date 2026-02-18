@@ -15,7 +15,7 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
   apiResourceURL : string,
   eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>
 )
-: [T, React.Dispatch<React.SetStateAction<T>>]
+  : [T, React.Dispatch<React.SetStateAction<T>>]
 {
   const [sseDefaultValue, setsseDefaultValue] = useSseConnection<T>(defaultValue, eventHandlers);
 
