@@ -178,9 +178,9 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
 
         <br/>
         <Button 
-        text = {isEditing ? "Änderungen verwerfen" : "Notiz editieren"}
-        backgroundColor = {isEditing ? editedColor : note.noteColor}
-        onClick = {() => setIsEditing(!isEditing)}
+          text = {isEditing ? "Änderungen verwerfen" : "Notiz editieren"}
+          backgroundColor = {isEditing ? editedColor : note.noteColor}
+          onClick = {() => setIsEditing(!isEditing)}
         />
 
         {
@@ -188,9 +188,9 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                 <>
                   <br/>
                   <Button
-                  text = "Änderungen hochladen"
-                  backgroundColor = {editedColor}
-                  onClick = {() => handleSubmit()}
+                    text = "Änderungen hochladen"
+                    backgroundColor = {editedColor}
+                    onClick = {() => handleSubmit()}
                   />
                 </>
         }
@@ -201,9 +201,9 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                 <>
                   <br/>
                   <Button
-                  text = "Notiz unwiderrufbar löschen"
-                  backgroundColor = {editedColor}
-                  onClick = {() => handleDelete()}
+                    text = "Notiz unwiderrufbar löschen"
+                    backgroundColor = {editedColor}
+                    onClick = {() => handleDelete()}
                   />
                 </>
         }

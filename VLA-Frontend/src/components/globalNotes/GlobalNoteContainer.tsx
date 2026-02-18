@@ -60,19 +60,28 @@ export default function GlobalNoteContainer() {
 
   return (
     <>
-      <div className="globalNoteToggle" onClick={() => setViewVisible(!viewVisible)} style={{display: viewVisible ? "none" : ""}}></div>
+      <div className="globalNoteToggle"
+        onClick={() => setViewVisible(!viewVisible)}
+        style={{display: viewVisible ? "none" : ""}}
+      >
+      </div>
       <div className="globalNoteContainer" style={{display: viewVisible ? "" : "none"}}>
         <div className="globalNoteView">
           <div className="globalNoteTopBar">
             <div className="globalNoteCreation"
             >
               <Button
-              text="+ Notiz"
-              marginBottom="0px"
-              backgroundColor={draftNote === undefined ? "" : "#AAA"}
-              onClick={createNewDummyNote}
-              cursor={draftNote === undefined ? "pointer" : "not-allowed"}
-              title={draftNote === undefined ? "Notiz erstellen" : "Laden Sie ihre aktuell entworfene Notiz hoch, um eine weitere Erstellen zu können"}
+                text="+ Notiz"
+                marginBottom="0px"
+                backgroundColor={draftNote === undefined ? "" : "#AAA"}
+                onClick={createNewDummyNote}
+                cursor={draftNote === undefined ? "pointer" : "not-allowed"}
+                title={
+                  draftNote === undefined ? 
+                    "Notiz erstellen"
+                    :
+                    "Laden Sie ihre aktuell entworfene Notiz hoch, um eine weitere Erstellen zu können"
+                }
               />
             </div>
             <div className="globalNoteTopBarTitle">Geteilte Notizen</div>
