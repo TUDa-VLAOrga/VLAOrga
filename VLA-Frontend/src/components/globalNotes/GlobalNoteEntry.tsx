@@ -84,7 +84,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       id: note.id,
       title: editingState.title,
       content: editingState.content,
-      noteColor: editingState.color
+      noteColor: editingState.color,
     };
         
     const submitfunction = note.id == NotSynchronisedId ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
@@ -103,12 +103,21 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       isEditing: note.id === NotSynchronisedId,
       title: note.title,
       content: note.content,
-      color: note.noteColor
+      color: note.noteColor,
     });
   }, [note]);
 
   return (
-    <div className="globalNoteEntry" style={{backgroundColor: editingState.isEditing ? editingState.color : note.noteColor}}>
+    <div className="globalNoteEntry" 
+      style={{
+        backgroundColor: 
+          editingState.isEditing ?
+            editingState.color 
+            : 
+            note.noteColor,
+      }}
+    >
+
       <div className="globalNoteTitle" onClick={() => setIsContentOpen(!isContentOpen)}>
         {
           editingState.isEditing ? (
