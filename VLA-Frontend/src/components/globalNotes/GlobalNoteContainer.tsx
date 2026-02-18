@@ -3,6 +3,8 @@ import { SseMessageType, type GlobalNote } from "@/lib/databaseTypes";
 import GlobalNoteEntry from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css"
 import { useState } from "react";
+import { Button } from "../ui/Button";
+import { NotSynchronisedId } from "@/lib/utils";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
     const createdGlobalNote = JSON.parse(event.data) as GlobalNote;
@@ -36,21 +38,37 @@ sseHandlers.set(SseMessageType.GLOBALNOTEUPDATED, handleGlobalNoteUpdated);
 sseHandlers.set(SseMessageType.GLOBALNOTEDELETED, handleGlobalNoteDeleted);
 
 export default function GlobalNoteContainer() {
-  const globalNotes = useSseConnectionWithInitialFetch<GlobalNote[]>([], "/api/globalNotes", sseHandlers);
+  const [globalNotes, setGlobalNotes] = useSseConnectionWithInitialFetch<GlobalNote[]>([], "/api/globalNotes", sseHandlers);
+  const [draftNote, setDraftNote] = useState<GlobalNote | undefined>(undefined);
   const [viewVisible, setViewVisible] = useState<boolean>(false);
 
+  function createNewDummyNote(){
+    const draftNote: GlobalNote = {
+      id: NotSynchronisedId,
+      noteColor: "#0d6efd",
+      title: "Neue Notiz (ändern Sie den Titel hier)",
+      content: "Fügen Sie hier ihre Notiz ein und laden Sie diese nach dem Schreiben hoch."
+    }
+
+    setDraftNote(draftNote);
+  }
+
   return (
-      <div className="globalNoteContainer">
-          <div className="globalNoteToggle" onClick={() => setViewVisible(!viewVisible)}></div>
-          <div className="globalNoteView" style={{display: viewVisible ? "" : "none"}}>
-            <div className="globalNoteTopBar">
-              <div></div>
-              <div className="globalNoteTopBarTitle">Geteilte Notizen</div>
-              <div className="globalNoteViewToggle" onClick={() => setViewVisible(!viewVisible)}></div>
+  <>
+  <div className="globalNoteToggle" onClick={() => setViewVisible(!viewVisible)}></div>
+    <div className="globalNoteContainer" style={{display: viewVisible ? "" : "none"}}>
+        <div className="globalNoteView">
+          <div className="globalNoteTopBar">
+            <div className="globalNoteCreation">
+              <button onClick={createNewDummyNote}>Neu</button>
             </div>
-            
-            {globalNotes.map(note => <GlobalNoteEntry note={note} key={note.id}></GlobalNoteEntry>)}
+            <div className="globalNoteTopBarTitle">Geteilte Notizen</div>
+            <div className="globalNoteViewToggle" onClick={() => setViewVisible(!viewVisible)}></div>
           </div>
-      </div>
+          {draftNote && <GlobalNoteEntry note={draftNote} key={draftNote.id} setDraftNote={setDraftNote}></GlobalNoteEntry>}
+          {globalNotes.map(note => <GlobalNoteEntry note={note} key={note.id}></GlobalNoteEntry>)}
+        </div>
+    </div>
+  </>
   );
 }

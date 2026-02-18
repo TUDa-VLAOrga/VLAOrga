@@ -1,10 +1,11 @@
 import type { GlobalNote } from "@/lib/databaseTypes"
-import { getReadableTextColor, NotSynchronisedId } from "@/lib/utils";
+import { NotSynchronisedId } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "../ui/Button";
 
 type GlobalNoteEntryProps = {
-    note: GlobalNote
+    note: GlobalNote,
+    setDraftNote?: React.Dispatch<React.SetStateAction<GlobalNote | undefined>> 
 }
 
 function handleTitleInput(input: string){
@@ -18,10 +19,10 @@ function handleEnterUnfocus(event: React.KeyboardEvent<HTMLTextAreaElement>){
     }
 }
 
-export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
-    const [isContentOpen, setIsContentOpen] = useState<boolean>(false);
+export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : GlobalNoteEntryProps){
+    const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id === NotSynchronisedId);
 
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean>(note.id === NotSynchronisedId);
     const [editedTitle, setEditedTitle] = useState<string>(note.title);
     const [editedContent, setEditedContent] = useState<string>(note.content);
     const [editedColor, setEditedColor] = useState<string>(note.noteColor);
@@ -35,9 +36,18 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
             },
             body: JSON.stringify(note)
         });
+
+        if(note.id === NotSynchronisedId) {
+            setDraftNote!(undefined);
+        }
     }
 
     function handleNoteUpdateSubmit(note: GlobalNote){
+        if(note.id === NotSynchronisedId) {
+            handleNoteCreationSubmit(note);
+            return;
+        }
+
         fetch("/api/globalNotes/" + note.id, {
             method: "PUT",
             headers: {
@@ -48,6 +58,11 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
     }
 
     function handleDelete(){
+        if(note.id === NotSynchronisedId) {
+            setDraftNote!(undefined);
+            return;
+        }
+
         fetch("/api/globalNotes/" + note.id, {
             method: "DELETE",
             headers: {
@@ -128,12 +143,23 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                 {
                 isEditing && 
                 <>
-                    <br/>
                     <i>
                         Hinweis: Sie sind aktuell im Editiermodus. 
                         Sie können nun Titel, Farbe und Inhalt der Notiz durch
                         einen Klick auf das entsprechende Feld bzw. den Text ändern.
                     </i>
+                    
+                    {
+                    setDraftNote !== undefined && 
+                    <>
+                    <br/><br/>
+                    <i>
+                        Achtung: Diese Notiz ist noch nicht hochgeladen.
+                        Wenn Sie diese speichern wollen, laden Sie sie hoch. 
+                    </i>
+                    </>
+                    }
+
                     <br/>
                     <br/>
                     <i>
