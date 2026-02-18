@@ -34,7 +34,7 @@ export default function CalendarView() {
     closeEventDetails, 
     handleUpdateEvent,
     handleMoveEvent,
-    handleMoveSeries
+    handleMoveSeries,
   } = useEvents();
  
   /**
