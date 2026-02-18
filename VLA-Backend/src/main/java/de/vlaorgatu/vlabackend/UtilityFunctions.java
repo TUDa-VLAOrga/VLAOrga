@@ -18,6 +18,10 @@ public class UtilityFunctions {
      * @return True iff. string matches pattern #RRGGBB
      */
     public static boolean checkColorFormatHtml7CharsNotation(String colorString) {
+        if (colorString == null) {
+            return false;
+        }
+
         if (colorString.length() != 7) {
             return false;
         }

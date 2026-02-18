@@ -57,7 +57,7 @@ public class GlobalNote {
      * @return true iff. title is not empty
      */
     public boolean hasInvalidTitle() {
-        return this.title.trim().isEmpty();
+        return this.title == null || this.title.trim().isEmpty();
     }
 
     /**
