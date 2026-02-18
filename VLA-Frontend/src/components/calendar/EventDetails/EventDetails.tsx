@@ -51,7 +51,7 @@ export default function EventDetails({
   const [showMoveConfirm, setShowMoveConfirm] = useState(false);
   const lecture = event.series.lecture;
 
-  function handleUpdate(personId: number, notes: string) {
+  function handlePersonNotesUpdate(personId: number, notes: string) {
     //TODO: Backend - PUT request to update person notes
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes);
@@ -68,21 +68,8 @@ export default function EventDetails({
     setIsEditing(false);
   };
 
-  function getEventPeople(): Person[] {
-    if (lecture && lecture.persons) {
-      return lecture.persons
-        .map(person => people.find(p => p.id === person.id))
-        .filter((p): p is Person => p !== undefined);
-    }
-    return [];
-  };
-
-  const eventPeople = getEventPeople();
-  function getCurrentPerson(personId: number): Person | undefined {
-    return people.find(p => p.id === personId);
-  };
-
-  const currentSelectedPerson = selectedPerson ? getCurrentPerson(selectedPerson.id) : null;
+  const eventPeople = lecture?.persons || [];
+  const currentSelectedPerson = selectedPerson || null;
 
   if (isEditing) {
     return (
@@ -254,7 +241,7 @@ export default function EventDetails({
         <PersonDetails
           person={currentSelectedPerson}
           onClose={() => setSelectedPerson(null)}
-          onSaveNotes={handleUpdate}
+          onSaveNotes={handlePersonNotesUpdate}
         />
       )}
     </>
