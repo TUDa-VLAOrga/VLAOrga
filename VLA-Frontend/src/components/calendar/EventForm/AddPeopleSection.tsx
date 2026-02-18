@@ -132,16 +132,13 @@ export default function AddPeopleSection({
       {selectedPeople.length > 0 && (
         <div className="cv-selectedPeoplePreview">
           <small className="cv-formHint">
-            Ausgewählt: {selectedPeople.map(selectedPerson => {
-              const person = people.find(availablePerson => selectedPerson.id === availablePerson.id);
-              return person?.name || selectedPerson.name;
-            }).join(", ")}
+            Ausgewählt: {selectedPeople.map(selectedPerson => selectedPerson.name).join(", ")}
           </small>
         </div>
       )}
 
       <small className="cv-formHint">
-        Wähle Personen aus oder erstelle neue
+        Personen auswählen oder neue hinzufügen.
       </small>
       <small className="cv-formHint">
         Personenspezifische Notizen können nach dem Erstellen eines Termins in der Detailansicht hinzugefügt werden.

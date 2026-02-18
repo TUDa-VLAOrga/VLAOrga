@@ -54,7 +54,7 @@ export default function RecurrenceSection({
 
           <div className="cv-formGroup">
             <label htmlFor="recEnd" className="cv-formLabel">
-              Wiederholung bis
+              Wiederholung bis einschließlich
             </label>
             <input
               id="recEnd"

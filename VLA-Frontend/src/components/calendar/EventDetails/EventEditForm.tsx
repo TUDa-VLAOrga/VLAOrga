@@ -69,7 +69,7 @@ export default function EventEditForm({
     onSave(updatedEvent);
   };
 
-  const hasTitle = title.trim() !== "";
+  const hasTitle = (title.trim() !== "") || lecture;
   const hasCategory = category;
   const isValidTimeRange = verifyValidTimeRange(startDateTime, endDateTime);
   const isValid = hasTitle && hasCategory && isValidTimeRange;
@@ -142,6 +142,7 @@ export default function EventEditForm({
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
               disabled={!isValid}
+              title={isValid ? "" : "Beginn und Ende müssen am selben Tag liegen"}
             >
               Speichern
             </button>

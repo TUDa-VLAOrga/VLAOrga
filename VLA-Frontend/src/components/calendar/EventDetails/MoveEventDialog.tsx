@@ -68,6 +68,7 @@ export default function MoveEventDialog({
             className="cv-formBtn cv-formBtnSubmit"
             onClick={handleMove}
             disabled={!isValid}
+            title={isValid ? "" : "Beginn und Ende müssen am selben Tag liegen"}
           >
             Verschieben
           </button>
