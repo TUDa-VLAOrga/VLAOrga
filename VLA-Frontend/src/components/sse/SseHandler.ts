@@ -1,8 +1,8 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import { SseMessageType } from "./SseMessageType";
 import type { SseObserver } from "./SseObserver";
 import { Logger } from "../logger/Logger";
 import { LogEvent } from "../logger/LoggerTypes";
+import { SseMessageType } from "@/lib/databaseTypes";
 
 /**
  * Class for notification of components
