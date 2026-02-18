@@ -25,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("/globalNotes")
+@RequestMapping("/api/globalNotes")
 public class GlobalNoteController {
     /**
      * Repository that contains all globalNote entities.
