@@ -27,7 +27,7 @@ export default function useSseConnection<T>(
     if(!eventHandlers.has(event.type as SseMessageType)) return;
 
     // This updates the trigger of the rendering function
-    setValue(eventHandlers.get(event.type as SseMessageType)!(event, value));
+    setValue((currentValue) => eventHandlers.get(event.type as SseMessageType)!(event, currentValue));
   }
 
   /**
