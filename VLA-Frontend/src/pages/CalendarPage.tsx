@@ -1,4 +1,4 @@
-import GlobalNoteContainer from "@/components/globalNoteArea/GlobalNoteContainer";
+import GlobalNoteContainer from "@/components/globalNotes/GlobalNoteContainer";
 import CalendarView from "../components/calendar/CalendarView";
 import SSEComponent from "@/components/sse/SseComponent";
 
