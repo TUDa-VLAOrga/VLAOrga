@@ -52,6 +52,4 @@ export default function GlobalNoteContainer() {
           </div>
       </div>
   );
-
-    
 }

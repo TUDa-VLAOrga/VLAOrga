@@ -47,6 +47,15 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
         });
     }
 
+    function handleDelete(){
+        fetch("/api/globalNotes/" + note.id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type":"application/json"
+            }
+        });
+    }
+
     function handleSubmit(){
         const postNote: GlobalNote = {
             id: note.id,
@@ -140,6 +149,7 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                 <Button>
                     {{
                         text: isEditing ? "Änderungen verwerfen" : "Notiz editieren", 
+                        backgroundColor: isEditing ? editedColor : note.noteColor,
                         onClick: () => setIsEditing(!isEditing)
                     }}
                 </Button>
@@ -150,7 +160,20 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                 <Button>
                     {{
                         text: "Änderungen hochladen",
+                        backgroundColor: editedColor,
                         onClick: () => handleSubmit()
+                    }}
+                </Button>
+                }
+                <br/>
+
+                {
+                isEditing &&
+                <Button>
+                    {{
+                        text: "Notiz unwiderrufbar löschen",
+                        backgroundColor: editedColor,
+                        onClick: () => handleDelete()
                     }}
                 </Button>
                 }
