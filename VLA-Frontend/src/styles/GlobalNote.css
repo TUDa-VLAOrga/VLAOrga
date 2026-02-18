@@ -1,0 +1,105 @@
+.globalNoteContainer {
+    position: absolute;
+    height: 100dvh;
+    width: 100dvw;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.globalNoteToggle {
+    height: min(10dvmin, 100px);
+    aspect-ratio: 1 / 1;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background-color: red;
+    cursor: pointer;
+    /* background-image: url("/public/GlobalNote/");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center; */
+}
+
+.globalNoteViewToggle {
+    height: 50px;
+    width: 100%;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    cursor: pointer;
+    /* background-image: url("/public/GlobalNote/");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center; */
+}
+
+.globalNoteView {
+    height: min(90%, 1000px);
+    width: min(90%, 1500px);
+    border-radius: 20px;
+    background-color: #FFF;
+    box-shadow: 4px 4px 8px #777;
+    overflow: hidden;
+}
+
+.globalNoteTopBarTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.globalNoteTopBar {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+}
+
+.globalNoteEntry {
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.globalNoteTitle {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: scroll;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.globalNoteTitle > textarea {
+    width: 100%;
+    font-size: inherit;
+    resize: none;
+    display: flex;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.globalNoteContent {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    background-color: white;
+    font-size: 18px;
+}
+
+.globalNoteContent > textarea {
+    width: 100%;
+    height: auto;
+    font-size: inherit;
+    resize: vertical;
+    display: flex;
+    text-align: center;
+}
