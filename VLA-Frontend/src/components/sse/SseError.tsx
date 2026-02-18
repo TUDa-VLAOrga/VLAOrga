@@ -33,7 +33,7 @@ function SseError(){
                   <br/>
                   <Button>
                     {{
-                      onClickEvent: refreshPage,
+                      onClick: refreshPage,
                       text: <><u>Neu laden</u></>,
                     }}
                   </Button>
