@@ -4,6 +4,7 @@ import GlobalNoteEntry from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css";
 import { useState } from "react";
 import { NotSynchronisedId } from "@/lib/utils";
+import { Button } from "../ui/Button";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
   const createdGlobalNote = JSON.parse(event.data) as GlobalNote;
@@ -59,15 +60,25 @@ export default function GlobalNoteContainer() {
 
   return (
     <>
-      <div className="globalNoteToggle" onClick={() => setViewVisible(!viewVisible)}></div>
+      <div className="globalNoteToggle" onClick={() => setViewVisible(!viewVisible)} style={{display: viewVisible ? "none" : ""}}></div>
       <div className="globalNoteContainer" style={{display: viewVisible ? "" : "none"}}>
         <div className="globalNoteView">
           <div className="globalNoteTopBar">
-            <div className="globalNoteCreation">
-              <button onClick={createNewDummyNote}>Neu</button>
+            <div className="globalNoteCreation"
+            >
+              <Button
+              text="+ Notiz"
+              marginBottom="0px"
+              backgroundColor={draftNote === undefined ? "" : "#AAA"}
+              onClick={createNewDummyNote}
+              cursor={draftNote === undefined ? "pointer" : "not-allowed"}
+              title={draftNote === undefined ? "Notiz erstellen" : "Laden Sie ihre aktuell entworfene Notiz hoch, um eine weitere Erstellen zu können"}
+              />
             </div>
             <div className="globalNoteTopBarTitle">Geteilte Notizen</div>
-            <div className="globalNoteViewToggle" onClick={() => setViewVisible(!viewVisible)}></div>
+            <div className="globalNoteViewToggle" onClick={() => setViewVisible(!viewVisible)}>
+              <Button text="Zurück" marginBottom="0px"/>
+            </div>
           </div>
           {
             draftNote &&

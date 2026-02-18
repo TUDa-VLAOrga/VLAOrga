@@ -15,24 +15,19 @@
     position: absolute;
     right: 10px;
     bottom: 10px;
-    background-color: red;
     cursor: pointer;
-    /* background-image: url("/public/GlobalNote/");
+    background-image: url("/public/GlobalNotes/NotesIcon.png");
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center; */
+    background-position: center;
 }
 
 .globalNoteViewToggle {
     width: 100%;
-    top: 10px;
-    right: 10px;
-    background-color: red;
     cursor: pointer;
-    /* background-image: url("/public/GlobalNote/");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center; */
+    display: grid;
+    align-items: center;
+    justify-content: center;
 }
 
 .globalNoteView {
@@ -57,7 +52,7 @@
 
 .globalNoteTopBar {
     display: grid;
-    grid-template-columns: 20% 60% 20%;
+    grid-template-columns: 30% 40% 30%;
 }
 
 .globalNoteEntry {
@@ -118,7 +113,7 @@
 }
 
 .globalNoteCreation {
-    display: flex;
+    display: grid;
     align-items: center;
     justify-content: center;
 }

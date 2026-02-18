@@ -1,22 +1,31 @@
 import "@/styles/Button.css";
 
+const defaultBackgroundColor = "#0d6efd";
+const defaultMarginBottom = "10px";
+
 type ButtonConfig = {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>,
   text: React.ReactNode,
-  backgroundColor?: string
+  onClick?: React.MouseEventHandler<HTMLButtonElement>,
+  backgroundColor?: string,
+  marginBottom?: string,
+  cursor?: string,
+  title?: string
 };
 
-function Button({children} : {children: ButtonConfig}){
+function Button({text, onClick, backgroundColor, marginBottom, cursor, title} : ButtonConfig){
   return (
     <>
       <button 
         className="classicButton"
-        onClick={children.onClick}
+        onClick={onClick}
         style={{
-          backgroundColor: children.backgroundColor || "#0d6efd",
+          backgroundColor: backgroundColor || defaultBackgroundColor,
+          marginBottom: marginBottom || defaultMarginBottom,
+          cursor: cursor || "pointer",
         }}
+        title={title}
       >
-        {children.text}
+        {text}
       </button>
     </>
   );
