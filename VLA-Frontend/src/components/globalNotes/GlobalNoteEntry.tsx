@@ -124,27 +124,32 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                 }
 
                 <br/>
-                <br/>
-                
+
                 {
                 isEditing && 
                 <>
-                Gewählte Notizfarbe<br/>
-                <input
-                type="color"
-                name="noteColor"
-                value={editedColor}
-                onChange={e => setEditedColor(e.target.value)}
-                />
+                    <br/>
+                    <i>
+                        Hinweis: Sie sind aktuell im Editiermodus. 
+                        Sie können nun Titel, Farbe und Inhalt der Notiz durch
+                        einen Klick auf das entsprechende Feld ändern.
+                    </i>
+                    <br/>
+                    <br/>
+                    <i>
+                        Gewählte Notizfarbe
+                    </i>
+                    <br/>
+                    <input
+                    type="color"
+                    name="noteColor"
+                    value={editedColor}
+                    onChange={e => setEditedColor(e.target.value)}
+                    />
+                    <br/>
                 </>
                 }
 
-                <br/>
-                <br/>
-                
-                {isEditing && <i>Hinweis: Sie sind aktuell im Editiermodus, Sie können nun Titel, Farbe und Inhalt der Notiz durch einen Klick auf das entsprechende Feld ändern.</i>}
-
-                <br/>
                 <br/>
                 <Button>
                     {{
@@ -153,29 +158,35 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                         onClick: () => setIsEditing(!isEditing)
                     }}
                 </Button>
-                <br/>
 
                 {
                 isEditing &&
-                <Button>
+                <>
+                    <br/>
+                    <Button>
                     {{
                         text: "Änderungen hochladen",
                         backgroundColor: editedColor,
                         onClick: () => handleSubmit()
                     }}
-                </Button>
+                    </Button>
+                    
+                </>
                 }
-                <br/>
+                
 
                 {
                 isEditing &&
-                <Button>
+                <>
+                    <br/>
+                    <Button>
                     {{
                         text: "Notiz unwiderrufbar löschen",
                         backgroundColor: editedColor,
                         onClick: () => handleDelete()
                     }}
-                </Button>
+                    </Button>
+                </>
                 }
             </div>
         </div>

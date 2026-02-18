@@ -13,6 +13,7 @@ function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]
 } 
 
 function handleGlobalNoteUpdated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
+    console.log(currentState)
     const updatedGlobalNote = JSON.parse(event.data) as GlobalNote;
     
     let newState = currentState.filter(note => note.id != updatedGlobalNote.id);
