@@ -1,7 +1,5 @@
 package de.vlaorgatu.vlabackend;
 
-import de.vlaorgatu.vlabackend.exceptions.InvalidColorParameterException;
-
 /**
  * Class for frequently reusable functions.
  */

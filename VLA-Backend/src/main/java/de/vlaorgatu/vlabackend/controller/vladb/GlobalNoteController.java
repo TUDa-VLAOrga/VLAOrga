@@ -2,40 +2,21 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
-import de.vlaorgatu.vlabackend.exceptions.InvalidColorParameterException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.GlobalNoteRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @AllArgsConstructor
-@RestController
-@RequestMapping("/globalNotes")
+@RepositoryRestController
+@RequestMapping("/global_notes")
 public class GlobalNoteController {
     private final GlobalNoteRepository globalNoteRepository;
-
-    @GetMapping
-    public ResponseEntity<List<GlobalNote>> getAllGlobalNotes() {
-        List<GlobalNote> notes = globalNoteRepository.findAll();
-        return ResponseEntity.ok(notes);
-    }
-
-    @GetMapping("/{id}")
-    ResponseEntity<GlobalNote> getGlobalNoteById(@PathVariable Long id){
-        GlobalNote note = globalNoteRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                "No globalNote with id " + id + " was found"
-            )
-        );
-
-        return ResponseEntity.ok(note);
-    }
 
     @PostMapping
     ResponseEntity<GlobalNote> createGlobalNote(@RequestBody GlobalNote note){
@@ -43,7 +24,7 @@ public class GlobalNoteController {
             throw new InvalidParameterException("Note titles may not be empty");
 
         if(note.hasInvalidColor())
-            throw new InvalidColorParameterException("Color does not match 7 char HTML notation");
+            throw new InvalidParameterException("Color does not match 7 char HTML notation");
 
         GlobalNote savedNote = globalNoteRepository.save(note);
 
@@ -58,11 +39,19 @@ public class GlobalNoteController {
 
     @PutMapping("/{id}")
     ResponseEntity<GlobalNote> updateGlobalNote(@PathVariable Long id, @RequestBody GlobalNote proposedNote){
+        if(proposedNote.getId() == null){
+            proposedNote.setId(id);
+        }
+
+        if(!proposedNote.getId().equals(id)) {
+            throw new InvalidParameterException("Id mismatch between URL and proposed note id");
+        }
+
         if(proposedNote.hasInvalidTitle())
             throw new InvalidParameterException("Note titles may not be empty");
 
         if(proposedNote.hasInvalidColor())
-            throw new InvalidColorParameterException("Color does not match 7 char HTML notation");
+            throw new InvalidParameterException("Color does not match 7 char HTML notation");
 
         GlobalNote note = globalNoteRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(

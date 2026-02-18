@@ -22,7 +22,6 @@ public class GlobalNote {
     /**
      * Unique identifier of an event.
      */
-    @NonNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
