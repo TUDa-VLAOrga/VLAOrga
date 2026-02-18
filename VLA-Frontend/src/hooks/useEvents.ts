@@ -112,39 +112,52 @@ export function useEvents() {
 
     const newEvents: Appointment[] = [];
 
-    // create appointment series, even w/o recurrence we need it to conform with our data model
-    const newAppSeries: AppointmentSeries = {
-      id: -Date.now(),
-      lecture: formData.lecture,
-      name: formData.title.trim(),
-      category: formData.category,
-    };
-    // TODO: Backend - POST request to /api/appointmentSeries (maybe later below together with POST to /api/appointments
+    // even w/o recurrence we need one series to conform with our data model.
+    // Also, create a single series if initial event date is not on one recurring day.
+    if (!formData.recurrence || !formData.recurrence.weekdays.includes(formData.startDateTime.getDay() as Weekday)) {
+      const newAppSeries: AppointmentSeries = {
+        id: -Date.now(),
+        lecture: formData.lecture,
+        name: formData.title.trim(),
+        category: formData.category,
+      };
+      newEvents.push({
+        id: -Date.now() - 1,
+        series: newAppSeries,
+        start: formData.startDateTime,
+        end: formData.endDateTime,
+        notes: formData.notes || "",
+      });
+    }
 
-    // Always create the base event on the explicitly chosen start date.
-    let dummyId = -Date.now(); // negative ID signals a not-yet-created entity
-    newEvents.push({
-      id: dummyId,
-      series: newAppSeries,
-      start: formData.startDateTime,
-      end: formData.endDateTime,
-      notes: formData.notes || "",
-    });
+    let dummyId = -Date.now() - 1; // negative ID signals a not-yet-created entity
 
-    // create series by looping day by day
+    // create series of recurring events by looping day by day
     if (formData.recurrence && formData.recurrence.weekdays.length > 0 && formData.recurrence.endDay) {
+      // create appointment series, one for each recurrence weekday
+      const seriesByWeekday = new Map<Weekday, AppointmentSeries>;
+      formData.recurrence.weekdays.forEach(
+        (day) => {
+          seriesByWeekday.set(day, {
+            id: --dummyId,
+            lecture: formData.lecture,
+            name: formData.title.trim(),
+            category: formData.category!,
+          });
+        }
+      );
 
       const duration = formData.endDateTime.getTime() - formData.startDateTime.getTime();
       const endDate = new Date(formData.recurrence.endDay.date);
       endDate.setHours(23, 59, 59, 999);
-      let currentDate = addDays(new Date(formData.startDateTime), 1);
+      let currentDate = new Date(formData.startDateTime);
 
       while (currentDate <= endDate) {
         const weekday = currentDate.getDay() as Weekday;
         if (formData.recurrence.weekdays.includes(weekday)) {
           newEvents.push({
             id: --dummyId,
-            series: newAppSeries,
+            series: seriesByWeekday.get(weekday)!,
             start: currentDate,
             end: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
@@ -153,6 +166,7 @@ export function useEvents() {
         currentDate = addDays(currentDate, 1);
       }
     }
+    // TODO: Backend - POST request to /api/appointmentSeries
     // TODO: Backend - POST request to /api/appointments
     // Append newly created events to state
     setEvents((prev) => [...prev, ...newEvents]);

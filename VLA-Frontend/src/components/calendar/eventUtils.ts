@@ -40,7 +40,8 @@ export function verifyValidTimeRange(start?: Date, end?: Date) {
  *
  * @param events - Array of events to move
  * @param referenceEvent - The event that was dragged. Only events with the same series ID will be moved.
- * @param newStartDateTime - New start datetime string
+ * @param newStartDateTime - New start datetime
+ * @param newEndDateTime - New end datetime
  * @returns Updated events with new times
  */
 export function moveEventSeries(
