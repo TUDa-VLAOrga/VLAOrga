@@ -43,6 +43,7 @@
     background-color: #FFF;
     box-shadow: 4px 4px 8px #777;
     overflow: hidden;
+    overflow-y: scroll;
 }
 
 .globalNoteTopBarTitle {
@@ -52,6 +53,7 @@
     font-weight: bold;
     font-size: 32px;
     margin-bottom: 10px;
+    height: auto;
 }
 
 .globalNoteTopBar {
@@ -76,6 +78,9 @@
     font-size: 24px;
     cursor: pointer;
     user-select: none;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px .1px #000;
 }
 
 .globalNoteTitle > textarea {
@@ -85,6 +90,7 @@
     display: flex;
     text-align: center;
     vertical-align: middle;
+    text-shadow: 1px 1px .1px #000;
 }
 
 .globalNoteContent {
@@ -94,6 +100,7 @@
     border-radius: 0 0 10px 10px;
     background-color: white;
     font-size: 18px;
+    color: black;
 }
 
 .globalNoteContent > textarea {
@@ -103,4 +110,5 @@
     resize: vertical;
     display: flex;
     text-align: center;
+    border: 5px solid #0003;
 }

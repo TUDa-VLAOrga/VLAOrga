@@ -1,5 +1,5 @@
 import type { GlobalNote } from "@/lib/databaseTypes"
-import { NotSynchronisedId } from "@/lib/utils";
+import { getReadableTextColor, NotSynchronisedId } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "../ui/Button";
 
@@ -81,7 +81,7 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                         value={editedTitle}
                         rows={1}
                         maxLength={255}
-                        placeholder="Notiztitel"
+                        placeholder="Sie müssen hier einen Notiztitel eingeben"
                         onChange={(e) => setEditedTitle(handleTitleInput(e.target.value))}
                         onKeyDown={(e) => handleEnterUnfocus(e)}
                         required
@@ -110,7 +110,7 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                         value={editedContent}
                         rows={6}
                         maxLength={4096}
-                        placeholder="Notiztext"
+                        placeholder="Geben Sie hier ihre Notiz ein"
                         onChange={(e) => setEditedContent(e.target.value)}
                         required
                         >
@@ -132,7 +132,7 @@ export default function GlobalNoteEntry({note} : GlobalNoteEntryProps){
                     <i>
                         Hinweis: Sie sind aktuell im Editiermodus. 
                         Sie können nun Titel, Farbe und Inhalt der Notiz durch
-                        einen Klick auf das entsprechende Feld ändern.
+                        einen Klick auf das entsprechende Feld bzw. den Text ändern.
                     </i>
                     <br/>
                     <br/>
