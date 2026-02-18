@@ -1,12 +1,19 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
 import { NotSynchronisedId } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 
 type GlobalNoteEntryProps = {
   note: GlobalNote,
   setDraftNote?: React.Dispatch<React.SetStateAction<GlobalNote | undefined>> 
 };
+
+interface globalNoteEntryEditingState {
+  isEditing: boolean,
+  title: string,
+  content: string,
+  color: string,
+}
 
 function handleTitleInput(input: string){
   return input.replaceAll("\n", "").replaceAll("\t", "");
@@ -22,11 +29,12 @@ function handleEnterUnfocus(event: React.KeyboardEvent<HTMLTextAreaElement>){
 export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : GlobalNoteEntryProps){
   const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id === NotSynchronisedId);
 
-  const [isEditing, setIsEditing] = useState<boolean>(note.id === NotSynchronisedId);
-  const [editedTitle, setEditedTitle] = useState<string>(note.title);
-  const [editedContent, setEditedContent] = useState<string>(note.content);
-  const [editedColor, setEditedColor] = useState<string>(note.noteColor);
-
+  const [editingState, setEditingState] = useState<globalNoteEntryEditingState>({
+    isEditing: note.id === NotSynchronisedId,
+    title: note.title,
+    content: note.content,
+    color: note.noteColor,
+  });
 
   function handleNoteCreationSubmit(note: GlobalNote){
     fetch("/api/globalNotes", {
@@ -74,30 +82,49 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   function handleSubmit(){
     const postNote: GlobalNote = {
       id: note.id,
-      noteColor: editedColor,
-      title: editedTitle,
-      content: editedContent,
+      title: editingState.title,
+      content: editingState.content,
+      noteColor: editingState.color
     };
         
     const submitfunction = note.id == NotSynchronisedId ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
     submitfunction(postNote);
-        
-    setIsEditing(false);
+
+    setEditingState(
+      {
+        ...editingState,
+        isEditing: false,
+      }
+    );
   }
 
+  useEffect(() => {
+    setEditingState({
+      isEditing: note.id === NotSynchronisedId,
+      title: note.title,
+      content: note.content,
+      color: note.noteColor
+    });
+  }, [note]);
+
   return (
-    <div className="globalNoteEntry" style={{backgroundColor: isEditing ? editedColor : note.noteColor}}>
+    <div className="globalNoteEntry" style={{backgroundColor: editingState.isEditing ? editingState.color : note.noteColor}}>
       <div className="globalNoteTitle" onClick={() => setIsContentOpen(!isContentOpen)}>
         {
-          isEditing ? (
+          editingState.isEditing ? (
             <>
               <textarea
                 name="title"
-                value={editedTitle}
+                value={editingState.title}
                 rows={1}
                 maxLength={255}
                 placeholder="Sie müssen hier einen Notiztitel eingeben"
-                onChange={(e) => setEditedTitle(handleTitleInput(e.target.value))}
+                onChange={(e) => 
+                  setEditingState({
+                    ...editingState,
+                    title: handleTitleInput(e.target.value),
+                  })
+                }
                 onKeyDown={(e) => handleEnterUnfocus(e)}
                 required
               >
@@ -113,27 +140,35 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
             
       <div className="globalNoteContent"
         style={{
-          display: isContentOpen || isEditing ? "" : "none",
-          border: "5px solid " + (isEditing ? editedColor : note.noteColor),
+          display: isContentOpen || editingState.isEditing ? "" : "none",
+          border: "5px solid " + (editingState.isEditing ? editingState.color : note.noteColor),
         }}>
                 
         {
-          isEditing ? (
+          editingState.isEditing ? (
             <>
               <textarea
                 name="content"
-                value={editedContent}
+                value={editingState.content}
                 rows={6}
                 maxLength={4096}
                 placeholder="Geben Sie hier ihre Notiz ein"
-                onChange={(e) => setEditedContent(e.target.value)}
+                onChange={(e) => 
+                  setEditingState({
+                    ...editingState,
+                    content: e.target.value,
+                  })
+                }
+                
                 required
               >
               </textarea>
             </>
           ) : (
             <>
-              {note.content}
+              <span className="displayedNoteContent">
+                {note.content}
+              </span>
             </>
           )
         }
@@ -141,7 +176,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
         <br/>
 
         {
-          isEditing && 
+          editingState.isEditing && 
                 <>
                   <i>
                     Hinweis: Sie sind aktuell im Editiermodus. 
@@ -169,8 +204,13 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                   <input
                     type="color"
                     name="noteColor"
-                    value={editedColor}
-                    onChange={e => setEditedColor(e.target.value)}
+                    value={editingState.color}
+                    onChange={e => 
+                      setEditingState({
+                        ...editingState,
+                        color: e.target.value,
+                      })
+                    }
                   />
                   <br/>
                 </>
@@ -178,18 +218,23 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
 
         <br/>
         <Button 
-          text = {isEditing ? "Änderungen verwerfen" : "Notiz editieren"}
-          backgroundColor = {isEditing ? editedColor : note.noteColor}
-          onClick = {() => setIsEditing(!isEditing)}
+          text = {editingState.isEditing ? "Änderungen verwerfen" : "Notiz editieren"}
+          backgroundColor = {editingState.isEditing ? editingState.color : note.noteColor}
+          onClick = {() => 
+            setEditingState({
+              ...editingState,
+              isEditing: !editingState.isEditing,
+            })
+          }
         />
 
         {
-          isEditing &&
+          editingState.isEditing &&
                 <>
                   <br/>
                   <Button
                     text = "Änderungen hochladen"
-                    backgroundColor = {editedColor}
+                    backgroundColor = {editingState.color}
                     onClick = {() => handleSubmit()}
                   />
                 </>
@@ -197,12 +242,12 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                 
 
         {
-          isEditing &&
+          editingState.isEditing &&
                 <>
                   <br/>
                   <Button
                     text = "Notiz unwiderrufbar löschen"
-                    backgroundColor = {editedColor}
+                    backgroundColor = {editingState.color}
                     onClick = {() => handleDelete()}
                   />
                 </>

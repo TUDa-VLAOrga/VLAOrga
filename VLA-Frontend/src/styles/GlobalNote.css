@@ -117,3 +117,7 @@
     align-items: center;
     justify-content: center;
 }
+
+.displayedNoteContent {
+    white-space: pre-line;
+}
