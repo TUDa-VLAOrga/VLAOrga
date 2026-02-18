@@ -25,15 +25,17 @@ export default function CalendarView() {
   const {categories,handleAddCategory}= useCategories();
   const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
 
-  const {selectedEvent, 
+  const {
+    allEvents,
+    selectedEvent,
     eventsByDate, 
     handleCreateEvent, 
     handleEventClick,
     closeEventDetails, 
     handleUpdateEvent,
     handleMoveEvent,
-    handleMoveSeries  }= 
-    useEvents();
+    handleMoveSeries
+  } = useEvents();
  
   /**
    * Called by EventForm when the user submits.
@@ -104,6 +106,7 @@ export default function CalendarView() {
       {selectedEvent && (
         <EventDetails
           event={selectedEvent}
+          allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}
           people={people}

@@ -11,6 +11,7 @@ import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts
 
 type EventDetailsProps = {
   event: Appointment;
+  allEvents: Appointment[];
   onClose: () => void;
   lectures?: Lecture[];
   people?: Person[];
@@ -29,7 +30,8 @@ type EventDetailsProps = {
  * If the event is assigned to a lecture, it shows the lecture color + name.
  */
 export default function EventDetails({ 
-  event, 
+  event,
+  allEvents,
   onClose,
   lectures = [],
   people = [],
@@ -219,8 +221,7 @@ export default function EventDetails({
               type="button"
               className="cv-formBtn cv-formBtnSecondary"
               onClick={() => {
-                if (event.series) {
-                  // TODO: replace with check that series has more than one event. This is always true currently
+                if (allEvents.filter(e => e.series.id === event.series.id).length > 1) {
                   setShowMoveConfirm(true);
                 } else {
                   setShowMoveDialog(true);

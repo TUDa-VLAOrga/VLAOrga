@@ -15,7 +15,7 @@ import {Logger} from "@/components/logger/Logger.ts";
  */
 
 export function useEvents() {
-  const [events, setEvents] = useState<Appointment[]>([]);
+  const [allEvents, setEvents] = useState<Appointment[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Appointment | null>(null);
 
   function handleUpdateEvent(eventId: number, updates: Partial<Appointment>) {
@@ -47,25 +47,26 @@ export function useEvents() {
       return;
     }
 
-    const oldEvent = events.find(e => e.id === eventId);
+    const oldEvent = allEvents.find(e => e.id === eventId);
     if (!oldEvent) {
       Logger.error("Event not found");
       return;
     }
-    // create new appointment series on move
-    // TODO: determine if series already has just one event, do not create new one in this case
-    //  (see also the todo comment in EventDetails at showMoveConfirm vs showMoveDialog)
-    const newSeries: AppointmentSeries = {
-      ...oldEvent.series,
-      id: -Date.now(),  // negative ID signals a not-yet-created entity
-    };
+    // create new appointment series when moving out of existing series
+    let newSeries: AppointmentSeries | undefined;
+    if (allEvents.filter(e => e.series.id === oldEvent.series.id).length > 1) {
+      newSeries = {
+        ...oldEvent.series,
+        id: -Date.now(),  // negative ID signals a not-yet-created entity
+      };
+    }
     // TODO: Backend - POST request to /api/events/:eventId/move
     setEvents((prev) =>
       prev.map((event) =>
         event.id === eventId
           ? {
             ...event,
-            series: newSeries,
+            series: newSeries || event.series,
             start: newStartDateTime,
             end: newEndDateTime,
           }
@@ -84,7 +85,7 @@ export function useEvents() {
     newStartDateTime: Date,
     newEndDateTime: Date
   ) {
-    const event= events.find(e => e.id === eventId);
+    const event= allEvents.find(e => e.id === eventId);
     if(!event?.series){
       Logger.error("Event not part of a series");
       return;
@@ -186,7 +187,7 @@ export function useEvents() {
    */
   const eventsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
-    events.forEach((event) => {
+    allEvents.forEach((event) => {
       const eventDateISO = getEventDateISO(event);
       if (!grouped[eventDateISO]) {
         grouped[eventDateISO] = [];
@@ -194,10 +195,10 @@ export function useEvents() {
       grouped[eventDateISO].push(event);
     });
     return grouped;
-  }, [events]);
+  }, [allEvents]);
 
   return {
-    events,
+    allEvents,
     selectedEvent,
     eventsByDate,
     handleCreateEvent,
