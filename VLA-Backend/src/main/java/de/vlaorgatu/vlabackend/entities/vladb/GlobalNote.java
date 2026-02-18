@@ -51,11 +51,21 @@ public class GlobalNote {
     @Column(name = "content", nullable = false, length = 4096)
     private String content;
 
-    public boolean hasInvalidTitle(){
-        return !this.title.isEmpty();
+    /**
+     * Checks if the title of a note is valid.
+     *
+     * @return true iff. title is not empty
+     */
+    public boolean hasInvalidTitle() {
+        return this.title.trim().isEmpty();
     }
 
-    public boolean hasInvalidColor(){
-        return UtilityFunctions.checkColorFormatHtml7CharsNotation(this.getNoteColor());
+    /**
+     * Checks if the color of a not is valid.
+     *
+     * @return true, iff color string is of type #RRGGBB
+     */
+    public boolean hasInvalidColor() {
+        return !UtilityFunctions.checkColorFormatHtml7CharsNotation(this.getNoteColor());
     }
 }

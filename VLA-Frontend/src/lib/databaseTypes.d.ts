@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-16 14:21:07.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-18 07:58:46.
 
 export interface LinusAppointment {
     id: number;
@@ -57,6 +57,13 @@ export interface ExperimentBooking {
     status: ExperimentPreparationStatus;
 }
 
+export interface GlobalNote {
+    id: number;
+    noteColor: string;
+    title: string;
+    content: string;
+}
+
 export interface Lecture {
     id: number;
     name: string;
@@ -84,8 +91,9 @@ export const enum ExperimentPreparationStatus {
 }
 
 export const enum SseMessageType {
+    SSEDEBUG = "SSEDEBUG",
+    GLOBALNOTECREATED = "GLOBALNOTECREATED",
+    GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
+    GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
     DEBUG = "DEBUG",
-    EXPERIMENT = "EXPERIMENT",
-    CALENDAR = "CALENDAR",
-    APPROVEDELETION = "APPROVEDELETION",
 }

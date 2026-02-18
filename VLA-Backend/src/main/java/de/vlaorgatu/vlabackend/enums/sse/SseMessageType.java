@@ -24,6 +24,10 @@ public enum SseMessageType {
      */
     GLOBALNOTEUPDATED("GLOBALNOTEUPDATED"),
     /**
+     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
+     */
+    GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
+    /**
      * Used for sending Debug messages to the frontend.
      */
     DEBUG("DEBUG");
