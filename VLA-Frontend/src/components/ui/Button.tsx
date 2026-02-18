@@ -1,12 +1,18 @@
+import "@/styles/Button.css"
+
 type ButtonConfig = {
-  onClickEvent?(): void
-  text?: React.ReactNode
+  onClick?: React.MouseEventHandler<HTMLButtonElement>,
+  text: React.ReactNode
 };
 
 function Button({children} : {children: ButtonConfig}){
   return (
     <>
-      <button onClick={children.onClickEvent}>{children.text}</button>
+      <button 
+      onClick={children.onClick}
+      >
+        {children.text}
+      </button>
     </>
   );
 }
