@@ -3,13 +3,14 @@ import "@/styles/Button.css"
 type ButtonConfig = {
   onClick?: React.MouseEventHandler<HTMLButtonElement>,
   text: React.ReactNode,
-  backgroundColor?: string,
+  backgroundColor?: string
 };
 
 function Button({children} : {children: ButtonConfig}){
   return (
     <>
       <button 
+      className="classicButton"
       onClick={children.onClick}
       style={{
         backgroundColor: children.backgroundColor || "#0d6efd",

@@ -24,7 +24,6 @@
 }
 
 .globalNoteViewToggle {
-    height: 50px;
     width: 100%;
     top: 10px;
     right: 10px;
@@ -74,7 +73,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow-x: scroll;
+    overflow-x: auto;     
+    overflow-y: hidden;
+    white-space: nowrap;
     font-size: 24px;
     cursor: pointer;
     user-select: none;
@@ -91,6 +92,9 @@
     text-align: center;
     vertical-align: middle;
     text-shadow: 1px 1px .1px #000;
+    overflow-x: auto;     
+    overflow-y: hidden;
+    white-space: nowrap;
 }
 
 .globalNoteContent {
@@ -111,4 +115,10 @@
     display: flex;
     text-align: center;
     border: 5px solid #0003;
+}
+
+.globalNoteCreation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
