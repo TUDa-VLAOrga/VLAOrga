@@ -12,9 +12,10 @@ type EventEditFormProps = {
   categories?: AppointmentCategory[];
   onSave: (updates: Partial<Appointment>) => void;
   onCancel: () => void;
-  onAddCategory?: (category: AppointmentCategory) => void;
-  onAddPerson?: (person: Person) => void;
-  onAddLecture?: (lecture: Lecture) => void;
+  onAddCategory: (category: AppointmentCategory) => void;
+  onAddPerson: (person: Person) => void;
+  onAddLecture: (lecture: Lecture) => void;
+  isSeries: boolean;
 };
 
 /**
@@ -30,25 +31,26 @@ export default function EventEditForm({
   onAddCategory,
   onAddPerson,
   onAddLecture,
+  isSeries,
 }: EventEditFormProps) {
   // TODO: proper copying, do not modify existing entity
   const [title, setTitle] = useState(event.series.name);
   const [category, setCategory] = useState<AppointmentCategory>(event.series.category);
   const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);
-  const [notes, setNotes] = useState(event.notes || "");
+  const [notes, setNotes] = useState(event.notes);
 
   const [startDateTime, setStartDateTime] = useState(event.start);
   const [endDateTime, setEndDateTime] = useState(event.end);
 
   function handleAddCategory(category: AppointmentCategory) {
-    onAddCategory?.(category);
+    onAddCategory(category);
     setCategory(category);
-  };
+  }
 
   function handleAddLecture(lecture: Lecture) {
-    onAddLecture?.(lecture);
+    onAddLecture(lecture);
     setLecture(lecture);
-  };
+  }
  
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -62,12 +64,13 @@ export default function EventEditForm({
     const updatedEvent: Partial<Appointment> = {
       start: startDateTime,
       end: endDateTime,
-      notes: notes.trim(),
+      // when editing a series, notes cannot be edited
+      notes: isSeries ? undefined : notes.trim(),
       series: updatedSeries,
     };
 
     onSave(updatedEvent);
-  };
+  }
 
   const hasTitle = (title.trim() !== "") || Boolean(lecture);
   const hasCategory = category;
@@ -78,6 +81,14 @@ export default function EventEditForm({
     <div className="cv-formOverlay">
       <div className="cv-formBox">
         <h2 className="cv-formTitle">Termin bearbeiten</h2>
+
+        <div className="cv-detailsContent">
+          <p className="cv-moveDialogInfo">
+            {isSeries
+              ? 'Alle Termine dieser Serie werden bearbeitet und entsprechend verschoben.'
+              : 'Nur dieser einzelne Termin wird bearbeitet und aus der Serie gelöst.'}
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">
@@ -116,19 +127,21 @@ export default function EventEditForm({
             onEndChange={setEndDateTime}
           />
 
-          <div className="cv-formGroup">
-            <label htmlFor="eventNotes" className="cv-formLabel">
-              Notizen zum Termin
-            </label>
-            <textarea
-              id="eventNotes"
-              className="cv-formInput cv-eventNotesTextarea"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notizen zu diesem Termin..."
-              rows={4}
-            />
-          </div>
+          {!isSeries &&
+            <div className="cv-formGroup">
+              <label htmlFor="eventNotes" className="cv-formLabel">
+                Notizen zum Termin
+              </label>
+              <textarea
+                id="eventNotes"
+                className="cv-formInput cv-eventNotesTextarea"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Notizen zu diesem Termin..."
+                rows={4}
+              />
+            </div>
+          }
 
           <div className="cv-formActions">
             <button

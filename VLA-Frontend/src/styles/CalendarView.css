@@ -338,7 +338,7 @@
   background: white;
   border-radius: 8px;
   padding: 24px;
-  max-width: 600px;
+  max-width: 680px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
@@ -437,6 +437,11 @@
   color: #666;
   font-size: 0.85rem;
   margin-top: 4px;
+}
+
+.cv-formActions .cv-formHint {
+  width: 100%;
+  text-align: center;
 }
 
 .cv-formActions {

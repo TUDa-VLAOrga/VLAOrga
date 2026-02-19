@@ -186,7 +186,7 @@ export default function EventForm({
               className="cv-formInput cv-eventNotesTextarea"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notizen zu diesem Termin..."
+              placeholder={recurrence.enabled ? "initiale Notizen für alle Termine" : "Notizen zu diesem Termin..."}
               rows={4}
             />
           </div>

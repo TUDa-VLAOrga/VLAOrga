@@ -2,7 +2,12 @@ import { useState, useMemo } from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
 import { addDays } from "../components/calendar/dateUtils";
 import type {Appointment, AppointmentSeries} from "@/lib/databaseTypes";
-import {getEventDateISO, moveEventSeries, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import {
+  checkPartOfSeries,
+  getEventDateISO,
+  moveEventSeries,
+  verifyValidTimeRange
+} from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
 
 
@@ -16,87 +21,75 @@ import {Logger} from "@/components/logger/Logger.ts";
 
 export function useEvents() {
   const [allEvents, setEvents] = useState<Appointment[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<Appointment | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Appointment>();
 
-  function handleUpdateEvent(eventId: number, updates: Partial<Appointment>) {
-    // TODO: Backend - PATCH request to /api/events/:eventId
+  function handleUpdateEventNotes(eventId: number, notes: string) {
+    // TODO: Backend request
     setEvents((prev) =>
-      prev.map((event) =>
-        event.id === eventId ? { ...event, ...updates } : event
-      )
+      prev.map(event => event.id === eventId ? {...event, notes} : event)
     );
-
-    setSelectedEvent((prev) => {
-      if (prev?.id === eventId) {
-        return { ...prev, ...updates };
-      }
-      return prev;
-    });
+    setSelectedEvent(prev => prev?.id === eventId ? {...prev, notes} : prev);
   }
 
   /**
-   * Moves a single event in time. Detaches it from its series.
+   * Updates an event, maybe also its series. If not, a new series for this single event is created.
+   *
+   * @param eventId ID of the event to update
+   * @param updates updates to apply to the event.
+   * @param editSeries Whether to update the whole series or just this event.
    */
-  function handleMoveEvent(
-    eventId: number,
-    newStartDateTime: Date,
-    newEndDateTime: Date
-  ) {
-    if (!verifyValidTimeRange(newStartDateTime, newEndDateTime)) {
+  function handleUpdateEvent(eventId: number, updates: Partial<Appointment>, editSeries: boolean) {
+    if (updates.start && updates.end && !verifyValidTimeRange(updates.start, updates.end)) {
       Logger.error("Invalid time range for event");
       return;
     }
-
     const oldEvent = allEvents.find(e => e.id === eventId);
     if (!oldEvent) {
       Logger.error("Event not found");
       return;
     }
-    // create new appointment series when moving out of existing series
-    let newSeries: AppointmentSeries | undefined;
-    if (allEvents.filter(e => e.series.id === oldEvent.series.id).length > 1) {
-      newSeries = {
+    // case 1: only this event should be updated
+    if (!editSeries || !checkPartOfSeries(oldEvent, allEvents)) {
+      let newSeries: AppointmentSeries | undefined;
+      // create new series for event, if not already alone in a series
+      if (checkPartOfSeries(oldEvent, allEvents)) {
+        newSeries = {
+          ...oldEvent.series,
+          ...updates.series,
+          id: -Date.now(),
+        };
+        // TODO: backend request to create new series
+      }
+      setEvents((prev) =>
+        prev.map((event) =>
+          event.id === eventId
+            ? {
+              ...event,
+              ...updates,
+              series: newSeries || event.series,
+            }
+            : event
+        )
+      );
+      // TODO: backend request to update event
+    } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
+      const newSeries = {
         ...oldEvent.series,
-        id: -Date.now(),  // negative ID signals a not-yet-created entity
+        ...updates.series,
       };
+      // TODO: backend request to update series
+      let movedEvents: Appointment[] = allEvents;
+      if (updates.start && updates.end) {
+        // calculate new start and end for every event, if changed
+        movedEvents = moveEventSeries(allEvents, oldEvent, updates.start, updates.end);
+      }
+      // set events to moved ones with updated series
+      setEvents(movedEvents.map(event =>
+        event.series.id === oldEvent.series.id ? {...event, series: newSeries} : event)
+      );
+      // TODO: backend request to update events
     }
-    // TODO: Backend - POST request to /api/events/:eventId/move
-    setEvents((prev) =>
-      prev.map((event) =>
-        event.id === eventId
-          ? {
-            ...event,
-            series: newSeries || event.series,
-            start: newStartDateTime,
-            end: newEndDateTime,
-          }
-          : event
-      )
-    );
-
-    setSelectedEvent(null);
-  }
-
-  /**
-   * Move all events in a series by a given offset.
-   */
-  function handleMoveSeries(
-    eventId: number,
-    newStartDateTime: Date,
-    newEndDateTime: Date
-  ) {
-    const event= allEvents.find(e => e.id === eventId);
-    if(!event?.series){
-      Logger.error("Event not part of a series");
-      return;
-    }
-    if (!verifyValidTimeRange(newStartDateTime, newEndDateTime)) {
-      Logger.error("Invalid time range for event");
-      return;
-    }
-    // Verschiebe alle Events der Serie
-    setEvents((prev) => moveEventSeries(prev, event, newStartDateTime, newEndDateTime));
-    setSelectedEvent(null);
+    setSelectedEvent(allEvents.find(e => e.id === eventId));
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
@@ -178,7 +171,7 @@ export function useEvents() {
   }
 
   function closeEventDetails() {
-    setSelectedEvent(null);
+    setSelectedEvent(undefined);
   }
 
   /**
@@ -204,8 +197,7 @@ export function useEvents() {
     handleCreateEvent,
     handleEventClick,
     closeEventDetails,
+    handleUpdateEventNotes,
     handleUpdateEvent,
-    handleMoveEvent,
-    handleMoveSeries,
   };
 }

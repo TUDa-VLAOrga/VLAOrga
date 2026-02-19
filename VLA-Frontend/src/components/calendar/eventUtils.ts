@@ -67,6 +67,13 @@ export function moveEventSeries(
   });
 }
 
+/**
+ * Determine whether the event is part of a series with more than one event.
+ */
+export function checkPartOfSeries(event: Appointment, allEvents: Appointment[]) {
+  return allEvents.filter(e => e.series.id === event.series.id).length > 1;
+}
+
 
 /**
  * Get event status.

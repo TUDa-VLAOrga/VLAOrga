@@ -31,10 +31,9 @@ export default function CalendarView() {
     eventsByDate, 
     handleCreateEvent, 
     handleEventClick,
-    closeEventDetails, 
+    closeEventDetails,
+    handleUpdateEventNotes,
     handleUpdateEvent,
-    handleMoveEvent,
-    handleMoveSeries,
   } = useEvents();
  
   /**
@@ -114,9 +113,8 @@ export default function CalendarView() {
           people={people}
           categories={categories}
           onUpdatePersonNotes={handleUpdatePersonNotes}
+          onUpdateEventNotes={handleUpdateEventNotes}
           onUpdateEvent={handleUpdateEvent}
-          onMoveEvent={handleMoveEvent}
-          onMoveSeries={handleMoveSeries}
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
