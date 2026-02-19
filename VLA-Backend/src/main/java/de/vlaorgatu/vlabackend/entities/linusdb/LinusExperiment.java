@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.linusdb;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,48 +25,53 @@ public class LinusExperiment {
     /**
      * Category of the experiment.
      */
-    @Column(name = "category_id")
+    @Column(name = "category_id", nullable = false)
     private int categoryId;
 
     /**
      * Name of the experiment.
      */
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     /**
      * Description of the experiment.
      */
+    @Nullable
     @Column(name = "description")
     private String description;
 
     /**
      * Comment on the experiment.
      */
+    @Nullable
     @Column(name = "comment")
     private String comment;
 
     /**
      * Preparation time of the experiment in minutes.
      */
+    @Nullable
     @Column(name = "preparation_time")
     private Integer preparationTime;
 
     /**
      * Status of the experiment.
      */
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private String status;
 
     /**
      * Execution time of the experiment in minutes.
      */
+    @Nullable
     @Column(name = "execution_time")
     private Integer executionTime;
 
     /**
      * Safety signs of the experiment, json format.
      */
+    @Nullable
     @Column(name = "safety_signs")
     private String safetySigns;
 
@@ -74,6 +80,6 @@ public class LinusExperiment {
      * Can be seen as the last Number of the path when navigating through linus.
      * Example: Experiment with id 124 "Magische Glühlampen" with path M.A.1.3 has number 3
      */
-    @Column(name = "experiment_number")
+    @Column(name = "experiment_number", nullable = false)
     private int experimentNumber;
 }
