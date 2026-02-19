@@ -1,24 +1,28 @@
 
 import DayColumn from "./DayColumn";
-import type { CalendarDay, CalendarEvent, CalendarEventsByDateISO } from "./CalendarTypes";
+import type { CalendarDay, CalendarEventsByDateISO } from "./CalendarTypes";
+import type {Appointment} from "@/lib/databaseTypes";
 
 type Props = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
-  onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string | undefined;
+  onEventClick?: (event: Appointment) => void;
 };
 
 /**
  * WeekGrid rendert die Spalten für die Woche.
  * Jede Spalte ist über day.iso eindeutig an einen Wochentag gekoppelt.
  */
-export default function WeekGrid({ days, eventsByDate = {}, onEventClick, getEventColor }: Props) {
+export default function WeekGrid({ days, eventsByDate = {}, onEventClick }: Props) {
   return (
     <div className="cv-grid">
       {days.map((day) => (
-        <DayColumn key={day.iso} day={day} events={eventsByDate[day.iso] || []} onEventClick={onEventClick} 
-          getEventColor={getEventColor} />
+        <DayColumn
+          key={day.iso}
+          day={day}
+          events={eventsByDate[day.iso] || []}
+          onEventClick={onEventClick}
+        />
       ))}
     </div>
   );

@@ -13,6 +13,13 @@ export function toISODateLocal(d: Date) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+export function toDatetimeLocalString(d: Date) {
+  const hours = d.getHours().toString().padStart(2, "0");
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+
+  return `${toISODateLocal(d)}T${hours}:${minutes}`;
+}
+
 /** Formats a date as "dd.mm." (e.g., "19.12."). */
 export function formatDDMM(date: Date) {
   const dd = String(date.getDate()).padStart(2, "0");
@@ -72,7 +79,7 @@ export function addWorkdays(date: Date, n: number) {
   return d;
 }
 
-const rangeFmt = new Intl.DateTimeFormat("de-DE", {
+const dayFormat = new Intl.DateTimeFormat("de-DE", {
   weekday: "short",
   day: "2-digit",
   month: "2-digit",
@@ -80,9 +87,24 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
 });
 
 /** formats a range like "Fr 19.12 – Do 25.12" */
-export function formatRangeShortDE(start: Date, end: Date) {
-  return `${rangeFmt.format(start)} – ${rangeFmt.format(end)}`;
+export function formatDayRangeShortDE(start: Date, end: Date) {
+  return `${dayFormat.format(start)} – ${dayFormat.format(end)}`;
 }
+
+const timeFormat = new Intl.DateTimeFormat("de-DE", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+/** formats a time range like 11:30 - 13:10, includes days if spanning over multiple days */
+export function formatTimeRangeShortDE(start: Date, end: Date) {
+  if (compareSameDay(start, end)) {
+    return `${timeFormat.format(start)} - ${timeFormat.format(end)}`;
+  }
+  return `${dayFormat.format(start)}, ${timeFormat.format(start)}`
+    + ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`;
+}
+
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */
 export function parseISODateLocal(iso: string): Date {
   const [datePart] = iso.split("T"); // in case you ever store timestamps
@@ -100,18 +122,6 @@ const dateFmtDE = new Intl.DateTimeFormat("de-DE", {
 export function formatISODateDE(iso: string): string {
   return dateFmtDE.format(parseISODateLocal(iso));
 }
-/**
- * Splits a datetime-local string (yyyy-mm-ddTHH:mm) into date and time parts.
- * @param dateTimeString - Format: "2024-01-15T09:00"
- * @returns Object with date (yyyy-mm-dd) and time (HH:mm)
- */
-export function splitDateTime(dateTimeString: string): {
-  date: string;
-  time: string;
-} {
-  const [date, time] = dateTimeString.split("T");
-  return { date, time };
-}
 
 /**
  * Compares two days while ignoring the clock time on a given day
@@ -125,28 +135,4 @@ export function compareSameDay(a: Date, b: Date){
   return a.getDate() == b.getDate() &&
     a.getMonth() == b.getMonth() &&
     a.getFullYear() == b.getFullYear();
-}
-
-/**
- * Adds minutes to a datetime-local string (yyyy-mm-ddTHH:mm)
- * and returns the result in the same format.
- * Handles local time correctly without UTC conversion.
- * @param dateTimeString - Format: "2024-01-15T09:00"
- * @param minutes - Number of minutes to add (can be negative)
- * @returns datetime-local string in format "yyyy-mm-ddTHH:mm"
- */
-export function addMinutesToDateTime(dateTimeString: string, minutes: number): string {
-  if (!dateTimeString) return "";
-  
-  const date = new Date(dateTimeString);
-  date.setMinutes(date.getMinutes() + minutes);
-  
-  // Format as YYYY-MM-DDTHH:mm for datetime-local input
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const mins = String(date.getMinutes()).padStart(2, '0');
-  
-  return `${year}-${month}-${day}T${hours}:${mins}`;
 }

@@ -1,24 +1,24 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-19 10:39:45.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-17 21:39:47.
 
 export interface LinusAppointment {
     id: number;
     linusUserId: number;
-    orderTime: Date;
+    orderTime?: Date;
     status: number;
-    appointmentTime: Date;
-    comment: string;
-    name: string;
+    appointmentTime?: Date;
+    comment?: string;
+    name?: string;
 }
 
 export interface LinusExperimentBooking {
     id: number;
-    linusAppointmentId: number;
+    linusAppointmentId?: number;
     linusExperimentId: number;
     linusUserId: number;
     status: number;
-    pinnedOn: Date;
+    pinnedOn?: Date;
 }
 
 export interface Acceptance {
@@ -43,16 +43,17 @@ export interface AppointmentCategory {
 
 export interface AppointmentSeries {
     id: number;
-    lecture: Lecture;
+    lecture?: Lecture;
+    name: string;
     category: AppointmentCategory;
 }
 
 export interface ExperimentBooking {
     id: number;
     linusExperimentId: number;
-    linusExperimentBookingId: number;
-    person: Person;
-    appointment: Appointment;
+    linusExperimentBookingId?: number;
+    person?: Person;
+    appointment?: Appointment;
     notes: string;
     status: ExperimentPreparationStatus;
 }
@@ -62,13 +63,16 @@ export interface Lecture {
     name: string;
     semester: string;
     color: string;
+    persons: Person[];
 }
 
 export interface Person {
     id: number;
     name: string;
+    email: string;
     notes: string;
-    linusUserId: number;
+    linusUserId?: number;
+    lectures: Lecture[];
 }
 
 export interface User {

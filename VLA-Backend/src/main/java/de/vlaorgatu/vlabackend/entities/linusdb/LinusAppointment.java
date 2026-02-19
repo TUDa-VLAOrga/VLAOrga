@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.linusdb;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -33,6 +34,7 @@ public class LinusAppointment {
      * Date and time when the reservation of the appointment was made in linus.
      */
     @Column(name = "ordertime")
+    @Nullable
     private LocalDateTime orderTime;
 
     // TODO: enum for status?
@@ -46,17 +48,20 @@ public class LinusAppointment {
      * Date and time when the appointment takes place.
      */
     @Column(name = "lecture_date")
+    @Nullable
     private LocalDateTime appointmentTime;
 
     /**
      * Comment from the linus order.
      */
     @Column(name = "comment")
+    @Nullable
     private String comment;
 
     /**
      * Name of the person/lecture.
      */
     @Column(name = "name")
+    @Nullable
     private String name;
 }

@@ -1,5 +1,6 @@
 import WeekdayPicker from "../WeekdayPicker";
 import type { Weekday } from "./EventForm";
+import type {CalendarDay} from "@/components/calendar/CalendarTypes.ts";
 
 
 
@@ -8,8 +9,8 @@ type RecurrenceSectionProps = {
   onToggle: (enabled: boolean) => void;
   weekdays: Weekday[];
   onWeekdaysChange: (weekdays: Weekday[]) => void;
-  endDate: string;
-  onEndDateChange: (date: string) => void;
+  endDay?: CalendarDay;
+  onEndDayChange: (day: CalendarDay) => void;
 };
 
 /**
@@ -24,8 +25,8 @@ export default function RecurrenceSection({
   onToggle,
   weekdays,
   onWeekdaysChange,
-  endDate,
-  onEndDateChange,
+  endDay,
+  onEndDayChange,
 }: RecurrenceSectionProps) {
   return (
     <>
@@ -53,14 +54,20 @@ export default function RecurrenceSection({
 
           <div className="cv-formGroup">
             <label htmlFor="recEnd" className="cv-formLabel">
-              Wiederholung bis
+              Wiederholung bis einschließlich
             </label>
             <input
               id="recEnd"
               type="date"
               className="cv-formInput"
-              value={endDate}
-              onChange={(e) => onEndDateChange(e.target.value)}
+              value={endDay?.iso}
+              onChange={(e) => {
+                const newDay: CalendarDay = {
+                  date: new Date(e.target.value),
+                  iso: e.target.value,
+                };
+                onEndDayChange(newDay);
+              }}
             />
           </div>
         </>

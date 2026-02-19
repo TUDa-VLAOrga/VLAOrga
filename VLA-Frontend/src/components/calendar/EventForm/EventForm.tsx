@@ -1,45 +1,41 @@
-import { useEffect, useState } from "react";
-import type { EventKind, EventStatus , Lecture } from "../CalendarTypes";
+import {  useState } from "react";
+import type {CalendarDay, EventStatus} from "../CalendarTypes";
 import AddLectureSection from "./AddLectureSection";
 import AddCategorySection from "./AddCategorySection";
 import RecurrenceSection from "./RecurrenceSection";
-import { addMinutesToDateTime } from "../dateUtils";
+import TimeRangeInput from "./TimeRangeInput";
+import type {AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
 
 export type RecurrencePattern = {
   weekdays: Weekday[];
-  endDate: string;
+  endDay?: CalendarDay;
 };
 
 export type EventFormData = {
   title: string;
-  lectureId?: string;
-  category: EventKind;
-  startDateTime: string;
-  endDateTime: string;
+  lecture?: Lecture;
+  category?: AppointmentCategory;
+  startDateTime?: Date;
+  endDateTime?: Date;
   recurrence?: RecurrencePattern;
-  people: string[] | Person[];
   status?: EventStatus;
+  notes?: string;
 };
 
 type EventFormProps = {
-  initialDate?: string;
   onSubmit: (data: EventFormData) => void;
   onCancel: () => void;
-  lectures?: Lecture[];
-  categories?: EventKind[];
-  onAddLecture?: (lecture: Lecture) => void;
-  onAddCategory?: (category: EventKind) => void;
+  lectures: Lecture[];
+  categories: AppointmentCategory[];
+  onAddLecture: (lecture: Lecture) => void;
+  onAddCategory: (category: AppointmentCategory) => void;
+  people: Person[];
+  onAddPerson?: (person: Person) => void;
 };
-
-type Person = {
-  id?: string;
-  name: string;
-  email?: string;
-  role?: string;
-};
-
 
 /**
  * EventForm collects all user inputs needed to create a calendar event.
@@ -51,29 +47,25 @@ type Person = {
  * - optional people list
  */
 export default function EventForm({
-  initialDate,
   onSubmit,
   onCancel,
   lectures= [],
   categories=[],
   onAddLecture,
   onAddCategory,
+  people= [],
+  onAddPerson,
 }: EventFormProps) {
   // Basic form fields.
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<EventKind>("Vorlesung");
-  const [lectureId, setLectureId] = useState("");
-  const [startDateTime, setStartDateTime] = useState(initialDate ? `${initialDate}T09:00` : "");
-  const [endDateTime, setEndDateTime] = useState(  initialDate ? `${initialDate}T10:00` : "");
-  const [peopleInput, setPeopleInput] = useState("");
-  const [recurrence, setRecurrence] = useState({enabled: false, weekdays: [] as Weekday[], endDate: ""});
+  const [category, setCategory] = useState<AppointmentCategory>();
+  const [lecture, setLecture] = useState<Lecture>();
+  const [startDateTime, setStartDateTime] = useState<Date | undefined>();
+  const [endDateTime, setEndDateTime] = useState<Date | undefined>();
+  const [notes, setNotes] = useState("");
+  const [recurrence, setRecurrence] = useState(
+    {enabled: false, weekdays: [] as Weekday[], endDay: undefined as CalendarDay | undefined});
   
-  useEffect(() => {
-  // Wenn startDateTime gesetzt ist, aber endDateTime fehlt oder davor liegt
-    if (startDateTime ) {
-      setEndDateTime(addMinutesToDateTime(startDateTime, 100));
-    }
-  }, [startDateTime]);
   /**
    * When a new lecture is created inside AddLectureSection:
    * - forward it to the parent (so it ends up in the lecture list)
@@ -82,16 +74,17 @@ export default function EventForm({
 
   const handleAddLecture = (lecture: Lecture) => {
     onAddLecture?.(lecture);
-    setLectureId(lecture.id); 
+    setLecture(lecture);
   };
+  
   /**
    * When a new category is created inside AddCategorySection:
    * - forward it to the parent (so it ends up in the category list)
    * - auto-select it for the current event
    */
-  const handleAddCategory = (categoryName: string) => {
-    onAddCategory?.(categoryName);
-    setCategory(categoryName);
+  const handleAddCategory = (category: AppointmentCategory) => {
+    onAddCategory?.(category);
+    setCategory(category);
   };
 
   /**
@@ -108,32 +101,28 @@ export default function EventForm({
       category,
       startDateTime,
       endDateTime,
-      people: peopleInput
-        .split(",")
-        .map((p) => p.trim())
-        .filter((p) =>p !== ""),
     };
 
-    if( lectureId) {
-      formData.lectureId= lectureId;
+    if( lecture) {
+      formData.lecture= lecture;
     }
 
-    if (recurrence.enabled && recurrence.weekdays.length > 0 && recurrence.endDate) {
+    if (recurrence.enabled && recurrence.weekdays.length > 0 && recurrence.endDay) {
       formData.recurrence = {
         weekdays: recurrence.weekdays,
-        endDate: recurrence.endDate,
+        endDay: recurrence.endDay,
       };
     }
 
+    if (notes.trim() !== "") {
+      formData.notes = notes.trim();
+    }
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
-  const hasTitle = title.trim() !== "";
-  const hasCategory = category.trim() !== "";
-  const hasStartDateTime = startDateTime !== "";
-  const hasEndDateTime = endDateTime !== "";
-  const isValidTimeRange = endDateTime > startDateTime;
-  const isValid = hasTitle && hasCategory && hasStartDateTime && hasEndDateTime && isValidTimeRange;
+  const hasTitle = (title.trim() !== "") || lecture;
+  const isValid =
+    hasTitle && category && startDateTime && endDateTime && verifyValidTimeRange(startDateTime, endDateTime);
 
   return (
     <div className="cv-formOverlay">
@@ -143,7 +132,7 @@ export default function EventForm({
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">
             <label htmlFor="title" className="cv-formLabel">
-              Titel *
+              Titel (für Vorlesungen optional)
             </label>
             <input
               id="title"
@@ -152,7 +141,6 @@ export default function EventForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="z.B. Vorlesung Physik I"
-              required
             />
           </div>
 
@@ -165,65 +153,42 @@ export default function EventForm({
 
           <AddLectureSection
             lectures={lectures}
-            selectedLectureId={lectureId}
-            onLectureChange={setLectureId}
+            selectedLecture={lecture}
+            onLectureChange={setLecture}
             onAddLecture={handleAddLecture}
+            people={people}
+            onAddPerson={onAddPerson}
           />
 
-          <div className="cv-formGroup">
-            <label htmlFor="startDateTime" className="cv-formLabel">
-              Start (Datum & Uhrzeit) *
-            </label>
-            <input
-              id="startDateTime"
-              type="datetime-local"
-              className="cv-formInput"
-              value={startDateTime}
-              onChange={(e) => {
-                setStartDateTime(e.target.value);
-              }}
-              required
-            />
-          </div>
-
-          <div className="cv-formGroup">
-            <label htmlFor="endDateTime" className="cv-formLabel">
-              Ende (Datum & Uhrzeit) *
-            </label>
-            <input
-              id="endDateTime"
-              type="datetime-local"
-              className="cv-formInput"
-              value={endDateTime}
-              onChange={(e) => setEndDateTime(e.target.value)}
-              required
-            />
-          </div>
+          <TimeRangeInput
+            startDateTime={startDateTime}
+            endDateTime={endDateTime}
+            onStartChange={setStartDateTime}
+            onEndChange={setEndDateTime}
+            autoCalculateEnd={true}
+          />
 
           <RecurrenceSection
             isEnabled={recurrence.enabled}
             onToggle={(enabled) => setRecurrence({ ...recurrence, enabled })}
             weekdays={recurrence.weekdays}
             onWeekdaysChange={(weekdays) => setRecurrence({ ...recurrence, weekdays })}
-            endDate={recurrence.endDate}
-            onEndDateChange={(endDate) => setRecurrence({ ...recurrence, endDate })}
+            endDay={recurrence.endDay}
+            onEndDayChange={(endDay) => setRecurrence({ ...recurrence, endDay })}
           />
 
           <div className="cv-formGroup">
-            <label htmlFor="people" className="cv-formLabel">
-              Personen (kommagetrennt)
+            <label htmlFor="eventNotes" className="cv-formLabel">
+              Notizen zum Termin
             </label>
-            <input
-              id="people"
-              type="text"
-              className="cv-formInput"
-              value={peopleInput}
-              onChange={(e) => setPeopleInput(e.target.value)}
-              placeholder="z.B. Prof. Müller, Dr. Schmidt"
+            <textarea
+              id="eventNotes"
+              className="cv-formInput cv-eventNotesTextarea"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Notizen zu diesem Termin..."
+              rows={4}
             />
-            <small className="cv-formHint">
-              Mehrere Personen mit Komma trennen
-            </small>
           </div>
 
           <div className="cv-formActions">

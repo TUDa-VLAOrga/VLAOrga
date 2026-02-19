@@ -9,6 +9,7 @@ import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
 import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
+import { usePeople } from "@/hooks/usePeople";
 
 
 /**
@@ -22,9 +23,19 @@ export default function CalendarView() {
   const {days,weekStart,rangeText,prevDay,nextDay,goToDate}= useCalendarNavigation();
   const {lectures,handleAddLecture}= useLectures();
   const {categories,handleAddCategory}= useCategories();
+  const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
 
-  const {selectedEvent, eventsByDate, handleCreateEvent, handleEventClick,closeEventDetails, getEventColor  }= 
-    useEvents(lectures);
+  const {
+    allEvents,
+    selectedEvent,
+    eventsByDate, 
+    handleCreateEvent, 
+    handleEventClick,
+    closeEventDetails, 
+    handleUpdateEvent,
+    handleMoveEvent,
+    handleMoveSeries,
+  } = useEvents();
  
   /**
    * Called by EventForm when the user submits.
@@ -74,8 +85,11 @@ export default function CalendarView() {
       {/* Main frame: header row (weekdays) + grid with day columns */}
       <div className="cv-frame">
         <WeekHeader days={days} />
-        <WeekGrid days={days}  eventsByDate={eventsByDate} onEventClick={handleEventClick} 
-          getEventColor={getEventColor}/>
+        <WeekGrid
+          days={days}
+          eventsByDate={eventsByDate}
+          onEventClick={handleEventClick}
+        />
       </div>
       {/* Modal overlay: create new event */}
       {showEventForm && (
@@ -86,14 +100,26 @@ export default function CalendarView() {
           categories={categories}
           onAddLecture={handleAddLecture}
           onAddCategory={handleAddCategory}
+          people={people}
+          onAddPerson={handleAddPerson}
         />
       )}
       {/* Modal overlay: event details */}
       {selectedEvent && (
         <EventDetails
           event={selectedEvent}
+          allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}
+          people={people}
+          categories={categories}
+          onUpdatePersonNotes={handleUpdatePersonNotes}
+          onUpdateEvent={handleUpdateEvent}
+          onMoveEvent={handleMoveEvent}
+          onMoveSeries={handleMoveSeries}
+          onAddCategory={handleAddCategory}
+          onAddPerson={handleAddPerson}
+          onAddLecture={handleAddLecture}
         />
       )}
     </div>
