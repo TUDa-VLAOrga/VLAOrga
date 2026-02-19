@@ -1,4 +1,4 @@
-import type { Weekday } from "./EventForm/EventForm";
+import type { Weekday } from "./EventForm/EventCreationForm.tsx";
 
 type WeekdayPickerProps = {
   selectedDays: Weekday[];

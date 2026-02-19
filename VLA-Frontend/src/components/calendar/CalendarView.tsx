@@ -3,7 +3,7 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
 import GoToMenu from "./GoToButton";
-import EventForm, { type EventFormData } from "./EventForm/EventForm";
+import EventCreationForm, { type EventFormData } from "./EventForm/EventCreationForm.tsx";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
@@ -92,7 +92,7 @@ export default function CalendarView() {
       </div>
       {/* Modal overlay: create new event */}
       {showEventForm && (
-        <EventForm
+        <EventCreationForm
           onSubmit={onEventSubmit}
           onCancel={() => setShowEventForm(false)}
           lectures={lectures}

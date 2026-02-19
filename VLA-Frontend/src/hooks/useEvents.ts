@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventForm";
+import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import { addDays } from "../components/calendar/dateUtils";
 import type {Appointment, AppointmentSeries} from "@/lib/databaseTypes";
 import {

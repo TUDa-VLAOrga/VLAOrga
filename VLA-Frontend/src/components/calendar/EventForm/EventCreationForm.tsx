@@ -46,7 +46,7 @@ type EventFormProps = {
  * - optional recurrence
  * - optional people list
  */
-export default function EventForm({
+export default function EventCreationForm({
   onSubmit,
   onCancel,
   lectures= [],
