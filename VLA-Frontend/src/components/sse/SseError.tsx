@@ -31,12 +31,7 @@ function SseError(){
                   Bitte laden Sie die Seite neu.
                   <br/>
                   <br/>
-                  <Button>
-                    {{
-                      onClickEvent: refreshPage,
-                      text: <><u>Neu laden</u></>,
-                    }}
-                  </Button>
+                  <Button onClick={refreshPage} text={<><u>Neu laden</u></>}/>
                 </>,
       }}
     </Popup>

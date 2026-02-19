@@ -1,6 +1,6 @@
 import { SSEHandler } from "@/components/sse/SseHandler";
 import SseHookObserver from "@/components/sse/SseHookObserver";
-import type { SseMessageType } from "@/components/sse/SseMessageType";
+import type { SseMessageType } from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
 
 /**
@@ -12,7 +12,9 @@ import { useEffect, useState } from "react";
 export default function useSseConnection<T>(
   initialValue: T, 
   eventHandlers: Map<SseMessageType, (event: MessageEvent, currentValue: T) => T>
-){
+)
+  : [T, React.Dispatch<React.SetStateAction<T>>]
+{
   const [value, setValue] = useState<T>(initialValue);
 
   /**
@@ -25,7 +27,7 @@ export default function useSseConnection<T>(
     if(!eventHandlers.has(event.type as SseMessageType)) return;
 
     // This updates the trigger of the rendering function
-    setValue(eventHandlers.get(event.type as SseMessageType)!(event, value));
+    setValue((currentValue) => eventHandlers.get(event.type as SseMessageType)!(event, currentValue));
   }
 
   /**
