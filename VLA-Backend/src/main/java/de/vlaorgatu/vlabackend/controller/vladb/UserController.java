@@ -4,7 +4,9 @@ import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,21 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
-
+    /**
+     * Default injected Password Encoder defined by the SecurityConfig.
+     */
+    private final PasswordEncoder passwordEncoder;
     /**
      * Repository used for user persistence operations.
      */
     private final UserRepository userRepository;
-
-    /**
-     * Creates a new {@code UserController}.
-     *
-     * @param userRepository repository used for user persistence operations
-     */
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     /**
      * Returns a list of all users.
@@ -59,12 +56,14 @@ public class UserController {
 
     /**
      * Creates a new user.
+     * Encrypts the password using the password encoder injected by the security configuration
      *
      * @param user user to create
      * @return created user
      */
     @PostMapping
     public User createUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
