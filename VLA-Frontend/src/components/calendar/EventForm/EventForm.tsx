@@ -120,7 +120,7 @@ export default function EventForm({
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
-  const hasTitle = (title.trim() !== "") || lecture;
+  const hasTitle = (title.trim() !== "") || Boolean(lecture);
   const isValid =
     hasTitle && category && startDateTime && endDateTime && verifyValidTimeRange(startDateTime, endDateTime);
 

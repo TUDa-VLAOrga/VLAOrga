@@ -5,8 +5,11 @@ import TimeRangeInput from "@/components/calendar/EventForm/TimeRangeInput.tsx";
 
 type MoveEventDialogProps = {
   event: Appointment;
-  onMove?: (eventID: number, newStart: Date, newEnd: Date) => void;
-  onCancel: () => void;
+  // action handler for moving event
+  onMove: (eventID: number, newStart: Date, newEnd: Date) => void;
+  // action to be performed when dialog is closed, e.g., close popup
+  closeAction: () => void;
+  // whether to move the whole series or just this single event
   isSeries: boolean;
 };
 
@@ -16,7 +19,7 @@ type MoveEventDialogProps = {
 export default function MoveEventDialog({ 
   event, 
   onMove, 
-  onCancel, 
+  closeAction,
   isSeries, 
 }: MoveEventDialogProps) {
 
@@ -24,9 +27,9 @@ export default function MoveEventDialog({
   const [newEndDateTime, setNewEndDateTime] = useState(event.end);
 
   const handleMove = () => {
-    if (onMove && newStartDateTime && newEndDateTime) {
+    if (newStartDateTime && newEndDateTime) {
       onMove(event.id, newStartDateTime, newEndDateTime);
-      onCancel();
+      closeAction();
     }
   };
 
@@ -59,7 +62,7 @@ export default function MoveEventDialog({
           <button
             type="button"
             className="cv-formBtn cv-formBtnCancel"
-            onClick={onCancel}
+            onClick={closeAction}
           >
             Abbrechen
           </button>

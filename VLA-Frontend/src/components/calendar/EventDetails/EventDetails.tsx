@@ -91,7 +91,7 @@ export default function EventDetails({
       <MoveEventDialog
         event={event}
         onMove={onMoveEvent}
-        onCancel={() => setShowMoveDialog(false)}
+        closeAction={() => setShowMoveDialog(false)}
         isSeries={false}
       />
     );
@@ -101,7 +101,7 @@ export default function EventDetails({
       <MoveEventDialog
         event={event}
         onMove={onMoveSeries}
-        onCancel={() => setShowMoveSeriesDialog(false)}
+        closeAction={() => setShowMoveSeriesDialog(false)}
         isSeries={true}
       />
     );

@@ -31,7 +31,7 @@ export default function AddPeopleSection({
         // role: newPersonRole.trim() || undefined,
         notes: "",
         lectures: [],
-        linusUserId: 0,  // ID zero represents a non-existing user
+        linusUserId: undefined,
       };
       onAddPerson(newPerson);
       setNewPersonName("");

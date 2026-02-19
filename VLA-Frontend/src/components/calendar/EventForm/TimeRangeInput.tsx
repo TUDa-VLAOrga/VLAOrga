@@ -1,5 +1,5 @@
 import {useEffect, useRef} from "react";
-import {DEFAULT_DURATION} from "@/components/calendar/eventUtils.ts";
+import {DEFAULT_DURATION_MIN} from "@/components/calendar/eventUtils.ts";
 import {toDatetimeLocalString} from "@/components/calendar/dateUtils.ts";
 
 type TimeRangeInputProps = {
@@ -21,7 +21,7 @@ export default function TimeRangeInput({
   onStartChange,
   onEndChange,
   autoCalculateEnd = true,
-  durationMilliseconds = DEFAULT_DURATION * 60 * 1000,
+  durationMilliseconds = DEFAULT_DURATION_MIN * 60 * 1000,
 }: TimeRangeInputProps) {
 
   const initialDuration = (startDateTime && endDateTime)

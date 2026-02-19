@@ -12,9 +12,6 @@ type AddLectureFormProps = {
 };
 
 /**
- * ============================================================================
- * NEUE KOMPONENTE: AddLectureForm
- * ============================================================================
  * Ersetzt das inline-Formular in AddLectureSection durch ein vollständiges Modal.
  * Ermöglicht das Erstellen von Vorlesungen mit:
  * - Name
@@ -58,7 +55,7 @@ export default function AddLectureForm({
 
   const isValid = lectureName.trim() !== "";
 
-  const madalContent = (
+  const modalContent = (
     <div className="cv-formOverlay" onClick={(e)=> e.stopPropagation()}>
       <div className="cv-formBox" onClick={(e)=> e.stopPropagation()}>
         <h2 className="cv-formTitle">Neue Vorlesung</h2>
@@ -132,5 +129,5 @@ export default function AddLectureForm({
       </div>
     </div>);
 
-  return createPortal(madalContent, document.body);
+  return createPortal(modalContent, document.body);
 }

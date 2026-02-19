@@ -69,7 +69,7 @@ export default function EventEditForm({
     onSave(updatedEvent);
   };
 
-  const hasTitle = (title.trim() !== "") || lecture;
+  const hasTitle = (title.trim() !== "") || Boolean(lecture);
   const hasCategory = category;
   const isValidTimeRange = verifyValidTimeRange(startDateTime, endDateTime);
   const isValid = hasTitle && hasCategory && isValidTimeRange;
