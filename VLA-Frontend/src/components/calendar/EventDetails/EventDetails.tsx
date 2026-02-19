@@ -18,8 +18,8 @@ type EventDetailsProps = {
   categories?: AppointmentCategory[];
   onUpdatePersonNotes?: (personId: number, notes: string) => void;
   onUpdateEvent?: (eventId: number, updates: Partial<Appointment>) => void;
-  onMoveEvent?: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
-  onMoveSeries?: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
+  onMoveEvent: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
+  onMoveSeries: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
   onAddCategory?: (category: AppointmentCategory) => void;
   onAddPerson?: (person: Person) => void;
   onAddLecture?: (lecture: Lecture) => void;
