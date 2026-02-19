@@ -7,6 +7,7 @@ import "../../../styles/Event-details-styles.css";
 import MoveConfirmDialog from "./MoveConfirmDialog";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
+import ExperimentSection from "@/components/experiments/ExperimentSection";
 
 
 type EventDetailsProps = {
@@ -162,6 +163,8 @@ export default function EventDetails({
                 {formatTimeRangeShortDE(event.start, event.end)}
               </span>
             </div>
+
+            <ExperimentSection appointment={event}/>
 
             {eventPeople.length > 0 && (
               <div className="cv-detailRow">
