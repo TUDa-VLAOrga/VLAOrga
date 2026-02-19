@@ -24,24 +24,24 @@ public class LinusUser {
     /**
      * Name of the user.
      */
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     /**
      * Roles of the user, json format.
      */
-    @Column(name = "roles")
+    @Column(name = "roles", nullable = false)
     private String roles;
 
     /**
      * Hashed Password of the user.
      */
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     /**
      * Email address of the user.
      */
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 }
