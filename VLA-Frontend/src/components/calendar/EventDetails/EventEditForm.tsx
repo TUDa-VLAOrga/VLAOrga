@@ -4,6 +4,7 @@ import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
 import type {Appointment, AppointmentCategory, AppointmentSeries, Lecture, Person} from "@/lib/databaseTypes";
 import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
@@ -82,14 +83,6 @@ export default function EventEditForm({
       <div className="cv-formBox">
         <h2 className="cv-formTitle">Termin bearbeiten</h2>
 
-        <div className="cv-detailsContent">
-          <p className="cv-moveDialogInfo">
-            {isSeries
-              ? 'Alle Termine dieser Serie werden bearbeitet und entsprechend verschoben.'
-              : 'Nur dieser einzelne Termin wird bearbeitet und aus der Serie gelöst.'}
-          </p>
-        </div>
-
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">
             <label htmlFor="title" className="cv-formLabel">
@@ -125,8 +118,15 @@ export default function EventEditForm({
             endDateTime={endDateTime}
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
+            hintText={"Ursprüngliche Zeit: " + formatTimeRangeShortDE(event.start, event.end)}
           />
-
+          <div className="cv-detailsContent">
+            <p className="cv-moveDialogInfo">
+              {isSeries
+                ? 'Alle Termine dieser Serie werden bearbeitet und entsprechend verschoben.'
+                : 'Nur dieser einzelne Termin wird bearbeitet und aus der Serie gelöst.'}
+            </p>
+          </div>
           {!isSeries &&
             <div className="cv-formGroup">
               <label htmlFor="eventNotes" className="cv-formLabel">
