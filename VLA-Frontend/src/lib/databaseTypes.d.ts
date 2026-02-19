@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-16 14:21:07.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-17 14:35:11.
 
 export interface LinusAppointment {
     id: number;
@@ -12,6 +12,19 @@ export interface LinusAppointment {
     name: string;
 }
 
+export interface LinusExperiment {
+    id: number;
+    categoryId: number;
+    name: string;
+    description: string;
+    comment: string;
+    preparationTime: number;
+    status: string;
+    executionTime: number;
+    safetySigns: string;
+    experimentNumber: number;
+}
+
 export interface LinusExperimentBooking {
     id: number;
     linusAppointmentId: number;
@@ -19,6 +32,14 @@ export interface LinusExperimentBooking {
     linusUserId: number;
     status: number;
     pinnedOn: Date;
+}
+
+export interface LinusUser {
+    id: number;
+    name: string;
+    roles: string;
+    password: string;
+    email: string;
 }
 
 export interface Acceptance {
@@ -85,6 +106,7 @@ export const enum ExperimentPreparationStatus {
 
 export const enum SseMessageType {
     DEBUG = "DEBUG",
+    SSEDEBUG = "SSEDEBUG",
     EXPERIMENT = "EXPERIMENT",
     CALENDAR = "CALENDAR",
     APPROVEDELETION = "APPROVEDELETION",
