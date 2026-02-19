@@ -29,6 +29,7 @@ export default function AddLectureForm({
   const [semester, setSemester] = useState("");
   const [color, setColor] = useState("#3b82f6");
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
+  let notSynchronisedId = -1;  // negative ID to signal a not-yet-created entity
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,7 +39,7 @@ export default function AddLectureForm({
 
     
     const newLecture: Lecture = {
-      id: -Date.now(),  // negative ID to signal not-yet-created entity
+      id: notSynchronisedId--,  // negative ID to signal not-yet-created entity
       name: lectureName.trim(),
       semester: semester.trim(),
       color: color.trim(),

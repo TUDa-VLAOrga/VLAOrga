@@ -20,6 +20,7 @@ import {Logger} from "@/components/logger/Logger.ts";
  */
 
 export function useEvents() {
+  let notSynchronisedId = -1;  // negative ID signals an entity not created in the backend
   const [allEvents, setEvents] = useState<Appointment[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Appointment>();
 
@@ -56,7 +57,7 @@ export function useEvents() {
         newSeries = {
           ...oldEvent.series,
           ...updates.series,
-          id: -Date.now(),
+          id: notSynchronisedId--,
         };
         // TODO: backend request to create new series
       }
@@ -110,21 +111,19 @@ export function useEvents() {
     // Also, create a single series if initial event date is not on one recurring day.
     if (!formData.recurrence || !formData.recurrence.weekdays.includes(formData.startDateTime.getDay() as Weekday)) {
       const newAppSeries: AppointmentSeries = {
-        id: -Date.now(),
+        id: notSynchronisedId--,
         lecture: formData.lecture,
         name: formData.title.trim(),
         category: formData.category,
       };
       newEvents.push({
-        id: -Date.now() - 1,
+        id: notSynchronisedId--,
         series: newAppSeries,
         start: formData.startDateTime,
         end: formData.endDateTime,
         notes: formData.notes || "",
       });
     }
-
-    let dummyId = -Date.now() - 1; // negative ID signals a not-yet-created entity
 
     // create series of recurring events by looping day by day
     if (formData.recurrence && formData.recurrence.weekdays.length > 0 && formData.recurrence.endDay) {
@@ -133,7 +132,7 @@ export function useEvents() {
       formData.recurrence.weekdays.forEach(
         (day) => {
           seriesByWeekday.set(day, {
-            id: --dummyId,
+            id: notSynchronisedId--,
             lecture: formData.lecture,
             name: formData.title.trim(),
             category: formData.category!,
@@ -150,7 +149,7 @@ export function useEvents() {
         const weekday = currentDate.getDay() as Weekday;
         if (formData.recurrence.weekdays.includes(weekday)) {
           newEvents.push({
-            id: --dummyId,
+            id: notSynchronisedId--,
             series: seriesByWeekday.get(weekday)!,
             start: currentDate,
             end: new Date(currentDate.getTime() + duration),
