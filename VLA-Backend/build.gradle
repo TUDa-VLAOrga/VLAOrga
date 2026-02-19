@@ -1,8 +1,13 @@
+import cz.habarta.typescript.generator.EnumMapping
+import cz.habarta.typescript.generator.JsonLibrary
+import cz.habarta.typescript.generator.TypeScriptOutputKind
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.7'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
+    id 'cz.habarta.typescript-generator' version '3.2.1263'
 }
 
 group = 'de.VLAOrgaTU'
@@ -52,6 +57,24 @@ checkstyle {
     maxWarnings = 0
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    generateTypeScript {
+        dependsOn build
+
+        classPatterns = [
+                "de.vlaorgatu.vlabackend.entities.**",
+                "de.vlaorgatu.vlabackend.enums.**"
+        ]
+
+        jsonLibrary = JsonLibrary.Jackson2
+
+        mapEnum = EnumMapping.asEnum
+
+        outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.d.ts")
+        outputKind = TypeScriptOutputKind.Module
+    }
 }
