@@ -17,7 +17,7 @@ type EventDetailsProps = {
   people?: Person[];
   categories?: AppointmentCategory[];
   onUpdatePersonNotes?: (personId: number, notes: string) => void;
-  onUpdateEvent?: (eventId: number, updates: Partial<Appointment>) => void;
+  onUpdateEvent: (eventId: number, updates: Partial<Appointment>) => void;
   onMoveEvent: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
   onMoveSeries: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
   onAddCategory?: (category: AppointmentCategory) => void;
@@ -49,6 +49,7 @@ export default function EventDetails({
   const [showMoveDialog, setShowMoveDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   const [showMoveConfirm, setShowMoveConfirm] = useState(false);
+  const [eventNotes, setEventNotes] = useState(event.notes);
   const lecture = event.series.lecture;
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
@@ -59,14 +60,14 @@ export default function EventDetails({
         setSelectedPerson({...selectedPerson, notes});
       }
     }
-  };
+  }
 
   function handleUpdateEvent(updates: Partial<Appointment>) {
     if (onUpdateEvent) {
       onUpdateEvent(event.id, updates);
     }
     setIsEditing(false);
-  };
+  }
 
   const eventPeople = lecture?.persons || [];
   const currentSelectedPerson = selectedPerson || null;
@@ -201,9 +202,35 @@ export default function EventDetails({
                 <span className="cv-detailValue cv-detailValueNotes">{event.notes}</span>
               </div>
             )}
+            <textarea
+              id="eventNotes"
+              className="cv-notesTextarea"
+              value={eventNotes}
+              onChange={(e) => setEventNotes(e.target.value)}
+              placeholder="Notizen zu diesem Termin..."
+              rows={4}
+            />
           </div>
 
           <div className="cv-formActions">
+            <button
+              type="button"
+              className="cv-formBtn cv-formBtnCancel"
+              onClick={onClose}
+            >
+              Abbrechen
+            </button>
+            <button
+              type="submit"
+              className="cv-formBtn cv-formBtnSubmit"
+              disabled={eventNotes === event.notes}
+              onClick={() => {
+                onUpdateEvent(event.id, {notes: eventNotes});
+                onClose();
+              }}
+            >
+              Notizen speichern
+            </button>
             <button
               type="button"
               className="cv-formBtn cv-formBtnSecondary"
@@ -218,20 +245,13 @@ export default function EventDetails({
             >
               Verschieben
             </button>
-            
+
             <button
               type="button"
               className="cv-formBtn cv-formBtnSecondary"
               onClick={() => setIsEditing(true)}
             >
               Bearbeiten
-            </button>
-            <button
-              type="button"
-              className="cv-formBtn cv-formBtnCancel"
-              onClick={onClose}
-            >
-              Schließen
             </button>
           </div>
         </div>

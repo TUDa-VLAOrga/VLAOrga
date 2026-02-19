@@ -863,9 +863,10 @@
   font-size: 14px;
 }
 
-.cv-personNotesTextarea {
+.cv-notesTextarea {
   width: 100%;
   max-width: 420px;
+  margin: 0 auto;
   min-height: 100px;
   padding: 12px;
   border: 1px solid #d1d5db;
@@ -877,13 +878,13 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cv-personNotesTextarea:focus {
+.cv-notesTextarea:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.cv-personNotesTextarea::placeholder {
+.cv-notesTextarea::placeholder {
   color: #9ca3af;
 }
 

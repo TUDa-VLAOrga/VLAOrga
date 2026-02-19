@@ -179,7 +179,7 @@ export default function EventForm({
 
           <div className="cv-formGroup">
             <label htmlFor="eventNotes" className="cv-formLabel">
-              Notizen zum Termin
+              Notizen {recurrence.enabled && "(wird allen Terminen hinzugefügt)"}
             </label>
             <textarea
               id="eventNotes"
