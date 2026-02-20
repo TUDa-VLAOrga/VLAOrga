@@ -123,7 +123,7 @@ public class GlobalNoteController {
                 )
             );
 
-        note.setNoteColor(proposedNote.getNoteColor());
+        note.setColor(proposedNote.getColor());
         note.setTitle(proposedNote.getTitle());
         note.setContent(proposedNote.getContent());
 

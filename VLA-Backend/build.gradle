@@ -71,6 +71,8 @@ tasks {
                 "de.vlaorgatu.vlabackend.enums.**"
         ]
 
+        optionalAnnotations = [ "jakarta.annotation.Nullable" ]
+
         jsonLibrary = JsonLibrary.Jackson2
 
         mapEnum = EnumMapping.asEnum

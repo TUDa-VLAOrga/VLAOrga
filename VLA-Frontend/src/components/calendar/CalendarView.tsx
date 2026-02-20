@@ -3,12 +3,13 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
 import GoToMenu from "./GoToButton";
-import EventForm, { type EventFormData } from "./EventForm/EventForm";
+import EventCreationForm, { type EventFormData } from "./EventForm/EventCreationForm.tsx";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
 import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
+import { usePeople } from "@/hooks/usePeople";
 
 
 /**
@@ -22,9 +23,18 @@ export default function CalendarView() {
   const {days,weekStart,rangeText,prevDay,nextDay,goToDate}= useCalendarNavigation();
   const {lectures,handleAddLecture}= useLectures();
   const {categories,handleAddCategory}= useCategories();
+  const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
 
-  const {selectedEvent, eventsByDate, handleCreateEvent, handleEventClick,closeEventDetails, getEventColor  }= 
-    useEvents(lectures);
+  const {
+    allEvents,
+    selectedEvent,
+    eventsByDate, 
+    handleCreateEvent, 
+    handleEventClick,
+    closeEventDetails,
+    handleUpdateEventNotes,
+    handleUpdateEvent,
+  } = useEvents();
  
   /**
    * Called by EventForm when the user submits.
@@ -74,26 +84,40 @@ export default function CalendarView() {
       {/* Main frame: header row (weekdays) + grid with day columns */}
       <div className="cv-frame">
         <WeekHeader days={days} />
-        <WeekGrid days={days}  eventsByDate={eventsByDate} onEventClick={handleEventClick} 
-          getEventColor={getEventColor}/>
+        <WeekGrid
+          days={days}
+          eventsByDate={eventsByDate}
+          onEventClick={handleEventClick}
+        />
       </div>
       {/* Modal overlay: create new event */}
       {showEventForm && (
-        <EventForm
+        <EventCreationForm
           onSubmit={onEventSubmit}
           onCancel={() => setShowEventForm(false)}
           lectures={lectures}
           categories={categories}
           onAddLecture={handleAddLecture}
           onAddCategory={handleAddCategory}
+          people={people}
+          onAddPerson={handleAddPerson}
         />
       )}
       {/* Modal overlay: event details */}
       {selectedEvent && (
         <EventDetails
           event={selectedEvent}
+          allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}
+          people={people}
+          categories={categories}
+          onUpdatePersonNotes={handleUpdatePersonNotes}
+          onUpdateEventNotes={handleUpdateEventNotes}
+          onUpdateEvent={handleUpdateEvent}
+          onAddCategory={handleAddCategory}
+          onAddPerson={handleAddPerson}
+          onAddLecture={handleAddLecture}
         />
       )}
     </div>
