@@ -254,7 +254,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                     cursor = {isInvalidTitle(editingState) ? "not-allowed" : "pointer"}
                   />
                   {
-                  isInvalidTitle(editingState) &&
+                    isInvalidTitle(editingState) &&
                   <>
                     <br/>
                     <i>* Notizen mit einem leeren Titel können nicht hochgeladen werden</i>
