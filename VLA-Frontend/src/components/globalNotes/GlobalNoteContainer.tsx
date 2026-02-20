@@ -50,7 +50,7 @@ export default function GlobalNoteContainer() {
   function createNewDummyNote(){
     const draftNote: GlobalNote = {
       id: NotSynchronisedId,
-      noteColor: "#0d6efd",
+      color: "#0d6efd",
       title: "Neue Notiz (ändern Sie den Titel hier)",
       content: "",
     };

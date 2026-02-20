@@ -37,7 +37,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
     isEditing: note.id === NotSynchronisedId,
     title: note.title,
     content: note.content,
-    color: note.noteColor,
+    color: note.color,
   });
 
   function handleNoteCreationSubmit(note: GlobalNote){
@@ -90,7 +90,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       id: note.id,
       title: editingState.title,
       content: editingState.content,
-      noteColor: editingState.color,
+      color: editingState.color,
     };
         
     const submitfunction = note.id == NotSynchronisedId ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
@@ -109,7 +109,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       isEditing: note.id === NotSynchronisedId,
       title: note.title,
       content: note.content,
-      color: note.noteColor,
+      color: note.color,
     });
   }, [note]);
 
@@ -120,7 +120,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
           editingState.isEditing ?
             editingState.color 
             : 
-            note.noteColor,
+            note.color,
       }}
     >
 
@@ -156,7 +156,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       <div className="globalNoteContent"
         style={{
           display: isContentOpen || editingState.isEditing ? "" : "none",
-          border: "5px solid " + (editingState.isEditing ? editingState.color : note.noteColor),
+          border: "5px solid " + (editingState.isEditing ? editingState.color : note.color),
         }}>
                 
         {
@@ -234,7 +234,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
         <br/>
         <Button 
           text = {editingState.isEditing ? "Änderungen verwerfen" : "Notiz editieren"}
-          backgroundColor = {editingState.isEditing ? editingState.color : note.noteColor}
+          backgroundColor = {editingState.isEditing ? editingState.color : note.color}
           onClick = {() => 
             setEditingState({
               ...editingState,
