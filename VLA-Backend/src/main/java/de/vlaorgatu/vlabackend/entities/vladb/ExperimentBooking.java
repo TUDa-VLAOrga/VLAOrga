@@ -8,11 +8,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a booked experiment for a certain appointment.
  */
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "experiment_bookings")
@@ -58,7 +64,7 @@ public class ExperimentBooking {
     private String notes = "";
 
     /**
-     * Preparation status of the experiment..
+     * Preparation status of the experiment.
      */
     @Column(name = "status", nullable = false)
     private ExperimentPreparationStatus status = ExperimentPreparationStatus.PENDING;
