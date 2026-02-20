@@ -2,7 +2,7 @@
 // This is only a demonstration and should not be used
 
 import useSseConnection from "@/hooks/useSseConnection";
-import { SseMessageType } from "./SseMessageType";
+import { SseMessageType } from "@/lib/databaseTypes";
 
 export default function SseTestComponent(){
   const eventHandlers = new Map<SseMessageType, (event: MessageEvent) => string>();
