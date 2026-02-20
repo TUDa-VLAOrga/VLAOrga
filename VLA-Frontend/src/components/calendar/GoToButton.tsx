@@ -69,7 +69,7 @@ export default function GoToMenu({ currentWeekStart, onDateSelect }: GoToMenuPro
           aria-label="Gehe zu heute"
           type="button"
         >
-          Jetzt
+          Heute
         </button>
         
         <button

@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.linusdb;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -27,6 +28,7 @@ public class LinusExperimentBooking {
      */
     // TODO: possible candidate for @JoinColumn
     @Column(name = "reservation_id")
+    @Nullable
     private Integer linusAppointmentId;
 
     /**
@@ -53,5 +55,6 @@ public class LinusExperimentBooking {
      * Time of the booking.
      */
     @Column(name = "pinned_on")
+    @Nullable
     private LocalDateTime pinnedOn;
 }

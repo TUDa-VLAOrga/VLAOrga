@@ -1,37 +1,37 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-17 14:35:11.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-19 19:41:17.
 
 export interface LinusAppointment {
     id: number;
     linusUserId: number;
-    orderTime: Date;
+    orderTime?: Date;
     status: number;
-    appointmentTime: Date;
-    comment: string;
-    name: string;
+    appointmentTime?: Date;
+    comment?: string;
+    name?: string;
 }
 
 export interface LinusExperiment {
     id: number;
     categoryId: number;
     name: string;
-    description: string;
-    comment: string;
-    preparationTime: number;
+    description?: string;
+    comment?: string;
+    preparationTime?: number;
     status: string;
-    executionTime: number;
-    safetySigns: string;
+    executionTime?: number;
+    safetySigns?: string;
     experimentNumber: number;
 }
 
 export interface LinusExperimentBooking {
     id: number;
-    linusAppointmentId: number;
+    linusAppointmentId?: number;
     linusExperimentId: number;
     linusUserId: number;
     status: number;
-    pinnedOn: Date;
+    pinnedOn?: Date;
 }
 
 export interface LinusUser {
@@ -64,16 +64,17 @@ export interface AppointmentCategory {
 
 export interface AppointmentSeries {
     id: number;
-    lecture: Lecture;
+    lecture?: Lecture;
+    name: string;
     category: AppointmentCategory;
 }
 
 export interface ExperimentBooking {
     id: number;
     linusExperimentId: number;
-    linusExperimentBookingId: number;
-    person: Person;
-    appointment: Appointment;
+    linusExperimentBookingId?: number;
+    person?: Person;
+    appointment?: Appointment;
     notes: string;
     status: ExperimentPreparationStatus;
 }
@@ -83,13 +84,16 @@ export interface Lecture {
     name: string;
     semester: string;
     color: string;
+    persons: Person[];
 }
 
 export interface Person {
     id: number;
     name: string;
+    email: string;
     notes: string;
-    linusUserId: number;
+    linusUserId?: number;
+    lectures: Lecture[];
 }
 
 export interface User {

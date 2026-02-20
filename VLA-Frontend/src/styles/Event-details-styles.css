@@ -1,0 +1,353 @@
+/* Additional styles for event notes and edit functionality */
+
+/* Event notes in details view */
+.cv-detailRowNotes {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cv-detailValueNotes {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  width: 100%;
+  line-height: 1.5;
+}
+
+/* Event notes textarea */
+.cv-eventNotesTextarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+/* Secondary button style for move/edit actions */
+.cv-formBtnSecondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.cv-formBtnSecondary:hover {
+  background-color: #5a6268;
+}
+
+.cv-formBtnSecondary:active {
+  background-color: #545b62;
+}
+
+/* Move dialog info text */
+.cv-moveDialogInfo {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background-color: #e7f3ff;
+  border-left: 4px solid #0066cc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #004085;
+}
+
+/* Form actions with multiple buttons */
+.cv-formActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+/* Ensure buttons in form actions are properly sized */
+.cv-formActions .cv-formBtn {
+  min-width: 100px;
+}
+
+/* Person link styling */
+.cv-personLink {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.cv-personLink:hover {
+  color: #004085;
+}
+
+/* Lecture swatch in details */
+.cv-lectureSwatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.cv-detailValueLecture {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .cv-formActions {
+    flex-direction: column;
+  }
+  
+  .cv-formActions .cv-formBtn {
+    width: 100%;
+  }
+}
+/* ========================================
+   PERSONEN-LISTE MIT ICON-BUTTON
+   ======================================== */
+
+/* Container für Personen-Liste */
+.cv-peopleList {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+}
+
+/* Einzelne Person - Name + Button (inline, kein Block) */
+.cv-personItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Name der Person */
+.cv-personName {
+  color: inherit;
+  font-weight: normal;
+}
+
+/* Info-Button (ⓘ) - dezent und grau */
+.cv-personDetailsBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-left: 0.15rem;
+  background: none;
+  color: #6c757d;  /* Dezentes Grau */
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.7;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.cv-personDetailsBtn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  opacity: 1;
+  color: #495057;  /* Etwas dunkler beim Hover */
+}
+
+.cv-personDetailsBtn:active {
+  opacity: 0.6;
+}
+
+.cv-personDetailsBtn:focus {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+/* Komma nach Person (außer bei letzter) */
+.cv-personItem:not(:last-child)::after {
+  content: ",";
+  margin-left: 0.1rem;
+  color: inherit;
+}
+
+/* Responsive: Mobile */
+@media (max-width: 640px) {
+  .cv-personDetailsBtn {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+  }
+}
+/* Detail-Value ohne Input-Look nur für Personen */
+.cv-detailValuePeople {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: unset !important;
+}
+/* ========================================
+   PERSON DETAILS - MODERNES DESIGN
+   ======================================== */
+
+.cv-personDetailsBox {
+  max-width: 500px;
+}
+
+.cv-personDetailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.cv-personDetailsHeader .cv-formTitle {
+  margin: 0;
+}
+
+/* Close Button (X) */
+.cv-closeBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.cv-closeBtn:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* Content Container */
+.cv-personDetailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Info Cards (Email, Role) */
+.cv-personInfoCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #0066cc;
+}
+
+.cv-personInfoLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+.cv-personInfoValue {
+  font-size: 0.95rem;
+  color: #212529;
+}
+
+.cv-personEmail {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cv-personEmail:hover {
+  color: #0052a3;
+  text-decoration: underline;
+}
+
+/* Notizen Section */
+.cv-personNotesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cv-personNotesLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.cv-personNotesTextarea {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cv-personNotesTextarea:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.cv-personNotesTextarea::placeholder {
+  color: #adb5bd;
+}
+
+/* ========================================
+   MOVE CONFIRM DIALOG
+   ======================================== */
+
+.cv-confirmDialog {
+  max-width: 450px;
+}
+
+.cv-confirmMessage {
+  margin-bottom: 1rem;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.cv-confirmQuestion {
+  margin-bottom: 0;
+  color: #212529;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.cv-confirmActions {
+  gap: 0.75rem;
+}
+
+.cv-confirmActions .cv-formBtn {
+  flex: 1;
+  min-width: auto;
+}
+
+@media (max-width: 640px) {
+  .cv-confirmActions {
+    flex-direction: column;
+  }
+  
+  .cv-confirmActions .cv-formBtn {
+    width: 100%;
+  }
+}
