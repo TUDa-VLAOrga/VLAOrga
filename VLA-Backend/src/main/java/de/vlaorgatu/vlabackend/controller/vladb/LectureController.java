@@ -5,6 +5,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.LectureRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -92,5 +93,15 @@ public class LectureController
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture deleted: " + deletedLecture);
         return ResponseEntity.ok(deletedLecture);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public LectureRepository getRepository() {
+        return lectureRepository;
     }
 }

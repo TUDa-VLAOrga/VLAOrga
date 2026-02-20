@@ -6,6 +6,7 @@ import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.GlobalNoteRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.net.URI;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api/globalNotes")
 public class GlobalNoteController
-    implements GetAndGetByIdInterface<GlobalNote, GlobalNoteRepository> {
+    implements GetAndGetByIdDefaultInterface<GlobalNote, GlobalNoteRepository> {
     /**
      * Repository that contains all globalNote entities.
      */
@@ -126,5 +127,15 @@ public class GlobalNoteController
         SseController.notifyAllOfObject(SseMessageType.GLOBALNOTEDELETED, note);
 
         return ResponseEntity.ok(note);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public GlobalNoteRepository getRepository() {
+        return globalNoteRepository;
     }
 }
