@@ -19,13 +19,20 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 public interface GetAndGetByIdDefaultInterface<T, R extends JpaRepository<T, Long>> {
     /**
+     * Retrieves the repository R from the controller instance.
+     *
+     * @return The JPARepository used by the controller
+     */
+    R getRepository();
+
+    /**
      * Endpoint for GETting all entities of type T in a repo type R.
      *
      * @return All entities of type T in repo of type R
      */
     @GetMapping
-    default ResponseEntity<List<T>> getAllOfTypeT(@Autowired R repository) {
-        List<T> entities = repository.findAll();
+    default ResponseEntity<List<T>> getAllOfTypeT() {
+        List<T> entities = getRepository().findAll();
         return ResponseEntity.ok(entities);
     }
 
@@ -36,9 +43,8 @@ public interface GetAndGetByIdDefaultInterface<T, R extends JpaRepository<T, Lon
      * @return The specified note if exists
      */
     @GetMapping("/{id}")
-    default ResponseEntity<T> getEntityById(@PathVariable Long id,
-                                            @Autowired R repository) {
-        T entity = repository.findById(id)
+    default ResponseEntity<T> getEntityById(@PathVariable Long id) {
+        T entity = getRepository().findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                     "No entity with id " + id + " was found"
                 )

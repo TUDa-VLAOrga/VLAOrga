@@ -5,6 +5,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentCategoryRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -100,5 +101,15 @@ public class AppointmentCategoryController
         SseController.notifyDebugTest(
             "Appointment category deleted: " + deletedAppointmentCategory);
         return ResponseEntity.ok(deletedAppointmentCategory);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public AppointmentCategoryRepository getRepository() {
+        return appointmentCategoryRepository;
     }
 }

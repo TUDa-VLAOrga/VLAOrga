@@ -26,6 +26,7 @@ public class UserController implements GetAndGetByIdDefaultInterface<User, UserR
      */
     private final UserRepository userRepository;
 
+
     /**
      * Creates a new user.
      *
@@ -70,5 +71,15 @@ public class UserController implements GetAndGetByIdDefaultInterface<User, UserR
         userRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public UserRepository getRepository() {
+        return userRepository;
     }
 }

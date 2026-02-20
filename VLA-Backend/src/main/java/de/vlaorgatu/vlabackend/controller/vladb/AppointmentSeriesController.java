@@ -5,6 +5,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -98,5 +99,15 @@ public class AppointmentSeriesController
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Appointment series deleted: " + deletedAppointmentSeries);
         return ResponseEntity.ok(deletedAppointmentSeries);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public AppointmentSeriesRepository getRepository() {
+        return appointmentSeriesRepository;
     }
 }
