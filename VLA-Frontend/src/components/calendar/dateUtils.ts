@@ -5,6 +5,7 @@
  */
 
 export const WORKDAY_COUNT = 5;
+export const NON_WORKDAYS = [0, 6];  // days that are no workdays
 
 export function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
@@ -38,7 +39,7 @@ export function addDays(date: Date, days: number) {
 /** True, if date is Saturday or Sunday. */
 export function isWeekend(date: Date) {
   const day = date.getDay(); // 0=So,6=Sa
-  return day === 0 || day === 6;
+  return NON_WORKDAYS.includes(day);
 }
 
 /**
@@ -49,10 +50,7 @@ export function normalizeToWorkdayStart(date: Date) {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
 
-  const day = d.getDay(); // 0=So,6=Sa
-  if (day === 6) d.setDate(d.getDate() + 2); // Sa -> Mo
-  if (day === 0) d.setDate(d.getDate() + 1); // So -> Mo
-
+  while (isWeekend(d)) d.setDate(d.getDate() + 1);
   return d;
 }
 

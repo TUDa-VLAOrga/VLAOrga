@@ -13,7 +13,7 @@ type EventDetailsProps = {
   allEvents: Appointment[];
   onClose: () => void;
   lectures?: Lecture[];
-  people?: Person[];
+  people: Person[];
   categories?: AppointmentCategory[];
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
@@ -32,7 +32,7 @@ export default function EventDetails({
   allEvents,
   onClose,
   lectures = [],
-  people = [],
+  people,
   categories = [],
   onUpdatePersonNotes,
   onUpdateEventNotes,
@@ -41,24 +41,17 @@ export default function EventDetails({
   onAddPerson,
   onAddLecture,
 }: EventDetailsProps) {
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   const [eventNotes, setEventNotes] = useState(event.notes);
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
-    //TODO: Backend - PUT request to update person notes
     if (onUpdatePersonNotes) {
-      onUpdatePersonNotes(personId, notes);
-      if (selectedPerson && selectedPerson.id === personId) {
-        setSelectedPerson({...selectedPerson, notes});
-      }
+      onUpdatePersonNotes(personId, notes.trim());
     }
   }
 
-  const lecture = event.series.lecture;
-  const eventPeople = lecture?.persons || [];
-  const currentSelectedPerson = selectedPerson || null;
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
 
   if (showEditSingleDialog) {
@@ -112,25 +105,25 @@ export default function EventDetails({
             </div>
 
             {/* Lecture details (only if lecture is assigned) */}
-            {lecture && (
+            {event.series.lecture && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Vorlesung:</span>
                 <span className="cv-detailValue">
                   <span className="cv-detailValueLecture ">
                     <span
                       className="cv-lectureSwatch"
-                      style={{ backgroundColor: lecture.color }}
+                      style={{ backgroundColor: event.series.lecture.color }}
                     />
-                    <span className="cv-lectureName">{lecture.name}</span>
+                    <span className="cv-lectureName">{event.series.lecture.name}</span>
                   </span>
                 </span>
               </div>
             )}
 
-            {lecture?.semester && (
+            {event.series.lecture?.semester && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Semester:</span>
-                <span className="cv-detailValue">{lecture.semester}</span>
+                <span className="cv-detailValue">{event.series.lecture.semester}</span>
               </div>
             )}
 
@@ -141,21 +134,21 @@ export default function EventDetails({
               </span>
             </div>
 
-            <ExperimentSection appointment={event}/>
-
-            {eventPeople.length > 0 && (
+            {event.series.lecture && event.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Personen:</span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
-                    {eventPeople.map((person) => (
+                    {event.series.lecture?.persons.map((person) => (
                       <span key={person.id} className="cv-personItem">
-                        <span className="cv-personName">{person.name}</span>
+                        {/* Need to use people (state from usePeople) here, since lecture.persons
+                         include probably old versions of the person entity. */}
+                        <span className="cv-personName">{people.find((p) => p.id == person.id)?.name}</span>
                         <button
                           type="button"
                           className="cv-personDetailsBtn"
-                          onClick={() => setSelectedPerson(person)}
-                          aria-label={`Details zu ${person.name}`}
+                          onClick={() => setSelectedPersonId(person.id)}
+                          aria-label={`Details zu ${people.find((p) => p.id == selectedPersonId)?.name} anzeigen`}
                           title="Details anzeigen"
                         >
                           ⓘ
@@ -230,10 +223,10 @@ export default function EventDetails({
         </div>
       </div>
 
-      {currentSelectedPerson && (
+      {selectedPersonId && people.find((p) => p.id === selectedPersonId) && (
         <PersonDetails
-          person={currentSelectedPerson}
-          onClose={() => setSelectedPerson(null)}
+          person={people.find((p) => p.id === selectedPersonId)!}
+          onClose={() => setSelectedPersonId(undefined)}
           onSaveNotes={handlePersonNotesUpdate}
         />
       )}

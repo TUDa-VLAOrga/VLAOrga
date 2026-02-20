@@ -11,11 +11,10 @@ type PersonDetailsProps = {
  * PersonDetails shows detailed information about a person in a modal.
  */
 export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDetailsProps) {
-  const [notes, setNotes] = useState(person.notes || "");
+  const [notes, setNotes] = useState(person.notes);
  
-  const handleSave = () => {
+  function handleSave(){
     if (onSaveNotes) {
-    //TODO: Backend - PUT request to save notes
       onSaveNotes(person.id, notes);
     }
     onClose();
