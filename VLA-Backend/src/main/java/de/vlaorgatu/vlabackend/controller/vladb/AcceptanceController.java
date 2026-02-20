@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Rest controller for acceptance-related endpoints.
@@ -21,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestBody;
  * Mainly needed to trigger SSE events on update operations.
  */
 @AllArgsConstructor
-@RepositoryRestController
-public class AcceptanceController {
+@RestController
+@RequestMapping("/api/acceptances")
+public class AcceptanceController
+    implements GetAndGetByIdDefaultInterface<Acceptance, AcceptanceRepository> {
     /**
      * Repository used for acceptance persistence operations.
      */
@@ -34,7 +38,7 @@ public class AcceptanceController {
      * @param acceptance Acceptance to create, must not contain an ID (auto-generated).
      * @return OK response with the created acceptance, Error response otherwise.
      */
-    @PostMapping("/acceptances")
+    @PostMapping
     public ResponseEntity<?> createAcceptance(@RequestBody Acceptance acceptance) {
         if (Objects.nonNull(acceptance.getId())) {
             throw new InvalidParameterException(
@@ -54,7 +58,7 @@ public class AcceptanceController {
      * @param acceptance Acceptance to update. Must contain all keys, ID may be omitted.
      * @return OK response with the updated acceptance, Error response otherwise.
      */
-    @PutMapping("/acceptances/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateAcceptance(@PathVariable Long id,
                                               @RequestBody Acceptance acceptance) {
         if (Objects.isNull(acceptance.getId())) {
@@ -80,7 +84,7 @@ public class AcceptanceController {
      * @param id ID of the acceptance to delete.
      * @return OK response with the deleted acceptance, Error response otherwise.
      */
-    @DeleteMapping("/acceptances/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAcceptance(@PathVariable Long id) {
         Acceptance deletedAcceptance = acceptanceRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(

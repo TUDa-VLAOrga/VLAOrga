@@ -4,6 +4,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,45 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * REST controller for user-related endpoints.
  */
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequestMapping("/api/users")
+public class UserController implements GetAndGetByIdDefaultInterface<User, UserRepository> {
 
     /**
      * Repository used for user persistence operations.
      */
     private final UserRepository userRepository;
-
-    /**
-     * Creates a new {@code UserController}.
-     *
-     * @param userRepository repository used for user persistence operations
-     */
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    /**
-     * Returns a list of all users.
-     *
-     * @return list of users
-     */
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    /**
-     * Returns a user by its ID.
-     *
-     * @param id user ID
-     * @return the user if found, otherwise 404
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).map(ResponseEntity::ok)
-            .orElseThrow(() -> new UserNotFoundException(id));
-    }
 
     /**
      * Creates a new user.

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Rest controller for experiment booking-related endpoints.
@@ -21,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestBody;
  * Mainly needed to trigger SSE events on update operations.
  */
 @AllArgsConstructor
-@RepositoryRestController
-public class ExperimentBookingController {
+@RestController
+@RequestMapping("/api/experimentBookings")
+public class ExperimentBookingController
+    implements GetAndGetByIdDefaultInterface<ExperimentBooking, ExperimentBookingRepository> {
     /**
      * Repository used for experiment booking persistence operations.
      */
@@ -34,7 +38,7 @@ public class ExperimentBookingController {
      * @param experimentBooking The dataset for creation. Must not contain an ID (auto-generated).
      * @return OK response with the created experiment booking, Error response otherwise.
      */
-    @PostMapping("/experimentBookings")
+    @PostMapping
     public ResponseEntity<?> createExperimentBooking(
         @RequestBody ExperimentBooking experimentBooking) {
         if (Objects.nonNull(experimentBooking.getId())) {
@@ -56,7 +60,7 @@ public class ExperimentBookingController {
      *                          ID may be omitted.
      * @return OK response with the updated experiment booking, Error response otherwise.
      */
-    @PutMapping("/experimentBookings/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateExperimentBooking(
         @PathVariable Long id, @RequestBody ExperimentBooking experimentBooking
     ) {
@@ -84,7 +88,7 @@ public class ExperimentBookingController {
      * @param id ID of the experiment booking to delete.
      * @return OK response with the deleted experiment booking, Error response otherwise.
      */
-    @DeleteMapping("/experimentBooking/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteExperimentBooking(@PathVariable Long id) {
         ExperimentBooking deletedExperimentBooking = repository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
