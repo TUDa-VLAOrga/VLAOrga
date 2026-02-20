@@ -52,7 +52,7 @@ export default function GlobalNoteContainer() {
       id: NotSynchronisedId,
       noteColor: "#0d6efd",
       title: "Neue Notiz (ändern Sie den Titel hier)",
-      content: "Fügen Sie hier ihre Notiz ein und laden Sie diese nach dem Schreiben hoch.",
+      content: "",
     };
 
     setDraftNote(draftNote);
