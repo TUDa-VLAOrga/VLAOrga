@@ -69,7 +69,7 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
           </label>
           <textarea
             id="personNotes"
-            className="cv-personNotesTextarea"
+            className="cv-notesTextarea"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Notizen zu dieser Person"

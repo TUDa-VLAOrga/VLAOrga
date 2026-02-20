@@ -46,7 +46,7 @@ type EventFormProps = {
  * - optional recurrence
  * - optional people list
  */
-export default function EventForm({
+export default function EventCreationForm({
   onSubmit,
   onCancel,
   lectures= [],
@@ -120,7 +120,7 @@ export default function EventForm({
     onSubmit(formData);
   }
   // Used to disable submit when required fields are missing
-  const hasTitle = (title.trim() !== "") || lecture;
+  const hasTitle = (title.trim() !== "") || Boolean(lecture);
   const isValid =
     hasTitle && category && startDateTime && endDateTime && verifyValidTimeRange(startDateTime, endDateTime);
 
@@ -179,14 +179,14 @@ export default function EventForm({
 
           <div className="cv-formGroup">
             <label htmlFor="eventNotes" className="cv-formLabel">
-              Notizen zum Termin
+              Notizen {recurrence.enabled && "(wird allen Terminen hinzugefügt)"}
             </label>
             <textarea
               id="eventNotes"
               className="cv-formInput cv-eventNotesTextarea"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notizen zu diesem Termin..."
+              placeholder={recurrence.enabled ? "initiale Notizen für alle Termine" : "Notizen zu diesem Termin..."}
               rows={4}
             />
           </div>

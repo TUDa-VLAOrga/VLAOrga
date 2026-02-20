@@ -20,18 +20,19 @@ export default function AddPeopleSection({
   const [newPersonName, setNewPersonName] = useState("");
   const [newPersonEmail, setNewPersonEmail] = useState("");
   //const [newPersonRole, setNewPersonRole] = useState("");
+  let notSynchronisedId = -1;  // negative ID signals a not-yet-saved entity
 
   const handleAdd = () => {
     // TODO: Backend - POST request to create new person
     if (newPersonName.trim()) {
       const newPerson: Person = {
-        id: -Date.now(),  // negative ID signals a not-yet-saved entity
+        id: notSynchronisedId--,
         name: newPersonName.trim(),
         email: newPersonEmail.trim(),
         // role: newPersonRole.trim() || undefined,
         notes: "",
         lectures: [],
-        linusUserId: 0,  // ID zero represents a non-existing user
+        linusUserId: undefined,
       };
       onAddPerson(newPerson);
       setNewPersonName("");

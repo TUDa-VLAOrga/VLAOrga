@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-19 11:48:12.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-19 19:41:17.
 
 export interface LinusAppointment {
     id: number;
@@ -16,12 +16,12 @@ export interface LinusExperiment {
     id: number;
     categoryId: number;
     name: string;
-    description: string;
-    comment: string;
-    preparationTime: number;
+    description?: string;
+    comment?: string;
+    preparationTime?: number;
     status: string;
-    executionTime: number;
-    safetySigns: string;
+    executionTime?: number;
+    safetySigns?: string;
     experimentNumber: number;
 }
 

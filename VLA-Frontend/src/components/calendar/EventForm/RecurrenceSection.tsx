@@ -1,5 +1,5 @@
 import WeekdayPicker from "../WeekdayPicker";
-import type { Weekday } from "./EventForm";
+import type { Weekday } from "./EventCreationForm.tsx";
 import type {CalendarDay} from "@/components/calendar/CalendarTypes.ts";
 
 
@@ -50,6 +50,9 @@ export default function RecurrenceSection({
               selectedDays={weekdays}
               onDaysChange={onWeekdaysChange}
             />
+            <div className="cv-formHint">
+              Für jeden Wochentag wird eine eigene Terminserie erstellt.
+            </div>
           </div>
 
           <div className="cv-formGroup">

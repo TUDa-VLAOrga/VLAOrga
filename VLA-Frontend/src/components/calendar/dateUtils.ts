@@ -99,7 +99,7 @@ const timeFormat = new Intl.DateTimeFormat("de-DE", {
 /** formats a time range like 11:30 - 13:10, includes days if spanning over multiple days */
 export function formatTimeRangeShortDE(start: Date, end: Date) {
   if (compareSameDay(start, end)) {
-    return `${timeFormat.format(start)} - ${timeFormat.format(end)}`;
+    return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${timeFormat.format(end)}`;
   }
   return `${dayFormat.format(start)}, ${timeFormat.format(start)}`
     + ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`;

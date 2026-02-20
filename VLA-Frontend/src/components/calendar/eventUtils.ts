@@ -3,7 +3,7 @@ import {compareSameDay, toISODateLocal} from "@/components/calendar/dateUtils.ts
 import type {EventStatus} from "@/components/calendar/CalendarTypes.ts";
 
 /** Default event duration in minutes. */
-export const DEFAULT_DURATION = 100;
+export const DEFAULT_DURATION_MIN = 100;
 
 /**
  * Returns a readable title for an event.
@@ -67,11 +67,19 @@ export function moveEventSeries(
   });
 }
 
+/**
+ * Determine whether the event is part of a series with more than one event.
+ */
+export function checkPartOfSeries(event: Appointment, allEvents: Appointment[]) {
+  return allEvents.filter(e => e.series.id === event.series.id).length > 1;
+}
+
 
 /**
  * Get event status.
  */
 export function getEventStatus(_event: Appointment) {
-  // TODO: implement, extract experiments? What was this EventStatus type thought for?
+  // TODO: implement, extract experiments? probably with a @OneToMany attribute
+  //  appointment.bookedExperiments in the backend
   return "" as EventStatus;
 }

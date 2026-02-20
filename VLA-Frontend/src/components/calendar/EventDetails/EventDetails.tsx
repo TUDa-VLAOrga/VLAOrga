@@ -2,12 +2,10 @@ import { useState } from "react";
 import {formatTimeRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
-import MoveEventDialog from "./MoveEventDialog";
 import "../../../styles/Event-details-styles.css";
-import MoveConfirmDialog from "./MoveConfirmDialog";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
 import ExperimentSection from "@/components/experiments/ExperimentSection";
+import {getEventStatus, checkPartOfSeries, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
 
 type EventDetailsProps = {
@@ -17,13 +15,12 @@ type EventDetailsProps = {
   lectures?: Lecture[];
   people?: Person[];
   categories?: AppointmentCategory[];
-  onUpdatePersonNotes?: (personId: number, notes: string) => void;
-  onUpdateEvent?: (eventId: number, updates: Partial<Appointment>) => void;
-  onMoveEvent?: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
-  onMoveSeries?: (eventId: number, newDateTime: Date, newEndDateTime: Date) => void;
-  onAddCategory?: (category: AppointmentCategory) => void;
-  onAddPerson?: (person: Person) => void;
-  onAddLecture?: (lecture: Lecture) => void;
+  onUpdatePersonNotes: (personId: number, notes: string) => void;
+  onUpdateEventNotes: (eventId: number, notes: string) => void;
+  onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
+  onAddCategory: (category: AppointmentCategory) => void;
+  onAddPerson: (person: Person) => void;
+  onAddLecture: (lecture: Lecture) => void;
 };
 
 /**
@@ -37,20 +34,17 @@ export default function EventDetails({
   lectures = [],
   people = [],
   categories = [],
-  onUpdatePersonNotes, 
+  onUpdatePersonNotes,
+  onUpdateEventNotes,
   onUpdateEvent,
-  onMoveEvent,
-  onMoveSeries,
   onAddCategory,
   onAddPerson,
   onAddLecture,
 }: EventDetailsProps) {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showMoveDialog, setShowMoveDialog] = useState(false);
+  const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
-  const [showMoveConfirm, setShowMoveConfirm] = useState(false);
-  const lecture = event.series.lecture;
+  const [eventNotes, setEventNotes] = useState(event.notes);
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
     //TODO: Backend - PUT request to update person notes
@@ -60,65 +54,48 @@ export default function EventDetails({
         setSelectedPerson({...selectedPerson, notes});
       }
     }
-  };
+  }
 
-  function handleUpdateEvent(updates: Partial<Appointment>) {
-    if (onUpdateEvent) {
-      onUpdateEvent(event.id, updates);
-    }
-    setIsEditing(false);
-  };
-
+  const lecture = event.series.lecture;
   const eventPeople = lecture?.persons || [];
   const currentSelectedPerson = selectedPerson || null;
+  const isPartOfSeries = checkPartOfSeries(event, allEvents);
 
-  if (isEditing) {
+  if (showEditSingleDialog) {
     return (
       <EventEditForm
         event={event}
+        isSeries={false}
         lectures={lectures}
         categories={categories}
         people={people}
         onAddCategory={onAddCategory}
         onAddPerson={onAddPerson}
         onAddLecture={onAddLecture}
-        onSave={handleUpdateEvent}
-        onCancel={() => setIsEditing(false)}
-      />
-    );
-  }
-  if (showMoveDialog) {
-    return (
-      <MoveEventDialog
-        event={event}
-        onMove={onMoveEvent}
-        onCancel={() => setShowMoveDialog(false)}
-        isSeries={false}
+        onSave={(updates) => {
+          onUpdateEvent(event.id, updates, false);
+          onClose();
+        }}
+        onCancel={() => setShowEditSingleDialog(false)}
       />
     );
   }
   if (showMoveSeriesDialog) {
     return (
-      <MoveEventDialog
+      <EventEditForm
         event={event}
-        onMove={onMoveSeries}
-        onCancel={() => setShowMoveSeriesDialog(false)}
         isSeries={true}
-      />
-    );
-  }
-  if (showMoveConfirm) {
-    return (
-      <MoveConfirmDialog
-        onMoveSingle={() => {
-          setShowMoveConfirm(false);
-          setShowMoveDialog(true);
+        lectures={lectures}
+        categories={categories}
+        people={people}
+        onAddCategory={onAddCategory}
+        onAddPerson={onAddPerson}
+        onAddLecture={onAddLecture}
+        onSave={(updates) => {
+          onUpdateEvent(event.id, updates, true);
+          onClose();
         }}
-        onMoveSeries={() => {
-          setShowMoveConfirm(false);
-          setShowMoveSeriesDialog(true);
-        }}
-        onCancel={() => setShowMoveConfirm(false)}
+        onCancel={() => setShowMoveSeriesDialog(false)}
       />
     );
   }
@@ -198,43 +175,56 @@ export default function EventDetails({
               </div>
             )}
 
-            {event.notes && (
-              <div className="cv-detailRow cv-detailRowNotes">
-                <span className="cv-detailLabel">Notizen:</span>
-                <span className="cv-detailValue cv-detailValueNotes">{event.notes}</span>
-              </div>
-            )}
+            <textarea
+              id="eventNotes"
+              className="cv-notesTextarea"
+              value={eventNotes}
+              onChange={(e) => setEventNotes(e.target.value)}
+              placeholder="Notizen zu diesem Termin..."
+              rows={4}
+            />
           </div>
 
           <div className="cv-formActions">
-            <button
-              type="button"
-              className="cv-formBtn cv-formBtnSecondary"
-              onClick={() => {
-                if (allEvents.filter(e => e.series.id === event.series.id).length > 1) {
-                  setShowMoveConfirm(true);
-                } else {
-                  setShowMoveDialog(true);
-                }
-              }
-              }
-            >
-              Verschieben
-            </button>
-            
-            <button
-              type="button"
-              className="cv-formBtn cv-formBtnSecondary"
-              onClick={() => setIsEditing(true)}
-            >
-              Bearbeiten
-            </button>
+            {isPartOfSeries &&
+              <small className="cv-formHint">
+                Dieser Termin ist Teil einer Wiederholungsserie.
+              </small>
+            }
             <button
               type="button"
               className="cv-formBtn cv-formBtnCancel"
               onClick={onClose}
             >
-              Schließen
+              Abbrechen
+            </button>
+            <button
+              type="submit"
+              className="cv-formBtn cv-formBtnSubmit"
+              disabled={eventNotes.trim() === event.notes}
+              onClick={() => {
+                onUpdateEventNotes(event.id, eventNotes);
+                onClose();
+              }}
+            >
+              Notizen speichern
+            </button>
+            {isPartOfSeries &&
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnSecondary"
+                onClick={() => setShowMoveSeriesDialog(true)}
+              >
+                Serie bearbeiten
+              </button>
+            }
+
+            <button
+              type="button"
+              className="cv-formBtn cv-formBtnSecondary"
+              onClick={() => setShowEditSingleDialog(true)}
+            >
+              {isPartOfSeries ? "Einzeln bearbeiten" : "Bearbeiten"}
             </button>
           </div>
         </div>

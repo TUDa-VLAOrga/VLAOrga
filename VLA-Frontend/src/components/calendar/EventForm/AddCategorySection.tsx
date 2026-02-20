@@ -23,12 +23,13 @@ export default function AddCategorySection({
 }: AddCategorySectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  let notSynchronisedId = -1;  // negative ID signals a not-yet-saved entity
 
   function handleAdd() {
     if (newCategoryName.trim() === "") return;
 
     const newCategory: AppointmentCategory = {
-      id: -Date.now(),  // negative ID signals not-yet-saved entity
+      id: notSynchronisedId--,
       title: newCategoryName.trim(),
     };
     onAddCategory(newCategory);

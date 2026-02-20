@@ -338,7 +338,7 @@
   background: white;
   border-radius: 8px;
   padding: 24px;
-  max-width: 600px;
+  max-width: 680px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
@@ -437,6 +437,11 @@
   color: #666;
   font-size: 0.85rem;
   margin-top: 4px;
+}
+
+.cv-formActions .cv-formHint {
+  width: 100%;
+  text-align: center;
 }
 
 .cv-formActions {
@@ -863,9 +868,10 @@
   font-size: 14px;
 }
 
-.cv-personNotesTextarea {
+.cv-notesTextarea {
   width: 100%;
   max-width: 420px;
+  margin: 0 auto;
   min-height: 100px;
   padding: 12px;
   border: 1px solid #d1d5db;
@@ -877,13 +883,13 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cv-personNotesTextarea:focus {
+.cv-notesTextarea:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.cv-personNotesTextarea::placeholder {
+.cv-notesTextarea::placeholder {
   color: #9ca3af;
 }
 

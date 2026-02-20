@@ -12,9 +12,6 @@ type AddLectureFormProps = {
 };
 
 /**
- * ============================================================================
- * NEUE KOMPONENTE: AddLectureForm
- * ============================================================================
  * Ersetzt das inline-Formular in AddLectureSection durch ein vollständiges Modal.
  * Ermöglicht das Erstellen von Vorlesungen mit:
  * - Name
@@ -32,6 +29,7 @@ export default function AddLectureForm({
   const [semester, setSemester] = useState("");
   const [color, setColor] = useState("#3b82f6");
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
+  let notSynchronisedId = -1;  // negative ID to signal a not-yet-created entity
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,7 +39,7 @@ export default function AddLectureForm({
 
     
     const newLecture: Lecture = {
-      id: -Date.now(),  // negative ID to signal not-yet-created entity
+      id: notSynchronisedId--,  // negative ID to signal not-yet-created entity
       name: lectureName.trim(),
       semester: semester.trim(),
       color: color.trim(),
@@ -58,7 +56,7 @@ export default function AddLectureForm({
 
   const isValid = lectureName.trim() !== "";
 
-  const madalContent = (
+  const modalContent = (
     <div className="cv-formOverlay" onClick={(e)=> e.stopPropagation()}>
       <div className="cv-formBox" onClick={(e)=> e.stopPropagation()}>
         <h2 className="cv-formTitle">Neue Vorlesung</h2>
@@ -132,5 +130,5 @@ export default function AddLectureForm({
       </div>
     </div>);
 
-  return createPortal(madalContent, document.body);
+  return createPortal(modalContent, document.body);
 }
