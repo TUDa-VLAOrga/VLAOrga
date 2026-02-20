@@ -14,11 +14,15 @@ export function usePeople() {
 
   function handleUpdatePersonNotes(personId: number, notes: string) {
     //TODO: Backend - PUT request to update person notes
+    console.log("all people:", people);
+    console.log("Updating person notes for person with id " + personId + "and new notes: " + notes);
+    console.log("previous notes: " + people.find((person) => person.id === personId)?.notes);
     setPeople((prev) =>
       prev.map((prevPerson) =>
-        prevPerson.id === personId ? { ...prevPerson, notes } : prevPerson
+        prevPerson.id === personId ? { ...prevPerson, notes: notes } : prevPerson
       )
     );
+    console.log("new notes: " + people.find((person) => person.id === personId)?.notes);
   }
 
   return {
