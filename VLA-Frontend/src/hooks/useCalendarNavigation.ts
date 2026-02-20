@@ -4,7 +4,7 @@ import {
   WORKDAY_COUNT,
   addDays,
   addWorkdays,
-  formatRangeShortDE,
+  formatDayRangeShortDE,
   isWeekend,
   normalizeToWorkdayStart,
   toISODateLocal
@@ -62,7 +62,7 @@ export function useCalendarNavigation() {
   // Human-readable range label for the toolbar (e.g. "12.–16. Jan")
   const rangeText =
     days.length >= 1
-      ? formatRangeShortDE(days[0].date, days[days.length - 1].date)
+      ? formatDayRangeShortDE(days[0].date, days[days.length - 1].date)
       : "";
 
   function prevDay() {

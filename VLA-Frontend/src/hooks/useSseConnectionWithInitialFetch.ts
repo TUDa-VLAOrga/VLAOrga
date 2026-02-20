@@ -1,7 +1,7 @@
-import type { SseMessageType } from "@/components/sse/SseMessageType";
 import { useEffect } from "react";
 import useSseConnection from "./useSseConnection";
 import { Logger } from "@/components/logger/Logger";
+import type { SseMessageType } from "@/lib/databaseTypes";
 
 /**
  * Extension of {@link useSseConnection} but directly initiates a fetch for data
@@ -14,7 +14,9 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
   defaultValue: T, 
   apiResourceURL : string,
   eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>
-){
+)
+  : [T, React.Dispatch<React.SetStateAction<T>>]
+{
   const [sseDefaultValue, setsseDefaultValue] = useSseConnection<T>(defaultValue, eventHandlers);
 
   /**
@@ -48,5 +50,5 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return sseDefaultValue;
+  return [sseDefaultValue, setsseDefaultValue] as const;
 }

@@ -27,7 +27,7 @@ public class Appointment {
     /**
      * Appointment series this appointment belongs to.
      */
-    @ManyToOne
+    @ManyToOne(optional = false)
     private AppointmentSeries series;
 
     /**
