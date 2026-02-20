@@ -26,39 +26,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/globalNotes")
-public class GlobalNoteController {
+public class GlobalNoteController
+    implements GetAndGetByIdInterface<GlobalNote, GlobalNoteRepository> {
     /**
      * Repository that contains all globalNote entities.
      */
     private final GlobalNoteRepository globalNoteRepository;
-
-    /**
-     * Endpoint for GETting all global notes.
-     *
-     * @return All globalNotes
-     */
-    @GetMapping
-    public ResponseEntity<List<GlobalNote>> getAllGlobalNotes() {
-        List<GlobalNote> notes = globalNoteRepository.findAll();
-        return ResponseEntity.ok(notes);
-    }
-
-    /**
-     * Endpoint for GETting a single globalNote by id.
-     *
-     * @param id The id of the note
-     * @return The specified note if exists
-     */
-    @GetMapping("/{id}")
-    ResponseEntity<GlobalNote> getGlobalNoteById(@PathVariable Long id) {
-        GlobalNote note = globalNoteRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                    "No globalNote with id " + id + " was found"
-                )
-            );
-
-        return ResponseEntity.ok(note);
-    }
 
     /**
      * Endpoint for creating a new global note.
