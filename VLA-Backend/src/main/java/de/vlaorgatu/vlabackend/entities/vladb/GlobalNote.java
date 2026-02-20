@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "globalNotes")
+@Table(name = "global_notes")
 public class GlobalNote {
     /**
      * Unique identifier of an event.
@@ -32,8 +32,8 @@ public class GlobalNote {
      * E.g #FF0000 for Red
      */
     @NonNull
-    @Column(name = "noteColor", nullable = false)
-    private String noteColor;
+    @Column(name = "color", nullable = false)
+    private String color;
 
     /**
      * Represents the non-empty title of a global note.
@@ -66,6 +66,6 @@ public class GlobalNote {
      * @return true, iff color string is of type #RRGGBB
      */
     public boolean hasInvalidColor() {
-        return !UtilityFunctions.checkColorFormatHtml7CharsNotation(this.getNoteColor());
+        return !UtilityFunctions.checkColorFormatHtml7CharsNotation(this.getColor());
     }
 }

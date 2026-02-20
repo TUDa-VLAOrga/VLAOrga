@@ -26,6 +26,10 @@ function handleEnterUnfocus(event: React.KeyboardEvent<HTMLTextAreaElement>){
   }
 }
 
+function isInvalidTitle(editingState: globalNoteEntryEditingState): boolean {
+  return editingState.title.trim() === "";
+}
+
 export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : GlobalNoteEntryProps){
   const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id === NotSynchronisedId);
 
@@ -33,7 +37,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
     isEditing: note.id === NotSynchronisedId,
     title: note.title,
     content: note.content,
-    color: note.noteColor,
+    color: note.color,
   });
 
   function handleNoteCreationSubmit(note: GlobalNote){
@@ -80,11 +84,13 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   }
 
   function handleSubmit(){
+    if(isInvalidTitle(editingState)) return;
+
     const postNote: GlobalNote = {
       id: note.id,
       title: editingState.title,
       content: editingState.content,
-      noteColor: editingState.color,
+      color: editingState.color,
     };
         
     const submitfunction = note.id == NotSynchronisedId ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
@@ -103,7 +109,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       isEditing: note.id === NotSynchronisedId,
       title: note.title,
       content: note.content,
-      color: note.noteColor,
+      color: note.color,
     });
   }, [note]);
 
@@ -114,7 +120,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
           editingState.isEditing ?
             editingState.color 
             : 
-            note.noteColor,
+            note.color,
       }}
     >
 
@@ -150,7 +156,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       <div className="globalNoteContent"
         style={{
           display: isContentOpen || editingState.isEditing ? "" : "none",
-          border: "5px solid " + (editingState.isEditing ? editingState.color : note.noteColor),
+          border: "5px solid " + (editingState.isEditing ? editingState.color : note.color),
         }}>
                 
         {
@@ -161,7 +167,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                 value={editingState.content}
                 rows={6}
                 maxLength={4096}
-                placeholder="Geben Sie hier ihre Notiz ein"
+                placeholder="Fügen Sie hier ihre Notiz ein und laden Sie diese nach dem Schreiben hoch."
                 onChange={(e) => 
                   setEditingState({
                     ...editingState,
@@ -228,7 +234,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
         <br/>
         <Button 
           text = {editingState.isEditing ? "Änderungen verwerfen" : "Notiz editieren"}
-          backgroundColor = {editingState.isEditing ? editingState.color : note.noteColor}
+          backgroundColor = {editingState.isEditing ? editingState.color : note.color}
           onClick = {() => 
             setEditingState({
               ...editingState,
@@ -242,10 +248,19 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
                 <>
                   <br/>
                   <Button
-                    text = "Änderungen hochladen"
+                    text = {"Änderungen hochladen" + (isInvalidTitle(editingState) ? "*" : "")}
                     backgroundColor = {editingState.color}
                     onClick = {() => handleSubmit()}
+                    cursor = {isInvalidTitle(editingState) ? "not-allowed" : "pointer"}
                   />
+                  {
+                    isInvalidTitle(editingState) &&
+                  <>
+                    <br/>
+                    <i>* Notizen mit einem leeren Titel können nicht hochgeladen werden</i>
+                    <br/>
+                  </>
+                  }
                 </>
         }
                 
