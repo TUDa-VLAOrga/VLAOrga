@@ -14,13 +14,8 @@ const handlers = new Map<SseMessageType, (event: MessageEvent, value: Experiment
  */
 export default function ExperimentSection({appointment}: ExperimentSectionProps){
     const [experimentBookings, _setExperimentBooking] = useSseConnectionWithInitialFetch<ExperimentBooking[]>(
-        [{
-            id: 0,
-            linusExperimentId: 0,
-            notes: "",
-            status: ExperimentPreparationStatus.PENDING
-        }],
-        "/experimentBookings/experimentFromAppointment/" + appointment.id,
+        [],
+        `api/appointments/${appointment.id}/experimentBookings`,
         handlers
     );
     

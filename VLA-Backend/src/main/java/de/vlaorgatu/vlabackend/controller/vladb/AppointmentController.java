@@ -2,13 +2,15 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
-import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +33,17 @@ public class AppointmentController
      * Repository used for appointment persistence operations.
      */
     private final AppointmentRepository appointmentRepository;
+
+    @GetMapping("/{id}/experimentbookings")
+    public ResponseEntity<List<ExperimentBooking>> getAllAppointments(@PathVariable Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Appointment with id " + id + " was not found"
+                )
+            );
+        return ResponseEntity.ok(appointment.getBookings());
+    }
 
     /**
      * Creates a new appointment.
