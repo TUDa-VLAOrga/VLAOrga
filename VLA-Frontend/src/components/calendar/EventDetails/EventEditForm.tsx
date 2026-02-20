@@ -75,7 +75,7 @@ export default function EventEditForm({
 
   const hasTitle = (title.trim() !== "") || Boolean(lecture);
   const hasCategory = category;
-  const isValidTimeRange = verifyValidTimeRange(startDateTime, endDateTime);
+  const [isValidTimeRange, timeRangeHintText] = verifyValidTimeRange(startDateTime, endDateTime);
   const isValid = hasTitle && hasCategory && isValidTimeRange;
 
   return (
@@ -119,6 +119,7 @@ export default function EventEditForm({
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
             hintText={"Ursprüngliche Zeit: " + formatTimeRangeShortDE(event.start, event.end)}
+            errorText={timeRangeHintText}
           />
           <div className="cv-detailsContent">
             <p className="cv-moveDialogInfo">
@@ -155,7 +156,6 @@ export default function EventEditForm({
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
               disabled={!isValid}
-              title={isValid ? "" : "Beginn und Ende müssen am selben Tag liegen"}
             >
               Speichern
             </button>

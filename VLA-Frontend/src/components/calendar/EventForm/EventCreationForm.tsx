@@ -121,8 +121,9 @@ export default function EventCreationForm({
   }
   // Used to disable submit when required fields are missing
   const hasTitle = (title.trim() !== "") || Boolean(lecture);
+  const [isValidTimeRange, timeRangeHintText] = verifyValidTimeRange(startDateTime, endDateTime);
   const isValid =
-    hasTitle && category && startDateTime && endDateTime && verifyValidTimeRange(startDateTime, endDateTime);
+    hasTitle && category && startDateTime && endDateTime && isValidTimeRange;
 
   return (
     <div className="cv-formOverlay">
@@ -166,6 +167,7 @@ export default function EventCreationForm({
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
             autoCalculateEnd={true}
+            errorText={timeRangeHintText}
           />
 
           <RecurrenceSection

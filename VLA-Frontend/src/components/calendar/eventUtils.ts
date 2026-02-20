@@ -1,5 +1,5 @@
 import type {Appointment} from "@/lib/databaseTypes";
-import {compareSameDay, toISODateLocal} from "@/components/calendar/dateUtils.ts";
+import {compareSameDay, NON_WORKDAYS, toISODateLocal} from "@/components/calendar/dateUtils.ts";
 import type {EventStatus} from "@/components/calendar/CalendarTypes.ts";
 
 /** Default event duration in minutes. */
@@ -30,8 +30,26 @@ export function getEventDateISO(event: Appointment) {
 /**
  * Verifies that given start and end are valid for an event, i.e., on the same day and nothing is undefined.
  */
-export function verifyValidTimeRange(start?: Date, end?: Date) {
-  return start && end && start < end && compareSameDay(start, end);
+export function verifyValidTimeRange(start?: Date, end?: Date): [boolean, string] {
+  let validRange;
+  let helpString;
+  if (! (start && end)) {
+    validRange = false;
+    helpString = "Stant und Ende sind erforderlich.";
+  } else if (start >= end) {
+    validRange = false;
+    helpString = "Start muss vor Ende liegen.";
+  } else if (!compareSameDay(start, end)) {
+    validRange = false;
+    helpString = "Start und Ende muss am selben Tag liegen.";
+  } else if (NON_WORKDAYS.includes(start.getDay())) {
+    validRange = false;
+    helpString = "Termin muss an einem Wochentag liegen.";
+  } else {
+    validRange = true;
+    helpString = "";
+  }
+  return [validRange, helpString];
 }
 
 

@@ -439,6 +439,12 @@
   margin-top: 4px;
 }
 
+.cv-formError {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
 .cv-formActions .cv-formHint {
   width: 100%;
   text-align: center;

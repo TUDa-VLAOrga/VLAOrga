@@ -10,6 +10,7 @@ type TimeRangeInputProps = {
   autoCalculateEnd?: boolean; // Ob End-Zeit automatisch berechnet werden soll
   durationMilliseconds?: number;
   hintText?: string;
+  errorText?: string;
 };
 
 /**
@@ -24,6 +25,7 @@ export default function TimeRangeInput({
   autoCalculateEnd = true,
   durationMilliseconds = DEFAULT_DURATION_MIN * 60 * 1000,
   hintText,
+  errorText,
 }: TimeRangeInputProps) {
 
   const initialDuration = (startDateTime && endDateTime)
@@ -78,6 +80,10 @@ export default function TimeRangeInput({
             {hintText}
           </div>
         }
+        {errorText &&
+          <div className="cv-formError">
+            {errorText}
+          </div>}
       </div>
     </>
   );
