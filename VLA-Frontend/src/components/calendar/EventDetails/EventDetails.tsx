@@ -134,6 +134,8 @@ export default function EventDetails({
               </span>
             </div>
 
+            <ExperimentSection appointment={event} />
+
             {event.series.lecture && event.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Personen:</span>
