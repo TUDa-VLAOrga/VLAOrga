@@ -83,6 +83,7 @@ export default function Draggable({children, onClose}: DraggableProps){
      * Removes all window listeners from component and updates the component state
      */
   const handleEnd = useCallback(() => {
+    if(!dragOffset.current.isBeingDragged) return;
 
     window.removeEventListener("pointermove", handleMove);
     window.removeEventListener("pointerup", handleEnd);
