@@ -11,12 +11,12 @@ type DragOffset = {
   xOffset: number,
   yOffset: number,
   isBeingDragged: boolean,
-}
+};
 
 type WindowPosition = {
   posX: number;
   posY: number;
-}
+};
 
 const defaultPosition = {
   posX: 10,
@@ -127,7 +127,7 @@ export default function Draggable({children, onClose}: DraggableProps){
   function handleTouchStart(e: React.TouchEvent<HTMLDivElement>){
     e.stopPropagation();
 
-    thisElement.current = e.currentTarget
+    thisElement.current = e.currentTarget;
 
     const relevantTouch = e.touches[0];
     handleStart(relevantTouch.clientX, relevantTouch.clientY);

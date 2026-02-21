@@ -18,3 +18,46 @@
     overflow: none;
     flex-direction: column;
 }
+
+.experimentOverview {
+    min-width: 30dvw;
+    min-height: 20dvw;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+    resize: both;
+}
+
+.experimentPropertyGrid {
+    display: grid;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+    grid-template-columns: 1fr 4fr;
+    grid-auto-flow: row;
+}
+
+.experimentPropertyGrid > div {
+    margin-bottom: 30px;
+}
+
+.experimentOverviewTitle {
+    grid-column-start: span 2;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.linusLink {
+    text-decoration: underline;
+    color: rgb(60, 60, 255)
+}
+
+.experimentOverviewStatus {
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 15px;
+    overflow-x: scroll;
+    text-wrap: nowrap;
+    font-weight: bold;
+    cursor: pointer;
+}

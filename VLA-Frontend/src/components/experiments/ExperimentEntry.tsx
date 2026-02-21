@@ -1,8 +1,9 @@
 import { type LinusExperiment, type ExperimentBooking, ExperimentPreparationStatus } from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
-import "@/styles/Experiments.css"
+import "@/styles/Experiments.css";
 import Draggable from "../draggableElement/Draggable";
+import ExperimentOverview from "./ExperimentOverview";
 
 export interface ExperimentProps {
   experiment: ExperimentBooking,
@@ -23,37 +24,38 @@ statusTextColorMap.set(ExperimentPreparationStatus.FINISHED, "#FFFFFF");
  */
 export default function ExperimentEntry({experiment}: ExperimentProps){
   const [linusExperiment, setLinusExperiment] = useState<LinusExperiment>({
-    id: 0,
+    id: -1,
     categoryId: 0,
-    name: "Lädt..",
+    name: "Experimente laden..",
     status: "",
     experimentNumber: 0,
   });
+
   const [experimentModalOpen, setExperimentModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetch("/api/linusExperiments/" + experiment.linusExperimentId)
-    .then(response => {
-      if(!response.ok) throw new Error("Non-ok response code received");
-      return response.json()
-    })
-    .then((linusExperiment) => setLinusExperiment(linusExperiment as unknown as LinusExperiment))
-    .catch(e => {
-      // TODO: Display error in experiment window
-      Logger.error("Fetch of linusExperiment id=" + experiment.linusExperimentId + " has failed");
-      console.log(e);
-    });
-  }, [experiment])
+      .then(response => {
+        if(!response.ok) throw new Error("Non-ok response code received");
+        return response.json();
+      })
+      .then((linusExperiment) => setLinusExperiment(linusExperiment as unknown as LinusExperiment))
+      .catch(e => {
+      // Possible TODO: Display error in experiment window
+        Logger.error("Fetch of linusExperiment id=" + experiment.linusExperimentId + " has failed");
+        console.log(e);
+      });
+  }, [experiment]);
 
   return (
     <>
       <div 
-      className="experimentEntry" 
-      style={{
-        backgroundColor: statusBackgroundColorMap.get(experiment.status),
-        color: statusTextColorMap.get(experiment.status)
+        className="experimentEntry" 
+        style={{
+          backgroundColor: statusBackgroundColorMap.get(experiment.status),
+          color: statusTextColorMap.get(experiment.status),
         }}
-      onClick={() => setExperimentModalOpen(!experimentModalOpen)}
+        onClick={() => linusExperiment.id !== -1 && setExperimentModalOpen(!experimentModalOpen)}
       >
         {linusExperiment.name}
       </div>
@@ -61,9 +63,11 @@ export default function ExperimentEntry({experiment}: ExperimentProps){
       {experimentModalOpen &&
       <>
         <Draggable onClose={() => setExperimentModalOpen(false)}>
-          <div style={{width: "100px", height: "100px", backgroundColor: "white"}}>
-            Test
-          </div>
+          <ExperimentOverview
+            linusExperiment={linusExperiment}
+            experimentBooking={experiment}
+            statusBackgroundColor={statusBackgroundColorMap.get(experiment.status)!}
+            statusTextColor={statusTextColorMap.get(experiment.status)!}/>
         </Draggable>
       </>
       }
