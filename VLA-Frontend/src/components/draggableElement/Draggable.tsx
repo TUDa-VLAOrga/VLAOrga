@@ -1,122 +1,122 @@
-import { useContext, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "../../styles/Draggable.css";
-import { MouseContext } from "./MouseContext";
+import { Button } from "../ui/Button";
 
 type DraggableProps = {
-  posX?: number
-  posY?: number
-  children: React.ReactNode
+  children: React.ReactNode,
+  onClose: () => void
 };
+
+type DragOffset = {
+  xOffset: number,
+  yOffset: number,
+  isBeingDragged: boolean,
+}
+
+type WindowPosition = {
+  posX: number;
+  posY: number;
+}
 
 const defaultPosition = {
   posX: 10,
   posY: 10,
 };
 
-// This will error if there is no transitive parent that is of type DragContainer that implements the mouse movement!
+const noInteractionPaddingPx = 20;
 
-export default function Draggable(props: DraggableProps){
-  const mousePosition = useContext(MouseContext);
+export default function Draggable({children, onClose}: DraggableProps){
+  const [position, setPosition] = useState<WindowPosition>(defaultPosition);
 
-  const [position, setPosition] = useState(defaultPosition);
-
-  const [dragOffset, setDragOffset] = useState({ 
+  const dragOffset = useRef<DragOffset>({ 
     xOffset: 0,
     yOffset: 0,
     isBeingDragged: false,
   });
 
-  const noInteractionPadding = 20;
+  const thisElement = useRef<HTMLSpanElement | null>(null);
 
   /**
-     * Determines the inital offset when dragging the component
-     * @param e The window event used
+     * Determines the inital offset when starting to drag the component
      * @param clientX Initial input X position of the input modality
      * @param clientY Initial input Y position of the input modality
      */
-  function handleStart(clientX: number, clientY: number, boundingBox: DOMRect){
+  const handleStart = (clientX: number, clientY: number) => {
+    const boundingBox = thisElement.current!.getBoundingClientRect();
 
     // Safety padding for dragging
-    if(clientX - boundingBox.left < noInteractionPadding) return;
-    if(boundingBox.right - clientX < noInteractionPadding) return;
+    if(clientX - boundingBox.left < noInteractionPaddingPx) return;
+    if(boundingBox.right - clientX < noInteractionPaddingPx) return;
     // if(clientY - boundingBox.top < noInteractionPadding) return;
-    if(boundingBox.bottom - clientY < noInteractionPadding) return;
+    if(boundingBox.bottom - clientY < noInteractionPaddingPx) return;
 
-    setDragOffset({
+    dragOffset.current = ({
       xOffset: clientX - boundingBox.left,
       yOffset: clientY - boundingBox.top,
       isBeingDragged: true,
     });
-  }
+
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleEnd);
+
+    setPosition(position);
+  };
 
   /**
      * Determines the position while dragging the component
-     * @param e The window event used
-     * @param clientX Initial input X position of the input modality
-     * @param clientY Initial input Y position of the input modality
+     * @param e The window pointer event triggering the function
      */
-  function handleMove(
-    e: React.PointerEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
-    clientX: number,
-    clientY: number
-  ){
-    const elementBoundingBox = e.currentTarget.getBoundingClientRect();
+  const handleMove = useCallback((e: PointerEvent) => {
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+
+    const elementBoundingBox = thisElement.current!.getBoundingClientRect();
 
     setPosition({
       // Min and Max functions prevent note from going offscreen
-      posX: Math.max(Math.min(clientX - dragOffset.xOffset, window.innerWidth - elementBoundingBox.width), 0),
-      posY: Math.max(Math.min(clientY - dragOffset.yOffset, window.innerHeight - elementBoundingBox.height), 0),
+      posX: Math.max(Math.min(clientX - dragOffset.current.xOffset, window.innerWidth - elementBoundingBox.width), 0),
+      posY: Math.max(Math.min(clientY - dragOffset.current.yOffset, window.innerHeight - elementBoundingBox.height), 0),
     });
-  }
+  }, []);
 
   /**
-     * Finalizes the dragging position of the component
-     * @param e The window event used
-     * @param clientX Initial input X position of the input modality
-     * @param clientY Initial input Y position of the input modality
+     * Removes all window listeners from component and updates the component state
      */
-  function handleEnd(
-    e: React.PointerEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
-    clientX: number,
-    clientY: number
-  ){     
-    if(dragOffset.isBeingDragged) handleMove(e, clientX, clientY);
+  const handleEnd = useCallback(() => {
 
-    setDragOffset({
+    window.removeEventListener("pointermove", handleMove);
+    window.removeEventListener("pointerup", handleEnd);
+
+    dragOffset.current = ({
       xOffset: 0,
       yOffset: 0,
       isBeingDragged: false,
     });
-  }
+
+    // React generally caches the state
+    // The new dragOffset will not be displayed if the position state is not updated
+    setPosition({...position});
+  }, [position]);
 
   /**
      * Handles mouse initiating dragging
      * @param e The triggering window event
      */
-  function handleDragStart(e: React.PointerEvent<HTMLDivElement>){
+  function handleDragStart(e: React.PointerEvent<HTMLSpanElement>){
     e.stopPropagation();
 
-    const elementBoundingBox = e.currentTarget.getBoundingClientRect();
+    thisElement.current = e.currentTarget;
 
-    handleStart(mousePosition.x, mousePosition.y, elementBoundingBox);
-  }
-
-  /**
-     * Handles mouse while dragging
-     * @param e The triggering window event
-     */
-  function handleDragMove(e: React.PointerEvent<HTMLDivElement>){
-    if(dragOffset.isBeingDragged) handleMove(e, mousePosition.x, mousePosition.y);
+    handleStart(e.clientX, e.clientY);
   }
 
   /**
      * Handles mouse releasing the drag
      * @param e The triggering window event
      */
-  function handleDragEnd(e: React.PointerEvent<HTMLDivElement>){
+  function handleDragEnd(e: React.PointerEvent<HTMLSpanElement>){
     e.stopPropagation();
-
-    handleEnd(e, mousePosition.x, mousePosition.y);
+    handleEnd();
   }
 
   /**
@@ -124,19 +124,12 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
   function handleTouchStart(e: React.TouchEvent<HTMLDivElement>){
-    const relevantTouch = e.touches[0];
-    const elementBoundingBox = e.currentTarget.getBoundingClientRect();
+    e.stopPropagation();
 
-    handleStart(relevantTouch.clientX, relevantTouch.clientY, elementBoundingBox);
-  }
+    thisElement.current = e.currentTarget
 
-  /**
-     * Handles touch dragging previewing
-     * @param e The triggering window event
-     */
-  function handleTouch(e: React.TouchEvent<HTMLDivElement>){
     const relevantTouch = e.touches[0];
-    handleMove(e, relevantTouch.clientX, relevantTouch.clientY);
+    handleStart(relevantTouch.clientX, relevantTouch.clientY);
   }
 
   /**
@@ -144,30 +137,32 @@ export default function Draggable(props: DraggableProps){
      * @param e The triggering window event
      */
   function handleTouchEnd(e: React.TouchEvent<HTMLDivElement>){
-    const relevantTouch = e.changedTouches[0];
-    handleEnd(e, relevantTouch.clientX, relevantTouch.clientY);
+    e.stopPropagation();
+    handleEnd();
   }
 
   return (
     <span 
       className="DragComponent"
 
-      // These have to be pointer events
       onPointerDown={handleDragStart}
-      onPointerMove={handleDragMove}
       onPointerUp={handleDragEnd}
 
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouch}
       onTouchEnd={handleTouchEnd}
         
       style={{
         left: position.posX,
         top: position.posY,
         // Here we should disable the padding if wanted
-        cursor: dragOffset.isBeingDragged ? "grabbing" : "grab",
+        cursor: dragOffset.current.isBeingDragged ? "grabbing" : "grab",
       }}>
-      {props.children}
+      
+      <div className="dragClose">
+        <Button text="x" onClick={_ => onClose()} marginBottom="0"/>
+      </div>
+
+      {children}
     </span>
   );
 }

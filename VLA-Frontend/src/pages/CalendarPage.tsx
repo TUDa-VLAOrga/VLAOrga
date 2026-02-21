@@ -7,7 +7,7 @@ export default function CalendarPage() {
   return (
     <>
       <div>
-        <CalendarView />
+          <CalendarView />
       </div>
       <SSEComponent></SSEComponent>
       <GlobalNoteContainer></GlobalNoteContainer>

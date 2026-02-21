@@ -4,9 +4,9 @@
  --z-base: 1;
   --z-dropdown: 100;
   --z-sticky: 200;
-  --z-overlay: 1000;
-  --z-modal: 1100;
-  --z-tooltip: 1200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-tooltip: 500;
 }
 .cv-root {   
   width: 100%;         
@@ -789,7 +789,7 @@
 
 /* Higher z-index for PersonDetails modal when it appears over EventDetails */
 .cv-personDetailsOverlay {
-  z-index: 1200 !important;
+  z-index: 500 !important;
   background: rgba(0, 0, 0, 0.3);
 }
 
