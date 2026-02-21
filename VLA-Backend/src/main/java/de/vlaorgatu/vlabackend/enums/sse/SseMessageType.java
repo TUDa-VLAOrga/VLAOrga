@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.enums.sse;
 
 import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -34,6 +35,12 @@ public enum SseMessageType {
      * TODO: Frontend handling
      */
     LINUSAPPOINTMENTIMPORT("LINUSAPPOINTMENTIMPORT"),
+    /**
+     * Used for sending SSE Events after a {@link ExperimentBookingRepository} has been updated.
+     * This update contains all created bookings imported from linus.
+     * TODO: Frontend handling
+     */
+    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
     /**
      * Used for sending Debug messages to the frontend.
      */

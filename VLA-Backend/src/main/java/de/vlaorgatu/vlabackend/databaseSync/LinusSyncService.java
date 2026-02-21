@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.databaseSync;
 
+import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
@@ -8,6 +9,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentCategoryRepository;
@@ -124,6 +126,8 @@ public class LinusSyncService {
 
         List<Appointment> savedAppointments = appointmentRepository.saveAll(newAppointments);
 
+        SseController.notifyAllOfObject(SseMessageType.LINUSAPPOINTMENTIMPORT, savedAppointments);
+
         log.info("Imported " + savedAppointments.size() + " appointments from linus");
     }
 
@@ -168,10 +172,13 @@ public class LinusSyncService {
                 experimentBookings.add(newExperimentBooking);
             }
 
-            List<ExperimentBooking> newExperimentBooking =
+            List<ExperimentBooking> savedExperimentBookings =
                 experimentBookingRepository.saveAll(experimentBookings);
 
-            log.info("Imported " + newExperimentBooking.size() + " experiments for " +
+            SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
+                savedExperimentBookings);
+
+            log.info("Imported " + savedExperimentBookings.size() + " experiments for " +
                 "appointment id=" + appointment.getId() + " from linus");
         }
     }
