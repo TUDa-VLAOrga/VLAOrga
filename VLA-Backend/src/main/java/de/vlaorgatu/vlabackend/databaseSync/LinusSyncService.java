@@ -43,6 +43,10 @@ public class LinusSyncService {
     private final ExperimentBookingRepository experimentBookingRepository;
     private final PersonRepository vlaPersonDb;
 
+    /**
+     * Remnant from an initial draft (To be extended?)
+     * TODO: Is this still needed?
+     */
     @Transactional
     public void syncBookings() {
         List<LinusExperimentBooking> linusExperiments = linusExperimentBookingRepository.findAll();
@@ -68,6 +72,13 @@ public class LinusSyncService {
 
     // TODO: make method for syncing appointment notes.
 
+    /**
+     * Syncs linus_reservations with valid appointment dates to {@link Appointment}s.
+     * This looks for appointments in a given time frame.
+     *
+     * @param start The start of the time frame that should be synced
+     * @param end   The end of the time frame that should be synced
+     */
     @Transactional
     public void syncAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
@@ -130,6 +141,13 @@ public class LinusSyncService {
         log.info("Imported " + savedAppointments.size() + " appointments from linus");
     }
 
+    /**
+     * Syncs linus_reservations_experiments with valid appointment dates to {@link Appointment}s.
+     * This looks for linus bookings that reference linus_reservations in a given time frame.
+     *
+     * @param start The start of the time frame that should be synced
+     * @param end   The end of the time frame that should be synced
+     */
     @Transactional
     public void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
         syncAppointments(start, end);
