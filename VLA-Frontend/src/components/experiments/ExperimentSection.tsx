@@ -1,27 +1,29 @@
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch";
-import { ExperimentPreparationStatus, type Appointment, type ExperimentBooking, type SseMessageType } from "@/lib/databaseTypes";
+import { SseMessageType, type Appointment, type ExperimentBooking } from "@/lib/databaseTypes";
 import ExperimentEntry from "./ExperimentEntry";
 
 interface ExperimentSectionProps {
   appointment: Appointment;
 }
 
-// TODO: Handle SSE
+function handleExperimentBookingUpdate(event: MessageEvent, previousState: ExperimentBooking[]){
+  const updatedBooking = JSON.parse(event.data) as unknown as ExperimentBooking
+  
+  const newState = previousState.map(booking => booking.id == updatedBooking.id ? updatedBooking : booking);
+  
+  return newState;
+}
+
 const handlers = new Map<SseMessageType, (event: MessageEvent, value: ExperimentBooking[]) => ExperimentBooking[]>;
+handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpdate)
 
 /**
  * Part of Appointments that handles interactions with the experiments
  */
 export default function ExperimentSection({appointment}: ExperimentSectionProps){
   const [experimentBookings, _setExperimentBooking] = useSseConnectionWithInitialFetch<ExperimentBooking[]>(
-    [{
-      id: 0,
-      linusExperimentId: 2,
-      linusExperimentBookingId: 0,
-      notes: "",
-      status: ExperimentPreparationStatus.FINISHED,
-    }],
-    `/api/appointments/${appointment.id}/experimentBookings`, // Fix this URL once testing is done
+    [],
+    `/api/appointments/${appointment.id}/experimentBookings`,
     handlers
   );
     
@@ -34,6 +36,11 @@ export default function ExperimentSection({appointment}: ExperimentSectionProps)
             experimentBookings.map(experimentBooking => {
               return <ExperimentEntry experiment={experimentBooking} key={experimentBooking.id}/>;
             })
+          }
+          {experimentBookings.length === 0 &&
+          <>
+            Keine hinterlegt
+          </>
           }
         </div>
       </span>

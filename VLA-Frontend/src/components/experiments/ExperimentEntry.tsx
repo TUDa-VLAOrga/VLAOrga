@@ -35,16 +35,22 @@ export default function ExperimentEntry({experiment}: ExperimentProps){
 
   useEffect(() => {
     fetch("/api/linusExperiments/" + experiment.linusExperimentId)
-      .then(response => {
-        if(!response.ok) throw new Error("Non-ok response code received");
-        return response.json();
-      })
-      .then((linusExperiment) => setLinusExperiment(linusExperiment as unknown as LinusExperiment))
-      .catch(e => {
-      // Possible TODO: Display error in experiment window
-        Logger.error("Fetch of linusExperiment id=" + experiment.linusExperimentId + " has failed");
-        console.log(e);
-      });
+      
+    .then(response => {
+      if(!response.ok) throw new Error("Non-ok response code received");
+
+      return response.json();
+    })
+
+    .then(linusExperiment => 
+      setLinusExperiment(linusExperiment as unknown as LinusExperiment)
+    )
+
+    .catch(e => {
+    // Possible TODO: Display error in experiment window
+      Logger.error("Fetch of linusExperiment id=" + experiment.linusExperimentId + " has failed");
+      console.log(e);
+    });
   }, [experiment]);
 
   return (

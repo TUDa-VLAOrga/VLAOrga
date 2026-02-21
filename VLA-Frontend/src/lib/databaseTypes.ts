@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-20 16:25:45.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-21 11:54:41.
 
 export interface LinusAppointment {
     id: number;
@@ -132,5 +132,9 @@ export enum SseMessageType {
     GLOBALNOTECREATED = "GLOBALNOTECREATED",
     GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
     GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
+    EXPERIMENTBOOKINGUPDATED = "EXPERIMENTBOOKINGUPDATED",
+    APPOINTMENTCREATED = "APPOINTMENTCREATED",
+    APPOINTMENTUPDATED = "APPOINTMENTUPDATED",
+    APPOINTMENTDELETED = "APPOINTMENTDELETED",
     DEBUG = "DEBUG",
 }
