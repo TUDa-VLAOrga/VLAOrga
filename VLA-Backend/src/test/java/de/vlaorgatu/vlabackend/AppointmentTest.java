@@ -29,23 +29,41 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Tests for the appointment endpoint.
+ */
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
 public class AppointmentTest {
+    /**
+     * The MVC mock for requesting.
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * The repository of {@link AppointmentCategory}.
+     */
     @Autowired
     private AppointmentCategoryRepository appointmentCategoryRepository;
 
+    /**
+     * The repository of {@link AppointmentSeries}.
+     */
     @Autowired
     private AppointmentSeriesRepository appointmentSeriesRepository;
 
+    /**
+     * The repository of {@link Appointment}.
+     */
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    /**
+     * The repository of {@link ExperimentBooking}.
+     */
     @Autowired
     private ExperimentBookingRepository experimentBookingRepository;
 
