@@ -2,17 +2,23 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Rest controller for appointment-related endpoints.
@@ -20,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestBody;
  * Mainly needed to trigger SSE events on update operations.
  */
 @AllArgsConstructor
-@RepositoryRestController
-public class AppointmentController {
+@RestController
+@RequestMapping("/api/appointments")
+public class AppointmentController
+    implements GetAndGetByIdDefaultInterface<Appointment, AppointmentRepository> {
 
     /**
      * Repository used for appointment persistence operations.
@@ -29,12 +37,29 @@ public class AppointmentController {
     private final AppointmentRepository appointmentRepository;
 
     /**
+     * Returns all {@link ExperimentBooking}s associated with an {@link Appointment}.
+     *
+     * @param id The id of the appointment
+     * @return All ExperimentBookings of this appointment
+     */
+    @GetMapping("/{id}/experimentbookings")
+    public ResponseEntity<List<ExperimentBooking>> getAllAppointments(@PathVariable Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Appointment with id " + id + " was not found"
+                )
+            );
+        return ResponseEntity.ok(appointment.getBookings());
+    }
+
+    /**
      * Creates a new appointment.
      *
      * @param appointment Appointment to create, must not contain an ID (auto-generated).
      * @return OK response with the created appointment, Error response otherwise.
      */
-    @PostMapping("/appointments")
+    @PostMapping
     public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
         if (Objects.nonNull(appointment.getId())) {
             throw new InvalidParameterException(
@@ -42,8 +67,7 @@ public class AppointmentController {
                     " when creating a new appointment.");
         }
         Appointment savedAppointment = appointmentRepository.save(appointment);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment created: " + savedAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCREATED, savedAppointment);
         return ResponseEntity.ok(savedAppointment);
     }
 
@@ -55,7 +79,7 @@ public class AppointmentController {
      *                    Must contain all keys, ID may be omitted.
      * @return OK response with the updated appointment, Error response otherwise.
      */
-    @PutMapping("/appointments/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateAppointment(@PathVariable Long id,
                                                @RequestBody Appointment appointment) {
         if (Objects.isNull(appointment.getId())) {
@@ -71,8 +95,7 @@ public class AppointmentController {
         }
 
         Appointment updated = appointmentRepository.save(appointment);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment updated: " + updated);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updated);
         return ResponseEntity.ok(updated);
     }
 
@@ -82,14 +105,23 @@ public class AppointmentController {
      * @param id ID of the appointment to delete.
      * @return OK response with the deleted appointment, Error response otherwise.
      */
-    @PostMapping("/appointments/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
         Appointment deletedAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
                 "Appointment with ID " + id + " not found."));
         appointmentRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment deleted: " + deletedAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, deletedAppointment);
         return ResponseEntity.ok(deletedAppointment);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public AppointmentRepository getRepository() {
+        return appointmentRepository;
     }
 }

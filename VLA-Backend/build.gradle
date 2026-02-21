@@ -64,14 +64,13 @@ tasks {
     }
 
     generateTypeScript {
-        dependsOn build
 
         classPatterns = [
                 "de.vlaorgatu.vlabackend.entities.**",
                 "de.vlaorgatu.vlabackend.enums.**"
         ]
 
-        optionalAnnotations = [ "jakarta.annotation.Nullable" ]
+        optionalAnnotations = ["jakarta.annotation.Nullable"]
 
         jsonLibrary = JsonLibrary.Jackson2
 
