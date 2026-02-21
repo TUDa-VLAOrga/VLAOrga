@@ -36,6 +36,12 @@ public class AppointmentController
      */
     private final AppointmentRepository appointmentRepository;
 
+    /**
+     * Returns all {@link ExperimentBooking}s associated with an {@link Appointment}.
+     *
+     * @param id The id of the appointment
+     * @return All ExperimentBookings of this appointment
+     */
     @GetMapping("/{id}/experimentbookings")
     public ResponseEntity<List<ExperimentBooking>> getAllAppointments(@PathVariable Long id) {
         Appointment appointment = appointmentRepository.findById(id)

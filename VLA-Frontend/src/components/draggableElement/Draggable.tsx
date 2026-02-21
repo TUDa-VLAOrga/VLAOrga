@@ -97,6 +97,9 @@ export default function Draggable({children, onClose}: DraggableProps){
     // React generally caches the state
     // The new dragOffset will not be displayed if the position state is not updated
     setPosition({...position});
+
+    // handleMove is a callback function and thus never changes
+    // eslint-disable-next-line
   }, [position]);
 
   /**

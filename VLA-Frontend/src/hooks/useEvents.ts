@@ -14,7 +14,7 @@ import useSseConnectionWithInitialFetch from "./useSseConnectionWithInitialFetch
 function handleAppointmentCreated(event: MessageEvent, previousState: Appointment[]){
   const createdAppointment = JSON.parse(event.data) as unknown as Appointment;
 
-  const newState = [createdAppointment, ...previousState]
+  const newState = [createdAppointment, ...previousState];
 
   return newState;
 }
@@ -22,7 +22,13 @@ function handleAppointmentCreated(event: MessageEvent, previousState: Appointmen
 function handleAppointmentUpdated(event: MessageEvent, previousState: Appointment[]){
   const updatedAppointment = JSON.parse(event.data) as unknown as Appointment;
 
-  const newState = previousState.map(appointment => appointment.id == updatedAppointment.id ? updatedAppointment : appointment);
+  const newState = previousState.map(appointment => 
+    appointment.id == updatedAppointment.id 
+      ? 
+      updatedAppointment 
+      : 
+      appointment
+  );
 
   return newState;
 }
@@ -53,7 +59,7 @@ export function useEvents() {
   const [allEvents, setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
     [],
     "/api/appointments",
-    sseHandlers,
+    sseHandlers
   );
   const [selectedEvent, setSelectedEvent] = useState<Appointment>();
 
@@ -155,7 +161,7 @@ export function useEvents() {
         start: formData.startDateTime,
         end: formData.endDateTime,
         notes: formData.notes || "",
-        bookings: []
+        bookings: [],
       });
     }
 
@@ -188,7 +194,7 @@ export function useEvents() {
             start: currentDate,
             end: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
-            bookings: []
+            bookings: [],
           });
         }
         currentDate = addDays(currentDate, 1);

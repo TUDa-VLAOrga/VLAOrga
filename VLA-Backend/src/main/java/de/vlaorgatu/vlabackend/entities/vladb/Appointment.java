@@ -59,7 +59,7 @@ public class Appointment {
     private String notes = "";
 
     /**
-     * All VLA bookings referencing this appointment
+     * All VLA bookings referencing this appointment.
      */
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ExperimentBooking> bookings;

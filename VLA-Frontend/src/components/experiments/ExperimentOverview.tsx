@@ -13,22 +13,27 @@ function updateAppointmentStatus(experimentBooking: ExperimentBooking, status: E
   const updatedExperimentBooking: ExperimentBooking = {
     ...experimentBooking,
     status: status,
-  }
+  };
 
   fetch("/api/experimentBookings/" + experimentBooking.id, {
     method: "PUT",
-    body: JSON.stringify(updatedExperimentBooking)
+    body: JSON.stringify(updatedExperimentBooking),
   })
-  .then(response => {
-    if(!response.ok) throw new Error("Experimentbooking could not be updated");
-  })
-  .catch(e => {
-    Logger.info(e.message)
-    console.log(e);
-  });
+    .then(response => {
+      if(!response.ok) throw new Error("Experimentbooking could not be updated");
+    })
+    .catch(e => {
+      Logger.info(e.message);
+      console.log(e);
+    });
 }
 
-export default function ExperimentOverview({linusExperiment, experimentBooking, statusBackgroundColor, statusTextColor} : ExperimentOverviewProps){
+export default function ExperimentOverview({
+  linusExperiment,
+  experimentBooking,
+  statusBackgroundColor,
+  statusTextColor,
+} : ExperimentOverviewProps){
   const [isEditingStatus, setIsEditingStatus] = useState<boolean>(false);
     
   return (
@@ -48,15 +53,15 @@ export default function ExperimentOverview({linusExperiment, experimentBooking, 
                 {Object.values(ExperimentPreparationStatus).map(status => {
                   return (
                     <>
-                    <option  
-                      value={status}
-                      onClick={() => {
-                        updateAppointmentStatus(experimentBooking, status)
-                        setIsEditingStatus(false);
-                      }}
-                    >
-                      {status}
-                    </option>
+                      <option  
+                        value={status}
+                        onClick={() => {
+                          updateAppointmentStatus(experimentBooking, status);
+                          setIsEditingStatus(false);
+                        }}
+                      >
+                        {status}
+                      </option>
                     </>
                   );
                 })}
@@ -85,7 +90,13 @@ export default function ExperimentOverview({linusExperiment, experimentBooking, 
           Link zu linus
         </div>
         <div>
-          <a className="linusLink" target="_blank" href={"https://linus.iap.physik.tu-darmstadt.de/experiment/" + linusExperiment.id + "/description"}>Experiment in Linus</a>
+          <a 
+            className="linusLink"
+            target="_blank"
+            href={"https://linus.iap.physik.tu-darmstadt.de/experiment/" + linusExperiment.id + "/description"}
+          >
+            Experiment in Linus
+          </a>
         </div>
       </div>
     </div>

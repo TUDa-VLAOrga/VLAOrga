@@ -7,7 +7,7 @@ interface ExperimentSectionProps {
 }
 
 function handleExperimentBookingUpdate(event: MessageEvent, previousState: ExperimentBooking[]){
-  const updatedBooking = JSON.parse(event.data) as unknown as ExperimentBooking
+  const updatedBooking = JSON.parse(event.data) as unknown as ExperimentBooking;
   
   const newState = previousState.map(booking => booking.id == updatedBooking.id ? updatedBooking : booking);
   
@@ -15,7 +15,7 @@ function handleExperimentBookingUpdate(event: MessageEvent, previousState: Exper
 }
 
 const handlers = new Map<SseMessageType, (event: MessageEvent, value: ExperimentBooking[]) => ExperimentBooking[]>;
-handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpdate)
+handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpdate);
 
 /**
  * Part of Appointments that handles interactions with the experiments

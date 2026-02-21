@@ -34,7 +34,7 @@ public class ExperimentBooking {
     private Long id;
 
     /**
-     * ID of the booked-for appointment
+     * ID of the booked-for appointment.
      */
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
