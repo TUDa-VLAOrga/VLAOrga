@@ -34,23 +34,22 @@ import java.util.List;
 public class LinusSyncService {
     private final Logger log = Logger.getLogger(this.getClass().getName());
 
-    private final LinusExperimentBookingRepository linusExperimentBookingRepository;
-    private final ExperimentBookingRepository vlaExperimentsDb;
-    private final LinusExperimentBookingRepository linusExperimentsDb;
-    private final PersonRepository vlaPersonDb;
     private final LinusAppointmentRepository linusAppointmentRepository;
-    private final AppointmentRepository appointmentRepository;
-    private final AppointmentSeriesRepository appointmentSeriesRepository;
+    private final LinusExperimentBookingRepository linusExperimentBookingRepository;
+
     private final AppointmentCategoryRepository appointmentCategoryRepository;
+    private final AppointmentSeriesRepository appointmentSeriesRepository;
+    private final AppointmentRepository appointmentRepository;
     private final ExperimentBookingRepository experimentBookingRepository;
+    private final PersonRepository vlaPersonDb;
 
     @Transactional
     public void syncBookings() {
-        List<LinusExperimentBooking> linusExperiments = linusExperimentsDb.findAll();
+        List<LinusExperimentBooking> linusExperiments = linusExperimentBookingRepository.findAll();
 
         linusExperiments.stream().filter(linusExperimentBooking ->
         {
-            return vlaExperimentsDb
+            return experimentBookingRepository
                 .findByLinusExperimentBookingId(linusExperimentBooking.getId()).isEmpty();
         }).forEach(toBeSavedBooking -> {
             ExperimentBooking newEntry = new ExperimentBooking();
@@ -63,7 +62,7 @@ public class LinusSyncService {
             }
             // TODO: appointment
             // no notes here because in linus notes are attached to the appointment
-            vlaExperimentsDb.save(newEntry);
+            experimentBookingRepository.save(newEntry);
         });
     }
 
@@ -164,7 +163,7 @@ public class LinusSyncService {
                     // TODO: Think about adding the linus users
                     .person(null)
                     .appointment(appointment)
-                    // TODO: Think about note import more (maybe from appointment?)
+                    // TODO: Think about note import more (from appointment or leave it at that?)
                     .notes("")
                     .status(ExperimentPreparationStatus.PENDING)
                     .build();
