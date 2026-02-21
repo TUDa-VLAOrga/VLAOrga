@@ -1,0 +1,123 @@
+.globalNoteContainer {
+    position: absolute;
+    height: 100dvh;
+    width: 100dvw;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.globalNoteToggle {
+    height: min(10dvmin, 100px);
+    aspect-ratio: 1 / 1;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    background-image: url("/public/GlobalNotes/NotesIcon.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.globalNoteViewToggle {
+    width: 100%;
+    cursor: pointer;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+.globalNoteView {
+    height: min(90%, 1000px);
+    width: min(90%, 1500px);
+    border-radius: 20px;
+    background-color: #FFF;
+    box-shadow: 4px 4px 8px #777;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.globalNoteTopBarTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 32px;
+    margin-bottom: 10px;
+    height: auto;
+}
+
+.globalNoteTopBar {
+    display: grid;
+    grid-template-columns: 30% 40% 30%;
+}
+
+.globalNoteEntry {
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.globalNoteTitle {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: auto;     
+    overflow-y: hidden;
+    white-space: nowrap;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px .1px #000;
+}
+
+.globalNoteTitle > textarea {
+    width: 100%;
+    font-size: inherit;
+    resize: none;
+    display: flex;
+    text-align: center;
+    vertical-align: middle;
+    text-shadow: 1px 1px .1px #000;
+    overflow-x: auto;     
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.globalNoteContent {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    background-color: white;
+    font-size: 18px;
+    color: black;
+}
+
+.globalNoteContent > textarea {
+    width: 100%;
+    height: auto;
+    font-size: inherit;
+    resize: vertical;
+    display: flex;
+    text-align: center;
+    border: 5px solid #0003;
+}
+
+.globalNoteCreation {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+.displayedNoteContent {
+    white-space: pre-line;
+}

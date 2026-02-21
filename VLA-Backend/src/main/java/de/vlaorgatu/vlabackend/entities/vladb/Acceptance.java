@@ -29,19 +29,19 @@ public class Acceptance {
     /**
      * Appointment this acceptance belongs to.
      */
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Appointment appointment;
 
     /**
      * Start time of the acceptance.
      */
-    @Column(name = "start")
+    @Column(name = "start", nullable = false)
     private LocalDateTime start;
 
     /**
      * End time of the acceptance.
      */
-    @Column(name = "end")
+    @Column(name = "end", nullable = false)
     private LocalDateTime end;
 }
 
