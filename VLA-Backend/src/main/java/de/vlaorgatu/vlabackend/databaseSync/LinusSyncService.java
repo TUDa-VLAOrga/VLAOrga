@@ -7,6 +7,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
+import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentCategoryRepository;
@@ -39,6 +40,7 @@ public class LinusSyncService {
     private final AppointmentRepository appointmentRepository;
     private final AppointmentSeriesRepository appointmentSeriesRepository;
     private final AppointmentCategoryRepository appointmentCategoryRepository;
+    private final ExperimentBookingRepository experimentBookingRepository;
 
     @Transactional
     public void syncBookings() {
@@ -123,5 +125,54 @@ public class LinusSyncService {
         List<Appointment> savedAppointments = appointmentRepository.saveAll(newAppointments);
 
         log.info("Imported " + savedAppointments.size() + " appointments from linus");
+    }
+
+    @Transactional
+    public void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
+        syncAppointments(start, end);
+
+        List<LinusAppointment> linusAppointments =
+            linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
+
+        for (LinusAppointment linusAppointment : linusAppointments) {
+            Optional<Appointment> retrievedAppointment =
+                appointmentRepository.findByLinusAppointmentId(linusAppointment.getId());
+
+            if (retrievedAppointment.isEmpty()) {
+                // ??? This should not happen ???
+                log.warning("Could not find appointment with linus_appointment_id " +
+                    linusAppointment.getId());
+                continue;
+            }
+
+            Appointment appointment = retrievedAppointment.get();
+
+            List<LinusExperimentBooking> linusExperimentBookings =
+                linusExperimentBookingRepository.findByLinusAppointmentId(linusAppointment.getId());
+
+            List<ExperimentBooking> experimentBookings = new ArrayList<>();
+
+            for (LinusExperimentBooking linusExperimentBooking : linusExperimentBookings) {
+                ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
+                    .id(null)
+                    .linusExperimentId(linusExperimentBooking.getLinusExperimentId())
+                    .linusExperimentBookingId(linusExperimentBooking.getId())
+                    // TODO: Think about adding the linus users
+                    .person(null)
+                    .appointment(appointment)
+                    // TODO: Think about note import more (maybe from appointment?)
+                    .notes("")
+                    .status(ExperimentPreparationStatus.PENDING)
+                    .build();
+
+                experimentBookings.add(newExperimentBooking);
+            }
+
+            List<ExperimentBooking> newExperimentBooking =
+                experimentBookingRepository.saveAll(experimentBookings);
+
+            log.info("Imported " + newExperimentBooking.size() + " experiments for " +
+                "appointment id=" + appointment.getId() + " from linus");
+        }
     }
 }

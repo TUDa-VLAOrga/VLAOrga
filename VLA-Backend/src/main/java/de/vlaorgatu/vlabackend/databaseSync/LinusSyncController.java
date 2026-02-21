@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sync")
 public class LinusSyncController {
     private LinusSyncService syncService;
-    
+
+    // TODO: Change this date and make dynamic
     @GetMapping
     public ResponseEntity<String> syncLinusAppointments() {
-        syncService.syncAppointments(
+        syncService.syncExperimentBookings(
             LocalDateTime.of(2020, 1, 1, 0, 0),
             LocalDateTime.of(2021, 1, 1, 0, 0)
         );
