@@ -1,15 +1,20 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Represents a user in the system.
  */
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 public class User {
@@ -30,28 +35,14 @@ public class User {
     /**
      * Email address of the user.
      */
-    @Column(name = "email", nullable = false)
+    @Nullable
+    @Column(name = "email")
     private String email;
 
-    // getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    /**
+     * User Id in linus (if existent)
+     */
+    @Nullable
+    @Column(name = "linus_user_id")
+    private Integer linusUserId;
 }
