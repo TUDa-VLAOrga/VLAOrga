@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/users")
-public class UserController implements GetAndGetByIdDefaultInterface<User, UserRepository> {
+public class UserController implements GetAllAndGetByIdDefaultInterface<User, UserRepository> {
 
     /**
      * Repository used for user persistence operations.
