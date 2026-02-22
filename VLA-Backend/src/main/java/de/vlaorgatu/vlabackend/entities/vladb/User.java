@@ -38,11 +38,4 @@ public class User {
     @Nullable
     @Column(name = "email")
     private String email;
-
-    /**
-     * User Id in linus (if existent)
-     */
-    @Nullable
-    @Column(name = "linus_user_id")
-    private Integer linusUserId;
 }
