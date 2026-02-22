@@ -1,11 +1,14 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -57,13 +60,14 @@ public class ExperimentBooking {
      * Appointment this experiment is booked for.
      */
     @ManyToOne
-    @Nullable
+    @JsonBackReference
+    @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
     /**
      * Notes for this booking, probably taken from linus reservation at init.
      */
-    @Column(name = "notes", nullable = false)
+    @Column(name = "notes", nullable = false, length = 4096)
     private String notes = "";
 
     /**

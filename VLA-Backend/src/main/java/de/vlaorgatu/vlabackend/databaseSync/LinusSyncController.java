@@ -17,10 +17,6 @@ public class LinusSyncController {
     // TODO: Change this date and make dynamic
     @GetMapping
     public ResponseEntity<String> syncLinusAppointments() {
-        syncService.syncExperimentBookings(
-            LocalDateTime.of(2020, 1, 1, 0, 0),
-            LocalDateTime.of(2021, 1, 1, 0, 0)
-        );
-        return ResponseEntity.ok("Updated");
+        return ResponseEntity.internalServerError().build();
     }
 }

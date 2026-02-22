@@ -9,10 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,7 +33,7 @@ public class AppointmentMatching {
      * The list of linus reservation ids an appointment is matched to
      */
     @Column(name = "linus_appointment_id", nullable = false)
-    private Integer linusAppointmentIds;
+    private Integer linusAppointmentId;
 
     @Nullable
     @OneToOne
