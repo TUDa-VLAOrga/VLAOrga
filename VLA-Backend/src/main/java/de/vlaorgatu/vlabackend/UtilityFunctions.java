@@ -40,6 +40,13 @@ public class UtilityFunctions {
         return true;
     }
 
+    /**
+     * Truncates a string to a specified length if neccessary.
+     *
+     * @param string    The string to possibly truncate
+     * @param maxLength The maximum length the string may have
+     * @return A string with limited length, ending in "..." if truncated
+     */
     public static String truncateStringIfNeccessary(String string, int maxLength) {
         if (string == null) {
             return "";
@@ -49,6 +56,6 @@ public class UtilityFunctions {
             return string;
         }
 
-        return string.substring(0, maxLength - 1);
+        return string.substring(0, maxLength - 4) + "...";
     }
 }

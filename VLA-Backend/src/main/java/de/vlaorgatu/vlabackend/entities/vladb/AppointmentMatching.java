@@ -35,7 +35,7 @@ public class AppointmentMatching {
     private Long id;
 
     /**
-     * The linus reservation id this matching represents
+     * The linus reservation id this matching represents.
      */
     @Column(name = "linus_appointment_id", nullable = false)
     private Integer linusAppointmentId;

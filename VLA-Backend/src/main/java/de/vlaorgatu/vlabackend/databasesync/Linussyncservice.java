@@ -1,6 +1,4 @@
-package de.vlaorgatu.vlabackend.databaseSync;
-
-import static de.vlaorgatu.vlabackend.UtilityFunctions.truncateStringIfNeccessary;
+package de.vlaorgatu.vlabackend.databasesync;
 
 import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
@@ -13,66 +11,48 @@ import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPrepar
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
-import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentCategoryRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
-import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
-import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+/**
+ * Service for various syncing mechanisms for linus.
+ */
 @Service
 @AllArgsConstructor
-public class LinusSyncService {
+public class Linussyncservice {
+    /**
+     * Logger for this class.
+     */
     private final Logger log = Logger.getLogger(this.getClass().getName());
 
+    // VLA Repositories
+    /**
+     * Repository containing all {@link LinusAppointment}s.
+     */
     private final LinusAppointmentRepository linusAppointmentRepository;
-    private final LinusExperimentBookingRepository linusExperimentBookingRepository;
-
-    private final AppointmentCategoryRepository appointmentCategoryRepository;
-    private final AppointmentSeriesRepository appointmentSeriesRepository;
-    private final AppointmentRepository appointmentRepository;
-    private final ExperimentBookingRepository experimentBookingRepository;
-    private final AppointmentMatchingRepository appointmentMatchingRepository;
 
     /**
-     * Remnant from an initial draft (To be extended?)
-     * TODO: Is this still needed?
+     * Repository containing all {@link LinusExperimentBooking}s.
      */
-//    @Transactional
-//    public void syncBookings() {
-//        List<LinusExperimentBooking> linusExperiments = linusExperimentBookingRepository.findAll();
-//
-//        linusExperiments.stream().filter(linusExperimentBooking ->
-//        {
-//            return experimentBookingRepository
-//                .findByLinusExperimentBookingId(linusExperimentBooking.getId()).isEmpty();
-//        }).forEach(toBeSavedBooking -> {
-//            ExperimentBooking newEntry = new ExperimentBooking();
-//            newEntry.setLinusExperimentBookingId(toBeSavedBooking.getId());
-//            newEntry.setLinusExperimentId(toBeSavedBooking.getLinusExperimentId());
-//            List<Person> person = vlaPersonDb.findByLinusUserId(toBeSavedBooking.getLinusUserId());
-//            // TODO: make new person if there is no person with linusUserId (linusUser needed)
-//            if (!person.isEmpty()) {
-//                newEntry.setPerson(person.getFirst());
-//            }
-//            // TODO: appointment
-//            // no notes here because in linus notes are attached to the appointment
-//            experimentBookingRepository.save(newEntry);
-//        });
-//    }
+    private final LinusExperimentBookingRepository linusExperimentBookingRepository;
 
-    // TODO: make method for syncing appointment notes.
+    // Linus Repositories
+    /**
+     * Repository containing all {@link ExperimentBooking}s.
+     */
+    private final ExperimentBookingRepository experimentBookingRepository;
+    /**
+     * Repository containing all {@link AppointmentMatching}s.
+     */
+    private final AppointmentMatchingRepository appointmentMatchingRepository;
 
     /**
      * Creates {@link AppointmentMatching} objects for each linus reservation in a given time frame.
@@ -120,8 +100,9 @@ public class LinusSyncService {
     }
 
     /**
-     * TODO: Syncs linus_reservations_experiments with valid appointment dates to {@link Appointment}s.
-     * This looks for linus bookings that reference linus_reservations in a given time frame.
+     * Syncs {@link LinusExperimentBooking} to {@link ExperimentBooking} in the given time frame.
+     * Synchronisation will only happen if a non-noll matched {@link AppointmentMatching} exists
+     * for the {@link LinusAppointment} the {@link LinusExperimentBooking} belongs to.
      *
      * @param start The start of the time frame that should be synced
      * @param end   The end of the time frame that should be synced
