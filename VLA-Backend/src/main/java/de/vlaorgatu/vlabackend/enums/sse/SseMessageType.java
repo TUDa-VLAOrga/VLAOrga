@@ -1,6 +1,8 @@
 package de.vlaorgatu.vlabackend.enums.sse;
 
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
+import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,6 +29,18 @@ public enum SseMessageType {
      * Used for sending SSE Events after a {@link GlobalNote} has been updated.
      */
     GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
+    /**
+     * Used for sending SSE Events after a {@link AppointmentMatchingRepository} has been updated.
+     * This update contains all created appointments matchings.
+     * TODO: Frontend handling
+     */
+    APPOINTMENTMATCHINGCREATE("APPOINTMENTMATCHINGCREATE"),
+    /**
+     * Used for sending SSE Events after a {@link Appointment}s have been updated.
+     * This update contains all new bookings imported from Linus.
+     * TODO: Frontend handling
+     */
+    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
     /**
      * Used for sending Debug messages to the frontend.
      */

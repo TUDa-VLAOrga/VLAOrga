@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-20 15:29:26.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-22 11:41:00.
 
 export interface LinusAppointment {
     id: number;
@@ -55,11 +55,27 @@ export interface Appointment {
     start: Date;
     end: Date;
     notes: string;
+    bookings: ExperimentBooking[];
+}
+
+export interface AppointmentBuilder {
 }
 
 export interface AppointmentCategory {
     id: number;
     title: string;
+}
+
+export interface AppointmentCategoryBuilder {
+}
+
+export interface AppointmentMatching {
+    id: number;
+    linusAppointmentId: number;
+    appointment?: Appointment;
+}
+
+export interface AppointmentMatchingBuilder {
 }
 
 export interface AppointmentSeries {
@@ -69,14 +85,20 @@ export interface AppointmentSeries {
     category: AppointmentCategory;
 }
 
+export interface AppointmentSeriesBuilder {
+}
+
 export interface ExperimentBooking {
     id: number;
     linusExperimentId: number;
     linusExperimentBookingId?: number;
     person?: Person;
-    appointment?: Appointment;
     notes: string;
     status: ExperimentPreparationStatus;
+    appointment: Appointment;
+}
+
+export interface ExperimentBookingBuilder {
 }
 
 export interface GlobalNote {
@@ -106,7 +128,7 @@ export interface Person {
 export interface User {
     id: number;
     name: string;
-    email: string;
+    email?: string;
 }
 
 export enum ExperimentPreparationStatus {
@@ -120,5 +142,7 @@ export enum SseMessageType {
     GLOBALNOTECREATED = "GLOBALNOTECREATED",
     GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
     GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
+    APPOINTMENTMATCHINGCREATE = "APPOINTMENTMATCHINGCREATE",
+    LINUSBOOKINGSIMPORT = "LINUSBOOKINGSIMPORT",
     DEBUG = "DEBUG",
 }

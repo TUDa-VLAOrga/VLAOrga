@@ -39,4 +39,16 @@ public class UtilityFunctions {
 
         return true;
     }
+
+    public static String truncateStringIfNeccessary(String string, int maxLength) {
+        if (string == null) {
+            return "";
+        }
+
+        if (string.length() <= maxLength) {
+            return string;
+        }
+
+        return string.substring(0, maxLength - 1);
+    }
 }
