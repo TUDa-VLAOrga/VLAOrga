@@ -7,13 +7,14 @@ import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AcceptanceRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Rest controller for acceptance-related endpoints.
@@ -21,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
  * Mainly needed to trigger SSE events on update operations.
  */
 @AllArgsConstructor
-@RepositoryRestController
-public class AcceptanceController {
+@RestController
+@RequestMapping("/api/acceptances")
+public class AcceptanceController
+    implements GetAllAndGetByIdDefaultInterface<Acceptance, AcceptanceRepository> {
     /**
      * Repository used for acceptance persistence operations.
      */
@@ -34,7 +37,7 @@ public class AcceptanceController {
      * @param acceptance Acceptance to create, must not contain an ID (auto-generated).
      * @return OK response with the created acceptance, Error response otherwise.
      */
-    @PostMapping("/acceptances")
+    @PostMapping
     public ResponseEntity<?> createAcceptance(@RequestBody Acceptance acceptance) {
         if (Objects.nonNull(acceptance.getId())) {
             throw new InvalidParameterException(
@@ -54,7 +57,7 @@ public class AcceptanceController {
      * @param acceptance Acceptance to update. Must contain all keys, ID may be omitted.
      * @return OK response with the updated acceptance, Error response otherwise.
      */
-    @PutMapping("/acceptances/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateAcceptance(@PathVariable Long id,
                                               @RequestBody Acceptance acceptance) {
         if (Objects.isNull(acceptance.getId())) {
@@ -80,7 +83,7 @@ public class AcceptanceController {
      * @param id ID of the acceptance to delete.
      * @return OK response with the deleted acceptance, Error response otherwise.
      */
-    @DeleteMapping("/acceptances/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAcceptance(@PathVariable Long id) {
         Acceptance deletedAcceptance = acceptanceRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
@@ -89,5 +92,15 @@ public class AcceptanceController {
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Acceptance deleted: " + deletedAcceptance);
         return ResponseEntity.ok(deletedAcceptance);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public AcceptanceRepository getRepository() {
+        return acceptanceRepository;
     }
 }
