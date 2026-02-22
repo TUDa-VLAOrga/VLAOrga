@@ -122,7 +122,7 @@ export function useEvents() {
         start: formData.startDateTime,
         end: formData.endDateTime,
         notes: formData.notes || "",
-        bookings: []
+        bookings: [],
       });
     }
 
@@ -155,7 +155,7 @@ export function useEvents() {
             start: currentDate,
             end: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
-            bookings: []
+            bookings: [],
           });
         }
         currentDate = addDays(currentDate, 1);
