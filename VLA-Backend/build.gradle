@@ -67,7 +67,8 @@ tasks {
 
         classPatterns = [
                 "de.vlaorgatu.vlabackend.entities.**",
-                "de.vlaorgatu.vlabackend.enums.**"
+                "de.vlaorgatu.vlabackend.enums.**",
+                "de.vlaorgatu.vlabackend.helperClasses.requestBodyTemplates.**"
         ]
 
         optionalAnnotations = ["jakarta.annotation.Nullable"]

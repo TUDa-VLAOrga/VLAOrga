@@ -99,6 +99,7 @@ public class LinusSyncService {
             AppointmentMatching appointmentMatching = AppointmentMatching.builder()
                 .id(null)
                 .linusAppointmentId(linusAppointment.getId())
+                .linusAppointmentTime(linusAppointment.getAppointmentTime())
                 .appointment(null)
                 .build();
 

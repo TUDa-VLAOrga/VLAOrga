@@ -38,8 +38,8 @@ public interface GetAllAndGetByIdDefaultInterface<T, R extends JpaRepository<T, 
     /**
      * Endpoint for GETting an entity by id.
      *
-     * @param id The id of the note
-     * @return The specified note if exists
+     * @param id The id of the entity
+     * @return The specified entity if exists
      */
     @GetMapping("/{id}")
     default ResponseEntity<T> getById(@PathVariable Long id) {
