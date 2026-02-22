@@ -47,98 +47,41 @@ public class LinusSyncService {
      * Remnant from an initial draft (To be extended?)
      * TODO: Is this still needed?
      */
-    @Transactional
-    public void syncBookings() {
-        List<LinusExperimentBooking> linusExperiments = linusExperimentBookingRepository.findAll();
-
-        linusExperiments.stream().filter(linusExperimentBooking ->
-        {
-            return experimentBookingRepository
-                .findByLinusExperimentBookingId(linusExperimentBooking.getId()).isEmpty();
-        }).forEach(toBeSavedBooking -> {
-            ExperimentBooking newEntry = new ExperimentBooking();
-            newEntry.setLinusExperimentBookingId(toBeSavedBooking.getId());
-            newEntry.setLinusExperimentId(toBeSavedBooking.getLinusExperimentId());
-            List<Person> person = vlaPersonDb.findByLinusUserId(toBeSavedBooking.getLinusUserId());
-            // TODO: make new person if there is no person with linusUserId (linusUser needed)
-            if (!person.isEmpty()) {
-                newEntry.setPerson(person.getFirst());
-            }
-            // TODO: appointment
-            // no notes here because in linus notes are attached to the appointment
-            experimentBookingRepository.save(newEntry);
-        });
-    }
+//    @Transactional
+//    public void syncBookings() {
+//        List<LinusExperimentBooking> linusExperiments = linusExperimentBookingRepository.findAll();
+//
+//        linusExperiments.stream().filter(linusExperimentBooking ->
+//        {
+//            return experimentBookingRepository
+//                .findByLinusExperimentBookingId(linusExperimentBooking.getId()).isEmpty();
+//        }).forEach(toBeSavedBooking -> {
+//            ExperimentBooking newEntry = new ExperimentBooking();
+//            newEntry.setLinusExperimentBookingId(toBeSavedBooking.getId());
+//            newEntry.setLinusExperimentId(toBeSavedBooking.getLinusExperimentId());
+//            List<Person> person = vlaPersonDb.findByLinusUserId(toBeSavedBooking.getLinusUserId());
+//            // TODO: make new person if there is no person with linusUserId (linusUser needed)
+//            if (!person.isEmpty()) {
+//                newEntry.setPerson(person.getFirst());
+//            }
+//            // TODO: appointment
+//            // no notes here because in linus notes are attached to the appointment
+//            experimentBookingRepository.save(newEntry);
+//        });
+//    }
 
     // TODO: make method for syncing appointment notes.
 
     /**
-     * Syncs linus_reservations with valid appointment dates to {@link Appointment}s.
+     * TODO.
      * This looks for appointments in a given time frame.
      *
      * @param start The start of the time frame that should be synced
      * @param end   The end of the time frame that should be synced
      */
     @Transactional
-    public void syncAppointments(LocalDateTime start, LocalDateTime end) {
-        List<LinusAppointment> linusAppointments =
-            linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
+    public void matchAppointments(LocalDateTime start, LocalDateTime end) {
 
-        List<Appointment> newAppointments = new ArrayList<>();
-
-        Optional<AppointmentCategory> fetchedCategory =
-            appointmentCategoryRepository.findByTitle("LinusAppointmentImports");
-
-        AppointmentCategory category;
-
-        if (fetchedCategory.isPresent()) {
-            category = fetchedCategory.get();
-        } else {
-            AppointmentCategory linusAppointmentImports = AppointmentCategory.builder()
-                .id(null)
-                .title("LinusAppointmentImports")
-                .build();
-            category = appointmentCategoryRepository.save(linusAppointmentImports);
-        }
-
-        for (LinusAppointment linusAppointment : linusAppointments) {
-            Optional<Appointment> appointment =
-                appointmentRepository.findByLinusAppointmentId(linusAppointment.getId());
-
-            if (appointment.isPresent()) {
-                continue;
-            }
-
-            if (linusAppointment.getAppointmentTime() == null) {
-                continue;
-            }
-
-            AppointmentSeries newAppointmentSeries = AppointmentSeries.builder()
-                .id(null)
-                .lecture(null)
-                .name("LinusImport")
-                .category(category)
-                .build();
-
-            newAppointmentSeries = appointmentSeriesRepository.save(newAppointmentSeries);
-
-            Appointment newAppointment = Appointment.builder()
-                .id(null)
-                .series(newAppointmentSeries)
-                .start(linusAppointment.getAppointmentTime())
-                .end(linusAppointment.getAppointmentTime().plusMinutes(100))
-                .notes((linusAppointment.getComment() + "\n\nImportiert aus Linus").trim())
-                .linusAppointmentId(linusAppointment.getId())
-                .build();
-
-            newAppointments.add(newAppointment);
-        }
-
-        List<Appointment> savedAppointments = appointmentRepository.saveAll(newAppointments);
-
-        SseController.notifyAllOfObject(SseMessageType.LINUSAPPOINTMENTIMPORT, savedAppointments);
-
-        log.info("Imported " + savedAppointments.size() + " appointments from linus");
     }
 
     /**
@@ -150,53 +93,53 @@ public class LinusSyncService {
      */
     @Transactional
     public void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
-        syncAppointments(start, end);
-
-        List<LinusAppointment> linusAppointments =
-            linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
-
-        for (LinusAppointment linusAppointment : linusAppointments) {
-            Optional<Appointment> retrievedAppointment =
-                appointmentRepository.findByLinusAppointmentId(linusAppointment.getId());
-
-            if (retrievedAppointment.isEmpty()) {
-                // ??? This should not happen ???
-                log.warning("Could not find appointment with linus_appointment_id " +
-                    linusAppointment.getId());
-                continue;
-            }
-
-            Appointment appointment = retrievedAppointment.get();
-
-            List<LinusExperimentBooking> linusExperimentBookings =
-                linusExperimentBookingRepository.findByLinusAppointmentId(linusAppointment.getId());
-
-            List<ExperimentBooking> experimentBookings = new ArrayList<>();
-
-            for (LinusExperimentBooking linusExperimentBooking : linusExperimentBookings) {
-                ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
-                    .id(null)
-                    .linusExperimentId(linusExperimentBooking.getLinusExperimentId())
-                    .linusExperimentBookingId(linusExperimentBooking.getId())
-                    // TODO: Think about adding the linus users
-                    .person(null)
-                    .appointment(appointment)
-                    // TODO: Think about note import more (from appointment or leave it at that?)
-                    .notes("")
-                    .status(ExperimentPreparationStatus.PENDING)
-                    .build();
-
-                experimentBookings.add(newExperimentBooking);
-            }
-
-            List<ExperimentBooking> savedExperimentBookings =
-                experimentBookingRepository.saveAll(experimentBookings);
-
-            SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
-                savedExperimentBookings);
-
-            log.info("Imported " + savedExperimentBookings.size() + " experiments for " +
-                "appointment id=" + appointment.getId() + " from linus");
-        }
+//        syncAppointments(start, end);
+//
+//        List<LinusAppointment> linusAppointments =
+//            linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
+//
+//        for (LinusAppointment linusAppointment : linusAppointments) {
+//            Optional<Appointment> retrievedAppointment =
+//                appointmentRepository.findByLinusAppointmentId(linusAppointment.getId());
+//
+//            if (retrievedAppointment.isEmpty()) {
+//                // ??? This should not happen ???
+//                log.warning("Could not find appointment with linus_appointment_id " +
+//                    linusAppointment.getId());
+//                continue;
+//            }
+//
+//            Appointment appointment = retrievedAppointment.get();
+//
+//            List<LinusExperimentBooking> linusExperimentBookings =
+//                linusExperimentBookingRepository.findByLinusAppointmentId(linusAppointment.getId());
+//
+//            List<ExperimentBooking> experimentBookings = new ArrayList<>();
+//
+//            for (LinusExperimentBooking linusExperimentBooking : linusExperimentBookings) {
+//                ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
+//                    .id(null)
+//                    .linusExperimentId(linusExperimentBooking.getLinusExperimentId())
+//                    .linusExperimentBookingId(linusExperimentBooking.getId())
+//                    // TODO: Think about adding the linus users
+//                    .person(null)
+//                    .appointment(appointment)
+//                    // TODO: Think about note import more (from appointment or leave it at that?)
+//                    .notes("")
+//                    .status(ExperimentPreparationStatus.PENDING)
+//                    .build();
+//
+//                experimentBookings.add(newExperimentBooking);
+//            }
+//
+//            List<ExperimentBooking> savedExperimentBookings =
+//                experimentBookingRepository.saveAll(experimentBookings);
+//
+//            SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
+//                savedExperimentBookings);
+//
+//            log.info("Imported " + savedExperimentBookings.size() + " experiments for " +
+//                "appointment id=" + appointment.getId() + " from linus");
+//        }
     }
 }
