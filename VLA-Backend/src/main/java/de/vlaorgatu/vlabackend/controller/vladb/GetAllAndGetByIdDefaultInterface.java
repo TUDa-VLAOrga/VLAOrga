@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * Interface with default GET implementations for controllers.
- * This assumes that the id of a given entity of T is of type Long.
+ * This assumes that the id of a given entity of T is of type {@link Long}.
  * The base path of the controller will serve a list of all stored entities
  * The base path appended with /id return the according entity from the repo
  *
- * @param <T> The type of entity inside the repository with id of type long
+ * @param <T> The type of entity inside the repository with id of type {@link Long}
  * @param <R> The type of the repository, which may not be extended upon
  */
 public interface GetAllAndGetByIdDefaultInterface<T, R extends JpaRepository<T, Long>> {
@@ -38,8 +38,8 @@ public interface GetAllAndGetByIdDefaultInterface<T, R extends JpaRepository<T, 
     /**
      * Endpoint for GETting an entity by id.
      *
-     * @param id The id of the note
-     * @return The specified note if exists
+     * @param id The id of the entity
+     * @return The specified entity if exists
      */
     @GetMapping("/{id}")
     default ResponseEntity<T> getById(@PathVariable Long id) {
