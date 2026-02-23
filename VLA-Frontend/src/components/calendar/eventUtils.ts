@@ -24,7 +24,7 @@ export function getEventTitle(event: Appointment) {
  * This assumes the end date is the same day as the start date.
  */
 export function getEventDateISO(event: Appointment) {
-  return toISODateLocal(event.start);
+  return toISODateLocal(new Date(event.start));
 }
 
 /**
@@ -35,7 +35,7 @@ export function verifyValidTimeRange(start?: Date, end?: Date): [boolean, string
   let helpString;
   if (! (start && end)) {
     validRange = false;
-    helpString = "Stant und Ende sind erforderlich.";
+    helpString = "Start und Ende sind erforderlich.";
   } else if (start >= end) {
     validRange = false;
     helpString = "Start muss vor Ende liegen.";

@@ -6,4 +6,12 @@ html, body {
 .DragComponent {
     position: fixed;
     z-index: 998;
+    user-select: none;
+}
+
+.dragClose {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 10px;
 }

@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-20 15:29:26.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-21 11:54:41.
 
 export interface LinusAppointment {
     id: number;
@@ -55,11 +55,18 @@ export interface Appointment {
     start: Date;
     end: Date;
     notes: string;
+    bookings: ExperimentBooking[];
+}
+
+export interface AppointmentBuilder {
 }
 
 export interface AppointmentCategory {
     id: number;
     title: string;
+}
+
+export interface AppointmentCategoryBuilder {
 }
 
 export interface AppointmentSeries {
@@ -69,14 +76,19 @@ export interface AppointmentSeries {
     category: AppointmentCategory;
 }
 
+export interface AppointmentSeriesBuilder {
+}
+
 export interface ExperimentBooking {
     id: number;
     linusExperimentId: number;
     linusExperimentBookingId?: number;
-    person?: Person;
-    appointment?: Appointment;
     notes: string;
     status: ExperimentPreparationStatus;
+    person?: Person;
+}
+
+export interface ExperimentBookingBuilder {
 }
 
 export interface GlobalNote {
@@ -120,5 +132,9 @@ export enum SseMessageType {
     GLOBALNOTECREATED = "GLOBALNOTECREATED",
     GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
     GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
+    EXPERIMENTBOOKINGUPDATED = "EXPERIMENTBOOKINGUPDATED",
+    APPOINTMENTCREATED = "APPOINTMENTCREATED",
+    APPOINTMENTUPDATED = "APPOINTMENTUPDATED",
+    APPOINTMENTDELETED = "APPOINTMENTDELETED",
     DEBUG = "DEBUG",
 }

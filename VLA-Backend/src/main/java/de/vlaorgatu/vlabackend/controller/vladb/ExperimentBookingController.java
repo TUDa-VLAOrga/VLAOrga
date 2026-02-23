@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
@@ -34,6 +35,7 @@ public class ExperimentBookingController
 
     /**
      * Creates a new experiment booking.
+     * TODO: Think about this mapping and implement SSE accordingly
      *
      * @param experimentBooking The dataset for creation. Must not contain an ID (auto-generated).
      * @return OK response with the created experiment booking, Error response otherwise.
@@ -79,13 +81,16 @@ public class ExperimentBookingController
 
         ExperimentBooking updatedExperimentBooking =
             experimentBookingRepository.save(experimentBooking);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Experiment booking updated: " + updatedExperimentBooking);
+
+        SseController.notifyAllOfObject(SseMessageType.EXPERIMENTBOOKINGUPDATED,
+            updatedExperimentBooking);
+
         return ResponseEntity.ok(updatedExperimentBooking);
     }
 
     /**
      * Deletes an experiment booking by its ID.
+     * TODO: Think about this mapping and implement SSE accordingly
      *
      * @param id ID of the experiment booking to delete.
      * @return OK response with the deleted experiment booking, Error response otherwise.

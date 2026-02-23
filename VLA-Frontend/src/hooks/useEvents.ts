@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import { addDays } from "../components/calendar/dateUtils";
-import type {Appointment, AppointmentSeries} from "@/lib/databaseTypes";
+import {SseMessageType, type Appointment, type AppointmentSeries} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -9,6 +9,42 @@ import {
   verifyValidTimeRange
 } from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
+import useSseConnectionWithInitialFetch from "./useSseConnectionWithInitialFetch.ts";
+
+function handleAppointmentCreated(event: MessageEvent, previousState: Appointment[]){
+  const createdAppointment = JSON.parse(event.data) as unknown as Appointment;
+
+  const newState = [createdAppointment, ...previousState];
+
+  return newState;
+}
+
+function handleAppointmentUpdated(event: MessageEvent, previousState: Appointment[]){
+  const updatedAppointment = JSON.parse(event.data) as unknown as Appointment;
+
+  const newState = previousState.map(appointment => 
+    appointment.id == updatedAppointment.id 
+      ? 
+      updatedAppointment 
+      : 
+      appointment
+  );
+
+  return newState;
+}
+
+function handleAppointmentDeleted(event: MessageEvent, previousState: Appointment[]){
+  const deletedAppointment = JSON.parse(event.data) as unknown as Appointment;
+
+  const newState = previousState.filter(appointment => appointment.id !== deletedAppointment.id);
+
+  return newState;
+}
+
+const sseHandlers = new Map<SseMessageType, (event: MessageEvent, value: Appointment[]) => Appointment[]>();
+sseHandlers.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
+sseHandlers.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
+sseHandlers.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
 
 
 /**
@@ -18,10 +54,13 @@ import {Logger} from "@/components/logger/Logger.ts";
  * - creation logic, including recurrence materialization
  * - a derived "eventsByDate" map for efficient rendering in the grid
  */
-
 export function useEvents() {
   let notSynchronisedId = -1;  // negative ID signals an entity not created in the backend
-  const [allEvents, setEvents] = useState<Appointment[]>([]);
+  const [allEvents, setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+    [],
+    "/api/appointments",
+    sseHandlers
+  );
   const [selectedEvent, setSelectedEvent] = useState<Appointment>();
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
@@ -122,6 +161,7 @@ export function useEvents() {
         start: formData.startDateTime,
         end: formData.endDateTime,
         notes: formData.notes || "",
+        bookings: [],
       });
     }
 
@@ -154,6 +194,7 @@ export function useEvents() {
             start: currentDate,
             end: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
+            bookings: [],
           });
         }
         currentDate = addDays(currentDate, 1);
