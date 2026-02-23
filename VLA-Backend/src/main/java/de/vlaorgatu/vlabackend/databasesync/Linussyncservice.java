@@ -119,6 +119,9 @@ public class Linussyncservice {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
 
+        String logWarnMessage = "";
+        int notAssignedExperimentBookings = 0;
+
         for (LinusAppointment linusAppointment : linusAppointments) {
             Optional<AppointmentMatching> fetchedAppointment = appointmentMatchingRepository
                 .findAppointmentMatchingsByLinusAppointmentId(linusAppointment.getId());
@@ -127,6 +130,7 @@ public class Linussyncservice {
 
             if (fetchedAppointment.isEmpty() || fetchedAppointment.get().getAppointment() == null) {
                 // No appointment to map ExperimentBookings to.
+                notAssignedExperimentBookings++;
                 continue;
             } else {
                 appointment = fetchedAppointment.get().getAppointment();
@@ -181,6 +185,13 @@ public class Linussyncservice {
             if (!savedExperimentBookings.isEmpty()) {
                 SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
                     savedExperimentBookings);
+            }
+
+            if (notAssignedExperimentBookings > 0) {
+                log.warning(
+                    "There were " + notAssignedExperimentBookings + " " +
+                        "experimentBookings that could not be matched because " +
+                        "the matched appointment was null.");
             }
 
             log.info("Imported " + savedExperimentBookings.size() + " experiments for " +
