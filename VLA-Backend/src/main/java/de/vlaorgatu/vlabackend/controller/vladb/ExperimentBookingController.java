@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/experimentBookings")
 public class ExperimentBookingController
-    implements GetAndGetByIdDefaultInterface<ExperimentBooking, ExperimentBookingRepository> {
+    implements
+    DefaultGettingForJpaReposInterface<ExperimentBooking, ExperimentBookingRepository> {
     /**
      * Repository used for experiment booking persistence operations.
      */

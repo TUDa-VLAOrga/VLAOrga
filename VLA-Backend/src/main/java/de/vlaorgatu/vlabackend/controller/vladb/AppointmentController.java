@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController
-    implements GetAndGetByIdDefaultInterface<Appointment, AppointmentRepository> {
+    implements DefaultGettingForJpaReposInterface<Appointment, AppointmentRepository> {
 
     /**
      * Repository used for appointment persistence operations.

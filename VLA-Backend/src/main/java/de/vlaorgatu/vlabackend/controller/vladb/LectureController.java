@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/lectures")
 public class LectureController
-    implements GetAndGetByIdDefaultInterface<Lecture, LectureRepository> {
+    implements DefaultGettingForJpaReposInterface<Lecture, LectureRepository> {
 
     /**
      * Repository used for lecture persistence operations.
