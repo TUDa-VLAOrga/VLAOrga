@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/linusExperimentBookings")
 public class LinusExperimentBookingController implements
-    defaultGettingForReadonlyReposInterface<LinusExperimentBooking, LinusExperimentBookingRepository> {
+    DefaultGettingForReadonlyReposInterface<LinusExperimentBooking, LinusExperimentBookingRepository> {
 
     private LinusExperimentBookingRepository linusExperimentBookingRepository;
 

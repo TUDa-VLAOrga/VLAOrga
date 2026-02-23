@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/users")
 public class UserController implements
-    defaultGettingForJPAReposInterface<User, UserRepository> {
+    DefaultGettingForJPAReposInterface<User, UserRepository> {
 
     /**
      * Repository used for user persistence operations.

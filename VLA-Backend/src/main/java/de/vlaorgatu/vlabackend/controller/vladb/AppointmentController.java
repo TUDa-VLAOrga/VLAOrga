@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController
-    implements defaultGettingForJPAReposInterface<Appointment, AppointmentRepository> {
+    implements DefaultGettingForJPAReposInterface<Appointment, AppointmentRepository> {
 
     /**
      * Repository used for appointment persistence operations.

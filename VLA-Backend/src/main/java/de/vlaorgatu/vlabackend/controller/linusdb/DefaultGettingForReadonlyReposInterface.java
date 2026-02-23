@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @param <T> The type of entity inside the repository with id of type {@link Integer}
  * @param <R> The type of the repository, which may not be extended upon
  */
-public interface defaultGettingForReadonlyReposInterface
+public interface DefaultGettingForReadonlyReposInterface
     <T, R extends ReadOnlyRepository<T, Integer>> {
     /**
      * Retrieves the repository R from the controller instance.
