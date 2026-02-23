@@ -2,7 +2,6 @@ package de.vlaorgatu.vlabackend.security;
 
 import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
