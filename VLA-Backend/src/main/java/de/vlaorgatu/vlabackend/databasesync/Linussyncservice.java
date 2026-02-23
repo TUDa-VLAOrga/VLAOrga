@@ -126,10 +126,6 @@ public class Linussyncservice {
                 appointment = fetchedAppointment.get().getAppointment();
             }
 
-            List<Integer> alreadyRegisteredLinusExperimentIds = appointment
-                .getBookings().stream()
-                .map(ExperimentBooking::getLinusExperimentBookingId).toList();
-
             List<LinusExperimentBooking> linusExperimentBookings =
                 linusExperimentBookingRepository.findByLinusAppointmentId(linusAppointment.getId());
 
@@ -137,7 +133,12 @@ public class Linussyncservice {
 
             for (LinusExperimentBooking linusExperimentBooking : linusExperimentBookings) {
 
-                if (alreadyRegisteredLinusExperimentIds.contains(linusExperimentBooking.getId())) {
+                Optional<ExperimentBooking> existingBooking = experimentBookingRepository
+                    .findExperimentBookingByLinusExperimentBookingId(
+                        linusExperimentBooking.getId()
+                    );
+
+                if (existingBooking.isPresent()) {
                     // Do not add new booking, already existent
                     continue;
                 }

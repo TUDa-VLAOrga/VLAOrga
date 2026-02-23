@@ -2,6 +2,8 @@ package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import java.util.List;
+import java.util.Optional;
+import javax.swing.text.html.Option;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExperimentBookingRepository extends JpaRepository<ExperimentBooking, Long> {
     /**
-     * Retrieves all {@link ExperimentBooking}s with a given id.
+     * Retrieves the {@link ExperimentBooking} with a given linus id.
      *
      * @param linusExperimentBookingId The id of the referenced {@link ExperimentBooking}
-     * @return {@link ExperimentBooking}s with a given id, empty list if nonexistent
+     * @return {@link ExperimentBooking}s with a given id, empty if nonexistent
      */
-    List<ExperimentBooking> findByLinusExperimentBookingId(Integer linusExperimentBookingId);
+    Optional<ExperimentBooking> findExperimentBookingByLinusExperimentBookingId(
+        Integer linusExperimentBookingId
+    );
 }
