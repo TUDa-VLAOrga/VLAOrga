@@ -7,12 +7,14 @@ import de.vlaorgatu.vlabackend.entities.linusdb.LinusExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentMatching;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.PersonRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class Linussyncservice {
      */
     private final Logger log = Logger.getLogger(this.getClass().getName());
 
-    // VLA Repositories
+    // Linus Repositories
     /**
      * Repository containing all {@link LinusAppointment}s.
      */
@@ -44,7 +46,7 @@ public class Linussyncservice {
      */
     private final LinusExperimentBookingRepository linusExperimentBookingRepository;
 
-    // Linus Repositories
+    // VLA Repositories
     /**
      * Repository containing all {@link ExperimentBooking}s.
      */
@@ -53,6 +55,10 @@ public class Linussyncservice {
      * Repository containing all {@link AppointmentMatching}s.
      */
     private final AppointmentMatchingRepository appointmentMatchingRepository;
+    /**
+     * Repository containing all {@link Person}s.
+     */
+    private final PersonRepository personRepository;
 
     /**
      * Creates {@link AppointmentMatching} objects for each linus reservation in a given time frame.
@@ -153,11 +159,14 @@ public class Linussyncservice {
                 // When adding new things to the note change this to a sum of lengths
                 assert maxLinusAppointmentCommentLength <= 4096;
 
+                Optional<Person> appointmentRequester = personRepository
+                    .findPersonByLinusUserId(linusExperimentBooking.getId());
+
                 ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
                     .id(null)
                     .linusExperimentId(linusExperimentBooking.getLinusExperimentId())
                     .linusExperimentBookingId(linusExperimentBooking.getId())
-                    .person(null)
+                    .person(appointmentRequester.orElse(null))
                     .appointment(appointment)
                     .notes(experimentNote)
                     .status(ExperimentPreparationStatus.PENDING)
