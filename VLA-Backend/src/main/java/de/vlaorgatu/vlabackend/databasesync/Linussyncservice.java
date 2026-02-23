@@ -64,6 +64,7 @@ public class Linussyncservice {
     public void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
+        // TODO: Potentially import by order time as well?
 
         List<AppointmentMatching> toBeSavedAppointmentMatching = new ArrayList<>();
 

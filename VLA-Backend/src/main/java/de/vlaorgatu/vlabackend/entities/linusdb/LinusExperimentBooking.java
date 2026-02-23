@@ -7,12 +7,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
  * Represents that an experiment is booked for an appointment.
  */
+@Builder
 @Getter
 @Entity
 @NoArgsConstructor
