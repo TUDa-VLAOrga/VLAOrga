@@ -3,12 +3,10 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * REST controller for user-related endpoints.
  */
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/user")
-@RequiredArgsConstructor
-public class UserController {
+@RequestMapping("/api/users")
+public class UserController implements
+    DefaultGettingForJpaReposInterface<User, UserRepository> {
     /**
      * Default injected Password Encoder defined by the SecurityConfig.
      */
@@ -31,28 +30,6 @@ public class UserController {
      * Repository used for user persistence operations.
      */
     private final UserRepository userRepository;
-
-    /**
-     * Returns a list of all users.
-     *
-     * @return list of users
-     */
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    /**
-     * Returns a user by its ID.
-     *
-     * @param id user ID
-     * @return the user if found, otherwise 404
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).map(ResponseEntity::ok)
-            .orElseThrow(() -> new UserNotFoundException(id));
-    }
 
     /**
      * Creates a new user.
@@ -100,5 +77,15 @@ public class UserController {
         userRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public UserRepository getRepository() {
+        return userRepository;
     }
 }

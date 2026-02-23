@@ -26,7 +26,7 @@ public class User {
     /**
      * Name of the user.
      */
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     /**

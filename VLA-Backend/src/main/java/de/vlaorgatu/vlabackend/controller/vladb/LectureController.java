@@ -7,21 +7,24 @@ import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.LectureRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Overrides to the default REST handlers generatey by Spring Data REST.
  * The override is needed mainly to trigger SSE events on update operations.
  */
 @AllArgsConstructor
-@RepositoryRestController
-public class LectureController {
+@RestController
+@RequestMapping("/api/lectures")
+public class LectureController
+    implements DefaultGettingForJpaReposInterface<Lecture, LectureRepository> {
 
     /**
      * Repository used for lecture persistence operations.
@@ -34,7 +37,7 @@ public class LectureController {
      * @param lecture Dataset of the lecture to create. Must not contain an ID (auto-generated).
      * @return OK response with the created lecture, error response otherwise.
      */
-    @PostMapping("/lectures")
+    @PostMapping
     public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
             throw new InvalidParameterException(
@@ -54,7 +57,7 @@ public class LectureController {
      * @param lecture Dataset of the lecture to update. Must contain all keys, ID may be omitted.
      * @return OK response with the updated lecture, Error response otherwise.
      */
-    @PutMapping("/lectures/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateLecture(@PathVariable Long id, @RequestBody Lecture lecture) {
         if (Objects.isNull(lecture.getId())) {
             lecture.setId(id);
@@ -79,7 +82,7 @@ public class LectureController {
      * @param id ID of the lecture to delete.
      * @return OK response with the deleted lecture, Error response otherwise.
      */
-    @DeleteMapping("/lectures/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
         Lecture deletedLecture = lectureRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
@@ -89,5 +92,15 @@ public class LectureController {
         // TODO: use a better method here instead of debug message
         SseController.notifyDebugTest("Lecture deleted: " + deletedLecture);
         return ResponseEntity.ok(deletedLecture);
+    }
+
+    /**
+     * Retrieves the repository ot this controller instance.
+     *
+     * @return The JPARepository used by this controller
+     */
+    @Override
+    public LectureRepository getRepository() {
+        return lectureRepository;
     }
 }

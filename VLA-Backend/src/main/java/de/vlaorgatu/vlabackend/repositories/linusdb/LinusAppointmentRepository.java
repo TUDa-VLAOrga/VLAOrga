@@ -5,5 +5,5 @@ import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
 /**
  * Repository for accessing and managing {@link LinusAppointment} entities.
  */
-public interface LinusAppointmentRepository extends ReadOnlyRepository<LinusAppointment, Long> {
+public interface LinusAppointmentRepository extends ReadOnlyRepository<LinusAppointment, Integer> {
 }

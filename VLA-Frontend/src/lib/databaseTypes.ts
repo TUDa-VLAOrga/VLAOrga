@@ -1,24 +1,45 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-16 14:21:07.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-20 15:29:26.
 
 export interface LinusAppointment {
     id: number;
     linusUserId: number;
-    orderTime: Date;
+    orderTime?: Date;
     status: number;
-    appointmentTime: Date;
-    comment: string;
+    appointmentTime?: Date;
+    comment?: string;
+    name?: string;
+}
+
+export interface LinusExperiment {
+    id: number;
+    categoryId: number;
     name: string;
+    description?: string;
+    comment?: string;
+    preparationTime?: number;
+    status: string;
+    executionTime?: number;
+    safetySigns?: string;
+    experimentNumber: number;
 }
 
 export interface LinusExperimentBooking {
     id: number;
-    linusAppointmentId: number;
+    linusAppointmentId?: number;
     linusExperimentId: number;
     linusUserId: number;
     status: number;
-    pinnedOn: Date;
+    pinnedOn?: Date;
+}
+
+export interface LinusUser {
+    id: number;
+    name: string;
+    roles: string;
+    password: string;
+    email: string;
 }
 
 export interface Acceptance {
@@ -43,18 +64,26 @@ export interface AppointmentCategory {
 
 export interface AppointmentSeries {
     id: number;
-    lecture: Lecture;
+    lecture?: Lecture;
+    name: string;
     category: AppointmentCategory;
 }
 
 export interface ExperimentBooking {
     id: number;
     linusExperimentId: number;
-    linusExperimentBookingId: number;
-    person: Person;
-    appointment: Appointment;
+    linusExperimentBookingId?: number;
+    person?: Person;
+    appointment?: Appointment;
     notes: string;
     status: ExperimentPreparationStatus;
+}
+
+export interface GlobalNote {
+    id: number;
+    color: string;
+    title: string;
+    content: string;
 }
 
 export interface Lecture {
@@ -62,13 +91,16 @@ export interface Lecture {
     name: string;
     semester: string;
     color: string;
+    persons: Person[];
 }
 
 export interface Person {
     id: number;
     name: string;
+    email: string;
     notes: string;
-    linusUserId: number;
+    linusUserId?: number;
+    lectures: Lecture[];
 }
 
 export interface User {
@@ -77,15 +109,16 @@ export interface User {
     email: string;
 }
 
-export const enum ExperimentPreparationStatus {
+export enum ExperimentPreparationStatus {
     PENDING = "PENDING",
     IN_PROGRESS = "IN_PROGRESS",
     FINISHED = "FINISHED",
 }
 
-export const enum SseMessageType {
+export enum SseMessageType {
+    SSEDEBUG = "SSEDEBUG",
+    GLOBALNOTECREATED = "GLOBALNOTECREATED",
+    GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
+    GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
     DEBUG = "DEBUG",
-    EXPERIMENT = "EXPERIMENT",
-    CALENDAR = "CALENDAR",
-    APPROVEDELETION = "APPROVEDELETION",
 }

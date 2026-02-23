@@ -31,6 +31,9 @@ export default defineConfig({
           }
         },
       },
+
+      // Required for testing API calls
+      '/api': 'http://localhost:8080',
     },
   },
 });

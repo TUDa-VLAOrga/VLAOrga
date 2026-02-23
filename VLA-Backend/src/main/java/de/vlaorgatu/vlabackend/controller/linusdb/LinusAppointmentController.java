@@ -1,52 +1,32 @@
 package de.vlaorgatu.vlabackend.controller.linusdb;
 
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
-import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
-import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * REST endpoints for managing {@link LinusAppointment} entities.
+ * Controller for retrieving {@link LinusAppointment}s.
  */
-// TODO: after merging with entities/lecture: adjust to use RepositoryRestController
-//  and path relative to the basePath (/api) specified in application.properties
-@Controller
-@RequestMapping("/api/linus/appointment")
 @AllArgsConstructor
-class LinusAppointmentController {
+@RestController
+@RequestMapping("/api/linusAppointments")
+public class LinusAppointmentController implements
+    DefaultGettingForReadonlyReposInterface<LinusAppointment, LinusAppointmentRepository> {
 
     /**
-     * Repository used for appointment persistence operations.
+     * Repository containing all {@link LinusAppointment}s.
      */
-    private final LinusAppointmentRepository appointmentRepository;
+    private LinusAppointmentRepository linusAppointmentRepository;
 
     /**
-     * List all appointments.
+     * Retrieves the repository from the controller instance.
+     *
+     * @return The read-only repository used by the controller
      */
-    @GetMapping()
-    public ResponseEntity<List<LinusAppointment>> listAppointments() {
-        List<LinusAppointment> all = appointmentRepository.findAll();
-        return ResponseEntity.ok(all);
-    }
-
-    /**
-     * Get an appointment by id.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<LinusAppointment> getAppointmentById(@PathVariable Long id) {
-        return appointmentRepository.findById(id)
-            .map(ResponseEntity::ok)
-            .orElseThrow(() ->
-                new EntityNotFoundException(
-                    "Could not find a linus appointment with the id=" + id
-                )
-            );
+    @Override
+    public LinusAppointmentRepository getRepository() {
+        return linusAppointmentRepository;
     }
 }

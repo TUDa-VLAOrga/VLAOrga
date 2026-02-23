@@ -1,6 +1,7 @@
 import cz.habarta.typescript.generator.EnumMapping
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptOutputKind
+import cz.habarta.typescript.generator.TypeScriptFileType
 
 plugins {
     id 'java'
@@ -71,11 +72,15 @@ tasks {
                 "de.vlaorgatu.vlabackend.enums.**"
         ]
 
+        optionalAnnotations = [ "jakarta.annotation.Nullable" ]
+
         jsonLibrary = JsonLibrary.Jackson2
 
         mapEnum = EnumMapping.asEnum
+        nonConstEnums = true
 
-        outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.d.ts")
+        outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.ts")
+        outputFileType = TypeScriptFileType.implementationFile
         outputKind = TypeScriptOutputKind.Module
     }
 }
