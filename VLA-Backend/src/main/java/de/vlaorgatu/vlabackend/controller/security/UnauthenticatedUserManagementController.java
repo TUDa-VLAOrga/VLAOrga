@@ -32,7 +32,7 @@ public class UnauthenticatedUserManagementController {
     public ResponseEntity<String> generateBcryptPassword(@RequestParam String password) {
 
         if (password.isEmpty()) {
-            throw new InvalidParameterException("Passwords may not be empty");
+            throw new InvalidParameterException("Passwords must not be empty");
         }
 
         return ResponseEntity.ok(passwordEncoder.encode(password));

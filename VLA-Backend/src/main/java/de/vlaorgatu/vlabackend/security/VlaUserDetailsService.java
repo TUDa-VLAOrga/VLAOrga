@@ -34,22 +34,13 @@ public class VlaUserDetailsService implements UserDetailsService {
      * This object is used for checking the authentication credentials.
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> loginUser = userRepository.findUserByName(username);
-
-        // TODO: after merging the PR with global exception handling, refactor this exception
-        //  (logging should be done centrally, then)
-        if (loginUser.isEmpty()) {
-            log.error("User not found");
-        }
-
-        loginUser.orElseThrow(() -> new UsernameNotFoundException(
-            "Username not found: " + username)
-        );
+    public UserDetails loadUserByUsername(String username) {
+        User loginUser = userRepository.findUserByName(username)
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found: " + username));
 
         return org.springframework.security.core.userdetails.User.builder()
-            .username(loginUser.get().getId().toString())
-            .password(loginUser.get().getPassword())
+            .username(loginUser.getId().toString())
+            .password(loginUser.getPassword())
             .build();
     }
 }

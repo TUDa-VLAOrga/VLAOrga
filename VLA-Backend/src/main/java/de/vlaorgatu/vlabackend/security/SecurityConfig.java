@@ -30,7 +30,7 @@ public class SecurityConfig {
      * Creates the security mechanism behind our authentication in all secured profiles.
      * Any unauthenticated request will be forwarded to the static login.html.
      * Authentication is CSRF protected.
-     * Forces a forward to /calendar on successful authentication.
+     * Forces a forward to / (the frontend application) on successful authentication.
      */
     @Bean
     @Profile({"prod", "dev"})
