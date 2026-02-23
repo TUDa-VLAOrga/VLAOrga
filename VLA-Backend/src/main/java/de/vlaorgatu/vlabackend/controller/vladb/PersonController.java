@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/persons")
 public class PersonController implements
-    GetAllAndGetByIdDefaultInterface<Person, PersonRepository> {
+    defaultGettingForJPAReposInterface<Person, PersonRepository> {
 
     /**
      * Repository used for person persistence operations.
