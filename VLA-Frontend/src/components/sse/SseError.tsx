@@ -33,6 +33,7 @@ function SseError(){
                   <br/>
                   <Button onClick={refreshPage} text={<><u>Neu laden</u></>}/>
                 </>,
+          zIndex: 9998 // In case this isn't clear, this is really important!
       }}
     </Popup>
   );
