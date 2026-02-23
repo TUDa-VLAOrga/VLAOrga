@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @param <T> The type of entity inside the repository with id of type {@link Long}
  * @param <R> The type of the repository, which may not be extended upon
  */
-public interface DefaultGettingForJPAReposInterface<T, R extends JpaRepository<T, Long>> {
+public interface DefaultGettingForJpaReposInterface<T, R extends JpaRepository<T, Long>> {
     /**
      * Retrieves the repository R from the controller instance.
      *

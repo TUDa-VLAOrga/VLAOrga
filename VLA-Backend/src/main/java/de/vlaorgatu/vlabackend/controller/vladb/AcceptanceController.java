@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/acceptances")
 public class AcceptanceController
-    implements DefaultGettingForJPAReposInterface<Acceptance, AcceptanceRepository> {
+    implements DefaultGettingForJpaReposInterface<Acceptance, AcceptanceRepository> {
     /**
      * Repository used for acceptance persistence operations.
      */

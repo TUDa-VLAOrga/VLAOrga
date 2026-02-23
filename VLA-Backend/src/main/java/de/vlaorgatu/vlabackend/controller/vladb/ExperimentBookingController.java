@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/experimentBookings")
 public class ExperimentBookingController
     implements
-    DefaultGettingForJPAReposInterface<ExperimentBooking, ExperimentBookingRepository> {
+    DefaultGettingForJpaReposInterface<ExperimentBooking, ExperimentBookingRepository> {
     /**
      * Repository used for experiment booking persistence operations.
      */
