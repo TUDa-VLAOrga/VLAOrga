@@ -160,7 +160,7 @@ public class Linussyncservice {
                 assert maxLinusAppointmentCommentLength <= 4096;
 
                 Optional<Person> appointmentRequester = personRepository
-                    .findPersonByLinusUserId(linusExperimentBooking.getId());
+                    .findPersonByLinusUserId(linusExperimentBooking.getLinusUserId());
 
                 ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
                     .id(null)
