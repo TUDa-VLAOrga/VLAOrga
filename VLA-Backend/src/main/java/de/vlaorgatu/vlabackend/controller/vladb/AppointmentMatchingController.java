@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/appointmentMatchings")
 public class AppointmentMatchingController implements
-    GetAllAndGetByIdDefaultInterface<AppointmentMatching, AppointmentMatchingRepository> {
+    DefaultGettingForJpaReposInterface<AppointmentMatching, AppointmentMatchingRepository> {
 
     /**
      * Repository containing {@link AppointmentMatching}s.

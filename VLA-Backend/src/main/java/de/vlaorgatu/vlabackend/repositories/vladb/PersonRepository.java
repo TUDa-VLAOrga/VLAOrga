@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,12 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
     /**
-     * Finds a Person by their user id in linus.
+     * Finds a {@link Person} by the given linusUserid.
      *
-     * @param linusUserId The id of the user in linus
-     * @return The Person with the proper id
+     * @param linusUserId The linus user id to search for
+     * @return Person with the linusUserId if existent
      */
-    List<Person> findByLinusUserId(int linusUserId);
-
     Optional<Person> findPersonByLinusUserId(int linusUserId);
 }
