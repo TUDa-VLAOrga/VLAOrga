@@ -8,7 +8,7 @@ import java.util.List;
  * Repository for accessing and managing {@link LinusExperimentBooking} entities.
  */
 public interface LinusExperimentBookingRepository
-    extends ReadOnlyRepository<LinusExperimentBooking, Long> {
+    extends ReadOnlyRepository<LinusExperimentBooking, Integer> {
     /**
      * Retrieves all {@link LinusExperimentBooking}s that reference a {@link LinusAppointment}.
      *

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Repository for accessing and managing {@link LinusAppointment} entities.
  */
-public interface LinusAppointmentRepository extends ReadOnlyRepository<LinusAppointment, Long> {
+public interface LinusAppointmentRepository extends ReadOnlyRepository<LinusAppointment, Integer> {
     /**
      * Searches for all linus reservations in a given time frame.
      *

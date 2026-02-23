@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/appointmentCategories")
 public class AppointmentCategoryController
     implements
-    GetAllAndGetByIdDefaultInterface<AppointmentCategory, AppointmentCategoryRepository> {
+    DefaultGettingForJpaReposInterface<AppointmentCategory, AppointmentCategoryRepository> {
     /**
      * Repository used for appointment category persistence operations.
      */
