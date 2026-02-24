@@ -92,7 +92,7 @@ public class AppointmentController
             () -> new EntityNotFoundException(
                 "Appointment with ID " + id + " not found."));
 
-        if(!toBeDeletedAppointment.getBookings().isEmpty()){
+        if (!toBeDeletedAppointment.getBookings().isEmpty()) {
             throw new InvalidParameterException(
                 "Appointments with assigned experimentBookings may not be deleted"
             );

@@ -30,5 +30,15 @@ public interface AppointmentMatchingRepository extends
     Optional<AppointmentMatching> findAppointmentMatchingsByLinusAppointmentId(
         Integer linusAppointmentId);
 
-    List<AppointmentMatching> getAppointmentMatchingsBylinusAppointmentTimeBetween(LocalDateTime start, LocalDateTime end);
+    /**
+     * Returns all {@link AppointmentMatching} in a given time frame.
+     *
+     * @param start Inclusive start of the date
+     * @param end Inclusive end of the date
+     * @return All {@link AppointmentMatching} in the time frame
+     */
+    List<AppointmentMatching> getAppointmentMatchingsBylinusAppointmentTimeBetween(
+        LocalDateTime start,
+        LocalDateTime end
+    );
 }

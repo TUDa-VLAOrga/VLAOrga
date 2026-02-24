@@ -22,8 +22,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +42,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Import(TestcontainersConfiguration.class)
 public class BookingServiceTest {
 
+    /**
+     * Test utilities.
+     */
     @Autowired
     private TestUtils testUtils;
 
@@ -118,8 +119,8 @@ public class BookingServiceTest {
         testUtils.clearVlaDb();
         testUtils.clearLinusDb();
 
-        ArrayList<Object> vlaEntities = new ArrayList<>();
-        ArrayList<Object> linusEntities = new ArrayList<>();
+        final ArrayList<Object> vlaEntities = new ArrayList<>();
+        final ArrayList<Object> linusEntities = new ArrayList<>();
 
         linusEntities.add(LinusAppointment.builder()
             .id(1)
@@ -269,7 +270,7 @@ public class BookingServiceTest {
         ));
 
         Assertions.assertEquals(0,
-            appointmentRepository.getAppointmentById(appointment.getId()).getBookings().size()
+            appointmentRepository.getAppointmentById(appointment.getId()).get().getBookings().size()
         );
 
         appointmentMatchingController.matchExperimentBookings(new TimeFrame(

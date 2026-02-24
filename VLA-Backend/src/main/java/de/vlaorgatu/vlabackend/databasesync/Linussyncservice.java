@@ -60,6 +60,9 @@ public class Linussyncservice {
      * Repository containing all {@link Person}s.
      */
     private final PersonRepository personRepository;
+    /**
+     * Repository containing all {@link Appointment}s.
+     */
     private final AppointmentRepository appointmentRepository;
 
     /**
@@ -118,13 +121,13 @@ public class Linussyncservice {
      */
     @Transactional
     public void syncMatchedAppointmentsExperimentBookings(LocalDateTime start, LocalDateTime end) {
-        List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository.
-            getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
+        List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository
+            .getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
 
         int unmatchedBecauseAppointmentNull = 0;
 
-        for(AppointmentMatching appointmentMatching : appointmentMatchings) {
-            if(appointmentMatching.getAppointment() == null) {
+        for (AppointmentMatching appointmentMatching : appointmentMatchings) {
+            if (appointmentMatching.getAppointment() == null) {
                 unmatchedBecauseAppointmentNull++;
                 continue;
             }
@@ -132,7 +135,7 @@ public class Linussyncservice {
             Optional<LinusAppointment> fetchedLinusAppointment =
                 linusAppointmentRepository.findById(appointmentMatching.getLinusAppointmentId());
 
-            if(fetchedLinusAppointment.isEmpty()) {
+            if (fetchedLinusAppointment.isEmpty()) {
                 log.warning(
                     "Linus appointment with id " +
                         appointmentMatching.getLinusAppointmentId() +
@@ -191,7 +194,8 @@ public class Linussyncservice {
             List<ExperimentBooking> savedExperimentBookings =
                 experimentBookingRepository.saveAll(newExperimentBookings);
 
-            List<ExperimentBooking> updatedExperimentBookings = new ArrayList<>(appointment.getBookings());
+            List<ExperimentBooking> updatedExperimentBookings =
+                new ArrayList<>(appointment.getBookings());
             updatedExperimentBookings.addAll(savedExperimentBookings);
 
             appointment.setBookings(updatedExperimentBookings);

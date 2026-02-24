@@ -1,8 +1,5 @@
 package de.vlaorgatu.vlabackend;
 
-import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
-import de.vlaorgatu.vlabackend.entities.linusdb.LinusExperiment;
-import de.vlaorgatu.vlabackend.entities.linusdb.LinusExperimentBooking;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentRepository;
@@ -13,14 +10,14 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Class that offers utility functions for testing purposes.
+ */
 @Service
 public class TestUtils {
     /**
@@ -77,27 +74,44 @@ public class TestUtils {
     @PersistenceContext(unitName = "linusEntityManagerFactory")
     private EntityManager linusEntityManager;
 
+    /**
+     * Entity manager for manipulating the vla db.
+     */
     @PersistenceContext(unitName = "vlaEntityManagerFactory")
     private EntityManager vlaEntityManager;
 
+    /**
+     * Deletes all entities in linus.
+     */
     @Transactional("linusTransactionManager")
     void clearLinusDb() {
         linusEntityManager.clear();
     }
 
+    /**
+     * Deletes all entities in the vla db.
+     */
     @Transactional("vlaTransactionManager")
     void clearVlaDb() {
         vlaEntityManager.clear();
     }
 
+    /**
+     * Populates linus with the specified entities.
+     * Should be Linus entities
+     */
     @Transactional("linusTransactionManager")
-    void populateLinusDb(ArrayList<Object> linusEntities){
+    void populateLinusDb(ArrayList<Object> linusEntities) {
         linusEntities.forEach(linusEntityManager::persist);
         linusEntityManager.flush();
     }
 
+    /**
+     * Populates the vla db with the specified entities.
+     * Should be VLA entities
+     */
     @Transactional("vlaTransactionManager")
-    void populateVlaDb(ArrayList<Object> vlaEntities){
+    void populateVlaDb(ArrayList<Object> vlaEntities) {
         vlaEntities.forEach(vlaEntityManager::persist);
         vlaEntityManager.flush();
     }
