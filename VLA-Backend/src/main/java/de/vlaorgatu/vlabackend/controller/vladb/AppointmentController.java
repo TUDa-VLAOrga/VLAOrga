@@ -8,6 +8,7 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,15 +86,22 @@ public class AppointmentController
      * @param id ID of the appointment to delete.
      * @return OK response with the deleted appointment, Error response otherwise.
      */
-    @PostMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
-        Appointment deletedAppointment = appointmentRepository.findById(id).orElseThrow(
+        Appointment toBeDeletedAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
                 "Appointment with ID " + id + " not found."));
+
+        if(!toBeDeletedAppointment.getBookings().isEmpty()){
+            throw new InvalidParameterException(
+                "Appointments with assigned experimentBookings may not be deleted"
+            );
+        }
+
         appointmentRepository.deleteById(id);
         // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment deleted: " + deletedAppointment);
-        return ResponseEntity.ok(deletedAppointment);
+        SseController.notifyDebugTest("Appointment deleted: " + toBeDeletedAppointment);
+        return ResponseEntity.ok(toBeDeletedAppointment);
     }
 
     /**
