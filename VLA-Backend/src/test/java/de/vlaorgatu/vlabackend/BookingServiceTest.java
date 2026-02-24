@@ -12,6 +12,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentMatching;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
+import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates.TimeFrame;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
@@ -24,6 +25,7 @@ import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +43,9 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 public class BookingServiceTest {
+
+    @Autowired
+    private TestUtils testUtils;
 
     /**
      * Repository for the appropriate entity.
@@ -103,109 +108,77 @@ public class BookingServiceTest {
     private AppointmentController appointmentController;
 
     /**
-     * Entity manager for manipulating read-only linus-db.
+     * Sets up...
+     * LinusAppointment 1 -> LinusBooking 1 -> LinusExperiment 1
+     * LinusAppointment 2 -> LinusBooking 2 -> LinusExperiment 1
+     * Lonely LinusExperiment 2
      */
-    @PersistenceContext(unitName = "linusEntityManagerFactory")
-    private EntityManager linusEntityManager;
-
-    /**
-     * Sets up the appointments and databases.
-     */
-    @Transactional("linusTransactionManager")
     @BeforeEach
     void setup() {
-        linusEntityManager.clear();
-        appointmentMatchingRepository.deleteAll();
-        appointmentCategoryRepository.deleteAll();
-        appointmentSeriesRepositorys.deleteAll();
-        appointmentRepository.deleteAll();
-        experimentBookingRepository.deleteAll();
+        testUtils.clearVlaDb();
+        testUtils.clearLinusDb();
 
-        linusEntityManager.persist(
-            LinusAppointment.builder()
-                .id(1)
-                .linusUserId(1)
-                .orderTime(LocalDateTime.of(2026, 1, 1, 0, 0))
-                .status(0)
-                .appointmentTime(LocalDateTime.of(2026, 3, 1, 0, 0))
-                .comment("")
-                .name("")
-                .build()
+        ArrayList<Object> vlaEntities = new ArrayList<>();
+        ArrayList<Object> linusEntities = new ArrayList<>();
+
+        linusEntities.add(LinusAppointment.builder()
+            .id(1)
+            .linusUserId(1)
+            .appointmentTime(LocalDateTime.of(2026, 3, 1, 1, 0))
+            .build()
         );
 
-        linusEntityManager.persist(
-            LinusAppointment.builder()
-                .id(2)
-                .linusUserId(1)
-                .orderTime(LocalDateTime.of(2026, 2, 1, 0, 0))
-                .status(0)
-                .appointmentTime(LocalDateTime.of(2026, 3, 1, 0, 0))
-                .comment("")
-                .name("")
-                .build()
+        linusEntities.add(LinusExperiment.builder()
+            .id(1)
+            .categoryId(1)
+            .name("")
+            .status("")
+            .experimentNumber(1)
+            .build()
         );
 
-        linusEntityManager.persist(
-            LinusExperimentBooking.builder()
-                .id(1)
-                .linusAppointmentId(1)
-                .linusExperimentId(1)
-                .linusUserId(1)
-                .status(0)
-                .pinnedOn(LocalDateTime.of(2026, 1, 1, 0, 0))
-                .build()
+        linusEntities.add(LinusExperimentBooking.builder()
+            .id(1)
+            .linusExperimentId(1)
+            .linusUserId(1)
+            .linusAppointmentId(1)
+            .status(0)
+            .build()
         );
 
-        linusEntityManager.persist(
-            LinusExperimentBooking.builder()
-                .id(2)
-                .linusAppointmentId(2)
-                .linusExperimentId(2)
-                .linusUserId(1)
-                .status(0)
-                .pinnedOn(LocalDateTime.of(2023, 1, 1, 0, 0))
-                .build()
+        linusEntities.add(LinusAppointment.builder()
+            .id(2)
+            .linusUserId(1)
+            .appointmentTime(LocalDateTime.of(2026, 3, 1, 2, 0))
+            .build()
         );
 
-        linusEntityManager.persist(
-            LinusExperiment.builder()
-                .id(1)
-                .categoryId(1)
-                .name("")
-                .description("")
-                .comment("")
-                .preparationTime(20)
-                .status("")
-                .executionTime(20)
-                .safetySigns("[]")
-                .experimentNumber(1)
-                .build()
+        linusEntities.add(LinusExperiment.builder()
+            .id(2)
+            .categoryId(1)
+            .name("")
+            .status("")
+            .experimentNumber(2)
+            .build()
         );
 
-        linusEntityManager.persist(
-            LinusExperiment.builder()
-                .id(2)
-                .categoryId(1)
-                .name("")
-                .description("")
-                .comment("")
-                .preparationTime(20)
-                .status("")
-                .executionTime(20)
-                .safetySigns("[]")
-                .experimentNumber(1)
-                .build()
+        linusEntities.add(LinusExperimentBooking.builder()
+            .id(2)
+            .linusExperimentId(1)
+            .linusUserId(1)
+            .status(0)
+            .build()
         );
 
-        linusEntityManager.flush();
+        testUtils.populateVlaDb(vlaEntities);
+        testUtils.populateLinusDb(linusEntities);
     }
 
     /**
      * Should error when setup of this test is tempered with.
      */
-    @Transactional("linusTransactionManager")
     @Test
-    void checkCorrectSetup() {
+    void checkCorrectDbSetup() {
         assertEquals(2, linusAppointmentRepository.findAll().size());
         assertEquals(2, linusExperimentBookingRepository.findAll().size());
         assertEquals(2, linusExperimentRepository.findAll().size());
@@ -214,7 +187,6 @@ public class BookingServiceTest {
     /**
      * Check that nothing happens if nothing is in the {@link TimeFrame}.
      */
-    @Transactional("linusTransactionManager")
     @Test
     void checkNoAppointmentsPlannedInTimeFrame() {
         appointmentMatchingController.matchAppointments(
@@ -232,7 +204,6 @@ public class BookingServiceTest {
      * time frame is inclusive
      * multiple appointments per day are all added
      */
-    @Transactional("linusTransactionManager")
     @Test
     void checkTwoAppointmentsOnOneDay() {
         appointmentMatchingController.matchAppointments(
@@ -250,71 +221,74 @@ public class BookingServiceTest {
      * bookings are appropriately matched
      * Deletion of appointment does not delete bookings
      */
-//    @Transactional("linusTransactionManager")
-//    @Test
-//    void checkBookingBehavior() {
-//
-//        AppointmentCategory appointmentCategory = AppointmentCategory.builder()
-//            .id(null)
-//            .title("Category")
-//            .build();
-//
-//        appointmentCategory = appointmentCategoryRepository.save(appointmentCategory);
-//
-//        AppointmentSeries appointmentSeries = AppointmentSeries.builder()
-//            .id(null)
-//            .lecture(null)
-//            .name("Series")
-//            .category(appointmentCategory)
-//            .build();
-//
-//        appointmentSeries = appointmentSeriesRepositorys.save(appointmentSeries);
-//
-//        Appointment appointment = Appointment.builder()
-//            .id(null)
-//            .series(appointmentSeries)
-//            .start(LocalDateTime.of(2026, 3, 1, 0, 0))
-//            .end(LocalDateTime.of(2026, 3, 1, 2, 0))
-//            .notes("")
-//            .bookings(List.of())
-//            .build();
-//
-//        appointment = appointmentRepository.save(appointment);
-//
-//        appointmentMatchingRepository.save(
-//            AppointmentMatching.builder()
-//                .id(null)
-//                .linusAppointmentId(1)
-//                .linusAppointmentTime(LocalDateTime.of(2026, 3, 1, 0, 0))
-//                .appointment(appointment)
-//                .build()
-//        );
-//
-//        appointmentMatchingController.matchExperimentBookings(new TimeFrame(
-//            LocalDateTime.of(2026, 3, 1, 0, 0),
-//            LocalDateTime.of(2026, 3, 1, 0, 0)
-//        ));
-//
-//        Assertions.assertEquals(1,
-//            appointmentRepository.getAppointmentById(appointment.getId()).getBookings().size()
-//        );
-//
-//        // Appointments should not be deletable when experimentBookings are assigned
-//        // This would cause an inconsistency in the database
-//        // ExperimentBookings should be preserved
-//        Appointment finalAppointment = appointment;
-//        Assertions.assertThrows(
-//            Throwable.class,
-//            () -> appointmentController.deleteAppointment(finalAppointment.getId())
-//        );
-//
-//        experimentBookingRepository.deleteAll();
-//        Assertions.assertDoesNotThrow(
-//            () -> appointmentController.deleteAppointment(finalAppointment.getId())
-//        );
-//
-//        Assertions.assertEquals(0,
-//            appointmentRepository.getAppointmentById(appointment.getId()).getBookings().size()
-//        );
-//    }
+    @Transactional("vlaTransactionManager")
+    @Test
+    void checkBookingBehavior() {
+
+        AppointmentCategory appointmentCategory = AppointmentCategory.builder()
+            .id(null)
+            .title("Category")
+            .build();
+
+        appointmentCategory = appointmentCategoryRepository.save(appointmentCategory);
+
+        AppointmentSeries appointmentSeries = AppointmentSeries.builder()
+            .id(null)
+            .lecture(null)
+            .name("Series")
+            .category(appointmentCategory)
+            .build();
+
+        appointmentSeries = appointmentSeriesRepositorys.save(appointmentSeries);
+
+        Appointment appointment = Appointment.builder()
+            .id(null)
+            .series(appointmentSeries)
+            .start(LocalDateTime.of(2026, 3, 1, 0, 0))
+            .end(LocalDateTime.of(2026, 3, 1, 2, 0))
+            .notes("")
+            .bookings(List.of())
+            .build();
+
+        appointment = appointmentRepository.save(appointment);
+
+        appointmentMatchingRepository.save(
+            AppointmentMatching.builder()
+                .id(null)
+                .linusAppointmentId(1)
+                .linusAppointmentTime(LocalDateTime.of(2026, 3, 1, 1, 0))
+                .appointment(appointment)
+                .build()
+        );
+
+        Assertions.assertEquals(1, appointmentMatchingRepository.findAll().size());
+
+        appointmentMatchingController.matchExperimentBookings(new TimeFrame(
+            LocalDateTime.of(2026, 3, 1, 0, 0),
+            LocalDateTime.of(2026, 3, 1, 0, 0)
+        ));
+
+        Assertions.assertEquals(0,
+            appointmentRepository.getAppointmentById(appointment.getId()).getBookings().size()
+        );
+
+        appointmentMatchingController.matchExperimentBookings(new TimeFrame(
+            LocalDateTime.of(2026, 3, 1, 0, 0),
+            LocalDateTime.of(2026, 3, 1, 1, 0)
+        ));
+
+        Assertions.assertEquals(1,
+            experimentBookingRepository.findAll().size()
+        );
+
+        Assertions.assertEquals(1,
+            appointmentRepository.findById(1L).get().getBookings().size()
+        );
+
+        Appointment finalAppointment = appointment;
+        Assertions.assertThrows(
+            InvalidParameterException.class,
+            () -> appointmentController.deleteAppointment(finalAppointment.getId())
+        );
+    }
 }

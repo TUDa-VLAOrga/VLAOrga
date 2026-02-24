@@ -13,6 +13,7 @@ import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.PersonRepository;
 import jakarta.transaction.Transactional;
@@ -59,6 +60,7 @@ public class Linussyncservice {
      * Repository containing all {@link Person}s.
      */
     private final PersonRepository personRepository;
+    private final AppointmentRepository appointmentRepository;
 
     /**
      * Creates {@link AppointmentMatching} objects for each linus reservation in a given time frame.
@@ -116,25 +118,32 @@ public class Linussyncservice {
      */
     @Transactional
     public void syncMatchedAppointmentsExperimentBookings(LocalDateTime start, LocalDateTime end) {
-        List<LinusAppointment> linusAppointments =
-            linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
+        List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository.
+            getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
 
-        String logWarnMessage = "";
-        int notAssignedExperimentBookings = 0;
+        int unmatchedBecauseAppointmentNull = 0;
 
-        for (LinusAppointment linusAppointment : linusAppointments) {
-            Optional<AppointmentMatching> fetchedAppointment = appointmentMatchingRepository
-                .findAppointmentMatchingsByLinusAppointmentId(linusAppointment.getId());
-
-            Appointment appointment;
-
-            if (fetchedAppointment.isEmpty() || fetchedAppointment.get().getAppointment() == null) {
-                // No appointment to map ExperimentBookings to.
-                notAssignedExperimentBookings++;
+        for(AppointmentMatching appointmentMatching : appointmentMatchings) {
+            if(appointmentMatching.getAppointment() == null) {
+                unmatchedBecauseAppointmentNull++;
                 continue;
-            } else {
-                appointment = fetchedAppointment.get().getAppointment();
             }
+
+            Optional<LinusAppointment> fetchedLinusAppointment =
+                linusAppointmentRepository.findById(appointmentMatching.getLinusAppointmentId());
+
+            if(fetchedLinusAppointment.isEmpty()) {
+                log.warning(
+                    "Linus appointment with id " +
+                        appointmentMatching.getLinusAppointmentId() +
+                        " was not found despite AppointmentMatching id=" +
+                        appointmentMatching.getId()
+                );
+                continue;
+            }
+
+            Appointment appointment = appointmentMatching.getAppointment();
+            LinusAppointment linusAppointment = fetchedLinusAppointment.get();
 
             List<LinusExperimentBooking> linusExperimentBookings =
                 linusExperimentBookingRepository.findByLinusAppointmentId(linusAppointment.getId());
@@ -171,7 +180,7 @@ public class Linussyncservice {
                     .linusExperimentId(linusExperimentBooking.getLinusExperimentId())
                     .linusExperimentBookingId(linusExperimentBooking.getId())
                     .person(appointmentRequester.orElse(null))
-                    .appointment(appointment)
+                    .appointment(appointmentMatching.getAppointment())
                     .notes(experimentNote)
                     .status(ExperimentPreparationStatus.PENDING)
                     .build();
@@ -182,20 +191,24 @@ public class Linussyncservice {
             List<ExperimentBooking> savedExperimentBookings =
                 experimentBookingRepository.saveAll(newExperimentBookings);
 
+            List<ExperimentBooking> updatedExperimentBookings = new ArrayList<>(appointment.getBookings());
+            updatedExperimentBookings.addAll(savedExperimentBookings);
+
+            appointment.setBookings(updatedExperimentBookings);
+
             if (!savedExperimentBookings.isEmpty()) {
                 SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
                     savedExperimentBookings);
             }
 
-            if (notAssignedExperimentBookings > 0) {
-                log.warning(
-                    "There were " + notAssignedExperimentBookings + " " +
-                        "experimentBookings that could not be matched because " +
-                        "the matched appointment was null.");
-            }
-
-            log.info("Imported " + savedExperimentBookings.size() + " experiments for " +
-                "appointment id=" + appointment.getId() + " from linus");
+            log.info("Imported " + savedExperimentBookings.size() + " experiment(s) for " +
+                "appointment id=" + appointmentMatching.getAppointment().getId() + " from linus");
         }
+
+        log.warning(
+            "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
+                "with a null-matched appointment. " +
+                "According experiments that were not imported."
+        );
     }
 }
