@@ -64,6 +64,12 @@ export default function GlobalNoteContainer() {
         onClick={() => setViewVisible(!viewVisible)}
         style={{display: viewVisible ? "none" : ""}}
       >
+      {globalNotes.length !== 0 &&
+      <>
+        <div className="globalNoteDot"></div>
+      </>
+      }
+      
       </div>
       <div className="globalNoteContainer" style={{display: viewVisible ? "" : "none"}}>
         <div className="globalNoteView">

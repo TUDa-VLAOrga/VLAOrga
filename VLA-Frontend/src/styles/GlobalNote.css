@@ -121,3 +121,13 @@
 .displayedNoteContent {
     white-space: pre-line;
 }
+
+.globalNoteDot {
+    position: absolute;
+    border-radius: 100%;
+    right: 0px;
+    top: -10px;
+    aspect-ratio: 1 / 1;
+    width: 20px;
+    background-color: red;
+}
