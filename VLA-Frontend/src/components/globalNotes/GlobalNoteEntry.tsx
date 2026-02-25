@@ -2,6 +2,8 @@ import type { GlobalNote } from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 
+export const NotSynchronisedId = -1;
+
 type GlobalNoteEntryProps = {
   note: GlobalNote,
   setDraftNote?: React.Dispatch<React.SetStateAction<GlobalNote | undefined>> 
@@ -30,10 +32,10 @@ function isInvalidTitle(editingState: globalNoteEntryEditingState): boolean {
 }
 
 export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : GlobalNoteEntryProps){
-  const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id < 0);
+  const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id === NotSynchronisedId);
 
   const [editingState, setEditingState] = useState<globalNoteEntryEditingState>({
-    isEditing: note.id < 0,
+    isEditing: note.id === NotSynchronisedId,
     title: note.title,
     content: note.content,
     color: note.color,
@@ -48,13 +50,13 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       body: JSON.stringify(note),
     });
 
-    if(note.id < 0) {
+    if(note.id === NotSynchronisedId) {
       setDraftNote!(undefined);
     }
   }
 
   function handleNoteUpdateSubmit(note: GlobalNote){
-    if(note.id < 0) {
+    if(note.id === NotSynchronisedId) {
       handleNoteCreationSubmit(note);
       return;
     }
@@ -69,7 +71,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   }
 
   function handleDelete(){
-    if(note.id < 0) {
+    if(note.id === NotSynchronisedId) {
       setDraftNote!(undefined);
       return;
     }
@@ -92,7 +94,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       color: editingState.color,
     };
         
-    const submitfunction = note.id < 0 ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
+    const submitfunction = note.id == NotSynchronisedId ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
     submitfunction(postNote);
 
     setEditingState(
@@ -105,7 +107,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
 
   useEffect(() => {
     setEditingState({
-      isEditing: note.id < 0,
+      isEditing: note.id === NotSynchronisedId,
       title: note.title,
       content: note.content,
       color: note.color,

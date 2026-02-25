@@ -1,10 +1,9 @@
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch";
 import { SseMessageType, type GlobalNote } from "@/lib/databaseTypes";
-import GlobalNoteEntry from "./GlobalNoteEntry";
+import GlobalNoteEntry, {NotSynchronisedId} from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css";
 import { useState } from "react";
 import { Button } from "../ui/Button";
-import {getNotSynchronisedId} from "@/lib/utils.ts";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
   const createdGlobalNote = JSON.parse(event.data) as GlobalNote;
@@ -49,7 +48,7 @@ export default function GlobalNoteContainer() {
 
   function createNewDummyNote(){
     const draftNote: GlobalNote = {
-      id: getNotSynchronisedId(),
+      id: NotSynchronisedId,
       color: "#0d6efd",
       title: "Neue Notiz (ändern Sie den Titel hier)",
       content: "",
