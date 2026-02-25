@@ -189,6 +189,7 @@ public class BookingServiceTest {
     /**
      * Check that nothing happens if nothing is in the {@link TimeFrame}.
      */
+    @Transactional("vlaTransactionManager")
     @Test
     void checkNoAppointmentsPlannedInTimeFrame() {
         appointmentMatchingController.matchAppointments(
@@ -206,12 +207,13 @@ public class BookingServiceTest {
      * time frame is inclusive
      * multiple appointments per day are all added
      */
+    @Transactional("vlaTransactionManager")
     @Test
     void checkTwoAppointmentsOnOneDay() {
         appointmentMatchingController.matchAppointments(
             new TimeFrame(
                 LocalDateTime.of(2026, 3, 1, 0, 0),
-                LocalDateTime.of(2026, 3, 1, 0, 0)
+                LocalDateTime.of(2026, 3, 1, 2, 0)
             )
         );
 

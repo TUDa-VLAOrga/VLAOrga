@@ -8,9 +8,12 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.metamodel.EntityType;
 import java.util.ArrayList;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,27 +83,42 @@ public class TestUtils {
     @PersistenceContext(unitName = "vlaEntityManagerFactory")
     private EntityManager vlaEntityManager;
 
-    // TODO clear entites
-
     /**
      * Deletes all entities in linus.
      */
     @Transactional("linusTransactionManager")
-    void clearLinusDb() {
-        linusEntityManager.close();
+    public void clearLinusDb() {
+        Set<EntityType<?>> entities = linusEntityManager.getMetamodel().getEntities();
+
+        for (EntityType<?> entityType : entities) {
+            Class<?> javaType = entityType.getJavaType();
+            if (javaType.isAnnotationPresent(Entity.class)) {
+                String entityName = entityType.getName();
+                linusEntityManager.createQuery("DELETE FROM " + entityName).executeUpdate();
+            }
+        }
     }
 
     /**
      * Deletes all entities in the vla db.
      */
     @Transactional("vlaTransactionManager")
-    void clearVlaDb() {
-        vlaEntityManager.close();
+    public void clearVlaDb() {
+        Set<EntityType<?>> entities = vlaEntityManager.getMetamodel().getEntities();
+
+        for (EntityType<?> entityType : entities) {
+            Class<?> javaType = entityType.getJavaType();
+            if (javaType.isAnnotationPresent(Entity.class)) {
+                String entityName = entityType.getName();
+                vlaEntityManager.createQuery("DELETE FROM " + entityName).executeUpdate();
+            }
+        }
     }
 
     /**
      * Populates linus with the specified entities.
      * Should be Linus entities
+     * If you get database errors, check that they are inserted according to their dependencies.
      */
     @Transactional("linusTransactionManager")
     void populateLinusDb(ArrayList<Object> linusEntities) {
