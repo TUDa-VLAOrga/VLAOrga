@@ -75,7 +75,6 @@ public class Linussyncservice {
     public void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
-        // TODO: Potentially import by order time as well?
 
         List<AppointmentMatching> toBeSavedAppointmentMatching = new ArrayList<>();
 
@@ -88,11 +87,23 @@ public class Linussyncservice {
                 continue;
             }
 
+            Appointment assignedAppointment = null;
+
+            // Auto-assign if one appointment is in that time frame
+            List<Appointment> appointmentsInThisTimeFrame =
+                appointmentRepository.findAppointmentsByStartBeforeAndEndAfter(
+                    linusAppointment.getAppointmentTime(),
+                    linusAppointment.getAppointmentTime());
+
+            if (appointmentsInThisTimeFrame.size() == 1) {
+                assignedAppointment = appointmentsInThisTimeFrame.getFirst();
+            }
+
             AppointmentMatching appointmentMatching = AppointmentMatching.builder()
                 .id(null)
                 .linusAppointmentId(linusAppointment.getId())
                 .linusAppointmentTime(linusAppointment.getAppointmentTime())
-                .appointment(null)
+                .appointment(assignedAppointment)
                 .build();
 
             toBeSavedAppointmentMatching.add(appointmentMatching);
