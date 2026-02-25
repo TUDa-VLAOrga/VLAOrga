@@ -122,6 +122,24 @@ public class BookingServiceTest {
         final ArrayList<Object> vlaEntities = new ArrayList<>();
         final ArrayList<Object> linusEntities = new ArrayList<>();
 
+        linusEntities.add(LinusExperiment.builder()
+            .id(1)
+            .categoryId(1)
+            .name("")
+            .status("")
+            .experimentNumber(1)
+            .build()
+        );
+
+        linusEntities.add(LinusExperiment.builder()
+            .id(2)
+            .categoryId(2)
+            .name("")
+            .status("")
+            .experimentNumber(2)
+            .build()
+        );
+
         linusEntities.add(LinusAppointment.builder()
             .id(1)
             .linusUserId(1)
@@ -129,12 +147,10 @@ public class BookingServiceTest {
             .build()
         );
 
-        linusEntities.add(LinusExperiment.builder()
-            .id(1)
-            .categoryId(1)
-            .name("")
-            .status("")
-            .experimentNumber(1)
+        linusEntities.add(LinusAppointment.builder()
+            .id(2)
+            .linusUserId(1)
+            .appointmentTime(LocalDateTime.of(2026, 3, 1, 2, 0))
             .build()
         );
 
@@ -147,26 +163,11 @@ public class BookingServiceTest {
             .build()
         );
 
-        linusEntities.add(LinusAppointment.builder()
-            .id(2)
-            .linusUserId(1)
-            .appointmentTime(LocalDateTime.of(2026, 3, 1, 2, 0))
-            .build()
-        );
-
-        linusEntities.add(LinusExperiment.builder()
-            .id(2)
-            .categoryId(1)
-            .name("")
-            .status("")
-            .experimentNumber(2)
-            .build()
-        );
-
         linusEntities.add(LinusExperimentBooking.builder()
             .id(2)
             .linusExperimentId(1)
             .linusUserId(1)
+            .linusAppointmentId(2)
             .status(0)
             .build()
         );

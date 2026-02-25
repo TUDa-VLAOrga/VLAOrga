@@ -80,12 +80,14 @@ public class TestUtils {
     @PersistenceContext(unitName = "vlaEntityManagerFactory")
     private EntityManager vlaEntityManager;
 
+    // TODO clear entites
+
     /**
      * Deletes all entities in linus.
      */
     @Transactional("linusTransactionManager")
     void clearLinusDb() {
-        linusEntityManager.clear();
+        linusEntityManager.close();
     }
 
     /**
@@ -93,7 +95,7 @@ public class TestUtils {
      */
     @Transactional("vlaTransactionManager")
     void clearVlaDb() {
-        vlaEntityManager.clear();
+        vlaEntityManager.close();
     }
 
     /**
