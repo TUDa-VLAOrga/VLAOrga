@@ -33,7 +33,7 @@ function SseError(){
                   <br/>
                   <Button onClick={refreshPage} text={<><u>Neu laden</u></>}/>
                 </>,
-        zIndex: 9998, // In case this isn't clear, this is really important!
+        zIndex: 9998, // If Sse fails multiple things will break, interaction should be prohibited.
       }}
     </Popup>
   );
