@@ -1,6 +1,5 @@
 package de.vlaorgatu.vlabackend.enums.sse;
 
-import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,18 +14,15 @@ public enum SseMessageType {
      * Used for sending Debug messages to the frontend for SSE.
      */
     SSEDEBUG("SSEDEBUG"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been created.
-     */
+
     GLOBALNOTECREATED("GLOBALNOTECREATED"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
-     */
     GLOBALNOTEUPDATED("GLOBALNOTEUPDATED"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
-     */
     GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
+
+    APPOINTMENTCATEGORYCREATED("APPOINTMENTCATEGORYCREATED"),
+    APPOINTMENTCATEGORYUPDATED("APPOINTMENTCATEGORYUPDATED"),
+    APPOINTMENTCATEGORYDELETED("APPOINTMENTCATEGORYDELETED"),
+
     /**
      * Used for sending Debug messages to the frontend.
      */

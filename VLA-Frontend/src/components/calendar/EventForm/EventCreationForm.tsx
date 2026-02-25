@@ -32,7 +32,7 @@ type EventFormProps = {
   lectures: Lecture[];
   categories: AppointmentCategory[];
   onAddLecture: (lecture: Lecture) => void;
-  onAddCategory: (category: AppointmentCategory) => void;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
   people: Person[];
   onAddPerson?: (person: Person) => void;
 };
@@ -83,8 +83,7 @@ export default function EventCreationForm({
    * - auto-select it for the current event
    */
   const handleAddCategory = (category: AppointmentCategory) => {
-    onAddCategory?.(category);
-    setCategory(category);
+    onAddCategory(category).then(setCategory);
   };
 
   /**
