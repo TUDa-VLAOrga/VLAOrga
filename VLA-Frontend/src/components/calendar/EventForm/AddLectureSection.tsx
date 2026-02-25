@@ -8,7 +8,7 @@ type AddLectureSectionProps = {
   onLectureChange: (lecture: Lecture) => void;
   onAddLecture: (lecture: Lecture) => void;
   people?: Person[];
-  onAddPerson?: (person: Person) => void; 
+  onAddPerson: (person: Person) => Promise<Person>;
 };
 
 /**

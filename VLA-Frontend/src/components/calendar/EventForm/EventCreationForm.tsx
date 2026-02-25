@@ -34,7 +34,7 @@ type EventFormProps = {
   onAddLecture: (lecture: Lecture) => void;
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
   people: Person[];
-  onAddPerson?: (person: Person) => void;
+  onAddPerson: (person: Person) => Promise<Person>;
 };
 
 /**

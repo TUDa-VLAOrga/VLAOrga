@@ -14,7 +14,7 @@ type EventEditFormProps = {
   onSave: (updates: Partial<Appointment>) => void;
   onCancel: () => void;
   onAddCategory: (category: AppointmentCategory) => void;
-  onAddPerson: (person: Person) => void;
+  onAddPerson: (person: Person) => Promise<Person>;
   onAddLecture: (lecture: Lecture) => void;
   isSeries: boolean;
 };

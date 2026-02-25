@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Data;
 
@@ -62,7 +63,11 @@ public class Person {
      *
      * @param linusUserId ID of this user in Linus, if a corresponding user exists there.
      */
-    public void setLinusUserId(Long linusUserId) {
-        this.linusUserId = linusUserId == 0 ? null : linusUserId;
+    public void setLinusUserId(@Nullable Long linusUserId) {
+        if (Objects.nonNull(linusUserId)) {
+            this.linusUserId = linusUserId == 0 ? null : linusUserId;
+        } else {
+            this.linusUserId = null;
+        }
     }
 }

@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.PersonRepository;
@@ -40,13 +41,16 @@ public class PersonController implements
     @PostMapping
     public ResponseEntity<?> createPerson(@RequestBody Person person) {
         if (Objects.nonNull(person.getId())) {
-            throw new InvalidParameterException(
-                "Received person with ID " + person.getId() + " when creating a new person.");
+            if (person.getId() < 0) {
+                person.setId(null);
+            } else {
+                throw new InvalidParameterException(
+                    "Received person with ID " + person.getId() + " when creating a new person.");
+            }
         }
 
         Person savedPerson = personRepository.save(person);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Person created: " + savedPerson);
+        SseController.notifyAllOfObject(SseMessageType.PERSONCREATED, savedPerson);
         return ResponseEntity.ok(savedPerson);
     }
 
@@ -71,8 +75,7 @@ public class PersonController implements
         }
 
         Person updatedPerson = personRepository.save(person);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Person updated: " + updatedPerson);
+        SseController.notifyAllOfObject(SseMessageType.PERSONUPDATED, updatedPerson);
         return ResponseEntity.ok(updatedPerson);
     }
 
@@ -88,8 +91,7 @@ public class PersonController implements
             () -> new EntityNotFoundException("Person with ID " + id + " not found."));
 
         personRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Person deleted: " + deletedPerson);
+        SseController.notifyAllOfObject(SseMessageType.PERSONDELETED, deletedPerson);
         return ResponseEntity.ok(deletedPerson);
     }
 

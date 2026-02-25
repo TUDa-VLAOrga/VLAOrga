@@ -117,7 +117,7 @@ export default function AddPeopleSection({
             <label key={person.id} className="cv-personCheckbox">
               <input
                 type="checkbox"
-                checked={selectedPeople.includes(person)}
+                checked={selectedPeople.map(p => p.id).includes(person.id)}
                 onChange={() => handleTogglePerson(person)}
               />
               <span className="cv-personInfo">

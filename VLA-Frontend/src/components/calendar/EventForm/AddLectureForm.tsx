@@ -8,7 +8,7 @@ type AddLectureFormProps = {
   onSubmit: (lecture: Lecture) => void;
   onCancel: () => void;
   people?: Person[];
-  onAddPerson?: (person: Person) => void;
+  onAddPerson: (person: Person) => Promise<Person>;
 };
 
 /**
@@ -50,9 +50,8 @@ export default function AddLectureForm({
   };
 
   function handleAddPerson(person: Person) {
-    onAddPerson?.(person);
-    setSelectedPeople([...selectedPeople, person]);
-  };
+    onAddPerson(person).then(person => setSelectedPeople([...selectedPeople, person]));
+  }
 
   const isValid = lectureName.trim() !== "";
 
