@@ -1,5 +1,4 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
-import { NotSynchronisedId } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 
@@ -31,10 +30,10 @@ function isInvalidTitle(editingState: globalNoteEntryEditingState): boolean {
 }
 
 export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : GlobalNoteEntryProps){
-  const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id === NotSynchronisedId);
+  const [isContentOpen, setIsContentOpen] = useState<boolean>(note.id < 0);
 
   const [editingState, setEditingState] = useState<globalNoteEntryEditingState>({
-    isEditing: note.id === NotSynchronisedId,
+    isEditing: note.id < 0,
     title: note.title,
     content: note.content,
     color: note.color,
@@ -49,13 +48,13 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       body: JSON.stringify(note),
     });
 
-    if(note.id === NotSynchronisedId) {
+    if(note.id < 0) {
       setDraftNote!(undefined);
     }
   }
 
   function handleNoteUpdateSubmit(note: GlobalNote){
-    if(note.id === NotSynchronisedId) {
+    if(note.id < 0) {
       handleNoteCreationSubmit(note);
       return;
     }
@@ -70,7 +69,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   }
 
   function handleDelete(){
-    if(note.id === NotSynchronisedId) {
+    if(note.id < 0) {
       setDraftNote!(undefined);
       return;
     }
@@ -93,7 +92,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       color: editingState.color,
     };
         
-    const submitfunction = note.id == NotSynchronisedId ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
+    const submitfunction = note.id < 0 ? handleNoteCreationSubmit : handleNoteUpdateSubmit;
     submitfunction(postNote);
 
     setEditingState(
@@ -106,7 +105,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
 
   useEffect(() => {
     setEditingState({
-      isEditing: note.id === NotSynchronisedId,
+      isEditing: note.id < 0,
       title: note.title,
       content: note.content,
       color: note.color,

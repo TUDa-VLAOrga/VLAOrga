@@ -5,4 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const NotSynchronisedId = -1;
+let internalNotSynchronisedId = -1;
+
+export function getNotSynchronisedId() {
+  return internalNotSynchronisedId--;
+}
