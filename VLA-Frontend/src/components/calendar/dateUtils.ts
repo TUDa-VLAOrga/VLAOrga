@@ -155,7 +155,7 @@ export function getDateStringOfDate(date: Date){
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
-  })
+  });
 
   return dateFormat.format(date);
 }
@@ -163,8 +163,8 @@ export function getDateStringOfDate(date: Date){
 export function getTimeStringOfDate(date: Date){
   const dateFormat = Intl.DateTimeFormat("de-DE", {
     hour: "2-digit",
-    minute: "2-digit"
-  })
+    minute: "2-digit",
+  });
 
   return dateFormat.format(date);
 }
