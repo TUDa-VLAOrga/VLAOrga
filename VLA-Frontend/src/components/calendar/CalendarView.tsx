@@ -11,6 +11,7 @@ import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
 import AppointmentMatchingButton from "../linusAppointmentMatcher/AppointmentMatchingButton.tsx";
+import { useAppointmentMatcher } from "@/hooks/useAppointmentMatcher.ts";
 
 
 /**
@@ -25,6 +26,7 @@ export default function CalendarView() {
   const {lectures,handleAddLecture}= useLectures();
   const {categories,handleAddCategory}= useCategories();
   const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
+  const missingAppointmentMatchings = useAppointmentMatcher(days);
 
   const {
     allEvents,
@@ -81,7 +83,7 @@ export default function CalendarView() {
           + Neuer Termin
         </button>
 
-        <AppointmentMatchingButton/>
+        <AppointmentMatchingButton appointmentMatching={missingAppointmentMatchings}/>
       </div>
 
       {/* Main frame: header row (weekdays) + grid with day columns */}
