@@ -1,14 +1,49 @@
 .linusAppointmentMatcherContainer {
     position: fixed;
-    width: 60%;
-    height: 50%;
+    width: clamp(400px, 80vw, 1000px);
+    height: clamp(400px, 80vh, 700px);
     background-color: white;
+    box-shadow: 4px 4px 8px #777;
+    border-radius: 20px;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.linusAppointmentMatcherTop {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 150px 1fr 150px;
+    margin-bottom: 15px;
+}
+
+.linusAppointmentMatcherClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.linusAppointmentMatcherTitle {
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .matchingColumn {
-
+    width: 90%;
+    margin: auto;
+    max-height: 80%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
-.linusPropsedAppointmentsRow {
-
+.matchGrid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 2fr;
+    gap: 5px;
+    background-color: #777;
 }

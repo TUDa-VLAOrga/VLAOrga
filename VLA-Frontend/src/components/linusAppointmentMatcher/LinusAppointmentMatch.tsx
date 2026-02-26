@@ -9,10 +9,12 @@ interface LinusAppointmentMatchProps {
 
 export default function LinusAppointmentMatch({matching} : LinusAppointmentMatchProps){
     return (
-        <div className="matchGrid">
-            <div><LinusAppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/></div>
-            <div><AppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/></div>
+        <>
+            <div className="matchGrid">
+                <div><LinusAppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/></div>
+                <div><AppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/></div>
+            </div>
             <>Zuweisen button</>
-        </div>
+        </>
     );
 }
