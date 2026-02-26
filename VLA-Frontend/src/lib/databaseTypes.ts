@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-26 11:35:40.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-26 11:37:24.
 
 export interface LinusAppointment {
     id: number;
@@ -140,6 +140,14 @@ export interface User {
     id: number;
     name: string;
     email?: string;
+}
+
+export interface TimeFrame {
+    commence: Date;
+    terminate: Date;
+}
+
+export interface TimeFrameBuilder {
 }
 
 export enum ExperimentPreparationStatus {
