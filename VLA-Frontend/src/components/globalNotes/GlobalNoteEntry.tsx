@@ -1,7 +1,8 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
-import { NotSynchronisedId } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
+
+export const NotSynchronisedId = -1;
 
 type GlobalNoteEntryProps = {
   note: GlobalNote,

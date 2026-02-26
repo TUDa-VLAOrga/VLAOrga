@@ -3,6 +3,7 @@ import ColorPicker from "../ColorPicker";
 import {createPortal} from "react-dom";
 import AddPeopleSection from "./AddPeopleSection";
 import type {Lecture, Person} from "@/lib/databaseTypes";
+import {getNotSynchronisedId} from "@/lib/utils.ts";
 
 type AddLectureFormProps = {
   onSubmit: (lecture: Lecture) => void;
@@ -29,7 +30,6 @@ export default function AddLectureForm({
   const [semester, setSemester] = useState("");
   const [color, setColor] = useState("#3b82f6");
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
-  let notSynchronisedId = -1;  // negative ID to signal a not-yet-created entity
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,7 +39,7 @@ export default function AddLectureForm({
 
     
     const newLecture: Lecture = {
-      id: notSynchronisedId--,  // negative ID to signal not-yet-created entity
+      id: getNotSynchronisedId(),  // negative ID to signal not-yet-created entity
       name: lectureName.trim(),
       semester: semester.trim(),
       color: color.trim(),

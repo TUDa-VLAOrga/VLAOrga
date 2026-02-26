@@ -1,9 +1,8 @@
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch";
 import { SseMessageType, type GlobalNote } from "@/lib/databaseTypes";
-import GlobalNoteEntry from "./GlobalNoteEntry";
+import GlobalNoteEntry, {NotSynchronisedId} from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css";
 import { useState } from "react";
-import { NotSynchronisedId } from "@/lib/utils";
 import { Button } from "../ui/Button";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
