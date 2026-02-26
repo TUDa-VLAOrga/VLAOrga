@@ -16,7 +16,7 @@ export default function AppointmentMatchingButton({
   const [
     appointmentMatchingVisible,
     setAppointmentMatchingVisible,
-  ] = useState<boolean>(true);
+  ] = useState<boolean>(false);
 
   const [
     showMatchTaskIcon,
