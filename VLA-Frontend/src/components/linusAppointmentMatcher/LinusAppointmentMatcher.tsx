@@ -1,28 +1,24 @@
 import type { AppointmentMatching } from "@/lib/databaseTypes";
 import LinusAppointmentMatch from "./LinusAppointmentMatch";
 import "@/styles/AppointmentMatching.css"
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../ui/Button";
 
 interface LinusAppointmentMatcherProps {
     appointmentMatching: AppointmentMatching[],
     setAppointmentMatcherVisible: Dispatch<SetStateAction<boolean>>,
-    setAppointmentMatcherIconVisible: Dispatch<SetStateAction<boolean>>
+    visible: boolean
 }
 
 export default function LinusAppointmentMatcher({
     appointmentMatching,
     setAppointmentMatcherVisible,
-    setAppointmentMatcherIconVisible
+    visible
 }
 : LinusAppointmentMatcherProps)
 {
-    useEffect(() => {
-        setAppointmentMatcherIconVisible(appointmentMatching.length !== 0)
-    }, [appointmentMatching]);
-
     return (
-        <div className="linusAppointmentMatcherContainer">
+        <div className="linusAppointmentMatcherContainer" style={{display: !visible ? "none" : undefined}}>
             <div className="linusAppointmentMatcherTop">
                 <span></span>
                 <span className="linusAppointmentMatcherTitle">Linus Terminzuordnung</span>
