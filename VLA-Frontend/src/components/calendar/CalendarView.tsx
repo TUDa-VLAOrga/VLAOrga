@@ -83,7 +83,7 @@ export default function CalendarView() {
           + Neuer Termin
         </button>
 
-        <AppointmentMatchingButton appointmentMatching={missingAppointmentMatchings}/>
+        <AppointmentMatchingButton appointmentMatching={missingAppointmentMatchings} appointments={allEvents}/>
       </div>
 
       {/* Main frame: header row (weekdays) + grid with day columns */}

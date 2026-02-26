@@ -1,20 +1,26 @@
-import type { AppointmentMatching } from "@/lib/databaseTypes";
+import type { Appointment, AppointmentMatching } from "@/lib/databaseTypes";
 import LinusAppointmentMatchEntry from "./LinusAppointmentMatchEntry";
 import AppointmentMatchEntry from "./AppointmentMatchEntry";
 import "@/styles/AppointmentMatching.css"
 
 interface LinusAppointmentMatchProps {
-    matching: AppointmentMatching
+    matching: AppointmentMatching,
+    appointments: Appointment[],
 }
 
-export default function LinusAppointmentMatch({matching} : LinusAppointmentMatchProps){
+export default function LinusAppointmentMatch({matching, appointments} : LinusAppointmentMatchProps){
     return (
         <>
+        <div className="concreteMatchContainer">
             <div className="matchGrid">
-                <div><LinusAppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/></div>
-                <div><AppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/></div>
+                <div>
+                    <LinusAppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/>
+                </div>
+                <div>
+                    <AppointmentMatchEntry matching={matching} apppointments={appointments}/>
+                </div>
             </div>
-            <>Zuweisen button</>
+        </div>
         </>
     );
 }

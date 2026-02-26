@@ -18,7 +18,7 @@ function handleAppointmentMatchingCreated(event: MessageEvent, previousState: Ap
     // For later: if created matchings are displayed, change the undefined to according value
     const toDoMatchings = createdMatchings.filter(matching => matching.appointment === undefined)
 
-    let nextState = [...previousState, ...toDoMatchings];
+    const nextState = [...previousState, ...toDoMatchings];
 
     return nextState;
 }
@@ -70,23 +70,27 @@ export function useAppointmentMatcher(days : CalendarDay[]): AppointmentMatching
             },
             body: JSON.stringify(timeFrame)
         })
-
-        // Get currently relevant data
-        fetch(
-            API_BASE_URL + "/nulledAppointments?" +
-            "commence=" + firstFetchDay.toISOString() + "&" +
-            "terminate=" + lastFetchDay.toISOString() 
-        )
-        .then(response => response.json())
-        .then(appointmentMatchings => 
-            setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
-        )
         .catch(e => {
-            Logger.error("An error has occured during appointmentMatching fetch");
+            Logger.warn("Initiating the experimentBooking matching has errored");
             console.log(e);
-        });
-
-    }, [days])
+        })
+        .finally(() =>
+            // Get currently relevant data
+            fetch(
+                API_BASE_URL + "/nulledAppointments?" +
+                "commence=" + firstFetchDay.toISOString() + "&" +
+                "terminate=" + lastFetchDay.toISOString() 
+            )
+            .then(response => response.json())
+            .then(appointmentMatchings => 
+                setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
+            )
+            .catch(e => {
+                Logger.error("An error has occured during appointmentMatching fetch");
+                console.log(e);
+            })
+        )
+    }, [days, events])
     
     return nullAppointmentMatchings;
 }

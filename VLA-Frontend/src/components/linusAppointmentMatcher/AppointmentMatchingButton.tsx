@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import LinusAppointmentMatcher from "./LinusAppointmentMatcher";
-import type { AppointmentMatching } from "@/lib/databaseTypes";
+import type { Appointment, AppointmentMatching } from "@/lib/databaseTypes";
 
 interface AppointmentMatchingButtonsProps {
-  appointmentMatching: AppointmentMatching[]
+  appointmentMatching: AppointmentMatching[],
+  appointments: Appointment[],
 }
 
-export default function AppointmentMatchingButton({appointmentMatching} : AppointmentMatchingButtonsProps) {
+export default function AppointmentMatchingButton({appointmentMatching, appointments} : AppointmentMatchingButtonsProps) {
     const [
       appointmentMatchingVisible,
       setAppointmentMatchingVisible
@@ -40,6 +41,7 @@ export default function AppointmentMatchingButton({appointmentMatching} : Appoin
           appointmentMatching={appointmentMatching}
           setAppointmentMatcherVisible={setAppointmentMatchingVisible}
           visible={appointmentMatchingVisible}
+          appointments={appointments}
         />
       </>
     )
