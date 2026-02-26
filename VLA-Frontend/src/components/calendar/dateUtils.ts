@@ -36,6 +36,21 @@ export function addDays(date: Date, days: number) {
   return d;
 }
 
+/**
+ * Wrapper function for addDays that ensures that a date is never in the past.
+ * If the resulting day is in the past, it return the current date 
+ * 
+ * @param baseDate The base date to perform addtion of days on.
+ * @param daysToAdd The days to advance (if positive) / go back (if negative)
+ * @returns A date with added days that is in the present of future
+ */
+export function addDaysPresentFuture(baseDate: Date, daysToAdd: number) {
+  const result = addDays(baseDate, daysToAdd);
+  const now = new Date();
+
+  return result < now ? now : result;
+}
+
 /** True, if date is Saturday or Sunday. */
 export function isWeekend(date: Date) {
   const day = date.getDay(); // 0=So,6=Sa
