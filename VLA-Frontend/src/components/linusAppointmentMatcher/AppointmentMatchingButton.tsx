@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import LinusAppointmentMatcher from "./LinusAppointmentMatcher";
 import type { AppointmentMatching } from "@/lib/databaseTypes";
 
@@ -16,6 +16,10 @@ export default function AppointmentMatchingButton({appointmentMatching} : Appoin
       showMatchTaskIcon,
       setShowMatchTaskIcon
     ] = useState<boolean>(false);
+
+    useEffect(() => {
+        setShowMatchTaskIcon(appointmentMatching.length !== 0)
+    }, [appointmentMatching]);
     
     return (
       <>
@@ -26,14 +30,17 @@ export default function AppointmentMatchingButton({appointmentMatching} : Appoin
           title="Synchronisation für Linustermine"
           type="button"
         >
-        Linus 
+        Linus
         {showMatchTaskIcon &&
         <span style={{color: "#8000d7", marginLeft: "3px"}}>⨝</span>
         }
         </button>
-        {appointmentMatchingVisible &&
-          <LinusAppointmentMatcher appointmentMatching={appointmentMatching} setAppointmentMatcherVisible={setAppointmentMatchingVisible} setAppointmentMatcherIconVisible={setShowMatchTaskIcon}/>
-        }
+
+        <LinusAppointmentMatcher
+          appointmentMatching={appointmentMatching}
+          setAppointmentMatcherVisible={setAppointmentMatchingVisible}
+          visible={appointmentMatchingVisible}
+        />
       </>
     )
 }
