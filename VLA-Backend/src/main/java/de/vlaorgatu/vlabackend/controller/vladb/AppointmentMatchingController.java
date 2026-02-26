@@ -11,7 +11,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +74,13 @@ public class AppointmentMatchingController implements
         return ResponseEntity.ok(appointmentMatchings);
     }
 
+    /**
+     * Endpoint for updating the matched appointmentId of a matchingId.
+     *
+     * @param matchingId    The id of the matching to update
+     * @param appointmentId The id of the appointment that should be assigned
+     * @return Updated {@link AppointmentMatching}
+     */
     @Transactional("vlaTransactionManager")
     @PostMapping("/{matchingId}")
     public ResponseEntity<AppointmentMatching> changeAppointmentMatchingAssignment(

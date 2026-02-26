@@ -37,6 +37,12 @@ public class AppointmentController
      */
     private final AppointmentRepository appointmentRepository;
 
+    /**
+     * Returns all appointments where eventTime is in their timeframe.
+     *
+     * @param eventTime The specified time as an ISO string
+     * @return All appointments that contain the eventTime
+     */
     @GetMapping("/includeTime")
     public ResponseEntity<List<Appointment>> getAppointmentsDuringTime(
         @RequestParam("eventTime")

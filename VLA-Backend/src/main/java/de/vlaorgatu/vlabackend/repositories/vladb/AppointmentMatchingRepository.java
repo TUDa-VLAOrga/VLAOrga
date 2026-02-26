@@ -21,6 +21,8 @@ public interface AppointmentMatchingRepository extends
      */
     List<AppointmentMatching> findAppointmentMatchingsByAppointmentNull();
 
+    // CHECKSTYLE.OFF: Indentation - IntelliJ formats the method name incorrectly
+
     /**
      * Returns {@link AppointmentMatching}s with an unmatched {@link Appointment} in a time frame.
      *
@@ -30,8 +32,11 @@ public interface AppointmentMatchingRepository extends
      */
     List<AppointmentMatching>
     findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeBetween(
-        LocalDateTime start, LocalDateTime end
+        LocalDateTime start,
+        LocalDateTime end
     );
+
+    // CHECKSTYLE.ON: Indentation
 
     /**
      * Retrieves the {@link AppointmentMatching}s for a linusAppointment based on the id.

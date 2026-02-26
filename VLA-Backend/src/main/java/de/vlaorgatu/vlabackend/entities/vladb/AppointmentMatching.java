@@ -1,6 +1,5 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -10,9 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
