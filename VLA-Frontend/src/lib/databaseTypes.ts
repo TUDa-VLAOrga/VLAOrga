@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-26 11:20:46.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-26 11:35:40.
 
 export interface LinusAppointment {
     id: number;
