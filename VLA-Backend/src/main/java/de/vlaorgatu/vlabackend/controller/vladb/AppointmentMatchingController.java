@@ -11,6 +11,7 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,7 @@ public class AppointmentMatchingController implements
      * @param endDate   The end of the time frame in the iso format
      * @return {@link AppointmentMatching}s without an assigned {@link Appointment}
      */
+    @Transactional("vlaTransactionManager")
     @GetMapping("/nulledAppointments")
     public ResponseEntity<List<AppointmentMatching>> getUnmatchedAppointmentsInTimeFrame(
         @RequestParam("commence")
@@ -73,6 +75,7 @@ public class AppointmentMatchingController implements
         return ResponseEntity.ok(appointmentMatchings);
     }
 
+    @Transactional("vlaTransactionManager")
     @PostMapping("/{matchingId}")
     public ResponseEntity<AppointmentMatching> changeAppointmentMatchingAssignment(
         @PathVariable Long matchingId,
@@ -106,7 +109,7 @@ public class AppointmentMatchingController implements
      */
     @Transactional("vlaTransactionManager")
     @PostMapping("/match/appointments")
-    public ResponseEntity<String> matchAppointments(@RequestBody TimeFrame timeFrame) {
+    public synchronized ResponseEntity<String> matchAppointments(@RequestBody TimeFrame timeFrame) {
         linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
         return ResponseEntity.ok("");
     }
@@ -118,8 +121,10 @@ public class AppointmentMatchingController implements
      * @param timeFrame The {@link TimeFrame} to look at
      * @return Status Ok (200)
      */
+    @Transactional("vlaTransactionManager")
     @PostMapping("/match/experimentBookings")
-    public ResponseEntity<String> matchExperimentBookings(@RequestBody TimeFrame timeFrame) {
+    public synchronized ResponseEntity<String> matchExperimentBookings(
+        @RequestBody TimeFrame timeFrame) {
         linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
         linusSyncService.syncMatchedAppointmentsExperimentBookings(
             timeFrame.getCommence(),

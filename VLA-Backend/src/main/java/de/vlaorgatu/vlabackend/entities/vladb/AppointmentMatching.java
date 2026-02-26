@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -9,7 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,14 +40,13 @@ public class AppointmentMatching {
     /**
      * The linus reservation id this matching represents.
      */
-    @Column(name = "linus_appointment_id", nullable = false)
+    @Column(name = "linus_appointment_id", nullable = false, unique = true)
     private Integer linusAppointmentId;
 
     /**
      * Duplication from {@link LinusAppointment}, the time an appointment was set to take place.
      * Note: This is for reducing API calls during the matching process
      */
-    @Nullable
     @Column(name = "linus_appointment_time")
     private LocalDateTime linusAppointmentTime;
 
