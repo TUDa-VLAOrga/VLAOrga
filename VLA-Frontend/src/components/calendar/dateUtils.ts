@@ -149,3 +149,22 @@ export function compareSameDay(a: Date, b: Date){
     a.getMonth() == b.getMonth() &&
     a.getFullYear() == b.getFullYear();
 }
+
+export function getDateStringOfDate(date: Date){
+  const dateFormat = Intl.DateTimeFormat("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  })
+
+  return dateFormat.format(date);
+}
+
+export function getTimeStringOfDate(date: Date){
+  const dateFormat = Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })
+
+  return dateFormat.format(date);
+}
