@@ -9,6 +9,7 @@ import {
   verifyValidTimeRange
 } from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
+import {getNotSynchronisedId} from "@/lib/utils.ts";
 
 
 /**
@@ -20,7 +21,6 @@ import {Logger} from "@/components/logger/Logger.ts";
  */
 
 export function useEvents() {
-  let notSynchronisedId = -1;  // negative ID signals an entity not created in the backend
   const [allEvents, setEvents] = useState<Appointment[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Appointment>();
 
@@ -57,7 +57,7 @@ export function useEvents() {
         newSeries = {
           ...oldEvent.series,
           ...updates.series,
-          id: notSynchronisedId--,
+          id: getNotSynchronisedId(),
         };
         // TODO: backend request to create new series
       }
@@ -111,13 +111,13 @@ export function useEvents() {
     // Also, create a single series if initial event date is not on one recurring day.
     if (!formData.recurrence || !formData.recurrence.weekdays.includes(formData.startDateTime.getDay() as Weekday)) {
       const newAppSeries: AppointmentSeries = {
-        id: notSynchronisedId--,
+        id: getNotSynchronisedId(),
         lecture: formData.lecture,
         name: formData.title.trim(),
         category: formData.category,
       };
       newEvents.push({
-        id: notSynchronisedId--,
+        id: getNotSynchronisedId(),
         series: newAppSeries,
         start: formData.startDateTime,
         end: formData.endDateTime,
@@ -132,7 +132,7 @@ export function useEvents() {
       formData.recurrence.weekdays.forEach(
         (day) => {
           seriesByWeekday.set(day, {
-            id: notSynchronisedId--,
+            id: getNotSynchronisedId(),
             lecture: formData.lecture,
             name: formData.title.trim(),
             category: formData.category!,
@@ -149,7 +149,7 @@ export function useEvents() {
         const weekday = currentDate.getDay() as Weekday;
         if (formData.recurrence.weekdays.includes(weekday)) {
           newEvents.push({
-            id: notSynchronisedId--,
+            id: getNotSynchronisedId(),
             series: seriesByWeekday.get(weekday)!,
             start: currentDate,
             end: new Date(currentDate.getTime() + duration),
