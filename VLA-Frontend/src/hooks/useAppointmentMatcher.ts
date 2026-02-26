@@ -1,5 +1,5 @@
 import type { CalendarDay } from "@/components/calendar/CalendarTypes";
-import { SseMessageType, type AppointmentMatching, type TimeFrame } from "@/lib/databaseTypes";
+import { SseMessageType, type Appointment, type AppointmentMatching, type TimeFrame } from "@/lib/databaseTypes";
 import useSseConnection from "./useSseConnection";
 import { useEffect } from "react";
 import { addDaysPresentFuture } from "@/components/calendar/dateUtils";
@@ -31,6 +31,10 @@ function handleAppointmentMatchingUpdated(event: MessageEvent, previousState: Ap
     return nextState;
 }
 
+interface useAppointmentMatcherProps {
+    days: CalendarDay[],
+    allEvents: Appointment[],
+}
 
 const sseHandlers = new Map<
     SseMessageType,
@@ -40,13 +44,12 @@ const sseHandlers = new Map<
 sseHandlers.set(SseMessageType.APPOINTMENTMATCHINGCREATE, handleAppointmentMatchingCreated);
 sseHandlers.set(SseMessageType.APPOINTMENTMATCHINGUPDATE, handleAppointmentMatchingUpdated);
 
-
 /**
  * 
  * @param days Sorted array of days, at least one
  * @returns The current AppointmentMatchings that need to be matched
  */
-export function useAppointmentMatcher(days : CalendarDay[]): AppointmentMatching[]{
+export function useAppointmentMatcher({days, allEvents} : useAppointmentMatcherProps): AppointmentMatching[]{
     const [
         nullAppointmentMatchings,
         setNullAppointmentMatchings
@@ -90,7 +93,7 @@ export function useAppointmentMatcher(days : CalendarDay[]): AppointmentMatching
                 console.log(e);
             })
         )
-    }, [days, events])
+    }, [days, allEvents])
     
     return nullAppointmentMatchings;
 }

@@ -26,7 +26,6 @@ export default function CalendarView() {
   const {lectures,handleAddLecture}= useLectures();
   const {categories,handleAddCategory}= useCategories();
   const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
-  const missingAppointmentMatchings = useAppointmentMatcher(days);
 
   const {
     allEvents,
@@ -38,6 +37,8 @@ export default function CalendarView() {
     handleUpdateEventNotes,
     handleUpdateEvent,
   } = useEvents();
+
+  const missingAppointmentMatchings = useAppointmentMatcher({days, allEvents});
  
   /**
    * Called by EventForm when the user submits.

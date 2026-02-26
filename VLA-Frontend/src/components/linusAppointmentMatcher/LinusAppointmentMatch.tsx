@@ -17,7 +17,7 @@ export default function LinusAppointmentMatch({matching, appointments} : LinusAp
                     <LinusAppointmentMatchEntry linusAppointmentId={matching.linusAppointmentId}/>
                 </div>
                 <div>
-                    <AppointmentMatchEntry matching={matching} apppointments={appointments}/>
+                    <AppointmentMatchEntry matching={matching} appointments={appointments}/>
                 </div>
             </div>
         </div>
