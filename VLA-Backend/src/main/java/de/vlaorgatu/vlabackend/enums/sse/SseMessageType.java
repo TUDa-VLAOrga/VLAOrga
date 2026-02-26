@@ -28,6 +28,10 @@ public enum SseMessageType {
     PERSONUPDATED("PERSONUPDATED"),
     PERSONDELETED("PERSONDELETED"),
 
+    LECTURECREATED("LECTURECREATED"),
+    LECTUREUPDATED("LECTUREUPDATED"),
+    LECTUREDELETED("LECTUREDELETED"),
+
     /**
      * Used for sending Debug messages to the frontend.
      */

@@ -31,7 +31,7 @@ type EventFormProps = {
   onCancel: () => void;
   lectures: Lecture[];
   categories: AppointmentCategory[];
-  onAddLecture: (lecture: Lecture) => void;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture>;
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
   people: Person[];
   onAddPerson: (person: Person) => Promise<Person>;
@@ -49,11 +49,11 @@ type EventFormProps = {
 export default function EventCreationForm({
   onSubmit,
   onCancel,
-  lectures= [],
-  categories=[],
+  lectures,
+  categories,
   onAddLecture,
   onAddCategory,
-  people= [],
+  people,
   onAddPerson,
 }: EventFormProps) {
   // Basic form fields.
@@ -73,8 +73,7 @@ export default function EventCreationForm({
    */
 
   const handleAddLecture = (lecture: Lecture) => {
-    onAddLecture?.(lecture);
-    setLecture(lecture);
+    onAddLecture(lecture).then(setLecture);
   };
   
   /**

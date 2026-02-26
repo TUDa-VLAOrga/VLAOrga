@@ -13,9 +13,9 @@ type EventEditFormProps = {
   categories?: AppointmentCategory[];
   onSave: (updates: Partial<Appointment>) => void;
   onCancel: () => void;
-  onAddCategory: (category: AppointmentCategory) => void;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
   onAddPerson: (person: Person) => Promise<Person>;
-  onAddLecture: (lecture: Lecture) => void;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture>;
   isSeries: boolean;
 };
 
@@ -49,8 +49,7 @@ export default function EventEditForm({
   }
 
   function handleAddLecture(lecture: Lecture) {
-    onAddLecture(lecture);
-    setLecture(lecture);
+    onAddLecture(lecture).then(setLecture);
   }
  
   function handleSubmit(e: FormEvent) {

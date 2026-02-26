@@ -17,9 +17,9 @@ type EventDetailsProps = {
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
-  onAddCategory: (category: AppointmentCategory) => void;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
   onAddPerson: (person: Person) => Promise<Person>;
-  onAddLecture: (lecture: Lecture) => void;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture>;
 };
 
 /**

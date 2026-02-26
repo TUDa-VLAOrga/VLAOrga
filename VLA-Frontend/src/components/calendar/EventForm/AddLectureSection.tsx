@@ -26,7 +26,7 @@ export default function AddLectureSection({
   onAddPerson,
 }: AddLectureSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
- 
+
 
   /**
    * Creates a new Lecture object and sends it to the parent.

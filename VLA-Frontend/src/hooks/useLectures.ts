@@ -1,32 +1,56 @@
-import { useState } from "react";
-import type {Lecture} from "@/lib/databaseTypes";
+import {type Lecture, SseMessageType} from "@/lib/databaseTypes";
+import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 
-// TODO: move to some central file
-//const BASE_URL = "http://localhost:8080/api";
-//const API_URL = `${BASE_URL}/lectures`;
+const API_URL = `/api/lectures`;
+
+function handleLectureCreated(event: MessageEvent, currentValue: Lecture[]) {
+  const newLecture = JSON.parse(event.data) as Lecture;
+  return [...currentValue, newLecture];
+}
+
+function handleLectureDeleted(event: MessageEvent, currentValue: Lecture[]) {
+  const deletedLecture = JSON.parse(event.data) as Lecture;
+  return currentValue.filter((lecture) => lecture.id !== deletedLecture.id);
+}
+
+function handleLectureUpdated(event: MessageEvent, currentValue: Lecture[]) {
+  const updatedLecture = JSON.parse(event.data) as Lecture;
+  return currentValue.map((lecture) => (lecture.id === updatedLecture.id ? updatedLecture : lecture));
+}
 
 /**
  * useLectures stores and manages the list of lectures that can be assigned to events.
- * Currently local-only state; later this can be replaced with backend persistence.
-// TODO: Backend - integrate with API
+ * It synchronizes with the server via SSE.
 */
 export function useLectures() {
-  const [lectures, setLectures] = useState<Lecture[]>([]);
+  const sseHandlers = new Map<SseMessageType, (event: MessageEvent, currentValue: Lecture[]) => Lecture[]>();
+  sseHandlers.set(SseMessageType.LECTURECREATED, handleLectureCreated);
+  sseHandlers.set(SseMessageType.LECTUREDELETED, handleLectureDeleted);
+  sseHandlers.set(SseMessageType.LECTUREUPDATED, handleLectureUpdated);
+  const [lectures, _setLectures] = useSseConnectionWithInitialFetch<Lecture[]>(
+    [], API_URL, sseHandlers
+  );
 
   /**
    * Add a new lecture to the list.
    */
-  // TODO: refactor this, probably to a central helper method
-  function handleAddLecture(lecture: Lecture) {
-    // unset ID, backend will generate one
-    
-    setLectures((prev) => [...prev, lecture]);
+  async function handleAddLecture(lecture: Lecture) {
+    return fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(lecture),
+    }).then((response) => response.json()).then((newLecture) => newLecture as Lecture);
   }
+
   /**
-   * Remove a lecture by id.
+   * Remove a lecture.
    */
-  function handleDeleteLecture(lecture: Lecture) {
-    setLectures((prev) => prev.filter((prevLecture) => prevLecture.id !== lecture.id));
+  async function handleDeleteLecture(lecture: Lecture) {
+    return fetch(`${API_URL}/${lecture.id}`, {
+      method: "DELETE",
+    }).then((response) => response.json()).then((deletedLecture) => deletedLecture as Lecture);
   }
 
   return {
