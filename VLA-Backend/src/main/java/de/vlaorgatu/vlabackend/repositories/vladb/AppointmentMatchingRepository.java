@@ -22,6 +22,18 @@ public interface AppointmentMatchingRepository extends
     List<AppointmentMatching> findAppointmentMatchingsByAppointmentNull();
 
     /**
+     * Returns {@link AppointmentMatching}s with an unmatched {@link Appointment} in a time frame.
+     *
+     * @param start The start of the time frame
+     * @param end   Then end of the time frame
+     * @return {@link AppointmentMatching}s in time frame that are unmatched
+     */
+    List<AppointmentMatching>
+    findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeBetween(
+        LocalDateTime start, LocalDateTime end
+    );
+
+    /**
      * Retrieves the {@link AppointmentMatching}s for a linusAppointment based on the id.
      *
      * @param linusAppointmentId The id of the linus reservation
@@ -34,7 +46,7 @@ public interface AppointmentMatchingRepository extends
      * Returns all {@link AppointmentMatching} in a given time frame.
      *
      * @param start Inclusive start of the date
-     * @param end Inclusive end of the date
+     * @param end   Inclusive end of the date
      * @return All {@link AppointmentMatching} in the time frame
      */
     List<AppointmentMatching> getAppointmentMatchingsBylinusAppointmentTimeBetween(

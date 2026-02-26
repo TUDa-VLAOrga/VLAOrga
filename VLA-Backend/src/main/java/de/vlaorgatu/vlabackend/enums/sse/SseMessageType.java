@@ -35,6 +35,8 @@ public enum SseMessageType {
      * TODO: Frontend handling
      */
     APPOINTMENTMATCHINGCREATE("APPOINTMENTMATCHINGCREATE"),
+
+    APPOINTMENTMATCHINGUPDATE("APPOINTMENTMATCHINGUPDATE"),
     /**
      * Used for sending SSE Events after a {@link Appointment}s have been updated.
      * This update contains all new bookings imported from Linus.
