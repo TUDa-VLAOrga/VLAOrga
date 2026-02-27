@@ -44,6 +44,7 @@ function handleAppointmentSeriesDeleted(event: MessageEvent, currentValue: Appoi
 function handleAppointmentSeriesUpdated(event: MessageEvent, currentValue: AppointmentSeries[]) {
   const updatedSeries = JSON.parse(event.data) as AppointmentSeries;
   // TODO: update reference in all events belonging to this series?
+  //  -> would sadly lead to a circular function definition order.
   return currentValue.map((series) => (series.id === updatedSeries.id ? updatedSeries : series));
 }
 
@@ -57,7 +58,40 @@ function handleAppointmentSeriesUpdated(event: MessageEvent, currentValue: Appoi
 export function useEvents() {
   const [selectedEventId, setSelectedEventId] = useState<number>();
 
+  // SSE handlers for appointment series
+  const sseHandlersSeries = new Map<
+    SseMessageType,
+    (event: MessageEvent, currentValue: AppointmentSeries[]) => AppointmentSeries[]
+  >();
+  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESCREATED, handleAppointmentSeriesCreated);
+  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESDELETED, handleAppointmentSeriesDeleted);
+  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESUPDATED, handleAppointmentSeriesUpdated);
+  const [allSeries, _setSeries] = useSseConnectionWithInitialFetch<AppointmentSeries[]>(
+    [], API_URL_SERIES, sseHandlersSeries
+  );
 
+  /**
+   * Replace appointment series with their corresponding events.
+   * Also convert Dates to Date objects using {@link fixupDates}.
+   *
+   * @param events list of events to replace series in.
+   */
+  function appointmentsFetchedPostProcess(events: Appointment[]) {
+    events = fixupDates(events);
+    events.map(event => {
+      if (event.series) {
+        const series = allSeries.find(s => s.id === event.series.id);
+        if (series) {
+          event.series = series;
+        }
+      }
+    });
+    return events;
+  }
+
+  /**
+   * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
+   */
   function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
     const deletedEvent = JSON.parse(event.data) as Appointment;
     // circumvent JSON parse bugs (not recognized as timestamp)
@@ -69,6 +103,7 @@ export function useEvents() {
     return currentValue.filter((event) => event.id !== deletedEvent.id);
   }
 
+  // SSE handlers for appointments
   const sseHandlersAppointments = new Map<
     SseMessageType,
     (event: MessageEvent, currentValue: Appointment[]) => Appointment[]
@@ -77,17 +112,7 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
   const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
-    [], API_URL_APPOINTMENTS, sseHandlersAppointments, fixupDates
-  );
-  const sseHandlersSeries = new Map<
-    SseMessageType,
-    (event: MessageEvent, currentValue: AppointmentSeries[]) => AppointmentSeries[]
-  >();
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESCREATED, handleAppointmentSeriesCreated);
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESDELETED, handleAppointmentSeriesDeleted);
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESUPDATED, handleAppointmentSeriesUpdated);
-  const [_allSeries, _setSeries] = useSseConnectionWithInitialFetch<AppointmentSeries[]>(
-    [], API_URL_SERIES, sseHandlersSeries
+    [], API_URL_APPOINTMENTS, sseHandlersAppointments, appointmentsFetchedPostProcess
   );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
@@ -167,7 +192,9 @@ export function useEvents() {
           throw new Error("Error during appointment update: " + response.statusText + ".");
         }
         return response.json();
-      }).then((event) => event as Appointment);
+      }).then((event) => {
+        return fixupDates([event as Appointment])[0];
+      });
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
