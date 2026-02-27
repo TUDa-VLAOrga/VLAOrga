@@ -40,16 +40,18 @@ export function useCategories() {
    * Adds a category if it doesn't exist yet.
    */
   async function handleAddCategory(category: AppointmentCategory): Promise<AppointmentCategory> {
-    const response = await fetch(API_URL, {
+    return fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(category),
-    });
-    const newCat = await response.json();
-    return newCat as AppointmentCategory;
-
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error during category creation: " + response.statusText + ".");
+      }
+      return response.json();
+    }).then((newCat) => newCat as AppointmentCategory);
   }
 
   return {

@@ -41,7 +41,12 @@ export function useLectures() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(lecture),
-    }).then((response) => response.json()).then((newLecture) => newLecture as Lecture);
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error during lecture creation: " + response.statusText + ".");
+      }
+      return response.json();
+    }).then((newLecture) => newLecture as Lecture);
   }
 
   /**

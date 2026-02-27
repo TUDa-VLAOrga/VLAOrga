@@ -100,6 +100,10 @@ export function useEvents() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({notes}),
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error during appointment update: " + response.statusText + ".");
+        }
       });
     }
   }
@@ -139,7 +143,12 @@ export function useEvents() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newSeries),
-        }).then((response) => response.json()).then((series) => series as AppointmentSeries);
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error("Error during series creation: " + response.statusText + ".");
+          }
+          return response.json();
+        }).then((series) => series as AppointmentSeries);
       }
 
       const newEvent = {
@@ -153,7 +162,12 @@ export function useEvents() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newEvent),
-      }).then((response) => response.json()).then((event) => event as Appointment);
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error during appointment update: " + response.statusText + ".");
+        }
+        return response.json();
+      }).then((event) => event as Appointment);
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
@@ -165,7 +179,12 @@ export function useEvents() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newSeries),
-      }).then((response) => response.json()).then((series) => series as AppointmentSeries);
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error during series update: " + response.statusText + ".");
+        }
+        return response.json();
+      }).then((series) => series as AppointmentSeries);
       let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
         ...e,
         series: newSeries,
@@ -182,6 +201,10 @@ export function useEvents() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(event),
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error("Error during appointment update: " + response.statusText + ".");
+          }
         });
       });
       return movedEvents.find(e => e.id === eventId)!;
@@ -220,7 +243,12 @@ export function useEvents() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newAppSeries),
-      }).then((response) => response.json()).then((series) => series as AppointmentSeries);
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error during series creation: " + response.statusText + ".");
+        }
+        return response.json();
+      }).then((series) => series as AppointmentSeries);
       newEvents.push({
         id: getNotSynchronisedId(),
         series: newAppSeries,
@@ -250,7 +278,12 @@ export function useEvents() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify([...seriesByWeekday.values()]),
-      }).then((response) => response.json()).then((series) => series as AppointmentSeries[]);
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error during series creation: " + response.statusText + ".");
+        }
+        return response.json();
+      }).then((series) => series as AppointmentSeries[]);
       // put saved series as reference in the weekday map
       const savedSeriesIterator = savedSeries.values();
       formData.recurrence.weekdays.forEach(
@@ -283,7 +316,12 @@ export function useEvents() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newEvents),
-    }).then((response) => response.json()).then((events) => events as Appointment[]);
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error during appointment creation: " + response.statusText + ".");
+      }
+      return response.json();
+    }).then((events) => events as Appointment[]);
     savedEvents = fixupDates(savedEvents);
     console.log("savedEvents", savedEvents);
     // return event with earliest start date
