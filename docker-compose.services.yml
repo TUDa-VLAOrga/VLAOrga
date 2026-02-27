@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+# Database for the VLA Backend
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - vlaorga_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+# Linus database dev build
+  linus-db:
+    container_name: linus-db
+    extends: 
+      file: ./Linus/docker-compose.yml
+      service: linus-db
+
+  # Dev build of backend application for VLAOrga
+  # Does not merge the frontend into the backend, seperated process for frontend is needed
+  backend:
+    build:
+      context: ./VLA-Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      VLAORGA_DATASOURCE_URL: ${VLAORGA_DATASOURCE_URL}
+      VLAORGA_DATASOURCE_USERNAME: ${VLAORGA_DATASOURCE_USERNAME}
+      VLAORGA_DATASOURCE_PASSWORD: ${VLAORGA_DATASOURCE_PASSWORD}
+      LINUS_DATASOURCE_URL: ${LINUS_DATASOURCE_URL}
+      LINUS_DATASOURCE_USERNAME: ${LINUS_DATASOURCE_USERNAME}
+      LINUS_DATASOURCE_PASSWORD: ${LINUS_DATASOURCE_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+      linus-db:
+        condition: service_healthy
+
+  # Prod build of backend application for VLAOrga
+  # Combines everything into a single container
+  prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+# !!! Changes in volumes must be applied in all docker-compose*.yml at this level !!!
+volumes:
+  vlaorga_postgres_data:

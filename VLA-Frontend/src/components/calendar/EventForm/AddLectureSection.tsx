@@ -1,12 +1,14 @@
 import { useState } from "react";
-import type { Lecture } from "../CalendarTypes";
-import ColorPicker from "../ColorPicker";
+import AddLectureForm from "./AddLectureForm";
+import type {Lecture, Person} from "@/lib/databaseTypes";
 
 type AddLectureSectionProps = {
   lectures: Lecture[];
-  selectedLectureId: string;
-  onLectureChange: (lectureId: string) => void;
+  selectedLecture?: Lecture;
+  onLectureChange: (lecture: Lecture) => void;
   onAddLecture: (lecture: Lecture) => void;
+  people?: Person[];
+  onAddPerson?: (person: Person) => void; 
 };
 
 /**
@@ -17,31 +19,22 @@ type AddLectureSectionProps = {
  */
 export default function AddLectureSection({
   lectures,
-  selectedLectureId,
+  selectedLecture,
   onLectureChange,
   onAddLecture,
+  people = [],
+  onAddPerson,
 }: AddLectureSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newLectureName, setNewLectureName] = useState("");
-  const [newLectureColor, setNewLectureColor] = useState("#3b82f6");
+ 
 
   /**
    * Creates a new Lecture object and sends it to the parent.
    * Afterwards, resets the local form state and closes the add-form UI.
    */
-  const handleAdd = () => {
-    if (!newLectureName.trim()) return;
-
-    // Temporary id generation
-    const newLecture: Lecture = {
-      id: `lecture-${Date.now()}`,
-      name: newLectureName.trim(),
-      color: newLectureColor,
-    };
-    // Reset inputs to the default state for the next creation.
-    onAddLecture(newLecture);
-    setNewLectureName("");
-    setNewLectureColor("#3b82f6");
+  function handleAdd(lecture: Lecture) {
+    onAddLecture(lecture);
+    
     setShowAddForm(false);
   };
 
@@ -54,53 +47,31 @@ export default function AddLectureSection({
         <button
           type="button"
           className="cv-addBtn"
-          onClick={() => setShowAddForm(!showAddForm)}
+          onClick={() => setShowAddForm(true)}
         >
-          {showAddForm ? "−" : "+"} Neue Vorlesung
+          + Neue Vorlesung
         </button>
       </div>
 
       {/* Inline section for creating a new lecture */}
       {showAddForm && (
-        <div className="cv-addSection">
-          <input
-            type="text"
-            className="cv-formInput"
-            value={newLectureName}
-            onChange={(e) => setNewLectureName(e.target.value)}
-            placeholder="Vorlesungsname eingeben"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleAdd();
-              }
-            }}
-          />
-
-          <div className="cv-formLabel" style={{ marginBottom: "8px" }}>
-            Farbe wählen:
-          </div>
-          <ColorPicker
-            selectedColor={newLectureColor}
-            onColorChange={setNewLectureColor}
-          />
-          <button
-            type="button"
-            className="cv-formBtn cv-formBtnSubmit"
-            onClick={handleAdd}
-            disabled={!newLectureName.trim()}
-            style={{ marginTop: "8px" }}
-          >
-            Hinzufügen
-          </button>
-        </div>
+        <AddLectureForm
+          onSubmit={handleAdd}
+          onCancel={() => setShowAddForm(false)}
+          people={people}
+          onAddPerson={onAddPerson}
+        />
       )}
+        
       {/* Dropdown to select an existing lecture */}
       <select
         id="lecture"
         className="cv-formSelect"
-        value={selectedLectureId}
-        onChange={(e) => onLectureChange(e.target.value)}
+        value={selectedLecture ? selectedLecture.id : ""}
+        onChange={(e) => {
+          const newLecture = lectures.find((lec) => lec.id === Number(e.target.value));
+          if (newLecture) onLectureChange(newLecture);
+        }}
       >
         <option value="">Keine Zuordnung</option>
         {lectures.map((lec) => (

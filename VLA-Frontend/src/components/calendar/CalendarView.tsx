@@ -4,12 +4,13 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
 import GoToMenu from "./GoToButton";
-import EventForm, { type EventFormData } from "./EventForm/EventForm";
+import EventCreationForm, { type EventFormData } from "./EventForm/EventCreationForm.tsx";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
 import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
+import { usePeople } from "@/hooks/usePeople";
 
 export default function CalendarView() {
   const [showEventForm, setShowEventForm] = useState(false);
@@ -19,15 +20,28 @@ export default function CalendarView() {
   const { lectures, handleAddLecture } = useLectures();
   const { categories, handleAddCategory } = useCategories();
 
+export default function CalendarView() {
+  const [showEventForm,setShowEventForm] = useState(false);
+  const {days,weekStart,rangeText,prevDay,nextDay,goToDate}= useCalendarNavigation();
+  const {lectures,handleAddLecture}= useLectures();
+  const {categories,handleAddCategory}= useCategories();
+  const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
+
   const {
+    allEvents,
     selectedEvent,
-    eventsByDate,
-    handleCreateEvent,
+    eventsByDate, 
+    handleCreateEvent, 
     handleEventClick,
     closeEventDetails,
-    getEventColor,
-  } = useEvents(lectures);
-
+    handleUpdateEventNotes,
+    handleUpdateEvent,
+  } = useEvents();
+ 
+  /**
+   * Called by EventForm when the user submits.
+   * Creates the event(s) (including recurrence materialization) and closes the modal.
+   */
   function onEventSubmit(formData: EventFormData) {
     handleCreateEvent(formData);
     setShowEventForm(false);
@@ -81,21 +95,32 @@ export default function CalendarView() {
       </div>
 
       {showEventForm && (
-        <EventForm
+        <EventCreationForm
           onSubmit={onEventSubmit}
           onCancel={() => setShowEventForm(false)}
           lectures={lectures}
           categories={categories}
           onAddLecture={handleAddLecture}
           onAddCategory={handleAddCategory}
+          people={people}
+          onAddPerson={handleAddPerson}
         />
       )}
 
       {selectedEvent && (
         <EventDetails
           event={selectedEvent}
+          allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}
+          people={people}
+          categories={categories}
+          onUpdatePersonNotes={handleUpdatePersonNotes}
+          onUpdateEventNotes={handleUpdateEventNotes}
+          onUpdateEvent={handleUpdateEvent}
+          onAddCategory={handleAddCategory}
+          onAddPerson={handleAddPerson}
+          onAddLecture={handleAddLecture}
         />
       )}
     </div>

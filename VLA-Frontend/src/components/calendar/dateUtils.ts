@@ -5,12 +5,20 @@
  */
 
 export const WORKDAY_COUNT = 5;
+export const NON_WORKDAYS = [0, 6];  // days that are no workdays
 
 export function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
+}
+
+export function toDatetimeLocalString(d: Date) {
+  const hours = d.getHours().toString().padStart(2, "0");
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+
+  return `${toISODateLocal(d)}T${hours}:${minutes}`;
 }
 
 /** Formats a date as "dd.mm." (e.g., "19.12."). */
@@ -30,7 +38,7 @@ export function addDays(date: Date, days: number) {
 /** True, if date is Saturday or Sunday. */
 export function isWeekend(date: Date) {
   const day = date.getDay(); // 0=So,6=Sa
-  return day === 0 || day === 6;
+  return NON_WORKDAYS.includes(day);
 }
 
 /**
@@ -41,10 +49,7 @@ export function normalizeToWorkdayStart(date: Date) {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
 
-  const day = d.getDay(); // 0=So,6=Sa
-  if (day === 6) d.setDate(d.getDate() + 2); // Sa -> Mo
-  if (day === 0) d.setDate(d.getDate() + 1); // So -> Mo
-
+  while (isWeekend(d)) d.setDate(d.getDate() + 1);
   return d;
 }
 
@@ -71,7 +76,7 @@ export function addWorkdays(date: Date, n: number) {
   return d;
 }
 
-const rangeFmt = new Intl.DateTimeFormat("de-DE", {
+const dayFormat = new Intl.DateTimeFormat("de-DE", {
   weekday: "short",
   day: "2-digit",
   month: "2-digit",
@@ -79,8 +84,22 @@ const rangeFmt = new Intl.DateTimeFormat("de-DE", {
 });
 
 /** formats a range like "Fr 19.12 – Do 25.12" */
-export function formatRangeShortDE(start: Date, end: Date) {
-  return `${rangeFmt.format(start)} – ${rangeFmt.format(end)}`;
+export function formatDayRangeShortDE(start: Date, end: Date) {
+  return `${dayFormat.format(start)} – ${dayFormat.format(end)}`;
+}
+
+const timeFormat = new Intl.DateTimeFormat("de-DE", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+/** formats a time range like 11:30 - 13:10, includes days if spanning over multiple days */
+export function formatTimeRangeShortDE(start: Date, end: Date) {
+  if (compareSameDay(start, end)) {
+    return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${timeFormat.format(end)}`;
+  }
+  return `${dayFormat.format(start)}, ${timeFormat.format(start)}`
+    + ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`;
 }
 
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */

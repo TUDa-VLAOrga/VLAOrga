@@ -1,19 +1,12 @@
 import type React from "react";
 import DayColumn from "./DayColumn";
-import TimeColumn from "./TimeColumn";
-import type {
-  CalendarDay,
-  CalendarEvent,
-  CalendarEventsByDateISO
-} from "./CalendarTypes";
+import type { CalendarDay, CalendarEventsByDateISO } from "./CalendarTypes";
+import type {Appointment} from "@/lib/databaseTypes";
 
 type Props = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
-  onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string | undefined;
-  startHour?: number;
-  endHour?: number;
+  onEventClick?: (event: Appointment) => void;
 };
 
 /**

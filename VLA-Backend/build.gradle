@@ -1,8 +1,14 @@
+import cz.habarta.typescript.generator.EnumMapping
+import cz.habarta.typescript.generator.JsonLibrary
+import cz.habarta.typescript.generator.TypeScriptOutputKind
+import cz.habarta.typescript.generator.TypeScriptFileType
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.7'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
+    id 'cz.habarta.typescript-generator' version '3.2.1263'
 }
 
 group = 'de.VLAOrgaTU'
@@ -28,8 +34,12 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'mysql:mysql-connector-java'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -37,6 +47,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation "org.testcontainers:testcontainers:2.0.2"
     testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mariadb'
     testImplementation 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -47,6 +58,28 @@ checkstyle {
     maxWarnings = 0
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    generateTypeScript {
+        dependsOn build
+
+        classPatterns = [
+                "de.vlaorgatu.vlabackend.entities.**",
+                "de.vlaorgatu.vlabackend.enums.**"
+        ]
+
+        optionalAnnotations = [ "jakarta.annotation.Nullable" ]
+
+        jsonLibrary = JsonLibrary.Jackson2
+
+        mapEnum = EnumMapping.asEnum
+        nonConstEnums = true
+
+        outputFile = file("${project.rootDir}/../VLA-Frontend/src/lib/databaseTypes.ts")
+        outputFileType = TypeScriptFileType.implementationFile
+        outputKind = TypeScriptOutputKind.Module
+    }
 }

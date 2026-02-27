@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class VlaBackendApplication {
-
     /**
      * Run the spring boot application.
      *
@@ -18,6 +17,5 @@ public class VlaBackendApplication {
         System.out.println("Hello World!");
         SpringApplication.run(VlaBackendApplication.class, args);
     }
-
 }
 

@@ -1,85 +1,49 @@
-import type { CalendarDay, CalendarEvent, EventStatus } from "./CalendarTypes";
-import type { HTMLAttributes } from "react";
-import Timeline from "./Timeline";
+
+
+import type { CalendarDay } from "./CalendarTypes";
+import { compareSameDay } from "./dateUtils";
+import type {Appointment} from "@/lib/databaseTypes";
+import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
+
 
 type DayColumnProps = {
   day: CalendarDay;
-  events: CalendarEvent[];
-  onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string | undefined;
-  startHour?: number;
-  endHour?: number;
-  showAllDayRow?: boolean;
+  events: Appointment[];
+  onEventClick?: (event: Appointment) => void;
 };
 
-function getStatusClass(status?: EventStatus): string {
-  if (!status) return "";
-  return `cv-event-${status}`;
-}
-
-export default function DayColumn({
-  day,
-  events,
-  onEventClick,
-  getEventColor,
-  startHour = 7,
-  endHour = 22,
-  showAllDayRow = true,
-}: DayColumnProps) {
-  const timed = events.filter(
-    (e) => e.displayedStartTime && e.displayedEndTime
-  );
-  const untimed = events.filter(
-    (e) => !(e.displayedStartTime && e.displayedEndTime)
-  );
-
-  const buildEventProps = (
-    event: CalendarEvent,
-    customColor?: string
-  ): HTMLAttributes<HTMLDivElement> & { title?: string } => ({
-    className: `cv-event cv-event-${event.kind} ${getStatusClass(event.status)}`,
-    style: customColor
-      ? { backgroundColor: customColor, borderColor: customColor }
-      : undefined,
-    title: event.shortTitle || event.title,
-    ...(onEventClick ? { onClick: () => onEventClick(event) } : {}),
-  });
-
+/**
+ * DayColumn renders all events for a single day.
+ * It is used inside the WeekGrid to build the calendar layout.
+ */
+export default function DayColumn({ day, events, onEventClick }: DayColumnProps) {
+  const isToday = compareSameDay(day.date, new Date());
+       
   return (
-    <div className="cv-dayColumn" data-date={day.iso}>
-      {/* Render all-day row ONLY if enabled AND this week has any untimed events */}
-      {showAllDayRow && (
-        <div className="cv-allDayRow" aria-label="Ganztägige Termine">
-          {untimed.length === 0 ? (
-            <div className="cv-allDayEmpty" />
-          ) : (
-            untimed.map((event) => {
-              const customColor = getEventColor?.(event);
-              const eventProps = buildEventProps(event, customColor);
+    <div
+      id={isToday ? "todaysColumn" : undefined}
+      className="cv-dayColumn"
+      data-date={day.iso}
+    >
+      {events.map((event) => {
+        // TODO: default color for events without associated lecture?
+        const color = event.series.lecture?.color;
+        const name = getEventTitle(event);
 
-              return (
-                <div
-                  key={event.id}
-                  {...eventProps}
-                  className={`cv-allDayPill ${eventProps.className}`}
-                >
-                  <div className="cv-eventTitle">{event.title}</div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
+        const eventProps = {
+          key: event.id,
+          className: `cv-event cv-event-${event.series.category} cv-event-${getEventStatus(event)}`,
+          style: color ? { backgroundColor: color, borderColor: color } : undefined,
+          title: name,
+          ...(onEventClick && { onClick: () => onEventClick(event) }),
+        };
 
-      <div className="cv-dayTimeline">
-        <Timeline
-          events={timed}
-          onEventClick={onEventClick}
-          getEventColor={getEventColor}
-          startHour={startHour}
-          endHour={endHour}
-        />
-      </div>
+        return (
+          <div {...eventProps}>
+            <div className="cv-eventTitle">{name}</div>
+          </div>
+        );
+      })} 
     </div>
   );
 }

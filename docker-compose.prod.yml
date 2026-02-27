@@ -1,0 +1,16 @@
+## Dockerfile for production
+
+services:
+  db:
+    extends:
+      file: docker-compose.services.yml
+      service: db
+
+  prod-app:
+    extends:
+      file: docker-compose.services.yml
+      service: prod
+
+# !!! Changes in volumes must be applied in all docker-compose*.yml at this level !!!
+volumes:
+  vlaorga_postgres_data:

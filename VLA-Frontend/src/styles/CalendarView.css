@@ -305,7 +305,7 @@
   background: white;
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   position: relative;
   display: flex;
   align-items: center;
@@ -523,7 +523,7 @@
   background: white;
   border-radius: 8px;
   padding: 24px;
-  max-width: 600px;
+  max-width: 680px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
@@ -622,6 +622,17 @@
   color: #666;
   font-size: 0.85rem;
   margin-top: 4px;
+}
+
+.cv-formError {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.cv-formActions .cv-formHint {
+  width: 100%;
+  text-align: center;
 }
 
 .cv-formActions {

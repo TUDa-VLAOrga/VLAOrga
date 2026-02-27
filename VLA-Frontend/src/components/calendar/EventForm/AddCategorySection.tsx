@@ -1,11 +1,12 @@
 import { useState } from "react";
-import type { EventKind } from "../CalendarTypes";
+import type {AppointmentCategory} from "@/lib/databaseTypes";
+import {getNotSynchronisedId} from "@/lib/utils.ts";
 
 type AddCategorySectionProps = {
-  categories: EventKind[];
-  selectedCategory: EventKind;
-  onCategoryChange: (category: EventKind) => void;
-  onAddCategory: (categoryName: string) => void;
+  categories: AppointmentCategory[];
+  selectedCategory?: AppointmentCategory;
+  onCategoryChange: (category: AppointmentCategory) => void;
+  onAddCategory: (category: AppointmentCategory) => void;
 };
 
 
@@ -27,7 +28,11 @@ export default function AddCategorySection({
   function handleAdd() {
     if (newCategoryName.trim() === "") return;
 
-    onAddCategory(newCategoryName.trim());
+    const newCategory: AppointmentCategory = {
+      id: getNotSynchronisedId(),
+      title: newCategoryName.trim(),
+    };
+    onAddCategory(newCategory);
     setNewCategoryName("");
     setShowAddForm(false);
   }
@@ -76,14 +81,17 @@ export default function AddCategorySection({
       <select
         id="category"
         className="cv-formSelect"
-        value={selectedCategory}
-        onChange={(e) => onCategoryChange(e.target.value as EventKind)}
+        value={selectedCategory ? selectedCategory.id : ""}
+        onChange={(e) => {
+          const newCategory = categories.find((cat) => cat.id === Number(e.target.value));
+          if (newCategory) onCategoryChange(newCategory);
+        }}
         required
       >
         <option value="">Bitte wählen...</option>
         {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
+          <option key={cat.id} value={cat.id}>
+            {cat.title}
           </option>
         ))}
       </select>
