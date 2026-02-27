@@ -8,7 +8,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;

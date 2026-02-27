@@ -11,11 +11,8 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +29,39 @@ import org.springframework.transaction.annotation.Transactional;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AppointmentControllerTest {
 
+    /**
+     * Instance of {@link AppointmentController}.
+     */
     @Autowired
     private AppointmentController appointmentController;
 
+    /**
+     * Instance of {@link TestUtils}.
+     */
     @Autowired
     private TestUtils testUtils;
 
+    /**
+     * Instance of {@link AppointmentCategoryRepository}.
+     */
     @Autowired
     private AppointmentCategoryRepository appointmentCategoryRepository;
 
+    /**
+     * Instance of {@link AppointmentSeriesRepository}.
+     */
     @Autowired
     private AppointmentSeriesRepository appointmentSeriesRepository;
 
+    /**
+     * Instance of {@link AppointmentRepository}.
+     */
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    /**
+     * Instance of {@link UserRepository}.
+     */
     @Autowired
     private UserRepository userRepository;
 
@@ -99,7 +114,7 @@ public class AppointmentControllerTest {
 
     @Transactional("vlaTransactionManager")
     @Test
-    void checkSetup(){
+    void checkSetup() {
         Assertions.assertEquals(1, appointmentCategoryRepository.findAll().size());
         Assertions.assertEquals(1, appointmentSeriesRepository.findAll().size());
         Assertions.assertEquals(1, appointmentRepository.findAll().size());

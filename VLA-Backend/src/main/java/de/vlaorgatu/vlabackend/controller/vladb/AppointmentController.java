@@ -36,7 +36,7 @@ public class AppointmentController
     private final AppointmentRepository appointmentRepository;
 
     /**
-     * Repository managing all {@link UserRepository}
+     * Repository managing all {@link UserRepository}.
      */
     private final UserRepository userRepository;
 
@@ -106,12 +106,12 @@ public class AppointmentController
 
         User deletingIntentUser = userRepository.findById(deletingIntentionUserId)
             .orElseThrow(() -> new EntityNotFoundException(
-                "User with Id " + deletingIntentionUserId + " not found."
-            )
-        );
+                    "User with Id " + deletingIntentionUserId + " not found."
+                )
+            );
 
         // At least two should agree that an appointment should be deleted
-        if(toDeleteAppointment.getDeletingIntentionUserId() == null) {
+        if (toDeleteAppointment.getDeletingIntentionUserId() == null) {
             toDeleteAppointment.setDeletingIntentionUserId(deletingIntentionUserId);
             final Appointment updatedAppointment = appointmentRepository.save(toDeleteAppointment);
 
@@ -120,11 +120,11 @@ public class AppointmentController
             return ResponseEntity.accepted().body(updatedAppointment);
         }
 
-        if(toDeleteAppointment.getDeletingIntentionUserId().equals(deletingIntentionUserId)) {
+        if (toDeleteAppointment.getDeletingIntentionUserId().equals(deletingIntentionUserId)) {
             // User may not delete appointments by themselves
             throw new InvalidParameterException(
-                "User (id=" + deletingIntentionUserId + ") has already requested deletion of "
-                + "appointment (id=" + toDeleteAppointment.getId() + ")."
+                "User (id=" + deletingIntentionUserId + ") has already requested deletion of " +
+                    " appointment (id=" + toDeleteAppointment.getId() + ")."
             );
         }
 

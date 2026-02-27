@@ -4,9 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.metamodel.EntityType;
-import java.util.ArrayList;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
