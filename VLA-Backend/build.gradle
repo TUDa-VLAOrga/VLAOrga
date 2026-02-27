@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-database-postgresql'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.mariadb.jdbc:mariadb-java-client'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
     runtimeOnly 'mysql:mysql-connector-java'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
@@ -68,7 +69,7 @@ tasks {
         classPatterns = [
                 "de.vlaorgatu.vlabackend.entities.**",
                 "de.vlaorgatu.vlabackend.enums.**",
-                "de.vlaorgatu.vlabackend.helperClasses.requestBodyTemplates.**"
+                "de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates.**"
         ]
 
         optionalAnnotations = ["jakarta.annotation.Nullable"]

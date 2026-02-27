@@ -16,7 +16,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.PersonRepository;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for various syncing mechanisms for linus.
@@ -71,7 +71,7 @@ public class Linussyncservice {
      * @param start The start of the time frame that should be matched
      * @param end   The end of the time frame that should be matched
      */
-    @Transactional
+    @Transactional("vlaTransactionManager")
     public void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
@@ -84,6 +84,11 @@ public class Linussyncservice {
 
             if (matching.isPresent()) {
                 // Matching already exists for this entry
+                continue;
+            }
+
+            if (linusAppointment.getAppointmentTime() == null) {
+                // Having no appointment would make the appointmentMatching undiscoverable
                 continue;
             }
 
@@ -112,14 +117,16 @@ public class Linussyncservice {
         List<AppointmentMatching> newAppointmentMatchings =
             appointmentMatchingRepository.saveAll(toBeSavedAppointmentMatching);
 
-        SseController.notifyAllOfObject(
-            SseMessageType.APPOINTMENTMATCHINGCREATE,
-            newAppointmentMatchings
-        );
+        if (!newAppointmentMatchings.isEmpty()) {
+            SseController.notifyAllOfObject(
+                SseMessageType.APPOINTMENTMATCHINGCREATE,
+                newAppointmentMatchings
+            );
 
-        log.info(
-            "Created " + newAppointmentMatchings.size() + " matchings for linus reservations"
-        );
+            log.info(
+                "Created " + newAppointmentMatchings.size() + " matchings for linus reservations"
+            );
+        }
     }
 
     /**
@@ -130,7 +137,7 @@ public class Linussyncservice {
      * @param start The start of the time frame that should be synced
      * @param end   The end of the time frame that should be synced
      */
-    @Transactional
+    @Transactional("vlaTransactionManager")
     public void syncMatchedAppointmentsExperimentBookings(LocalDateTime start, LocalDateTime end) {
         List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository
             .getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);

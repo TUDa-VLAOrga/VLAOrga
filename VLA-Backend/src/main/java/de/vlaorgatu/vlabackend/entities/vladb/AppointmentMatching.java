@@ -37,14 +37,13 @@ public class AppointmentMatching {
     /**
      * The linus reservation id this matching represents.
      */
-    @Column(name = "linus_appointment_id", nullable = false)
+    @Column(name = "linus_appointment_id", nullable = false, unique = true)
     private Integer linusAppointmentId;
 
     /**
      * Duplication from {@link LinusAppointment}, the time an appointment was set to take place.
      * Note: This is for reducing API calls during the matching process
      */
-    @Nullable
     @Column(name = "linus_appointment_time")
     private LocalDateTime linusAppointmentTime;
 
