@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.enums.sse;
 
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,10 +29,17 @@ public enum SseMessageType {
      */
     GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
     /**
+     * Used for sending SSE Events after a {@link Appointment} has been updated.
+     */
+    APPOINTMENTUPDATED("APPOINTMENTUPDATED"),
+    /**
+     * Used for sending SSE Events after a {@link Appointment} has been deleted.
+     */
+    APPOINTMENTDELETED("APPOINTMENTDELETED"),
+    /**
      * Used for sending Debug messages to the frontend.
      */
     DEBUG("DEBUG");
-
     /**
      * The actual value of the enum object.
      */

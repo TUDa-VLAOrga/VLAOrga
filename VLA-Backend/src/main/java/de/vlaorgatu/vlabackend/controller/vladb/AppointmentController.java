@@ -2,12 +2,16 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.User;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +34,11 @@ public class AppointmentController
      * Repository used for appointment persistence operations.
      */
     private final AppointmentRepository appointmentRepository;
+
+    /**
+     * Repository managing all {@link UserRepository}
+     */
+    private final UserRepository userRepository;
 
     /**
      * Creates a new appointment.
@@ -85,15 +94,45 @@ public class AppointmentController
      * @param id ID of the appointment to delete.
      * @return OK response with the deleted appointment, Error response otherwise.
      */
-    @PostMapping("/{id}")
-    public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
-        Appointment deletedAppointment = appointmentRepository.findById(id).orElseThrow(
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Appointment> deleteAppointment(
+        @PathVariable Long id,
+        @RequestBody Long deletingIntentionUserId
+    ) {
+        Appointment toDeleteAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
-                "Appointment with ID " + id + " not found."));
+                "Appointment with ID " + id + " not found.")
+        );
+
+        User deletingIntentUser = userRepository.findById(deletingIntentionUserId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "User with Id " + deletingIntentionUserId + " not found."
+            )
+        );
+
+        // At least two should agree that an appointment should be deleted
+        if(toDeleteAppointment.getDeletingIntentionUserId() == null) {
+            toDeleteAppointment.setDeletingIntentionUserId(deletingIntentionUserId);
+            final Appointment updatedAppointment = appointmentRepository.save(toDeleteAppointment);
+
+            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updatedAppointment);
+
+            return ResponseEntity.accepted().body(updatedAppointment);
+        }
+
+        if(toDeleteAppointment.getDeletingIntentionUserId().equals(deletingIntentionUserId)) {
+            // User may not delete appointments by themselves
+            throw new InvalidParameterException(
+                "User (id=" + deletingIntentionUserId + ") has already requested deletion of "
+                + "appointment (id=" + toDeleteAppointment.getId() + ")."
+            );
+        }
+
         appointmentRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment deleted: " + deletedAppointment);
-        return ResponseEntity.ok(deletedAppointment);
+
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, toDeleteAppointment);
+
+        return ResponseEntity.ok(toDeleteAppointment);
     }
 
     /**
