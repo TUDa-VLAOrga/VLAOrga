@@ -40,8 +40,8 @@ export default function EventEditForm({
   const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);
   const [notes, setNotes] = useState(event.notes);
 
-  const [startDateTime, setStartDateTime] = useState(event.start);
-  const [endDateTime, setEndDateTime] = useState(event.end);
+  const [startDateTime, setStartDateTime] = useState(event.startTime);
+  const [endDateTime, setEndDateTime] = useState(event.endTime);
 
   function handleAddCategory(category: AppointmentCategory) {
     onAddCategory(category);
@@ -62,8 +62,8 @@ export default function EventEditForm({
       lecture: lecture,
     };
     const updatedEvent: Partial<Appointment> = {
-      start: startDateTime,
-      end: endDateTime,
+      startTime: startDateTime,
+      endTime: endDateTime,
       // when editing a series, notes cannot be edited
       notes: isSeries ? undefined : notes.trim(),
       series: updatedSeries,
@@ -117,7 +117,7 @@ export default function EventEditForm({
             endDateTime={endDateTime}
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
-            hintText={"Ursprüngliche Zeit: " + formatTimeRangeShortDE(event.start, event.end)}
+            hintText={"Ursprüngliche Zeit: " + formatTimeRangeShortDE(event.startTime, event.endTime)}
             errorText={timeRangeHintText}
           />
           <div className="cv-detailsContent">

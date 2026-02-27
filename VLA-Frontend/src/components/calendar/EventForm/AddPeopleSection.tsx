@@ -31,7 +31,6 @@ export default function AddPeopleSection({
         email: newPersonEmail.trim(),
         // role: newPersonRole.trim() || undefined,
         notes: "",
-        lectures: [],
         linusUserId: undefined,
       };
       onAddPerson(newPerson);

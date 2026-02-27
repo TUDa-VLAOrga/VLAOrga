@@ -2,9 +2,12 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,13 +43,16 @@ public class AppointmentController
     @PostMapping
     public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
         if (Objects.nonNull(appointment.getId())) {
-            throw new InvalidParameterException(
-                "Received appointment with ID " + appointment.getId() +
-                    " when creating a new appointment.");
+            if (appointment.getId() < 0) {
+                appointment.setId(null);
+            } else {
+                throw new InvalidParameterException(
+                    "Received appointment with ID " + appointment.getId() +
+                        " when creating a new appointment.");
+            }
         }
         Appointment savedAppointment = appointmentRepository.save(appointment);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment created: " + savedAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCREATED, savedAppointment);
         return ResponseEntity.ok(savedAppointment);
     }
 
@@ -74,9 +80,33 @@ public class AppointmentController
         }
 
         Appointment updated = appointmentRepository.save(appointment);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment updated: " + updated);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updated);
         return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Creates multiple appointments.
+     *
+     * @param appointmentList List of datasets for creation.
+     * @return OK response with the created appointment list, Error response otherwise.
+     */
+    @PostMapping("/multi")
+    public ResponseEntity<Appointment[]> createAppointmentsMulti(
+        @RequestBody Appointment[] appointmentList) {
+        if (Arrays.stream(appointmentList).map(Appointment::getId).filter(Objects::nonNull)
+            .anyMatch(id -> id > 0)) {
+            throw new InvalidParameterException(
+                "Received appointment with ID > 0 when bulk-creating appointments.");
+        }
+        Arrays.stream(appointmentList).forEach((appointment) -> {
+            appointment.setId(null);
+        });
+
+        List<Appointment> saved = appointmentRepository.saveAll(Arrays.asList(appointmentList));
+        saved.forEach((appointment) -> {
+            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCREATED, appointment);
+        });
+        return ResponseEntity.ok(saved.toArray(Appointment[]::new));
     }
 
     /**
@@ -91,8 +121,7 @@ public class AppointmentController
             () -> new EntityNotFoundException(
                 "Appointment with ID " + id + " not found."));
         appointmentRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment deleted: " + deletedAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, deletedAppointment);
         return ResponseEntity.ok(deletedAppointment);
     }
 

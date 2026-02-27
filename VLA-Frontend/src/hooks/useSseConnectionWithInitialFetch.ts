@@ -13,7 +13,8 @@ import type { SseMessageType } from "@/lib/databaseTypes";
 export default function useSseConnectionWithInitialFetch<T extends object>(
   defaultValue: T, 
   apiResourceURL : string,
-  eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>
+  eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>,
+  postProcess?: (value: T) => T
 )
   : [T, React.Dispatch<React.SetStateAction<T>>]
 {
@@ -34,7 +35,10 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
       })
 
       .then(parsedObj => {
-        if (mounted){
+        if (mounted) {
+          if (postProcess) {
+            parsedObj = postProcess(parsedObj);
+          }
           setsseDefaultValue(parsedObj);
         }
       })

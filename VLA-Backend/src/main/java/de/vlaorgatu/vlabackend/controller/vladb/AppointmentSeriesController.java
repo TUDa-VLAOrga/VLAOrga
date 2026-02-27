@@ -2,9 +2,12 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,15 +45,47 @@ public class AppointmentSeriesController
     public ResponseEntity<?> createAppointmentSeries(
         @RequestBody AppointmentSeries appointmentSeries) {
         if (Objects.nonNull(appointmentSeries.getId())) {
-            throw new InvalidParameterException(
-                "Received appointment series with ID " + appointmentSeries.getId() +
-                    " when creating a new appointment series.");
+            if (appointmentSeries.getId() < 0) {
+                appointmentSeries.setId(null);
+            } else {
+                throw new InvalidParameterException(
+                    "Received appointment series with ID " + appointmentSeries.getId() +
+                        " when creating a new appointment series.");
+            }
         }
 
         AppointmentSeries saved = appointmentSeriesRepository.save(appointmentSeries);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment series created: " + saved);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTSERIESCREATED, saved);
         return ResponseEntity.ok(saved);
+    }
+
+    /**
+     * Creates multiple appointment series.
+     *
+     * @param appointmentSeries List of datasets for creation.
+     * @return OK response with the created appointment series list, Error response otherwise.
+     */
+    @PostMapping("/multi")
+    public ResponseEntity<AppointmentSeries[]> createAppointmentSeriesMulti(
+        @RequestBody AppointmentSeries[] appointmentSeries) {
+        if (Arrays.stream(appointmentSeries)
+            .map(AppointmentSeries::getId)
+            .filter(Objects::nonNull)
+            .anyMatch(id -> id > 0)
+        ) {
+            throw new InvalidParameterException(
+                "Received appointment series with ID > 0 when bulk-creating appointment series.");
+        }
+        Arrays.stream(appointmentSeries).forEach((series) -> {
+            series.setId(null);
+        });
+
+        List<AppointmentSeries> saved =
+            appointmentSeriesRepository.saveAll(Arrays.asList(appointmentSeries));
+        saved.forEach((series) -> {
+            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTSERIESCREATED, series);
+        });
+        return ResponseEntity.ok(saved.toArray(AppointmentSeries[]::new));
     }
 
     /**
@@ -78,8 +113,7 @@ public class AppointmentSeriesController
         }
 
         AppointmentSeries updated = appointmentSeriesRepository.save(appointmentSeries);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment series updated: " + updated);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTSERIESUPDATED, updated);
         return ResponseEntity.ok(updated);
     }
 
@@ -96,8 +130,8 @@ public class AppointmentSeriesController
                 "Appointment series with ID " + id + " not found."));
 
         appointmentSeriesRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment series deleted: " + deletedAppointmentSeries);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTSERIESDELETED,
+            deletedAppointmentSeries);
         return ResponseEntity.ok(deletedAppointmentSeries);
     }
 

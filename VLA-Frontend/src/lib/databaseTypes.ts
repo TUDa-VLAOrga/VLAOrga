@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-26 10:59:34.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-27 13:43:18.
 
 export interface LinusAppointment {
     id: number;
@@ -45,15 +45,15 @@ export interface LinusUser {
 export interface Acceptance {
     id: number;
     appointment: Appointment;
-    start: Date;
-    end: Date;
+    startTime: Date;
+    endTime: Date;
 }
 
 export interface Appointment {
     id: number;
     series: AppointmentSeries;
-    start: Date;
-    end: Date;
+    startTime: Date;
+    endTime: Date;
     notes: string;
 }
 
@@ -100,7 +100,6 @@ export interface Person {
     email: string;
     notes: string;
     linusUserId?: number;
-    lectures: Lecture[];
 }
 
 export interface User {
@@ -129,5 +128,11 @@ export enum SseMessageType {
     LECTURECREATED = "LECTURECREATED",
     LECTUREUPDATED = "LECTUREUPDATED",
     LECTUREDELETED = "LECTUREDELETED",
+    APPOINTMENTSERIESCREATED = "APPOINTMENTSERIESCREATED",
+    APPOINTMENTSERIESUPDATED = "APPOINTMENTSERIESUPDATED",
+    APPOINTMENTSERIESDELETED = "APPOINTMENTSERIESDELETED",
+    APPOINTMENTCREATED = "APPOINTMENTCREATED",
+    APPOINTMENTUPDATED = "APPOINTMENTUPDATED",
+    APPOINTMENTDELETED = "APPOINTMENTDELETED",
     DEBUG = "DEBUG",
 }

@@ -44,7 +44,6 @@ export function usePeople() {
     const prevPerson = people.find((person) => person.id === personId);
     if (prevPerson) {
       prevPerson.notes = notes;
-      console.log(prevPerson);
       fetch(`${API_URL}/${personId}`, {
         method: "PUT",
         headers: {

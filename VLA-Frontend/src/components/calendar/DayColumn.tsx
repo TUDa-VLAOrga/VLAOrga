@@ -9,7 +9,7 @@ import {getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts
 type DayColumnProps = {
   day: CalendarDay;
   events: Appointment[];
-  onEventClick?: (event: Appointment) => void;
+  onEventClick?: (eventId: number) => void;
 };
 
 /**
@@ -26,20 +26,18 @@ export default function DayColumn({ day, events, onEventClick }: DayColumnProps)
       data-date={day.iso}
     >
       {events.map((event) => {
-        // TODO: default color for events without associated lecture?
         const color = event.series.lecture?.color;
         const name = getEventTitle(event);
 
         const eventProps = {
-          key: event.id,
           className: `cv-event cv-event-${event.series.category} cv-event-${getEventStatus(event)}`,
           style: color ? { backgroundColor: color, borderColor: color } : undefined,
           title: name,
-          ...(onEventClick && { onClick: () => onEventClick(event) }),
+          ...(onEventClick && { onClick: () => onEventClick(event.id) }),
         };
 
         return (
-          <div {...eventProps}>
+          <div key={event.id} {...eventProps}>
             <div className="cv-eventTitle">{name}</div>
           </div>
         );

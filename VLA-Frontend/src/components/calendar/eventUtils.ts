@@ -24,7 +24,7 @@ export function getEventTitle(event: Appointment) {
  * This assumes the end date is the same day as the start date.
  */
 export function getEventDateISO(event: Appointment) {
-  return toISODateLocal(event.start);
+  return toISODateLocal(event.startTime);
 }
 
 /**
@@ -60,7 +60,7 @@ export function verifyValidTimeRange(start?: Date, end?: Date): [boolean, string
  * @param referenceEvent - The event that was dragged. Only events with the same series ID will be moved.
  * @param newStartDateTime - New start datetime
  * @param newEndDateTime - New end datetime
- * @returns Updated events with new times
+ * @returns Updated events with new times, events without changes are not returned!
  */
 export function moveEventSeries(
   events: Appointment[],
@@ -68,21 +68,21 @@ export function moveEventSeries(
   newStartDateTime: Date,
   newEndDateTime: Date
 ): Appointment[] {
-  const timeDiffStart = newStartDateTime.getTime() - referenceEvent.start.getTime();
-  const timeDiffEnd = newEndDateTime.getTime() - referenceEvent.end.getTime();
+  const timeDiffStart = newStartDateTime.getTime() - referenceEvent.startTime.getTime();
+  const timeDiffEnd = newEndDateTime.getTime() - referenceEvent.endTime.getTime();
 
-  return events.map((e) => {
-    if (e.series.id !== referenceEvent.series.id) return e;
+  return events
+    .filter((e) => e.series.id === referenceEvent.series.id)
+    .map((e) => {
+      const newEventStart = new Date(e.startTime.getTime() + timeDiffStart);
+      const newEventEnd = new Date(e.endTime.getTime() + timeDiffEnd);
 
-    const newEventStart = new Date(e.start.getTime() + timeDiffStart);
-    const newEventEnd = new Date(e.end.getTime() + timeDiffEnd);
-
-    return {
-      ...e,
-      start: newEventStart,
-      end: newEventEnd,
-    };
-  });
+      return {
+        ...e,
+        start: newEventStart,
+        end: newEventEnd,
+      };
+    });
 }
 
 /**
@@ -100,4 +100,19 @@ export function getEventStatus(_event: Appointment) {
   // TODO: implement, extract experiments? probably with a @OneToMany attribute
   //  appointment.bookedExperiments in the backend
   return "" as EventStatus;
+}
+
+/**
+ * Convert start and end of all appointments to Date objects from strings.
+ *
+ * Sadly typeScript is dumb at runtime and cannot do this at rertieving automatically...
+ */
+export function fixupDates(appointments: Appointment[]): Appointment[] {
+  return appointments.map((event) => {
+    return {
+      ...event,
+      startTime: new Date(event.startTime),
+      endTime: new Date(event.endTime),
+    };
+  });
 }

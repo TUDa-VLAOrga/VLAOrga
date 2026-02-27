@@ -1,16 +1,51 @@
-import { useState, useMemo } from "react";
+import {useState, useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import { addDays } from "../components/calendar/dateUtils";
-import type {Appointment, AppointmentSeries} from "@/lib/databaseTypes";
+import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
-  checkPartOfSeries,
+  checkPartOfSeries, fixupDates,
   getEventDateISO,
   moveEventSeries,
   verifyValidTimeRange
 } from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
 import {getNotSynchronisedId} from "@/lib/utils.ts";
+import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 
+const API_URL_APPOINTMENTS = "/api/appointments";
+const API_URL_SERIES = "/api/appointmentSeries";
+
+function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
+  const newEvent = JSON.parse(event.data) as Appointment;
+  // circumvent JSON parse bugs (not recognized as timestamp)
+  newEvent.startTime = new Date(newEvent.startTime);
+  newEvent.endTime = new Date(newEvent.endTime);
+  return [...currentValue, newEvent];
+}
+
+function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment[]) {
+  const updatedEvent = JSON.parse(event.data) as Appointment;
+  // circumvent JSON parse bugs (not recognized as timestamp)
+  updatedEvent.startTime = new Date(updatedEvent.startTime);
+  updatedEvent.endTime = new Date(updatedEvent.endTime);
+  return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
+}
+
+function handleAppointmentSeriesCreated(event: MessageEvent, currentValue: AppointmentSeries[]) {
+  const newSeries = JSON.parse(event.data) as AppointmentSeries;
+  return [...currentValue, newSeries];
+}
+
+function handleAppointmentSeriesDeleted(event: MessageEvent, currentValue: AppointmentSeries[]) {
+  const deletedSeries = JSON.parse(event.data) as AppointmentSeries;
+  return currentValue.filter((series) => series.id !== deletedSeries.id);
+}
+
+function handleAppointmentSeriesUpdated(event: MessageEvent, currentValue: AppointmentSeries[]) {
+  const updatedSeries = JSON.parse(event.data) as AppointmentSeries;
+  // TODO: update reference in all events belonging to this series?
+  return currentValue.map((series) => (series.id === updatedSeries.id ? updatedSeries : series));
+}
 
 /**
  * useEvents manages:
@@ -19,17 +54,54 @@ import {getNotSynchronisedId} from "@/lib/utils.ts";
  * - creation logic, including recurrence materialization
  * - a derived "eventsByDate" map for efficient rendering in the grid
  */
-
 export function useEvents() {
-  const [allEvents, setEvents] = useState<Appointment[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<Appointment>();
+  const [selectedEventId, setSelectedEventId] = useState<number>();
+
+
+  function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
+    const deletedEvent = JSON.parse(event.data) as Appointment;
+    // circumvent JSON parse bugs (not recognized as timestamp)
+    deletedEvent.startTime = new Date(deletedEvent.startTime);
+    deletedEvent.endTime = new Date(deletedEvent.endTime);
+    if (deletedEvent.id === selectedEventId) {
+      setSelectedEventId(undefined);
+    }
+    return currentValue.filter((event) => event.id !== deletedEvent.id);
+  }
+
+  const sseHandlersAppointments = new Map<
+    SseMessageType,
+    (event: MessageEvent, currentValue: Appointment[]) => Appointment[]
+  >();
+  sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
+  sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
+  sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
+  const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+    [], API_URL_APPOINTMENTS, sseHandlersAppointments, fixupDates
+  );
+  const sseHandlersSeries = new Map<
+    SseMessageType,
+    (event: MessageEvent, currentValue: AppointmentSeries[]) => AppointmentSeries[]
+  >();
+  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESCREATED, handleAppointmentSeriesCreated);
+  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESDELETED, handleAppointmentSeriesDeleted);
+  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESUPDATED, handleAppointmentSeriesUpdated);
+  const [_allSeries, _setSeries] = useSseConnectionWithInitialFetch<AppointmentSeries[]>(
+    [], API_URL_SERIES, sseHandlersSeries
+  );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
-    // TODO: Backend request
-    setEvents((prev) =>
-      prev.map(event => event.id === eventId ? {...event, notes} : event)
-    );
-    setSelectedEvent(prev => prev?.id === eventId ? {...prev, notes} : prev);
+    const event = allEvents.find(e => e.id === eventId);
+    if (event) {
+      event.notes = notes;
+      fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({notes}),
+      });
+    }
   }
 
   /**
@@ -39,15 +111,17 @@ export function useEvents() {
    * @param updates updates to apply to the event.
    * @param editSeries Whether to update the whole series or just this event.
    */
-  function handleUpdateEvent(eventId: number, updates: Partial<Appointment>, editSeries: boolean) {
-    if (updates.start && updates.end && !verifyValidTimeRange(updates.start, updates.end)) {
+  async function handleUpdateEvent(
+    eventId: number, updates: Partial<Appointment>, editSeries: boolean
+  ): Promise<Appointment> {
+    if (updates.startTime && updates.endTime && !verifyValidTimeRange(updates.startTime, updates.endTime)) {
       Logger.error("Invalid time range for event");
-      return;
+      throw new Error("Invalid time range for event");
     }
     const oldEvent = allEvents.find(e => e.id === eventId);
     if (!oldEvent) {
       Logger.error("Event not found");
-      return;
+      throw new Error("Event not found");
     }
     // case 1: only this event should be updated
     if (!editSeries || !checkPartOfSeries(oldEvent, allEvents)) {
@@ -59,42 +133,66 @@ export function useEvents() {
           ...updates.series,
           id: getNotSynchronisedId(),
         };
-        // TODO: backend request to create new series
+        newSeries = await fetch(API_URL_SERIES, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newSeries),
+        }).then((response) => response.json()).then((series) => series as AppointmentSeries);
       }
-      setEvents((prev) =>
-        prev.map((event) =>
-          event.id === eventId
-            ? {
-              ...event,
-              ...updates,
-              series: newSeries || event.series,
-            }
-            : event
-        )
-      );
-      // TODO: backend request to update event
+
+      const newEvent = {
+        ...oldEvent,
+        ...updates,
+        series: newSeries || oldEvent.series,
+      };
+      return fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEvent),
+      }).then((response) => response.json()).then((event) => event as Appointment);
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
-      const newSeries = {
+      let newSeries = {
         ...oldEvent.series,
         ...updates.series,
       };
-      // TODO: backend request to update series
-      let movedEvents: Appointment[] = allEvents;
-      if (updates.start && updates.end) {
+      newSeries = await fetch(API_URL_SERIES, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newSeries),
+      }).then((response) => response.json()).then((series) => series as AppointmentSeries);
+      let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
+        ...e,
+        series: newSeries,
+      }));
+      if (updates.startTime && updates.endTime) {
         // calculate new start and end for every event, if changed
-        movedEvents = moveEventSeries(allEvents, oldEvent, updates.start, updates.end);
+        movedEvents = moveEventSeries(allEvents, oldEvent, updates.startTime, updates.endTime);
       }
       // set events to moved ones with updated series
-      setEvents(movedEvents.map(event =>
-        event.series.id === oldEvent.series.id ? {...event, series: newSeries} : event)
-      );
-      // TODO: backend request to update events
+      movedEvents.forEach(event => {
+        fetch(`${API_URL_APPOINTMENTS}/${event.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(event),
+        });
+      });
+      return movedEvents.find(e => e.id === eventId)!;
+    } else {
+      Logger.error("Impossible: Event neither part of series nor single event.");
+      throw new Error("Impossible: Event neither part of series nor single event.");
     }
-    setSelectedEvent(allEvents.find(e => e.id === eventId));
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
-  function handleCreateEvent(formData: EventFormData) {
+  async function handleCreateEvent(formData: EventFormData) {
     // basic validation
     if (!(
       (formData.title || formData.lecture) && formData.category
@@ -110,17 +208,24 @@ export function useEvents() {
     // even w/o recurrence we need one series to conform with our data model.
     // Also, create a single series if initial event date is not on one recurring day.
     if (!formData.recurrence || !formData.recurrence.weekdays.includes(formData.startDateTime.getDay() as Weekday)) {
-      const newAppSeries: AppointmentSeries = {
+      let newAppSeries: AppointmentSeries = {
         id: getNotSynchronisedId(),
         lecture: formData.lecture,
         name: formData.title.trim(),
         category: formData.category,
       };
+      newAppSeries = await fetch(API_URL_SERIES, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newAppSeries),
+      }).then((response) => response.json()).then((series) => series as AppointmentSeries);
       newEvents.push({
         id: getNotSynchronisedId(),
         series: newAppSeries,
-        start: formData.startDateTime,
-        end: formData.endDateTime,
+        startTime: formData.startDateTime,
+        endTime: formData.endDateTime,
         notes: formData.notes || "",
       });
     }
@@ -139,6 +244,18 @@ export function useEvents() {
           });
         }
       );
+      const savedSeries = await fetch(`${API_URL_SERIES}/multi`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([...seriesByWeekday.values()]),
+      }).then((response) => response.json()).then((series) => series as AppointmentSeries[]);
+      // put saved series as reference in the weekday map
+      const savedSeriesIterator = savedSeries.values();
+      formData.recurrence.weekdays.forEach(
+        (day) => seriesByWeekday.set(day, savedSeriesIterator.next().value as AppointmentSeries)
+      );
 
       const duration = formData.endDateTime.getTime() - formData.startDateTime.getTime();
       const endDate = new Date(formData.recurrence.endDay.date);
@@ -151,26 +268,34 @@ export function useEvents() {
           newEvents.push({
             id: getNotSynchronisedId(),
             series: seriesByWeekday.get(weekday)!,
-            start: currentDate,
-            end: new Date(currentDate.getTime() + duration),
+            startTime: currentDate,
+            endTime: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
           });
         }
         currentDate = addDays(currentDate, 1);
       }
     }
-    // TODO: Backend - POST request to /api/appointmentSeries
-    // TODO: Backend - POST request to /api/appointments
-    // Append newly created events to state
-    setEvents((prev) => [...prev, ...newEvents]);
+    console.log("newEvents", newEvents);
+    let savedEvents = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newEvents),
+    }).then((response) => response.json()).then((events) => events as Appointment[]);
+    savedEvents = fixupDates(savedEvents);
+    console.log("savedEvents", savedEvents);
+    // return event with earliest start date
+    return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
   }
 
-  function handleEventClick(event: Appointment) {
-    setSelectedEvent(event);
+  function handleEventClick(eventId: number) {
+    setSelectedEventId(eventId);
   }
 
   function closeEventDetails() {
-    setSelectedEvent(undefined);
+    setSelectedEventId(undefined);
   }
 
   /**
@@ -191,7 +316,7 @@ export function useEvents() {
 
   return {
     allEvents,
-    selectedEvent,
+    selectedEventId,
     eventsByDate,
     handleCreateEvent,
     handleEventClick,

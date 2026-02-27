@@ -129,7 +129,7 @@ export default function EventDetails({
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Zeit:</span>
               <span className="cv-detailValue">
-                {formatTimeRangeShortDE(event.start, event.end)}
+                {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </span>
             </div>
 
