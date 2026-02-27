@@ -2,12 +2,15 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,11 @@ public class AppointmentController
      * Repository used for appointment persistence operations.
      */
     private final AppointmentRepository appointmentRepository;
+
+    /**
+     * Repository used for ExperimentBooking persistence operations.
+     */
+    private final ExperimentBookingRepository experimentBookingRepository;
 
     /**
      * Repository managing all {@link UserRepository}.
@@ -130,9 +138,16 @@ public class AppointmentController
             );
         }
 
-        appointmentRepository.deleteById(id);
+        // Check if experimentBookings can be moved, abort if not possible
+        List<ExperimentBooking> currentAppointmentExperimentBookings =
+            experimentBookingRepository.findExperimentBookingsByAppointment(toDeleteAppointment);
 
-        // TODO: Move ExperimentBookings
+        if (!currentAppointmentExperimentBookings.isEmpty()) {
+            // TODO: Move experimentBookings
+            // TODO: Throw exception if experimentBookings move does not work
+        }
+
+        appointmentRepository.deleteById(id);
 
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, toDeleteAppointment);
 
