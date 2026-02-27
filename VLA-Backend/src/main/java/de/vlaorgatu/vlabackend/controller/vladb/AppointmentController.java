@@ -110,6 +110,8 @@ public class AppointmentController
                 )
             );
 
+        // TODO: Authenticate user with credentials from authenticated session
+
         // At least two should agree that an appointment should be deleted
         if (toDeleteAppointment.getDeletingIntentionUserId() == null) {
             toDeleteAppointment.setDeletingIntentionUserId(deletingIntentionUserId);
@@ -130,7 +132,9 @@ public class AppointmentController
 
         appointmentRepository.deleteById(id);
 
-        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, toDeleteAppointment);
+        // TODO: Move ExperimentBookings
+
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, toDeleteAppointment);
 
         return ResponseEntity.ok(toDeleteAppointment);
     }
