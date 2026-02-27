@@ -4,6 +4,7 @@ import GlobalNoteEntry, {NotSynchronisedId} from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css";
 import { useState } from "react";
 import { Button } from "../ui/Button";
+import {API_URL_GLOBAL_NOTES} from "@/lib/api.ts";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
   const createdGlobalNote = JSON.parse(event.data) as GlobalNote;
@@ -40,7 +41,7 @@ export default function GlobalNoteContainer() {
   const [globalNotes, _setGlobalNotes] = 
     useSseConnectionWithInitialFetch<GlobalNote[]>(
       [],
-      "/api/globalNotes",
+      API_URL_GLOBAL_NOTES,
       sseHandlers
     );
   const [draftNote, setDraftNote] = useState<GlobalNote | undefined>(undefined);

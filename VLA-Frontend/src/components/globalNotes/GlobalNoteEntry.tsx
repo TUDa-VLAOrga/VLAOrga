@@ -1,6 +1,7 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
+import {API_URL_GLOBAL_NOTES} from "@/lib/api.ts";
 
 export const NotSynchronisedId = -1;
 
@@ -42,7 +43,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   });
 
   function handleNoteCreationSubmit(note: GlobalNote){
-    fetch("/api/globalNotes", {
+    fetch(API_URL_GLOBAL_NOTES, {
       method: "POST",
       headers: {
         "Content-Type":"application/json",
@@ -61,7 +62,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       return;
     }
 
-    fetch("/api/globalNotes/" + note.id, {
+    fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
       method: "PUT",
       headers: {
         "Content-Type":"application/json",
@@ -76,7 +77,7 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       return;
     }
 
-    fetch("/api/globalNotes/" + note.id, {
+    fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
       method: "DELETE",
       headers: {
         "Content-Type":"application/json",

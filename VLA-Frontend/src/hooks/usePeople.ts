@@ -1,7 +1,7 @@
 import {type Person, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
+import {API_URL_PERSONS} from "@/lib/api.ts";
 
-const API_URL = "/api/persons";
 
 function handlePersonCreated(event: MessageEvent, currentValue: Person[]) {
   const newPerson = JSON.parse(event.data) as Person;
@@ -27,11 +27,11 @@ export function usePeople() {
   sseHandlers.set(SseMessageType.PERSONDELETED, handlePersonDeleted);
   sseHandlers.set(SseMessageType.PERSONUPDATED, handlePersonUpdated);
   const [people, _setPeople] = useSseConnectionWithInitialFetch<Person[]>(
-    [], API_URL, sseHandlers
+    [], API_URL_PERSONS, sseHandlers
   );
 
   async function handleAddPerson(person: Person) {
-    return fetch(API_URL, {
+    return fetch(API_URL_PERSONS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export function usePeople() {
     const prevPerson = people.find((person) => person.id === personId);
     if (prevPerson) {
       prevPerson.notes = notes;
-      fetch(`${API_URL}/${personId}`, {
+      fetch(`${API_URL_PERSONS}/${personId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

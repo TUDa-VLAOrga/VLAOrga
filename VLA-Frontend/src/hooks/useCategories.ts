@@ -1,7 +1,6 @@
 import {type AppointmentCategory, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
-
-const API_URL = "/api/appointmentCategories";
+import {API_URL_APPOINTMENT_CATEGORIES} from "@/lib/api.ts";
 
 function handleCategoryCreated(event: MessageEvent, currentValue: AppointmentCategory[]) {
   const newCategory = JSON.parse(event.data) as AppointmentCategory;
@@ -32,7 +31,7 @@ export function useCategories() {
   sseHandlers.set(SseMessageType.APPOINTMENTCATEGORYUPDATED, handleCategoryUpdated);
   const [categories, _setCategories] = useSseConnectionWithInitialFetch<AppointmentCategory[]>(
     [],
-    API_URL,
+    API_URL_APPOINTMENT_CATEGORIES,
     sseHandlers
   );
 
@@ -40,7 +39,7 @@ export function useCategories() {
    * Adds a category if it doesn't exist yet.
    */
   async function handleAddCategory(category: AppointmentCategory): Promise<AppointmentCategory> {
-    return fetch(API_URL, {
+    return fetch(API_URL_APPOINTMENT_CATEGORIES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 import {type Lecture, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
+import {API_URL_LECTURES} from "@/lib/api.ts";
 
-const API_URL = `/api/lectures`;
 
 function handleLectureCreated(event: MessageEvent, currentValue: Lecture[]) {
   const newLecture = JSON.parse(event.data) as Lecture;
@@ -28,14 +28,14 @@ export function useLectures() {
   sseHandlers.set(SseMessageType.LECTUREDELETED, handleLectureDeleted);
   sseHandlers.set(SseMessageType.LECTUREUPDATED, handleLectureUpdated);
   const [lectures, _setLectures] = useSseConnectionWithInitialFetch<Lecture[]>(
-    [], API_URL, sseHandlers
+    [], API_URL_LECTURES, sseHandlers
   );
 
   /**
    * Add a new lecture to the list.
    */
   async function handleAddLecture(lecture: Lecture) {
-    return fetch(API_URL, {
+    return fetch(API_URL_LECTURES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export function useLectures() {
    * Remove a lecture.
    */
   async function handleDeleteLecture(lecture: Lecture) {
-    return fetch(`${API_URL}/${lecture.id}`, {
+    return fetch(`${API_URL_LECTURES}/${lecture.id}`, {
       method: "DELETE",
     }).then((response) => response.json()).then((deletedLecture) => deletedLecture as Lecture);
   }

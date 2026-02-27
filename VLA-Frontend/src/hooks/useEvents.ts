@@ -11,9 +11,7 @@ import {
 import {Logger} from "@/components/logger/Logger.ts";
 import {getNotSynchronisedId} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
-
-const API_URL_APPOINTMENTS = "/api/appointments";
-const API_URL_SERIES = "/api/appointmentSeries";
+import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
   const newEvent = JSON.parse(event.data) as Appointment;
@@ -67,7 +65,7 @@ export function useEvents() {
   sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESDELETED, handleAppointmentSeriesDeleted);
   sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESUPDATED, handleAppointmentSeriesUpdated);
   const [allSeries, _setSeries] = useSseConnectionWithInitialFetch<AppointmentSeries[]>(
-    [], API_URL_SERIES, sseHandlersSeries
+    [], API_URL_APPOINTMENT_SERIES, sseHandlersSeries
   );
 
   /**
@@ -162,7 +160,7 @@ export function useEvents() {
           ...updates.series,
           id: getNotSynchronisedId(),
         };
-        newSeries = await fetch(API_URL_SERIES, {
+        newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -200,7 +198,7 @@ export function useEvents() {
         ...oldEvent.series,
         ...updates.series,
       };
-      newSeries = await fetch(API_URL_SERIES, {
+      newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -264,7 +262,7 @@ export function useEvents() {
         name: formData.title.trim(),
         category: formData.category,
       };
-      newAppSeries = await fetch(API_URL_SERIES, {
+      newAppSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -299,7 +297,7 @@ export function useEvents() {
           });
         }
       );
-      const savedSeries = await fetch(`${API_URL_SERIES}/multi`, {
+      const savedSeries = await fetch(`${API_URL_APPOINTMENT_SERIES}/multi`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
