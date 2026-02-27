@@ -5,7 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Represents a certain kind of appointment. Examples: vacation, lecture.
@@ -13,7 +18,11 @@ import lombok.Data;
  * This is an own entity type (instead of just an attribute of appointment) to allow filtering
  * in the frontend.
  */
-@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 @Entity
 @Table(name = "appointment_categories")
 public class AppointmentCategory {

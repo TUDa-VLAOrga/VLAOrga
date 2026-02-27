@@ -1,7 +1,4 @@
 ALTER TABLE appointments
-    ADD deleting_intention_user_id BIGINT;
-
-ALTER TABLE appointments
     ADD end_time TIMESTAMP WITHOUT TIME ZONE;
 
 ALTER TABLE appointments
