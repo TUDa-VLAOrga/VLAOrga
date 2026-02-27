@@ -10,6 +10,8 @@ import { useEvents } from "@/hooks/useEvents";
 import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
+import AppointmentMatchingButton from "../linusAppointmentMatcher/AppointmentMatchingButton.tsx";
+import { useAppointmentMatcher } from "@/hooks/useAppointmentMatcher.ts";
 
 
 /**
@@ -35,6 +37,8 @@ export default function CalendarView() {
     handleUpdateEventNotes,
     handleUpdateEvent,
   } = useEvents();
+
+  const missingAppointmentMatchings = useAppointmentMatcher({days, allEvents});
  
   /**
    * Called by EventForm when the user submits.
@@ -79,6 +83,8 @@ export default function CalendarView() {
         >
           + Neuer Termin
         </button>
+
+        <AppointmentMatchingButton appointmentMatching={missingAppointmentMatchings} appointments={allEvents}/>
       </div>
 
       {/* Main frame: header row (weekdays) + grid with day columns */}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type {AppointmentCategory} from "@/lib/databaseTypes";
+import {getNotSynchronisedId} from "@/lib/utils.ts";
 
 type AddCategorySectionProps = {
   categories: AppointmentCategory[];
@@ -23,13 +24,12 @@ export default function AddCategorySection({
 }: AddCategorySectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
-  let notSynchronisedId = -1;  // negative ID signals a not-yet-saved entity
 
   function handleAdd() {
     if (newCategoryName.trim() === "") return;
 
     const newCategory: AppointmentCategory = {
-      id: notSynchronisedId--,
+      id: getNotSynchronisedId(),
       title: newCategoryName.trim(),
     };
     onAddCategory(newCategory);

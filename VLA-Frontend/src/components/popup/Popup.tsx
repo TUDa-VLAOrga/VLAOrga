@@ -7,6 +7,7 @@ import "./Popup.css";
 interface PopupProps {
   title: ReactNode,
   body: ReactNode,
+  zIndex?: number,
 }
 
 /**
@@ -15,7 +16,7 @@ interface PopupProps {
  */
 function Popup({children} : {children: PopupProps}){
   return (
-    <span className="PopupBackground">
+    <span className="PopupBackground" style={{zIndex: children.zIndex}}>
       <div className="PopupContainer">
         <div className="PopupTitle">{children.title}</div>
         <div className="PopupText">

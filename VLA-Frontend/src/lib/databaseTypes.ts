@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-22 12:34:32.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-26 16:05:38.
 
 export interface LinusAppointment {
     id: number;
@@ -10,6 +10,9 @@ export interface LinusAppointment {
     appointmentTime?: Date;
     comment?: string;
     name?: string;
+}
+
+export interface LinusAppointmentBuilder {
 }
 
 export interface LinusExperiment {
@@ -25,6 +28,9 @@ export interface LinusExperiment {
     experimentNumber: number;
 }
 
+export interface LinusExperimentBuilder {
+}
+
 export interface LinusExperimentBooking {
     id: number;
     linusAppointmentId?: number;
@@ -32,6 +38,9 @@ export interface LinusExperimentBooking {
     linusUserId: number;
     status: number;
     pinnedOn?: Date;
+}
+
+export interface LinusExperimentBookingBuilder {
 }
 
 export interface LinusUser {
@@ -72,11 +81,12 @@ export interface AppointmentCategoryBuilder {
 export interface AppointmentMatching {
     id: number;
     linusAppointmentId: number;
-    linusAppointmentTime?: Date;
+    linusAppointmentTime: Date;
     appointment?: Appointment;
 }
 
 export interface AppointmentMatchingBuilder {
+    linusAppointmentTime: Date;
 }
 
 export interface AppointmentSeries {
@@ -123,6 +133,7 @@ export interface Person {
     email: string;
     notes: string;
     linusUserId?: number;
+    linusUsername?: string;
     lectures: Lecture[];
 }
 
@@ -152,6 +163,7 @@ export enum SseMessageType {
     GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
     GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
     APPOINTMENTMATCHINGCREATE = "APPOINTMENTMATCHINGCREATE",
+    APPOINTMENTMATCHINGUPDATE = "APPOINTMENTMATCHINGUPDATE",
     LINUSBOOKINGSIMPORT = "LINUSBOOKINGSIMPORT",
     DEBUG = "DEBUG",
 }
