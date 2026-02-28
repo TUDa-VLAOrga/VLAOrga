@@ -193,7 +193,7 @@ export default function EventDetails({
             <button
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
-              disabled={eventNotes.trim() === event.notes}
+              disabled={typeof eventNotes === "string" && eventNotes.trim() === event.notes}
               onClick={() => {
                 onUpdateEventNotes(event.id, eventNotes);
                 onClose();

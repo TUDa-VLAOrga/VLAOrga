@@ -4,18 +4,17 @@ import {addDays, toJSONLocalTime} from "../components/calendar/dateUtils";
 import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
-  fixupDates,
   getEventDateISO,
   moveEventSeries,
   verifyValidTimeRange
 } from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
-import {getNotSynchronisedId} from "@/lib/utils.ts";
+import {getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
-  const newEvent = JSON.parse(event.data) as Appointment;
+  const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
   // circumvent JSON parse bugs (not recognized as timestamp)
   newEvent.startTime = new Date(newEvent.startTime);
   newEvent.endTime = new Date(newEvent.endTime);
@@ -23,21 +22,7 @@ function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment
 }
 
 function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment[]) {
-  console.log("DEBUG: handleAppointmentUpdated called. event:", event.data)
-  const updatedEvent = JSON.parse(event.data) as Appointment;
-  console.log("DEBUG: handleAppointmentUpdated called. initial start time:", updatedEvent.startTime)
-  // circumvent JSON parse bugs (not recognized as timestamp)
-  updatedEvent.startTime = updatedEvent.startTime as Array<number>
-  const newStartTime = new Date()
-  newStartTime.setFullYear(updatedEvent.startTime[0], updatedEvent.startTime[1] - 1, updatedEvent.startTime[2])
-  newStartTime.setHours(updatedEvent.startTime[3], updatedEvent.startTime[4])
-  updatedEvent.startTime = newStartTime;
-  const newEndTime = new Date()
-  newEndTime.setFullYear(updatedEvent.endTime[0], updatedEvent.endTime[1] - 1, updatedEvent.endTime[2])
-  newEndTime.setHours(updatedEvent.endTime[3], updatedEvent.endTime[4])
-  updatedEvent.endTime = newEndTime
-  console.log("DEBUG: handleAppointmentUpdated called. updated start time:", updatedEvent.startTime)
-  console.log("DEBUG: handleAppointmentUpdated called. Updated event:", updatedEvent)
+  const updatedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
@@ -94,12 +79,10 @@ export function useEvents() {
 
   /**
    * Replace appointment series with their corresponding events.
-   * Also convert Dates to Date objects using {@link fixupDates}.
    *
    * @param events list of events to replace series in.
    */
   function appointmentsFetchedPostProcess(events: Appointment[]) {
-    events = fixupDates(events);
     events.map(event => {
       if (event.series) {
         const series = allSeries.find(s => s.id === event.series.id);
@@ -115,10 +98,7 @@ export function useEvents() {
    * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
    */
   function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
-    const deletedEvent = JSON.parse(event.data) as Appointment;
-    // circumvent JSON parse bugs (not recognized as timestamp)
-    deletedEvent.startTime = new Date(deletedEvent.startTime);
-    deletedEvent.endTime = new Date(deletedEvent.endTime);
+    const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
     if (deletedEvent.id === selectedEventId) {
       setSelectedEventId(undefined);
     }
@@ -134,7 +114,7 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
   const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
-    [], API_URL_APPOINTMENTS, sseHandlersAppointments, appointmentsFetchedPostProcess
+    [], API_URL_APPOINTMENTS, sseHandlersAppointments, parseJsonFixDate, appointmentsFetchedPostProcess
   );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
@@ -203,7 +183,7 @@ export function useEvents() {
         ...updates,
         series: newSeries || oldEvent.series,
       };
-      return fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
+      const response = await fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -213,10 +193,10 @@ export function useEvents() {
         if (!response.ok) {
           throw new Error("Error during appointment update: " + response.statusText + ".");
         }
-        return response.json();
-      }).then((event) => {
-        return fixupDates([event as Appointment])[0];
-      });
+        return response;
+      }
+      );
+      return JSON.parse(await response.text(), parseJsonFixDate) as Appointment;
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
@@ -358,7 +338,7 @@ export function useEvents() {
         currentDate = addDays(currentDate, 1);
       }
     }
-    let savedEvents = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
+    const response = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -368,10 +348,9 @@ export function useEvents() {
       if (!response.ok) {
         throw new Error("Error during appointment creation: " + response.statusText + ".");
       }
-      return response.json();
-    }).then((events) => events as Appointment[]);
-    savedEvents = fixupDates(savedEvents);
-    console.log("savedEvents", savedEvents);
+      return response;
+    });
+    const savedEvents = JSON.parse(await response.text(), parseJsonFixDate) as Appointment[];
     // return event with earliest start date
     return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
   }

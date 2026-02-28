@@ -101,20 +101,3 @@ export function getEventStatus(_event: Appointment) {
   //  appointment.bookedExperiments in the backend
   return "" as EventStatus;
 }
-
-/**
- * Convert start and end of all appointments to Date objects from strings.
- *
- * Sadly typeScript is dumb at runtime and cannot do this at rertieving automatically...
- */
-export function fixupDates(appointments: Appointment[]): Appointment[] {
-  return appointments.map((event) => {
-    console.log(event.startTime);
-    console.log(new Date(event.startTime));
-    return {
-      ...event,
-      startTime: new Date(event.startTime),
-      endTime: new Date(event.endTime),
-    };
-  });
-}
