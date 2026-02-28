@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Tests for backend entity operations, using the Controller classes.
@@ -54,6 +55,7 @@ public class VlaBackendEntitiesTest {
     @Autowired
     AcceptanceController acceptanceController;
 
+    @Transactional("vlaTransactionManager")
     @Test
     void entityCreationTest() {
         Assertions.assertThrows(InvalidParameterException.class,
