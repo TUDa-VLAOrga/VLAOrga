@@ -20,7 +20,7 @@ public class TestUtils {
     private EntityManager vlaEntityManager;
 
     /**
-     * Entity manager for manipulating the vla db.
+     * Entity manager for manipulating the linus db.
      */
     @PersistenceContext(unitName = "linusEntityManagerFactory")
     private EntityManager linusEntityManager;
@@ -86,7 +86,7 @@ public class TestUtils {
     }
 
     /**
-     * Deletes all entities in the vla db.
+     * Deletes all entities in the linus db.
      * If you only use one db, use @Transactional("name of correct TransactionManager")
      * This should only be called in a sequential testing context!
      */
