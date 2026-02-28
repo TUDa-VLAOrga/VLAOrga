@@ -1,4 +1,3 @@
-import cz.habarta.typescript.generator.DateMapping
 import cz.habarta.typescript.generator.EnumMapping
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptOutputKind
@@ -74,7 +73,6 @@ tasks {
 
         jsonLibrary = JsonLibrary.Jackson2
 
-        mapDate = DateMapping.asString
         mapEnum = EnumMapping.asEnum
         nonConstEnums = true
 
