@@ -1,17 +1,113 @@
-import type { CalendarEvent } from "./CalendarTypes";
+import type { Appointment } from "@/lib/databaseTypes";
 
 type Props = {
-  events: CalendarEvent[];
+  /** Timed events for a single day column. */
+  events: Appointment[];
+  /** First visible hour (inclusive). */
   startHour?: number;
+  /** Last visible hour boundary (exclusive for rows; used as end boundary). */
   endHour?: number;
-  onEventClick?: (event: CalendarEvent) => void;
-  getEventColor?: (event: CalendarEvent) => string | undefined;
+  onEventClick?: (event: Appointment) => void;
+  getEventColor?: (event: Appointment) => string | undefined;
+};
+
+const timeFmt = new Intl.DateTimeFormat("de-DE", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+/**
+ * Convert a Date to minutes relative to the visible start hour.
+ * Example: startHour=7, date=08:30 -> 90
+ */
+function minutesSinceStartHour(d: Date, startHour: number): number {
+  return d.getHours() * 60 + d.getMinutes() - startHour * 60;
+}
+
+type TimedItem = {
+  event: Appointment;
+  start: number; // clamped minutes since startHour
+  end: number; // clamped minutes since startHour
+  rawStart: number; // unclamped
+  rawEnd: number; // unclamped
+};
+
+type PositionedItem = {
+  item: TimedItem;
+  col: number;
+  colCount: number;
 };
 
 /**
- * Timeline renders time-based events inside a single day column.
- * Events are positioned vertically based on their start/end time
- * and horizontally split when they overlap in time.
+ * Layout events into columns for each overlap cluster.
+ * Unlike "group by any overlap chain", this algorithm:
+ * - builds overlap clusters by time scanning
+ * - assigns each event the first free column (greedy)
+ * - uses the maximum simultaneous columns in that cluster as width divisor
+ */
+function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
+  const sorted = [...items].sort((a, b) => a.start - b.start || a.end - b.end);
+
+  // 1) Build overlap clusters: a new cluster starts when the next event starts
+  // after (or at) the current cluster's max end.
+  const clusters: TimedItem[][] = [];
+  let cluster: TimedItem[] = [];
+  let clusterMaxEnd = -Infinity;
+
+  for (const it of sorted) {
+    if (cluster.length === 0) {
+      cluster = [it];
+      clusterMaxEnd = it.end;
+      continue;
+    }
+    if (it.start >= clusterMaxEnd) {
+      clusters.push(cluster);
+      cluster = [it];
+      clusterMaxEnd = it.end;
+    } else {
+      cluster.push(it);
+      clusterMaxEnd = Math.max(clusterMaxEnd, it.end);
+    }
+  }
+  if (cluster.length) clusters.push(cluster);
+
+  // 2) For each cluster, assign columns greedily
+  const positioned: PositionedItem[] = [];
+
+  for (const cl of clusters) {
+    // columns store the "end time" of the last event in that column
+    const colEnds: number[] = [];
+    const temp: { it: TimedItem; col: number }[] = [];
+
+    for (const it of cl) {
+      // find first column that is free (end <= start)
+      let col = colEnds.findIndex((end) => end <= it.start);
+      if (col === -1) {
+        col = colEnds.length;
+        colEnds.push(it.end);
+      } else {
+        colEnds[col] = it.end;
+      }
+      temp.push({ it, col });
+    }
+
+    const colCount = colEnds.length;
+
+    for (const t of temp) {
+      positioned.push({ item: t.it, col: t.col, colCount });
+    }
+  }
+
+  return positioned;
+}
+
+/**
+ * Timeline renders hour grid lines (always visible) and positions time-based events.
+ *
+ * Important:
+ * - The visible window is [startHour, endHour] as a boundary (e.g. 07:00–22:00).
+ * - We render (endHour - startHour) hour rows (7–8 ... 21–22).
+ * - Events are clamped to the visible window so they never overflow the column.
  */
 export default function Timeline({
   events,
@@ -20,90 +116,78 @@ export default function Timeline({
   onEventClick,
   getEventColor,
 }: Props) {
-  const minutesPerDay = (endHour - startHour) * 60;
+  const minutesVisible = (endHour - startHour) * 60;
 
-  /**
-   * Converts "HH:mm" into minutes since startHour
-   */
-  function timeToMinutes(time?: string): number {
-    if (!time) return 0;
-    const [h, m] = time.split(":").map(Number);
-    return h * 60 + m - startHour * 60;
-  }
+  // Prepare numeric times, clamp to visible window
+  const timed: TimedItem[] = events
+    .filter((e) => e.start && e.end)
+    .map((e) => {
+      const rawStart = minutesSinceStartHour(e.start, startHour);
+      const rawEnd = minutesSinceStartHour(e.end, startHour);
 
-  /**
-   * Prepare events with numeric start/end
-   */
-  const timed = events
-    .filter((e) => e.displayedStartTime && e.displayedEndTime)
-    .map((e) => ({
-      event: e,
-      start: timeToMinutes(e.displayedStartTime),
-      end: timeToMinutes(e.displayedEndTime),
-    }))
-    .filter((e) => e.end > e.start);
+      // Clamp to [0, minutesVisible]
+      const start = Math.max(0, Math.min(minutesVisible, rawStart));
+      const end = Math.max(0, Math.min(minutesVisible, rawEnd));
 
-  /**
-   * Group overlapping events (simple O(n²), OK for calendar scale)
-   */
-  const groups: (typeof timed)[] = [];
-  timed.forEach((item) => {
-    let placed = false;
+      return { event: e, start, end, rawStart, rawEnd };
+    })
+    // Keep events that intersect the visible window and have positive duration
+    .filter(
+      (e) => e.rawEnd > 0 && e.rawStart < minutesVisible && e.end > e.start,
+    );
 
-    for (const group of groups) {
-      if (group.some((g) => item.start < g.end && g.start < item.end)) {
-        group.push(item);
-        placed = true;
-        break;
-      }
-    }
-
-    if (!placed) {
-      groups.push([item]);
-    }
-  });
+  const positioned = layoutOverlaps(timed);
 
   return (
     <div className="cv-timeline">
-      <div className="cv-timeline-grid">
-        {Array.from({ length: endHour - startHour }).map((_, i) => (
-          <div key={i} className="cv-timeline-hour" />
-        ))}
+      {/* Hour grid lines: must exist even when there are 0 events */}
+      <div className="cv-timeline-grid" aria-hidden="true">
+        {Array.from({ length: Math.max(0, endHour - startHour) }).map(
+          (_, i) => (
+            <div key={i} className="cv-timeline-hour" />
+          ),
+        )}
       </div>
 
       <div className="cv-timeline-events">
-        {groups.map((group) =>
-          group.map((item, index) => {
-            const { event, start, end } = item;
-            const top = (start / minutesPerDay) * 100;
-            const height = ((end - start) / minutesPerDay) * 100;
-            const width = 100 / group.length;
-            const left = index * width;
-            const color = getEventColor?.(event);
+        {positioned.map(({ item, col, colCount }) => {
+          const { event, start, end } = item;
 
-            return (
-              <div
-                key={event.id}
-                className="cv-timeline-event"
-                style={{
-                  top: `${top}%`,
-                  height: `${height}%`,
-                  left: `calc(${left}% + 4px)`,
-                  width: `calc(${width}% - 6px)`,
-                  backgroundColor: color ?? undefined,
-                  borderColor: color ?? undefined,
-                }}
-                onClick={onEventClick ? () => onEventClick(event) : undefined}
-              >
-                <div className="cv-timeline-event-title">{event.title}</div>
+          const top = (start / minutesVisible) * 100;
+          const height = ((end - start) / minutesVisible) * 100;
 
-                <div className="cv-timeline-event-time">
-                  {event.displayedStartTime} – {event.displayedEndTime}
-                </div>
+          // Slight gutter so borders don't touch
+          const gutterPx = 6;
+          const widthPct = 100 / colCount;
+          const leftPct = col * widthPct;
+
+          const color = getEventColor?.(event) ?? event.series?.lecture?.color;
+
+          return (
+            <div
+              key={event.id}
+              className="cv-timeline-event"
+              style={{
+                top: `${top}%`,
+                height: `${height}%`,
+                left: `calc(${leftPct}% + ${gutterPx / 2}px)`,
+                width: `calc(${widthPct}% - ${gutterPx}px)`,
+                backgroundColor: color ?? undefined,
+                borderColor: color ?? undefined,
+              }}
+              onClick={onEventClick ? () => onEventClick(event) : undefined}
+              title={`${event.series?.name ?? "Termin"} (${timeFmt.format(event.start)} – ${timeFmt.format(event.end)})`}
+            >
+              <div className="cv-timeline-event-title">
+                {event.series?.name ?? "Termin"}
               </div>
-            );
-          })
-        )}
+
+              <div className="cv-timeline-event-time">
+                {timeFmt.format(event.start)} – {timeFmt.format(event.end)}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

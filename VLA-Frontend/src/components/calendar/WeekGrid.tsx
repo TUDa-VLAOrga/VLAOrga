@@ -2,11 +2,14 @@ import type React from "react";
 import DayColumn from "./DayColumn";
 import type { CalendarDay, CalendarEventsByDateISO } from "./CalendarTypes";
 import type {Appointment} from "@/lib/databaseTypes";
+import TimeColumn from "./TimeColumn";
 
 type Props = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
   onEventClick?: (event: Appointment) => void;
+  startHour?: number;
+  endHour?: number;
 };
 
 /**
@@ -21,7 +24,6 @@ export default function WeekGrid({
   days,
   eventsByDate = {},
   onEventClick,
-  getEventColor,
   startHour = 7,
   endHour = 22,
 }: Props) {
@@ -29,7 +31,7 @@ export default function WeekGrid({
 
   const showAllDayRow = days.some((day) =>
     (eventsByDate[day.iso] || []).some(
-      (e) => !(e.displayedStartTime && e.displayedEndTime)
+      (e) => !(e.start && e.end)
     )
   );
 
@@ -53,7 +55,6 @@ export default function WeekGrid({
             day={day}
             events={eventsByDate[day.iso] || []}
             onEventClick={onEventClick}
-            getEventColor={getEventColor}
             startHour={startHour}
             endHour={endHour}
             showAllDayRow={showAllDayRow}

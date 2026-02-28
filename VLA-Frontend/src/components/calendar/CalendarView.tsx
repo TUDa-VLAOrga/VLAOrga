@@ -12,13 +12,7 @@ import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
 
-export default function CalendarView() {
-  const [showEventForm, setShowEventForm] = useState(false);
 
-  const { days, weekStart, rangeText, prevDay, nextDay, goToDate } =
-    useCalendarNavigation();
-  const { lectures, handleAddLecture } = useLectures();
-  const { categories, handleAddCategory } = useCategories();
 
 export default function CalendarView() {
   const [showEventForm,setShowEventForm] = useState(false);
@@ -90,7 +84,6 @@ export default function CalendarView() {
           days={days}
           eventsByDate={eventsByDate}
           onEventClick={handleEventClick}
-          getEventColor={getEventColor}
         />
       </div>
 

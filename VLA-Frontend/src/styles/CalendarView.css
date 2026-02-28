@@ -64,10 +64,11 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #777;
-  background: #d9d9d9;
 
-  /* never wrap days; allow horizontal scroll */
+  /* wrapper only (no border here) */
+  border: none;
+  background: transparent;
+
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -77,9 +78,14 @@
   display: grid;
   grid-template-columns: 80px repeat(var(--cv-day-count), minmax(220px, 1fr));
   background: #bfbfbf;
-  border-bottom: 1px solid #777;
 
   min-width: max-content;
+
+  /* table border */
+  border-top: 1px solid #777;
+  border-left: 1px solid #777;
+  border-right: 1px solid #777;
+  border-bottom: 1px solid #777;
 }
 
 .cv-headerCell {
@@ -106,15 +112,21 @@
 .cv-gridWithTime {
   display: grid;
   grid-template-columns: 80px 1fr;
+  grid-template-rows: 1fr;
+
   min-height: 0;
   flex: 1 1 0;
   background: #d9d9d9;
 
-  /* shared vertical scroll for time + days */
   overflow-y: auto;
   overflow-x: visible;
 
   min-width: max-content;
+
+  /* table border (bottom edge must be here!) */
+  border-left: 1px solid #777;
+  border-right: 1px solid #777;
+  border-bottom: 1px solid #777;
 }
 
 /* Left rail = all-day spacer (optional) + time column */
@@ -123,6 +135,9 @@
   flex-direction: column;
   border-right: 1px solid #777;
   background: #e9ecef;
+
+  /* ✅ make rail fill the scrollable height */
+  height: 100%;
 }
 
 .cv-allDaySpacer {
@@ -140,7 +155,34 @@
   background: #d9d9d9;
 
   min-width: max-content;
+
+  /* ✅ make grid fill the scrollable height */
+  height: 100%;
+
+  /* ✅ make day columns stretch full height */
+  align-items: stretch;
+
   overflow: hidden;
+
+  /* ✅ needed for separator overlay */
+  position: relative;
+}
+
+/* ✅ Full-height day separators (do not depend on column height) */
+.cv-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(100% / var(--cv-day-count) - 1px),
+    #777 calc(100% / var(--cv-day-count) - 1px),
+    #777 calc(100% / var(--cv-day-count))
+  );
 }
 
 /* Time column */
@@ -149,6 +191,23 @@
   background: #e9ecef;
   display: flex;
   flex-direction: column;
+  position: relative; /* needed for bottom boundary label */
+}
+
+/* Bottom boundary label (22:00) without adding a new hour row */
+.cv-timeBoundary {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+
+  /* ✅ keep label inside the table instead of pushing it below */
+  transform: translateY(-50%);
+
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
 }
 
 /* ✅ FIX: line alignment. remove padding that offsets dashed line */
@@ -170,17 +229,18 @@
   line-height: 1;
 }
 
-/* Day column: no per-day scrolling */
+/* keep the column line perfectly straight even when events overlap */
 .cv-dayColumn {
-  border-right: 1px solid #777;
-  padding: 0;
-  background: transparent;
+  border-right: none;
+  position: relative;
   overflow: hidden;
+
+  /* ✅ THIS is what you were missing */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.cv-dayColumn:last-child {
-  border-right: none;
-}
 
 /* All-day / untimed row */
 .cv-allDayRow {
@@ -213,6 +273,8 @@
 /* Timeline */
 .cv-dayTimeline {
   padding: 0 10px;
+  flex: 1;
+  min-height: 0;
 }
 
 .cv-timeline {
@@ -917,25 +979,6 @@
     font-size: 14px;
   }
 }
-/* keep the column line perfectly straight even when events overlap */
-.cv-dayColumn {
-  border-right: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.cv-dayColumn:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 1px;
-  height: 100%;
-  background: #777;
-  z-index: 20;
-  pointer-events: none;
-}
-
 .cv-timeline-events {
   inset: 0 10px 0 10px;
 }
