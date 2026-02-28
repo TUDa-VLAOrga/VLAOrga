@@ -1,9 +1,10 @@
 import {useState, useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
-import { addDays } from "../components/calendar/dateUtils";
+import {addDays, toJSONLocalTime} from "../components/calendar/dateUtils";
 import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
-  checkPartOfSeries, fixupDates,
+  checkPartOfSeries,
+  fixupDates,
   getEventDateISO,
   moveEventSeries,
   verifyValidTimeRange
@@ -44,6 +45,18 @@ function handleAppointmentSeriesUpdated(event: MessageEvent, currentValue: Appoi
   // TODO: update reference in all events belonging to this series?
   //  -> would sadly lead to a circular function definition order.
   return currentValue.map((series) => (series.id === updatedSeries.id ? updatedSeries : series));
+}
+
+/**
+ * Generate JSON representation of an event for the backend.
+ * Takes care of handling dates properly.
+ */
+function getJSONEvent(event: Appointment) {
+  return JSON.stringify({
+    ...event,
+    startTime: toJSONLocalTime(event.startTime),
+    endTime: toJSONLocalTime(event.endTime),
+  });
 }
 
 /**
@@ -122,7 +135,7 @@ export function useEvents() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({notes}),
+        body: getJSONEvent({...event, notes: notes}),
       }).then((response) => {
         if (!response.ok) {
           throw new Error("Error during appointment update: " + response.statusText + ".");
@@ -184,7 +197,7 @@ export function useEvents() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newEvent),
+        body: getJSONEvent(newEvent),
       }).then((response) => {
         if (!response.ok) {
           throw new Error("Error during appointment update: " + response.statusText + ".");
@@ -225,7 +238,7 @@ export function useEvents() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(event),
+          body: getJSONEvent(event),
         }).then((response) => {
           if (!response.ok) {
             throw new Error("Error during appointment update: " + response.statusText + ".");
@@ -334,13 +347,12 @@ export function useEvents() {
         currentDate = addDays(currentDate, 1);
       }
     }
-    console.log("newEvents", newEvents);
     let savedEvents = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newEvents),
+      body: "[" + newEvents.map(e => getJSONEvent(e)).join(",") + "]",
     }).then((response) => {
       if (!response.ok) {
         throw new Error("Error during appointment creation: " + response.statusText + ".");
