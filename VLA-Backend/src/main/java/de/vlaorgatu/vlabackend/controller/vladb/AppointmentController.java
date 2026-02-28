@@ -103,7 +103,7 @@ public class AppointmentController
      * @return OK response with the deleted appointment, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Appointment> deleteAppointment(
+    public synchronized ResponseEntity<?> deleteAppointment(
         @PathVariable Long id,
         @RequestBody Long deletingIntentionUserId
     ) {
@@ -142,10 +142,8 @@ public class AppointmentController
         List<ExperimentBooking> currentAppointmentExperimentBookings =
             experimentBookingRepository.findExperimentBookingsByAppointment(toDeleteAppointment);
 
-        if (!currentAppointmentExperimentBookings.isEmpty()) {
-            // TODO: Move experimentBookings
-            // TODO: Throw exception if experimentBookings move does not work
-        }
+        // TODO: Move experimentBookings
+        // TODO: Throw InvalidRequestInCurrentServerState if experimentBookings move does not work
 
         appointmentRepository.deleteById(id);
 
