@@ -1,13 +1,13 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-20 15:29:26.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-28 16:16:35.
 
 export interface LinusAppointment {
     id: number;
     linusUserId: number;
-    orderTime?: Date;
+    orderTime?: DateAsString;
     status: number;
-    appointmentTime?: Date;
+    appointmentTime?: DateAsString;
     comment?: string;
     name?: string;
 }
@@ -31,7 +31,7 @@ export interface LinusExperimentBooking {
     linusExperimentId: number;
     linusUserId: number;
     status: number;
-    pinnedOn?: Date;
+    pinnedOn?: DateAsString;
 }
 
 export interface LinusUser {
@@ -45,15 +45,15 @@ export interface LinusUser {
 export interface Acceptance {
     id: number;
     appointment: Appointment;
-    start: Date;
-    end: Date;
+    start: DateAsString;
+    end: DateAsString;
 }
 
 export interface Appointment {
     id: number;
     series: AppointmentSeries;
-    start: Date;
-    end: Date;
+    start: DateAsString;
+    end: DateAsString;
     notes: string;
 }
 
@@ -108,6 +108,8 @@ export interface User {
     name: string;
     email: string;
 }
+
+export type DateAsString = string;
 
 export enum ExperimentPreparationStatus {
     PENDING = "PENDING",
