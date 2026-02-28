@@ -76,7 +76,7 @@ export default function AddLectureSection({
         <option value="">Keine Zuordnung</option>
         {lectures.map((lec) => (
           <option key={lec.id} value={lec.id}>
-            {lec.name}
+            {lec.name} {lec.semester && `(${lec.semester})`}
           </option>
         ))}
       </select>
