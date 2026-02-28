@@ -53,6 +53,13 @@ public class SseController {
         }
     }
 
+    /**
+     * Converts an object to JSON.
+     *
+     * @param object An object that should be processable by {@link ObjectMapper}
+     * @return The JSON of the object
+     * @throws JsonProcessingException if object is not processable
+     */
     public static String convertObjectToJson(Object object) throws JsonProcessingException {
         ObjectMapper jsonMapper = new ObjectMapper();
         jsonMapper.registerModule(new JavaTimeModule());
@@ -60,13 +67,11 @@ public class SseController {
         return jsonMapper.writeValueAsString(object);
     }
 
-
     /**
      * Sends an SSE message with the JSON representation of an object to all connected clients.
-     * TODO: Narrow Object type to an abstract entity type
      *
      * @param sseMessageType The kind of the SSE event
-     * @param eventObject    The object to be sent
+     * @param eventObject    An object that should be processable by {@link ObjectMapper}
      */
     public static void notifyAllOfObject(SseMessageType sseMessageType, Object eventObject) {
         for (SseEmitter connection : sseHandlers) {
