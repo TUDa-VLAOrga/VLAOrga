@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.sse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -43,7 +44,7 @@ public class SseController {
         for (SseEmitter connection : sseHandlers) {
             try {
                 connection.send(SseEmitter.event().name(SseMessageType.DEBUG.getValue())
-                        .data("! Change Notification ! Message: " + message));
+                    .data("! Change Notification ! Message: " + message));
             } catch (IOException e) {
                 // Broken Pipe Error
                 sseHandlers.remove(connection);
@@ -53,18 +54,16 @@ public class SseController {
 
     /**
      * Sends an SSE message with the JSON representation of an object to all connected clients.
-     * TODO: Narrow Object type to an abstract entity type
      *
      * @param sseMessageType The kind of the SSE event
-     * @param eventObject The object to be sent
+     * @param eventObject    An object that should be processable by {@link ObjectMapper}
      */
     public static void notifyAllOfObject(SseMessageType sseMessageType, Object eventObject) {
         for (SseEmitter connection : sseHandlers) {
-            ObjectMapper jsonMapper = new ObjectMapper();
             String eventData;
 
             try {
-                eventData = jsonMapper.writeValueAsString(eventObject);
+                eventData = UtilityFunctions.convertObjectToJson(eventObject);
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");
@@ -73,8 +72,8 @@ public class SseController {
 
             try {
                 connection.send(SseEmitter.event()
-                        .name(sseMessageType.getValue())
-                        .data(eventData));
+                    .name(sseMessageType.getValue())
+                    .data(eventData));
             } catch (IOException e) {
                 // Broken Pipe Error
                 sseHandlers.remove(connection);
