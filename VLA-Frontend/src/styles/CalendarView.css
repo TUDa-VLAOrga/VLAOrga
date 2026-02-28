@@ -170,22 +170,7 @@
   position: relative;
 }
 
-/* ✅ Full-height day separators (do not depend on column height) */
-.cv-grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 20;
 
-  background-image: repeating-linear-gradient(
-    to right,
-    transparent 0,
-    transparent calc(100% / var(--cv-day-count) - 1px),
-    #777 calc(100% / var(--cv-day-count) - 1px),
-    #777 calc(100% / var(--cv-day-count))
-  );
-}
 
 /* Time column */
 .cv-timeColumn {
@@ -223,7 +208,7 @@
   /* draw the hour separator exactly at the top */
   padding: 0;
   margin: 0;
-  border-bottom: var(--timelineRowBorderBottom)
+  border-bottom: var(--timelineRowBorderBottom);
 }
 
 .cv-timeLabel {
@@ -232,19 +217,51 @@
   line-height: 1;
 }
 
-.cv-grid > .cv-dayColumn:last-child {
-  border-right: none;
-}
-
-/* keep the column line perfectly straight even when events overlap */
 .cv-dayColumn {
-  border-right: 1px solid #777;
   position: relative;
-  overflow: hidden;
-
   height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.cv-dayColumn:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: #777;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Short events (< 90 min) */
+.cv-timeline-event.cv-event-short {
+  padding: 6px 10px;
+}
+.cv-timeline-event.cv-event-short .cv-timeline-event-title {
+  font-size: 16px;
+  line-height: 1.1;
+}
+.cv-timeline-event.cv-event-short .cv-timeline-event-time {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.05;
+}
+
+/* Very short events (< 60 min): hide time to avoid overflow */
+.cv-timeline-event.cv-event-veryShort {
+  padding: 6px 10px;
+}
+.cv-timeline-event.cv-event-veryShort .cv-timeline-event-title {
+  font-size: 15px;
+  line-height: 1.1;
+}
+.cv-timeline-event.cv-event-veryShort .cv-timeline-event-time {
+  display: none;
 }
 
 
@@ -301,7 +318,7 @@
 .cv-timeline-hour {
   height: var(--cv-hour-height);
   position: relative;
-  border-bottom: var(--timelineRowBorderBottom)
+  border-bottom: var(--timelineRowBorderBottom);
 }
 
 .cv-timeline-hour-label {

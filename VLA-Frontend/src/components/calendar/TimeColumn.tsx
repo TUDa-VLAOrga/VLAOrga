@@ -7,7 +7,7 @@ type Props = {
 export default function TimeColumn({ startHour = 7, endHour = 22 }: Props) {
   const hours = Array.from(
     { length: Math.max(0, endHour - startHour) },
-    (_, i) => startHour + i,
+    (_, i) => startHour + i
   );
 
   return (

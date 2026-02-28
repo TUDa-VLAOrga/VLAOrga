@@ -40,14 +40,12 @@ type PositionedItem = {
 
 /**
  * Layout events into columns for each overlap cluster.
- * Unlike "group by any overlap chain", this algorithm:
- * - builds overlap clusters by time scanning
- * - assigns each event the first free column (greedy)
- * - uses the maximum simultaneous columns in that cluster as width divisor
+ * - Builds overlap clusters by time scanning
+ * - Assigns each event the first free column (greedy)
+ * - Uses the max simultaneous columns in that cluster as width divisor
  */
 function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
   const sorted = [...items].sort((a, b) => a.start - b.start || a.end - b.end);
-
   // 1) Build overlap clusters: a new cluster starts when the next event starts
   // after (or at) the current cluster's max end.
   const clusters: TimedItem[][] = [];
@@ -75,7 +73,6 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
   const positioned: PositionedItem[] = [];
 
   for (const cl of clusters) {
-    // columns store the "end time" of the last event in that column
     const colEnds: number[] = [];
     const temp: { it: TimedItem; col: number }[] = [];
 
@@ -92,10 +89,7 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
     }
 
     const colCount = colEnds.length;
-
-    for (const t of temp) {
-      positioned.push({ item: t.it, col: t.col, colCount });
-    }
+    for (const t of temp) positioned.push({ item: t.it, col: t.col, colCount });
   }
 
   return positioned;
@@ -104,10 +98,10 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
 /**
  * Timeline renders hour grid lines (always visible) and positions time-based events.
  *
- * Important:
- * - The visible window is [startHour, endHour] as a boundary (e.g. 07:00–22:00).
- * - We render (endHour - startHour) hour rows (7–8 ... 21–22).
+ * Visible window is [startHour, endHour] as a boundary (e.g. 07:00–22:00).
+ * We render (endHour - startHour) hour rows (7–8 ... 21–22).
  * - Events are clamped to the visible window so they never overflow the column.
+ * - Overlapping events are split horizontally using `layoutOverlaps`.
  */
 export default function Timeline({
   events,
@@ -118,7 +112,10 @@ export default function Timeline({
 }: Props) {
   const minutesVisible = (endHour - startHour) * 60;
 
-  // Prepare numeric times, clamp to visible window
+  /**
+   * Convert events into numeric start/end minutes and clamp them to the visible window.
+   * This prevents events starting before 07:00 or ending after 22:00 from rendering outside.
+   */
   const timed: TimedItem[] = events
     .filter((e) => e.start && e.end)
     .map((e) => {
@@ -133,7 +130,7 @@ export default function Timeline({
     })
     // Keep events that intersect the visible window and have positive duration
     .filter(
-      (e) => e.rawEnd > 0 && e.rawStart < minutesVisible && e.end > e.start,
+      (e) => e.rawEnd > 0 && e.rawStart < minutesVisible && e.end > e.start
     );
 
   const positioned = layoutOverlaps(timed);
@@ -145,7 +142,7 @@ export default function Timeline({
         {Array.from({ length: Math.max(0, endHour - startHour) }).map(
           (_, i) => (
             <div key={i} className="cv-timeline-hour" />
-          ),
+          )
         )}
       </div>
 
@@ -156,17 +153,30 @@ export default function Timeline({
           const top = (start / minutesVisible) * 100;
           const height = ((end - start) / minutesVisible) * 100;
 
-          // Slight gutter so borders don't touch
+          /**
+           * Apply "short event" classes based on duration after clamping in CalenandarView.css:
+           *   cv-event-short     (< 90 min)
+           *   cv-event-veryShort (< 60 min)
+           */
+          const durationMin = Math.max(0, end - start);
           const gutterPx = 6;
           const widthPct = 100 / colCount;
           const leftPct = col * widthPct;
 
           const color = getEventColor?.(event) ?? event.series?.lecture?.color;
+          const title = event.series?.name ?? "Termin";
+
+          const shortClass =
+            durationMin < 60
+              ? "cv-event-veryShort"
+              : durationMin < 90
+                ? "cv-event-short"
+                : "";
 
           return (
             <div
               key={event.id}
-              className="cv-timeline-event"
+              className={`cv-timeline-event ${shortClass}`}
               style={{
                 top: `${top}%`,
                 height: `${height}%`,
@@ -176,11 +186,11 @@ export default function Timeline({
                 borderColor: color ?? undefined,
               }}
               onClick={onEventClick ? () => onEventClick(event) : undefined}
-              title={`${event.series?.name ?? "Termin"} (${timeFmt.format(event.start)} – ${timeFmt.format(event.end)})`}
+              title={`${title} (${timeFmt.format(event.start)} – ${timeFmt.format(
+                event.end
+              )})`}
             >
-              <div className="cv-timeline-event-title">
-                {event.series?.name ?? "Termin"}
-              </div>
+              <div className="cv-timeline-event-title">{title}</div>
 
               <div className="cv-timeline-event-time">
                 {timeFmt.format(event.start)} – {timeFmt.format(event.end)}
