@@ -1,5 +1,10 @@
 package de.vlaorgatu.vlabackend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 /**
  * Class for frequently reusable functions.
  */
@@ -38,5 +43,19 @@ public class UtilityFunctions {
         }
 
         return true;
+    }
+
+    /**
+     * Converts an object to JSON.
+     *
+     * @param object An object that should be processable by {@link ObjectMapper}
+     * @return The JSON of the object
+     * @throws JsonProcessingException if object is not processable
+     */
+    public static String convertObjectToJson(Object object) throws JsonProcessingException {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        jsonMapper.registerModule(new JavaTimeModule());
+        jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return jsonMapper.writeValueAsString(object);
     }
 }
