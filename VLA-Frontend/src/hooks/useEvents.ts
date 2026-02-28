@@ -1,7 +1,7 @@
 import {useState, useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import {addDays, toJSONLocalTime} from "../components/calendar/dateUtils";
-import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
+import {type Appointment, type AppointmentSeries, type DeletionRequest, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   fixupDates,
@@ -13,6 +13,7 @@ import {Logger} from "@/components/logger/Logger.ts";
 import {getNotSynchronisedId} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
+import { API_URL_DELETION_REQUESTS } from "@/lib/api.ts"; // TODO Backend: Endpunkt anlegen
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
   const newEvent = JSON.parse(event.data) as Appointment;
@@ -27,15 +28,18 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
   const updatedEvent = JSON.parse(event.data) as Appointment;
   console.log("DEBUG: handleAppointmentUpdated called. initial start time:", updatedEvent.startTime)
   // circumvent JSON parse bugs (not recognized as timestamp)
-  updatedEvent.startTime = updatedEvent.startTime as Array<number>
+  const rawStart = updatedEvent.startTime as unknown as number[];
   const newStartTime = new Date()
-  newStartTime.setFullYear(updatedEvent.startTime[0], updatedEvent.startTime[1] - 1, updatedEvent.startTime[2])
-  newStartTime.setHours(updatedEvent.startTime[3], updatedEvent.startTime[4])
+  newStartTime.setFullYear(rawStart[0], rawStart[1] - 1, rawStart[2])
+  newStartTime.setHours(rawStart[3], rawStart[4]);
   updatedEvent.startTime = newStartTime;
+
+
+  const rawEnd = updatedEvent.endTime as unknown as number[];
   const newEndTime = new Date()
-  newEndTime.setFullYear(updatedEvent.endTime[0], updatedEvent.endTime[1] - 1, updatedEvent.endTime[2])
-  newEndTime.setHours(updatedEvent.endTime[3], updatedEvent.endTime[4])
-  updatedEvent.endTime = newEndTime
+  newEndTime.setFullYear(rawEnd[0], rawEnd[1] - 1, rawEnd[2])
+  newEndTime.setHours(rawEnd[3], rawEnd[4]);
+  updatedEvent.endTime = newEndTime;
   console.log("DEBUG: handleAppointmentUpdated called. updated start time:", updatedEvent.startTime)
   console.log("DEBUG: handleAppointmentUpdated called. Updated event:", updatedEvent)
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
@@ -68,6 +72,28 @@ function getJSONEvent(event: Appointment) {
     startTime: toJSONLocalTime(event.startTime),
     endTime: toJSONLocalTime(event.endTime),
   });
+}
+
+function handleDeletionRequestCreated(event: MessageEvent, currentValue: Appointment[]) {
+  
+  const request = JSON.parse(event.data) as DeletionRequest;
+  return currentValue.map((appointment) =>
+    appointment.id === request.appointment.id
+      ? { ...appointment, pendingDeletionRequest: request }
+      : appointment
+  );
+}
+function handleDeletionRequestCancelled(event: MessageEvent, currentValue: Appointment[]) {
+  const request = JSON.parse(event.data) as DeletionRequest;
+  return currentValue.map((appointment) =>
+    appointment.id === request.appointment.id
+      ? { ...appointment, pendingDeletionRequest: undefined }
+      : appointment
+  );
+}
+function handleDeletionRequestConfirmed(event: MessageEvent, currentValue: Appointment[]) {
+  const request = JSON.parse(event.data) as DeletionRequest;
+  return currentValue.filter((appointment) => appointment.id !== request.appointment.id);
 }
 
 /**
@@ -133,7 +159,10 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
-  const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+  sseHandlersAppointments.set(SseMessageType.DELETIONREQUESTCREATED, handleDeletionRequestCreated);
+  sseHandlersAppointments.set(SseMessageType.DELETIONREQUESTCANCELLED, handleDeletionRequestCancelled);
+  sseHandlersAppointments.set(SseMessageType.DELETIONREQUESTCONFIRMED, handleDeletionRequestConfirmed);
+    const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
     [], API_URL_APPOINTMENTS, sseHandlersAppointments, appointmentsFetchedPostProcess
   );
 
@@ -400,6 +429,85 @@ export function useEvents() {
     return grouped;
   }, [allEvents]);
 
+  /**
+ * Erster Schritt: User beantragt Löschung eines Termins.
+ * TODO Backend: POST /api/deletion-requests { appointmentId }
+ * TODO Backend: Gibt DeletionRequest zurück, sendet SSE DELETIONREQUESTCREATED an alle Clients
+ */
+async function handleRequestDeletion(eventId: number , currentUserId: number | null ): Promise<void> {
+  //TODO backend: fetch einkommentieren + Mock bock löschen
+  //Mock:
+     const targetEvent = allEvents.find(e => e.id === eventId);
+  if (!targetEvent) return;
+  const fakeRequest: DeletionRequest = {
+    id: 999,
+    appointment: targetEvent,
+    requestedBy: { id: currentUserId ?? 0, name: "Max Mustermann", email: "max@mustermann.de" },
+    requestedAt: new Date(),
+  };
+  _setEvents(current =>
+    current.map(a => a.id === eventId ? { ...a, pendingDeletionRequest: fakeRequest } : a)
+  );
+  return;
+  // ---- MOCK END ----
+
+  await fetch(`${API_URL_DELETION_REQUESTS}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ appointmentId: eventId }),
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Fehler beim Erstellen der Löschanfrage: " + response.statusText);
+    }
+  });
+}
+/**
+ * Löschanfrage zurückziehen.
+ * TODO Backend: DELETE /api/deletion-requests/{requestId}
+ * TODO Backend: Sendet SSE DELETIONREQUESTCANCELLED an alle Clients
+ */
+async function handleCancelDeletionRequest(requestId: number): Promise<void> {
+  // ---- MOCK START ----
+  _setEvents(current =>
+    current.map(a => a.pendingDeletionRequest?.id === requestId
+      ? { ...a, pendingDeletionRequest: undefined }
+      : a
+    )
+  );
+  return;
+  
+  await fetch(`${API_URL_DELETION_REQUESTS}/${requestId}`, {
+    method: "DELETE",
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Fehler beim Abbrechen der Löschanfrage: " + response.statusText);
+    }
+  });
+}
+/**
+ * Zweiter Schritt: Zweiter User bestätigt die Löschung.
+ * TODO Backend: POST /api/deletion-requests/{requestId}/confirm
+ * TODO Backend: Löscht den Termin, sendet SSE DELETIONREQUESTCONFIRMED + APPOINTMENTDELETED
+ * TODO Backend: Validieren, dass der confirmierende User != der requestende User ist
+ */
+async function handleConfirmDeletion(requestId: number): Promise<void> {
+  // TODO Backend: Mock-Block löschen + fetch einkommentieren wenn Backend bereit
+  // ---- MOCK START ----
+  _setEvents(current =>
+    current.filter(a => a.pendingDeletionRequest?.id !== requestId)
+  );
+  return;
+  // ---- MOCK END ----
+
+  await fetch(`${API_URL_DELETION_REQUESTS}/${requestId}/confirm`, {
+    method: "POST",
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Fehler beim Bestätigen der Löschung: " + response.statusText);
+    }
+  });
+}
+
   return {
     allEvents,
     selectedEventId,
@@ -409,5 +517,8 @@ export function useEvents() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
+    handleRequestDeletion,
+    handleCancelDeletionRequest,
+    handleConfirmDeletion,
   };
 }

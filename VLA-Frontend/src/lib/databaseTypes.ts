@@ -55,6 +55,14 @@ export interface Appointment {
     startTime: Date;
     endTime: Date;
     notes: string;
+    pendingDeletionRequest?: DeletionRequest;
+}
+
+export interface DeletionRequest {
+    id: number;
+    appointment: Appointment;
+    requestedBy: User;
+    requestedAt: Date;
 }
 
 export interface AppointmentCategory {
@@ -135,4 +143,7 @@ export enum SseMessageType {
     APPOINTMENTUPDATED = "APPOINTMENTUPDATED",
     APPOINTMENTDELETED = "APPOINTMENTDELETED",
     DEBUG = "DEBUG",
+    DELETIONREQUESTCREATED = "DELETIONREQUESTCREATED",
+    DELETIONREQUESTCANCELLED = "DELETIONREQUESTCANCELLED",
+    DELETIONREQUESTCONFIRMED = "DELETIONREQUESTCONFIRMED",
 }

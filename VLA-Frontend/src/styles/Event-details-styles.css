@@ -351,3 +351,29 @@
     width: 100%;
   }
 }
+/* [ADD] — Danger Button (rot) */
+.cv-formBtnDanger {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+}
+
+.cv-formBtnDanger:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.cv-formBtnDanger:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+}
+
+/* [ADD] — Outline-Variante für "Löschanfrage zurückziehen" */
+.cv-formBtnDanger.cv-formBtnOutline {
+  background-color: transparent;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+}
+
+.cv-formBtnDanger.cv-formBtnOutline:hover {
+  background-color: #fee2e2;
+}

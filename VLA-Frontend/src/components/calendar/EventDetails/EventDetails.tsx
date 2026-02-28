@@ -20,6 +20,10 @@ type EventDetailsProps = {
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
   onAddPerson: (person: Person) => Promise<Person>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture>;
+  onRequestDeletion: (eventId: number, currentUserId: number | null) => Promise<void>;
+  onCancelDeletionRequest: (eventId: number) => void;
+  onConfirmDeletion: (eventId: number) => void;
+  currentUserId?: number;
 };
 
 /**
@@ -39,11 +43,19 @@ export default function EventDetails({
   onAddCategory,
   onAddPerson,
   onAddLecture,
+  onRequestDeletion,
+  onCancelDeletionRequest,
+  onConfirmDeletion,
+  currentUserId,
 }: EventDetailsProps) {
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   const [eventNotes, setEventNotes] = useState(event.notes);
+  const [isDeletionPending, setIsDeletionPending] = useState(false);
+  const pendingRequest = event.pendingDeletionRequest;
+  const isOwnDeletionRequest = pendingRequest != null && pendingRequest.requestedBy.id === currentUserId;
+  const canConfirmDeletion = pendingRequest != null && !isOwnDeletionRequest;
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
@@ -167,6 +179,17 @@ export default function EventDetails({
               </div>
             )}
 
+            {pendingRequest && (
+              <div className="cv-deletionRequestBanner">
+                <span className="cv-deletionRequestIcon">⚠️</span>
+                <span>
+                  {isOwnDeletionRequest
+                    ? "Du hast die Löschung dieses Termins beantragt."
+                    : `${pendingRequest.requestedBy.name} hat die Löschung dieses Termins beantragt.`}
+                </span>
+              </div>
+            )}     
+
             <textarea
               id="eventNotes"
               className="cv-notesTextarea"
@@ -210,6 +233,49 @@ export default function EventDetails({
                 Serie bearbeiten
               </button>
             }
+
+            {!pendingRequest && (
+                <button
+                  type="button"
+                  className="cv-formBtn cv-formBtnDanger"
+                  disabled={isDeletionPending}
+                  onClick={async () => {
+                    setIsDeletionPending(true);
+                    try {
+                      await onRequestDeletion(event.id, currentUserId ?? null);
+                      // Modal offen lassen — zweiter User muss bestätigen
+                    } finally {
+                      setIsDeletionPending(false);
+                    }
+                  }}
+                >
+                  Löschen
+                </button>
+              )}
+              {isOwnDeletionRequest && (
+                <button
+                  type="button"
+                  className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
+                  onClick={() => onCancelDeletionRequest(pendingRequest!.id)}
+                >
+                  Löschanfrage zurückziehen
+                </button>
+              )}
+
+              {canConfirmDeletion && (
+                <button
+                  type="button"
+                  className="cv-formBtn cv-formBtnDanger"
+                  onClick={async () => {
+                    await onConfirmDeletion(pendingRequest!.id);
+                    onClose();
+                  }}
+                >
+                  Löschung bestätigen
+                </button>
+              )}
+
+
 
             <button
               type="button"

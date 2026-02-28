@@ -34,6 +34,9 @@ export default function CalendarView() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
+    handleRequestDeletion,
+    handleCancelDeletionRequest,
+    handleConfirmDeletion,
   } = useEvents();
  
   /**
@@ -103,7 +106,7 @@ export default function CalendarView() {
         />
       )}
       {/* Modal overlay: event details */}
-      {selectedEventId && (
+      {selectedEventId && allEvents.find(e => e.id === selectedEventId) && (
         <EventDetails
           event={allEvents.find(e => e.id === selectedEventId)!}
           allEvents={allEvents}
@@ -117,6 +120,10 @@ export default function CalendarView() {
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
+          onRequestDeletion={handleRequestDeletion}
+          onCancelDeletionRequest={handleCancelDeletionRequest}
+          onConfirmDeletion={handleConfirmDeletion}
+          currentUserId={2}// temporär für mock test
         />
       )}
     </div>
