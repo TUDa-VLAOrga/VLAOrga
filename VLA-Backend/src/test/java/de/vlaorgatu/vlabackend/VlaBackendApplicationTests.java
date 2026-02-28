@@ -18,7 +18,7 @@ class VlaBackendApplicationTests {
 
     @Test
     void sseReturnTimeFormat() throws JsonProcessingException {
-        String converted = SseController.convertObjectToJson(LocalDateTime.of(
+        String converted = UtilityFunctions.convertObjectToJson(LocalDateTime.of(
             2026,
             3,
             1,
