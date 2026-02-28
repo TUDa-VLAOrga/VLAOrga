@@ -1,7 +1,5 @@
 # Setup of VLAOrga
 
-[TOC]
-
 ## Installation
 
 ### 1. Setting environment variables
