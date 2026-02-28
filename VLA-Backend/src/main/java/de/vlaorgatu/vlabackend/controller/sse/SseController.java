@@ -2,8 +2,6 @@ package de.vlaorgatu.vlabackend.controller.sse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
