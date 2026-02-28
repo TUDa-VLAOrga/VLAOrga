@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,6 +38,7 @@ public class Appointment {
      * Appointment series this appointment belongs to.
      */
     @ManyToOne(optional = false)
+    @JsonBackReference
     private AppointmentSeries series;
 
     /**

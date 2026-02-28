@@ -2,14 +2,20 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
+import de.vlaorgatu.vlabackend.exceptions.InvalidRequestInCurrentServerState;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
+import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -47,6 +53,11 @@ public class AppointmentController
      * Repository managing all {@link UserRepository}.
      */
     private final UserRepository userRepository;
+
+    /**
+     * Service for managing {@link ExperimentBooking}s
+     */
+    private final ExperimentBookingService experimentBookingService;
 
     /**
      * Creates a new appointment.
@@ -138,12 +149,9 @@ public class AppointmentController
             );
         }
 
-        // Check if experimentBookings can be moved, abort if not possible
-        List<ExperimentBooking> currentAppointmentExperimentBookings =
-            experimentBookingRepository.findExperimentBookingsByAppointment(toDeleteAppointment);
-
-        // TODO: Move experimentBookings
-        // TODO: Throw InvalidRequestInCurrentServerState if experimentBookings move does not work
+        experimentBookingService.moveExperimentBookingsBeforeAppointmentDeletion(
+            toDeleteAppointment
+        );
 
         appointmentRepository.deleteById(id);
 
