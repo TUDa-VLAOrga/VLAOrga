@@ -31,10 +31,10 @@ type EventFormProps = {
   onCancel: () => void;
   lectures: Lecture[];
   categories: AppointmentCategory[];
-  onAddLecture: (lecture: Lecture) => Promise<Lecture>;
-  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   people: Person[];
-  onAddPerson: (person: Person) => Promise<Person>;
+  onAddPerson: (person: Person) => Promise<Person | void>;
 };
 
 /**
@@ -73,7 +73,11 @@ export default function EventCreationForm({
    */
 
   const handleAddLecture = (lecture: Lecture) => {
-    onAddLecture(lecture).then(setLecture);
+    onAddLecture(lecture).then((lecture) => {
+      if (lecture) {
+        setLecture(lecture);
+      }
+    });
   };
   
   /**
@@ -82,7 +86,11 @@ export default function EventCreationForm({
    * - auto-select it for the current event
    */
   const handleAddCategory = (category: AppointmentCategory) => {
-    onAddCategory(category).then(setCategory);
+    onAddCategory(category).then((category) => {
+      if (category) {
+        setCategory(category);
+      }
+    });
   };
 
   /**

@@ -1,6 +1,7 @@
 import {type Person, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_PERSONS} from "@/lib/api.ts";
+import {Logger} from "@/components/logger/Logger.ts";
 
 
 function handlePersonCreated(event: MessageEvent, currentValue: Person[]) {
@@ -37,7 +38,12 @@ export function usePeople() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(person),
-    }).then((response) => response.json()).then((newPerson) => newPerson as Person);
+    }).then((response) => response.json())
+      .then((newPerson) => newPerson as Person)
+      .catch((error) => {
+        Logger.error("Error during person creation: " + error);
+        return;
+      });
   }
 
   function handleUpdatePersonNotes(personId: number, notes: string) {
@@ -54,6 +60,8 @@ export function usePeople() {
         if (!response.ok) {
           throw new Error("Error during person update: " + response.statusText + ".");
         }
+      }).catch((error) => {
+        Logger.error("Error after updating person notes: " + error);
       });
     }
   }

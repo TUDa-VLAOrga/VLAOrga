@@ -86,6 +86,8 @@ export function useEvents() {
         if (!response.ok) {
           throw new Error("Error during appointment update: " + response.statusText + ".");
         }
+      }).catch((error) => {
+        Logger.error("Error after updating event notes: " + error);
       });
     }
   }
@@ -119,18 +121,23 @@ export function useEvents() {
           ...updates.series,
           id: getNotSynchronisedId(),
         };
-        newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newSeries),
-        }).then((response) => {
-          if (!response.ok) {
-            throw new Error("Error during series creation: " + response.statusText + ".");
-          }
-          return response.json();
-        }).then((series) => series as AppointmentSeries);
+        try {
+          newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newSeries),
+          }).then((response) => {
+            if (!response.ok) {
+              throw new Error("Error during series creation: " + response.statusText + ".");
+            }
+            return response.json();
+          }).then((series) => series as AppointmentSeries);
+        } catch (error) {
+          Logger.error("Error during series creation in handleUpdateEvent: " + error);
+          return oldEvent;
+        }
       }
 
       const newEvent = {
@@ -138,37 +145,47 @@ export function useEvents() {
         ...updates,
         series: newSeries || oldEvent.series,
       };
-      const response = await fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: getJSONEvent(newEvent),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during appointment update: " + response.statusText + ".");
+      try {
+        const response = await fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: getJSONEvent(newEvent),
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error("Error during appointment update: " + response.statusText + ".");
+          }
+          return response;
         }
-        return response;
+        );
+        return JSON.parse(await response.text(), parseJsonFixDate) as Appointment;
+      } catch (error) {
+        Logger.error("Error during appointment update in handleUpdateEvent: " + error);
+        return oldEvent;
       }
-      );
-      return JSON.parse(await response.text(), parseJsonFixDate) as Appointment;
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
         ...updates.series,
       };
-      newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newSeries),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during series update: " + response.statusText + ".");
-        }
-        return response.json();
-      }).then((series) => series as AppointmentSeries);
+      try {
+        newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newSeries),
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error("Error during series update: " + response.statusText + ".");
+          }
+          return response.json();
+        }).then((series) => series as AppointmentSeries);
+      } catch (error) {
+        Logger.error("Error during series update in handleUpdateEvent: " + error);
+        return oldEvent;
+      }
       let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
         ...e,
         series: newSeries,
@@ -178,23 +195,28 @@ export function useEvents() {
         movedEvents = moveEventSeries(allEvents, oldEvent, updates.startTime, updates.endTime);
       }
       // set events to moved ones with updated series
-      movedEvents.forEach(event => {
-        fetch(`${API_URL_APPOINTMENTS}/${event.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: getJSONEvent(event),
-        }).then((response) => {
-          if (!response.ok) {
-            throw new Error("Error during appointment update: " + response.statusText + ".");
-          }
+      try {
+        movedEvents.forEach(event => {
+          fetch(`${API_URL_APPOINTMENTS}/${event.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: getJSONEvent(event),
+          }).then((response) => {
+            if (!response.ok) {
+              throw new Error("Error during appointment update: " + response.statusText + ".");
+            }
+          });
         });
-      });
+      } catch (error) {
+        Logger.error("Error during appointment update in handleUpdateEvent: " + error);
+        return oldEvent;
+      }
       return movedEvents.find(e => e.id === eventId)!;
     } else {
       Logger.error("Impossible: Event neither part of series nor single event.");
-      throw new Error("Impossible: Event neither part of series nor single event.");
+      return oldEvent;
     }
   }
 
@@ -221,18 +243,23 @@ export function useEvents() {
         name: formData.title.trim(),
         category: formData.category,
       };
-      newAppSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newAppSeries),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during series creation: " + response.statusText + ".");
-        }
-        return response.json();
-      }).then((series) => series as AppointmentSeries);
+      try {
+        newAppSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newAppSeries),
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error("Error during series creation: " + response.statusText + ".");
+          }
+          return response.json();
+        }).then((series) => series as AppointmentSeries);
+      } catch (error) {
+        Logger.error("Error during series creation in handleCreateEvent: " + error);
+        return;
+      }
       newEvents.push({
         id: getNotSynchronisedId(),
         series: newAppSeries,
@@ -256,18 +283,24 @@ export function useEvents() {
           });
         }
       );
-      const savedSeries = await fetch(`${API_URL_APPOINTMENT_SERIES}/multi`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([...seriesByWeekday.values()]),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during series creation: " + response.statusText + ".");
-        }
-        return response.json();
-      }).then((series) => series as AppointmentSeries[]);
+      let savedSeries: AppointmentSeries[];
+      try {
+        savedSeries = await fetch(`${API_URL_APPOINTMENT_SERIES}/multi`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([...seriesByWeekday.values()]),
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error("Error during series creation: " + response.statusText + ".");
+          }
+          return response.json();
+        }).then((series) => series as AppointmentSeries[]);
+      } catch (error) {
+        Logger.error("Error during series creation in handleCreateEvent: " + error);
+        return;
+      }
       // put saved series as reference in the weekday map
       const savedSeriesIterator = savedSeries.values();
       formData.recurrence.weekdays.forEach(
@@ -293,21 +326,26 @@ export function useEvents() {
         currentDate = addDays(currentDate, 1);
       }
     }
-    const response = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: "[" + newEvents.map(e => getJSONEvent(e)).join(",") + "]",
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Error during appointment creation: " + response.statusText + ".");
-      }
-      return response;
-    });
-    const savedEvents = JSON.parse(await response.text(), parseJsonFixDate) as Appointment[];
-    // return event with earliest start date
-    return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
+    try {
+      const response = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: "[" + newEvents.map(e => getJSONEvent(e)).join(",") + "]",
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error during appointment creation: " + response.statusText + ".");
+        }
+        return response;
+      });
+      const savedEvents = JSON.parse(await response.text(), parseJsonFixDate) as Appointment[];
+      // return event with earliest start date
+      return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
+    } catch (error) {
+      Logger.error("Error during appointment creation in handleCreateEvent: " + error);
+      return;
+    }
   }
 
   function handleEventClick(eventId: number) {

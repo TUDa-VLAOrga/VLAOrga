@@ -1,6 +1,7 @@
 import {type Lecture, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_LECTURES} from "@/lib/api.ts";
+import {Logger} from "@/components/logger/Logger.ts";
 
 
 function handleLectureCreated(event: MessageEvent, currentValue: Lecture[]) {
@@ -46,7 +47,11 @@ export function useLectures() {
         throw new Error("Error during lecture creation: " + response.statusText + ".");
       }
       return response.json();
-    }).then((newLecture) => newLecture as Lecture);
+    }).then((newLecture) => newLecture as Lecture)
+      .catch((error) => {
+        Logger.error("Error during lecture creation: " + error);
+        return;
+      });
   }
 
   /**
