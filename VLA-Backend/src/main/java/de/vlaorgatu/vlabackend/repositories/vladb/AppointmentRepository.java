@@ -12,6 +12,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+    /**
+     * Gets the first appointment in a series that is after the startTime.
+     *
+     * @param series    The {@link AppointmentSeries} the appointment belongs to
+     * @param startTime The time the appointment should start after
+     * @return An appointment, if exists, matching the criteria
+     */
     Optional<Appointment> getAppointmentBySeriesAndStartTimeIsAfterOrderByStartTime(
         AppointmentSeries series, LocalDateTime startTime);
 }

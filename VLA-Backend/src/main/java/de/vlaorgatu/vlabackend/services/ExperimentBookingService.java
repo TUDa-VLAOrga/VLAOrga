@@ -14,13 +14,27 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Class for executing operations on {@link ExperimentBooking}s.
+ */
 @AllArgsConstructor
 @Service
 public class ExperimentBookingService {
+    /**
+     * Repository of {@link ExperimentBooking}s entities.
+     */
     private final ExperimentBookingRepository experimentBookingRepository;
 
+    /**
+     * Repository of {@link Appointment}s entities.
+     */
     private final AppointmentRepository appointmentRepository;
 
+    /**
+     * Moves experiments (if possible) to another appointment when an appointment should be deleted.
+     *
+     * @param toDeleteAppointment The appointment to delete
+     */
     public void moveExperimentBookingsBeforeAppointmentDeletion(
         Appointment toDeleteAppointment
     ) {
@@ -47,18 +61,17 @@ public class ExperimentBookingService {
             toDeleteAppointment,
             currentAppointmentExperimentBookings
         );
-
-        /**
-         * Wenn es eine lecture gibt: Das zeitlich nächste Event unter allen Events aller Serien der lecture
-         * Wenn es keine lecture gibt, aber eine Serie: Das zeitlich nächste Event dieser Serie
-         * wenn es weder lecture noch Serie gibt: Verschieben (nach vorne) unmöglich (-> Löschen des Appointments unmöglich, vorher müssen ExperimentBookings gelöscht werden.)
-         */
-
     }
 
+    /**
+     * Moves all {@link ExperimentBooking}s of a {@link Appointment} without lectures.
+     *
+     * @param toDeleteAppointment        The appointment to move the {@link ExperimentBooking}s from
+     * @param currentAppointmentBookings The {@link ExperimentBooking}s of appointment
+     */
     private void moveExperimentBookingsOnAppointmentWithoutLecture(
         Appointment toDeleteAppointment,
-        List<ExperimentBooking> currentAppointmentExperimentBookings
+        List<ExperimentBooking> currentAppointmentBookings
     ) {
         // If there is no lecture, move event to next in series
         final List<Appointment> appointmentsInSeries =
@@ -98,7 +111,7 @@ public class ExperimentBookingService {
         // Valid appointment was found in series
         // Update experimentBookings
         List<ExperimentBooking> movedExperimentBookings = new ArrayList<>();
-        for (ExperimentBooking experimentBooking : currentAppointmentExperimentBookings) {
+        for (ExperimentBooking experimentBooking : currentAppointmentBookings) {
             experimentBooking.setAppointment(nextAppointment);
             movedExperimentBookings.add(experimentBooking);
         }
