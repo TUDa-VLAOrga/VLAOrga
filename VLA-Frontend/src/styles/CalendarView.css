@@ -14,6 +14,8 @@
   --cv-day-count: 5;
   /* Will be set inline from WeekGrid.tsx */
   --cv-hour-count: 15;
+
+  --timelineRowBorderBottom: 1px dashed rgba(0, 0, 0, 0.4);
 }
 
 /* ✅ IMPORTANT: avoid box model mismatches (line alignment bugs) */
@@ -192,6 +194,7 @@
   display: flex;
   flex-direction: column;
   position: relative; /* needed for bottom boundary label */
+  border-right: 1px solid #777;
 }
 
 /* Bottom boundary label (22:00) without adding a new hour row */
@@ -218,9 +221,9 @@
   justify-content: center;
 
   /* draw the hour separator exactly at the top */
-  border-top: 1px dashed rgba(0, 0, 0, 0.06);
   padding: 0;
   margin: 0;
+  border-bottom: var(--timelineRowBorderBottom)
 }
 
 .cv-timeLabel {
@@ -229,9 +232,13 @@
   line-height: 1;
 }
 
+.cv-grid > .cv-dayColumn:last-child {
+  border-right: none;
+}
+
 /* keep the column line perfectly straight even when events overlap */
 .cv-dayColumn {
-  border-left: 1px solid #777;
+  border-right: 1px solid #777;
   position: relative;
   overflow: hidden;
 
@@ -294,7 +301,7 @@
 .cv-timeline-hour {
   height: var(--cv-hour-height);
   position: relative;
-  border-top: 1px dashed rgba(0, 0, 0, 0.06);
+  border-bottom: var(--timelineRowBorderBottom)
 }
 
 .cv-timeline-hour-label {
