@@ -23,10 +23,21 @@ function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment
 }
 
 function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment[]) {
+  console.log("DEBUG: handleAppointmentUpdated called. event:", event.data)
   const updatedEvent = JSON.parse(event.data) as Appointment;
+  console.log("DEBUG: handleAppointmentUpdated called. initial start time:", updatedEvent.startTime)
   // circumvent JSON parse bugs (not recognized as timestamp)
-  updatedEvent.startTime = new Date(updatedEvent.startTime);
-  updatedEvent.endTime = new Date(updatedEvent.endTime);
+  updatedEvent.startTime = updatedEvent.startTime as Array<number>
+  const newStartTime = new Date()
+  newStartTime.setFullYear(updatedEvent.startTime[0], updatedEvent.startTime[1] - 1, updatedEvent.startTime[2])
+  newStartTime.setHours(updatedEvent.startTime[3], updatedEvent.startTime[4])
+  updatedEvent.startTime = newStartTime;
+  const newEndTime = new Date()
+  newEndTime.setFullYear(updatedEvent.endTime[0], updatedEvent.endTime[1] - 1, updatedEvent.endTime[2])
+  newEndTime.setHours(updatedEvent.endTime[3], updatedEvent.endTime[4])
+  updatedEvent.endTime = newEndTime
+  console.log("DEBUG: handleAppointmentUpdated called. updated start time:", updatedEvent.startTime)
+  console.log("DEBUG: handleAppointmentUpdated called. Updated event:", updatedEvent)
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 

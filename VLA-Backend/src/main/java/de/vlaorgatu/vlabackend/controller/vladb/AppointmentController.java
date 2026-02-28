@@ -30,6 +30,11 @@ public class AppointmentController
     implements DefaultGettingForJpaReposInterface<Appointment, AppointmentRepository> {
 
     /**
+     * Logger for this class.
+     */
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(
+        AppointmentController.class);
+    /**
      * Repository used for appointment persistence operations.
      */
     private final AppointmentRepository appointmentRepository;
@@ -67,6 +72,8 @@ public class AppointmentController
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAppointment(@PathVariable Long id,
                                                @RequestBody Appointment appointment) {
+        LOG.warn("Received appointment update request for appointment with start {} and end {}.",
+            appointment.getStartTime(), appointment.getEndTime());
         if (Objects.isNull(appointment.getId())) {
             appointment.setId(id);
         } else if (!appointment.getId().equals(id)) {
@@ -80,6 +87,7 @@ public class AppointmentController
         }
 
         Appointment updated = appointmentRepository.save(appointment);
+        LOG.warn("Appointment updated: {}", updated);
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updated);
         return ResponseEntity.ok(updated);
     }

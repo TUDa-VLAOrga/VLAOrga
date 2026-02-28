@@ -109,6 +109,8 @@ export function getEventStatus(_event: Appointment) {
  */
 export function fixupDates(appointments: Appointment[]): Appointment[] {
   return appointments.map((event) => {
+    console.log(event.startTime);
+    console.log(new Date(event.startTime));
     return {
       ...event,
       startTime: new Date(event.startTime),

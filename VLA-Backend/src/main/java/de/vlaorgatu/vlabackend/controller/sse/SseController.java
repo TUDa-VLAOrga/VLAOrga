@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.sse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class SseController {
 
             try {
                 eventData = jsonMapper.writeValueAsString(eventObject);
+                logger.warn("DEBUG: sending following value over SSE: " + eventData);
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");
