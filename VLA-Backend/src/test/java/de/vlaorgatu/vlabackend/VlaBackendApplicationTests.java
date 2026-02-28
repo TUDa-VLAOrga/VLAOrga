@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
