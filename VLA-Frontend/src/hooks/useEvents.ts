@@ -26,22 +26,6 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
-function handleAppointmentSeriesCreated(event: MessageEvent, currentValue: AppointmentSeries[]) {
-  const newSeries = JSON.parse(event.data) as AppointmentSeries;
-  return [...currentValue, newSeries];
-}
-
-function handleAppointmentSeriesDeleted(event: MessageEvent, currentValue: AppointmentSeries[]) {
-  const deletedSeries = JSON.parse(event.data) as AppointmentSeries;
-  return currentValue.filter((series) => series.id !== deletedSeries.id);
-}
-
-function handleAppointmentSeriesUpdated(event: MessageEvent, currentValue: AppointmentSeries[]) {
-  const updatedSeries = JSON.parse(event.data) as AppointmentSeries;
-  // TODO: update reference in all events belonging to this series?
-  //  -> would sadly lead to a circular function definition order.
-  return currentValue.map((series) => (series.id === updatedSeries.id ? updatedSeries : series));
-}
 
 /**
  * Generate JSON representation of an event for the backend.
@@ -65,35 +49,6 @@ function getJSONEvent(event: Appointment) {
 export function useEvents() {
   const [selectedEventId, setSelectedEventId] = useState<number>();
 
-  // SSE handlers for appointment series
-  const sseHandlersSeries = new Map<
-    SseMessageType,
-    (event: MessageEvent, currentValue: AppointmentSeries[]) => AppointmentSeries[]
-  >();
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESCREATED, handleAppointmentSeriesCreated);
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESDELETED, handleAppointmentSeriesDeleted);
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESUPDATED, handleAppointmentSeriesUpdated);
-  const [allSeries, _setSeries] = useSseConnectionWithInitialFetch<AppointmentSeries[]>(
-    [], API_URL_APPOINTMENT_SERIES, sseHandlersSeries
-  );
-
-  /**
-   * Replace appointment series with their corresponding events.
-   *
-   * @param events list of events to replace series in.
-   */
-  function appointmentsFetchedPostProcess(events: Appointment[]) {
-    events.map(event => {
-      if (event.series) {
-        const series = allSeries.find(s => s.id === event.series.id);
-        if (series) {
-          event.series = series;
-        }
-      }
-    });
-    return events;
-  }
-
   /**
    * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
    */
@@ -114,7 +69,7 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
   const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
-    [], API_URL_APPOINTMENTS, sseHandlersAppointments, parseJsonFixDate, appointmentsFetchedPostProcess
+    [], API_URL_APPOINTMENTS, sseHandlersAppointments, parseJsonFixDate
   );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {

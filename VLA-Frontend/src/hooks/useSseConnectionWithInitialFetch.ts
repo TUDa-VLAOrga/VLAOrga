@@ -10,7 +10,6 @@ import type { SseMessageType } from "@/lib/databaseTypes";
  * @param apiResourceURL The api endpoint relative to the host of the JSON resource
  * @param eventHandlers Take a MessageEvent and the current value and return the new value
  * @param jsonReviver A function that will be given to JSON.parse as reviver parameter.
- * @param postProcess A function that post processes the fetched data.
  * @returns The reactive variable
  */
 export default function useSseConnectionWithInitialFetch<T extends object>(
@@ -19,8 +18,7 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
   eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>,
   // explicit any here, because what else should be the type annotation?
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jsonReviver?: (key: any, value: any) => any,
-  postProcess?: (value: T) => T
+  jsonReviver?: (key: any, value: any) => any
 )
   : [T, React.Dispatch<React.SetStateAction<T>>]
 {
@@ -45,9 +43,6 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
 
       .then(parsedObj => {
         if (mounted) {
-          if (postProcess) {
-            parsedObj = postProcess(parsedObj);
-          }
           setsseDefaultValue(parsedObj);
         }
       })
