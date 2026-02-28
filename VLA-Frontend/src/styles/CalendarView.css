@@ -231,11 +231,10 @@
 
 /* keep the column line perfectly straight even when events overlap */
 .cv-dayColumn {
-  border-right: none;
+  border-right: 1px solid black;
   position: relative;
   overflow: hidden;
 
-  /* ✅ THIS is what you were missing */
   height: 100%;
   display: flex;
   flex-direction: column;
