@@ -11,16 +11,28 @@ export const NotSynchronisedId = -1;
 export function fetchCSRFToken(){
   return new Promise<string>((resolve, reject) => {
     fetch('/csrf', {
-      credentials: 'same-origin'
+      credentials: 'same-origin',
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         resolve(data.token);
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         Logger.error("CSRF could not be fetched");
         console.log(error);
-        reject(error)
-    })
+        reject(error);
+      });
   });
+}
+
+/**
+ * Do not re-assign this variable otherwise than in the function below!
+ */
+let internalNotSynchronisedId = -1;
+
+/**
+ * Get a unique negative number usable as proto-type ID as long as an entity is not synced with the server yet.
+ */
+export function getNotSynchronisedId() {
+  return internalNotSynchronisedId--;
 }

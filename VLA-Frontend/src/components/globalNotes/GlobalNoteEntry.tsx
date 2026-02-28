@@ -1,7 +1,9 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
-import { fetchCSRFToken, NotSynchronisedId } from "@/lib/utils";
+import { fetchCSRFToken } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
+
+export const NotSynchronisedId = -1;
 
 type GlobalNoteEntryProps = {
   note: GlobalNote,
@@ -42,16 +44,16 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
 
   function handleNoteCreationSubmit(note: GlobalNote){    
     fetchCSRFToken()
-    .then(csrfToken =>
-      fetch("/api/globalNotes", {
-        method: "POST",
-        headers: {
-          "Content-Type":"application/json",
-          'X-CSRF-TOKEN': csrfToken,
-        },
-        body: JSON.stringify(note),
-      })
-    )
+      .then(csrfToken =>
+        fetch("/api/globalNotes", {
+          method: "POST",
+          headers: {
+            "Content-Type":"application/json",
+            'X-CSRF-TOKEN': csrfToken,
+          },
+          body: JSON.stringify(note),
+        })
+      );
 
     if(note.id === NotSynchronisedId) {
       setDraftNote!(undefined);
@@ -65,16 +67,16 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
     }
 
     fetchCSRFToken()
-    .then(csrfToken => {
-      fetch("/api/globalNotes/" + note.id, {
-        method: "PUT",
-        headers: {
-          "Content-Type":"application/json",
-          'X-CSRF-TOKEN': csrfToken,
-        },
-        body: JSON.stringify(note),
+      .then(csrfToken => {
+        fetch("/api/globalNotes/" + note.id, {
+          method: "PUT",
+          headers: {
+            "Content-Type":"application/json",
+            'X-CSRF-TOKEN': csrfToken,
+          },
+          body: JSON.stringify(note),
+        });
       });
-    });
   }
 
   function handleDelete(){
@@ -84,15 +86,15 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
     }
 
     fetchCSRFToken()
-    .then(csrfToken => {
-      fetch("/api/globalNotes/" + note.id, {
-        method: "DELETE",
-        headers: {
-          "Content-Type":"application/json",
-          'X-CSRF-TOKEN': csrfToken,
-        },
+      .then(csrfToken => {
+        fetch("/api/globalNotes/" + note.id, {
+          method: "DELETE",
+          headers: {
+            "Content-Type":"application/json",
+            'X-CSRF-TOKEN': csrfToken,
+          },
+        });
       });
-    });
   }
 
   function handleSubmit(){
