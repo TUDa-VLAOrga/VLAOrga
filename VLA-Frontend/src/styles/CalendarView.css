@@ -231,7 +231,7 @@
 
 /* keep the column line perfectly straight even when events overlap */
 .cv-dayColumn {
-  border-right: 1px solid black;
+  border-left: 1px solid #777;
   position: relative;
   overflow: hidden;
 
