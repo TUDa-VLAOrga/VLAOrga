@@ -1,0 +1,10 @@
+.classicButton {
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px 10px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 1px 1px .1px #000;
+}

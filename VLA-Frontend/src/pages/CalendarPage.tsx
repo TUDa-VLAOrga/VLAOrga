@@ -1,5 +1,5 @@
+import GlobalNoteContainer from "@/components/globalNotes/GlobalNoteContainer";
 import CalendarView from "../components/calendar/CalendarView";
-
 import SSEComponent from "@/components/sse/SseComponent";
 
 
@@ -10,6 +10,7 @@ export default function CalendarPage() {
         <CalendarView />
       </div>
       <SSEComponent></SSEComponent>
+      <GlobalNoteContainer></GlobalNoteContainer>
     </>
   );
 }
