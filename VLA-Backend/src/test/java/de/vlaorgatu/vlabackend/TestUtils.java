@@ -22,7 +22,7 @@ public class TestUtils {
     /**
      * Entity manager for manipulating the vla db.
      */
-    @PersistenceContext(unitName = "linusEntityManager")
+    @PersistenceContext(unitName = "linusEntityManagerFactory")
     private EntityManager linusEntityManager;
 
     /**

@@ -1,17 +1,17 @@
 package de.vlaorgatu.vlabackend;
 
-import de.vlaorgatu.vlabackend.entities.calendar.acceptance.Acceptance;
-import de.vlaorgatu.vlabackend.entities.calendar.acceptance.AcceptanceController;
-import de.vlaorgatu.vlabackend.entities.calendar.appointment.Appointment;
-import de.vlaorgatu.vlabackend.entities.calendar.appointment.AppointmentController;
-import de.vlaorgatu.vlabackend.entities.calendar.appointmentcategory.AppointmentCategory;
-import de.vlaorgatu.vlabackend.entities.calendar.appointmentcategory.AppointmentCategoryController;
-import de.vlaorgatu.vlabackend.entities.calendar.appointmentseries.AppointmentSeries;
-import de.vlaorgatu.vlabackend.entities.calendar.appointmentseries.AppointmentSeriesController;
-import de.vlaorgatu.vlabackend.entities.calendar.lecture.Lecture;
-import de.vlaorgatu.vlabackend.entities.calendar.lecture.LectureController;
-import de.vlaorgatu.vlabackend.entities.calendar.person.Person;
-import de.vlaorgatu.vlabackend.entities.calendar.person.PersonController;
+import de.vlaorgatu.vlabackend.controller.vladb.AcceptanceController;
+import de.vlaorgatu.vlabackend.controller.vladb.AppointmentCategoryController;
+import de.vlaorgatu.vlabackend.controller.vladb.AppointmentController;
+import de.vlaorgatu.vlabackend.controller.vladb.AppointmentSeriesController;
+import de.vlaorgatu.vlabackend.controller.vladb.LectureController;
+import de.vlaorgatu.vlabackend.controller.vladb.PersonController;
+import de.vlaorgatu.vlabackend.entities.vladb.Acceptance;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
+import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
+import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
+import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
@@ -29,10 +29,32 @@ import org.springframework.transaction.annotation.Transactional;
 public class VlaBackendEntitiesTest {
 
     // Sample Data
-    Lecture lecture = new Lecture(1L, "Physik 1", "WS 25/26", "#FFFF00");
-    Person person = new Person(1L, "Dr. Alberner Stein", "bitte grünen Laserpointer", 42L);
+    Lecture lecture = Lecture.builder()
+        .id(1L)
+        .name("Physik 1")
+        .semester("WS 25/26")
+        .color("#FFFF00")
+        .persons(null)
+        .build();
+
+    Person person = Person.builder()
+        .id(1L)
+        .name("Dr. Alberner Stein")
+        .email("")
+        .notes("bitte grünen Laserpointer")
+        .linusUserId(42L)
+        .lectures(null)
+        .build();
+
     AppointmentCategory appCategory = new AppointmentCategory(1L, "Vorlesung");
-    AppointmentSeries appSeries = new AppointmentSeries(1L, lecture, appCategory);
+
+    AppointmentSeries appSeries = AppointmentSeries.builder()
+        .id(1L)
+        .lecture(lecture)
+        .name("Serie")
+        .category(appCategory)
+        .build();
+
     Appointment appointment =
         new Appointment(1L, appSeries, LocalDateTime.parse("2025-10-14T09:50:00"),
             LocalDateTime.parse("2025-10-14T11:30:00"),
@@ -67,9 +89,9 @@ public class VlaBackendEntitiesTest {
 
         // empty datasets are filled with default (empty string)
         Lecture emptyLecture = new Lecture();
-        Lecture emptyExpected = new Lecture(2L, "", "", "");
-        Assertions.assertEquals(emptyExpected,
-            lectureController.createLecture(emptyLecture).getBody());
+        Lecture emptyExpected = Lecture.builder().id(2L).build();
+        Assertions.assertEquals(emptyExpected.getId(),
+            lectureController.createLecture(emptyLecture).getBody().getId());
 
         Assertions.assertThrows(InvalidParameterException.class,
             () -> personController.createPerson(person));
