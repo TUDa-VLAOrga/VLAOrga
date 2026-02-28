@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ $# -ne 3 ]; then
     echo "Usage: $0 username password mail"
     exit 1;
