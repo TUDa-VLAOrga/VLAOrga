@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -54,20 +55,6 @@ public class SseController {
     }
 
     /**
-     * Converts an object to JSON.
-     *
-     * @param object An object that should be processable by {@link ObjectMapper}
-     * @return The JSON of the object
-     * @throws JsonProcessingException if object is not processable
-     */
-    public static String convertObjectToJson(Object object) throws JsonProcessingException {
-        ObjectMapper jsonMapper = new ObjectMapper();
-        jsonMapper.registerModule(new JavaTimeModule());
-        jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        return jsonMapper.writeValueAsString(object);
-    }
-
-    /**
      * Sends an SSE message with the JSON representation of an object to all connected clients.
      *
      * @param sseMessageType The kind of the SSE event
@@ -78,7 +65,7 @@ public class SseController {
             String eventData;
 
             try {
-                eventData = convertObjectToJson(eventObject);
+                eventData = UtilityFunctions.convertObjectToJson(eventObject);
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");
