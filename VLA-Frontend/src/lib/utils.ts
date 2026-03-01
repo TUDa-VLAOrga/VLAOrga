@@ -14,7 +14,7 @@ export function fetchCSRFToken(){
         resolve(data.token);
       })
       .catch(error => {
-        Logger.error("CSRF could not be fetched: " + error);
+        Logger.error("CSRF could not be fetched: ", error);
         reject(error);
       });
   });
@@ -44,7 +44,6 @@ export async function fetchBackend<T>(url: string, method: string, body?: T) {
   if (body) {
     requestContent['body'] = JSON.stringify(body, toJsonFixDate);
   }
-  Logger.info("Requesting: " + method + " " + url + " with body: " + requestContent['body']);
   const response = await fetch(url, requestContent).then(response => {
     if (!response.ok) {
       throw new Error("Error from request: " + response.statusText + ".");

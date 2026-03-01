@@ -7,7 +7,7 @@ function LoggerComponent(){
   const [logMessages, setLogMessages] = useState<LogMessage[]>([]);
 
   useEffect(() => {
-    Logger.overrideComponenentMessageSetterRef(setLogMessages);
+    Logger.overrideComponentMessageSetterRef(setLogMessages);
   }, []);
 
   return (
@@ -24,7 +24,6 @@ function LoggerComponent(){
           <div 
             key={"logEntry-" + index} 
             className="LogEntry"
-            data-log-event-type={logMessage.eventType}
             data-log-level={logMessage.level}
           >
             <div className="LogDate">{logMessage.date.toLocaleTimeString()}</div>

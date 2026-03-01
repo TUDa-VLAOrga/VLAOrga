@@ -40,7 +40,7 @@ export function useLectures() {
   async function handleAddLecture(lecture: Lecture): Promise<Lecture | void> {
     return fetchBackend(API_URL_LECTURES, "POST", lecture)
       .catch((error) => {
-        Logger.error("Error during lecture creation: " + error);
+        Logger.error("Error during lecture creation: ", error);
         return;
       });
   }
@@ -52,7 +52,7 @@ export function useLectures() {
   async function handleDeleteLecture(lecture: Lecture): Promise<Lecture | void> {
     return fetchBackend<Lecture>(`${API_URL_LECTURES}/${lecture.id}`, "DELETE")
       .catch((error) => {
-        Logger.error("Error during lecture deletion: " + error);
+        Logger.error("Error during lecture deletion: ", error);
         return;
       });
   }

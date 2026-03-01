@@ -39,7 +39,7 @@ export function usePeople() {
   async function handleAddPerson(person: Person): Promise<Person | void> {
     return fetchBackend(API_URL_PERSONS, "POST", person)
       .catch((error) => {
-        Logger.error("Error during person creation: " + error);
+        Logger.error("Error during person creation: ", error);
         return;
       });
   }
@@ -53,7 +53,7 @@ export function usePeople() {
       prevPerson.notes = notes;
       fetchBackend(`${API_URL_PERSONS}/${personId}`, "PUT", prevPerson)
         .catch((error) => {
-          Logger.error("Error after updating person notes: " + error);
+          Logger.error("Error after updating person notes: ", error);
         });
     }
   }

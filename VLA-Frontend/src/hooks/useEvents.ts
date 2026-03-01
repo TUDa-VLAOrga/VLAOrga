@@ -39,6 +39,8 @@ export function useEvents() {
   function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
     const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
     if (deletedEvent.id === selectedEventId) {
+      // TODO: figure out whether this has some weird react race conditions,
+      //  since the result of this function is also passed to a setState
       setSelectedEventId(undefined);
     }
     return currentValue.filter((event) => event.id !== deletedEvent.id);
@@ -66,7 +68,7 @@ export function useEvents() {
         {...event, notes: notes}
       )
         .catch((error) => {
-          Logger.error("Error after updating event notes: " + error);
+          Logger.error("Error after updating event notes: ", error);
         });
     }
   }
@@ -104,7 +106,7 @@ export function useEvents() {
         try {
           newSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newSeries);
         } catch (error) {
-          Logger.error("Error during series creation in handleUpdateEvent: " + error);
+          Logger.error("Error during series creation in handleUpdateEvent: ", error);
           return oldEvent;
         }
       }
@@ -119,7 +121,7 @@ export function useEvents() {
           `${API_URL_APPOINTMENTS}/${eventId}`, "PUT", newEvent
         );
       } catch (error) {
-        Logger.error("Error during appointment update in handleUpdateEvent: " + error);
+        Logger.error("Error during appointment update in handleUpdateEvent: ", error);
         return oldEvent;
       }
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
@@ -130,7 +132,7 @@ export function useEvents() {
       try {
         newSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/${newSeries.id}`, "PUT", newSeries);
       } catch (error) {
-        Logger.error("Error during series update in handleUpdateEvent: " + error);
+        Logger.error("Error during series update in handleUpdateEvent: ", error);
         return oldEvent;
       }
       let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
@@ -146,7 +148,7 @@ export function useEvents() {
         movedEvents.forEach(event => fetchBackend(
           `${API_URL_APPOINTMENTS}/${event.id}`, "PUT", event));
       } catch (error) {
-        Logger.error("Error during appointment update in handleUpdateEvent: " + error);
+        Logger.error("Error during appointment update in handleUpdateEvent: ", error);
         return oldEvent;
       }
       return movedEvents.find(e => e.id === eventId)!;
@@ -186,7 +188,7 @@ export function useEvents() {
       try {
         newAppSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newAppSeries);
       } catch (error) {
-        Logger.error("Error during series creation in handleCreateEvent: " + error);
+        Logger.error("Error during series creation in handleCreateEvent: ", error);
         return;
       }
       newEvents.push({
@@ -216,7 +218,7 @@ export function useEvents() {
       try {
         savedSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/multi`,"POST",[...seriesByWeekday.values()]);
       } catch (error) {
-        Logger.error("Error during series creation in handleCreateEvent: " + error);
+        Logger.error("Error during series creation in handleCreateEvent: ", error);
         return;
       }
       // put saved series as reference in the weekday map
@@ -251,7 +253,7 @@ export function useEvents() {
       // return event with earliest start date
       return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
     } catch (error) {
-      Logger.error("Error during appointment creation in handleCreateEvent: " + error);
+      Logger.error("Error during appointment creation in handleCreateEvent: ", error);
       return;
     }
   }

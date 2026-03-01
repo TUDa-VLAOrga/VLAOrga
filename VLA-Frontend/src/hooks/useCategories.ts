@@ -46,7 +46,7 @@ export function useCategories() {
     return fetchBackend(API_URL_APPOINTMENT_CATEGORIES, "POST", category)
       .then((newCat) => newCat as AppointmentCategory)
       .catch((error) => {
-        Logger.error("Error during category creation: " + error);
+        Logger.error("Error during category creation: ", error);
         return;
       });
   }

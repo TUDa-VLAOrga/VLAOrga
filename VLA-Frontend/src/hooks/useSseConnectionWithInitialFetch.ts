@@ -36,7 +36,7 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
       })
 
       .catch(error => {
-        Logger.error("Could not fetch data on state init from URL: " + apiResourceURL + ": " + error);
+        Logger.error("Could not fetch data on state init from URL: " + apiResourceURL + ": ", error);
       }
       );
 
