@@ -51,6 +51,21 @@ export default function EventDetails({
     }
   }
 
+  function mailToPersons(persons: Person[]) {
+    let mails: string[] = [];
+    persons.forEach((person) => {
+      if(person.email != "") { mails.push(person.email)}
+    });
+
+    if(mails.length > 0){
+      let ref: string = "mailto:" + mails[0];
+      for(let i = 1; i < mails.length; i++){
+        ref += ", " + mails[i];
+      }
+      window.location.href = ref;
+    }
+  }
+
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
 
   if (showEditSingleDialog) {
@@ -155,6 +170,13 @@ export default function EventDetails({
                       </span>
                     ))}
                   </span>
+                  <button
+                    type="button"
+                    className="cv-formBtn cv-formBtnSecondary"
+                    onClick={() => mailToPersons(event.series.lecture?.persons)}
+                  >
+                    {"Email an alle Personen"}
+                  </button>
                 </div>
               </div>
             )}
