@@ -43,7 +43,6 @@ public class VlaBackendEntitiesTest {
         .email("")
         .notes("bitte grünen Laserpointer")
         .linusUserId(42L)
-        .lectures(null)
         .build();
 
     AppointmentCategory appCategory = new AppointmentCategory(1L, "Vorlesung");
