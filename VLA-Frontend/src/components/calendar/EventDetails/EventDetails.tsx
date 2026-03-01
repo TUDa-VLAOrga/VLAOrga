@@ -52,17 +52,9 @@ export default function EventDetails({
   }
 
   function mailToPersons(persons:Person[]) {
-    const mails: string[] = [];
-    persons.forEach((person) => {
-      if(person.email != "") { mails.push(person.email);}
-    });
-
+    const mails: string[] = persons.filter(person => person.email != "").map(person => person.email);
     if(mails.length > 0){
-      let ref: string = "mailto:" + mails[0];
-      for(let i = 1; i < mails.length; i++){
-        ref += ", " + mails[i];
-      }
-      window.location.href = ref;
+      window.location.href = "mailto:" + mails.join(",");
     }
   }
 
@@ -155,7 +147,7 @@ export default function EventDetails({
                   <button
                     type="button"
                     className="cv-formBtn cv-formBtnSecondary"
-                    onClick={() => {if(event.series.lecture) mailToPersons(event.series.lecture.persons);}}
+                    onClick={() => mailToPersons(event.series.lecture!.persons)}
                   >
                     {"Email an Alle"}
                   </button>
