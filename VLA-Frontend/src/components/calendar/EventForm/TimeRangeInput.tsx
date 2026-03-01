@@ -33,7 +33,9 @@ export default function TimeRangeInput({
     ? endDateTime.getTime() - startDateTime.getTime()
     : durationMilliseconds;
   const duration = useRef(initialDuration);
-  const [isWholeDay, setWholeDay] = useState(false);
+  const [isWholeDay, setWholeDay] = useState(
+    startDateTime && startDateTime.getHours() === 0 && endDateTime && endDateTime.getHours() === 23
+  );
 
   // Auto-calculate end time when start time changes, but keep duration.
   useEffect(() => {
