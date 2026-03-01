@@ -102,11 +102,15 @@ export default function TimeRangeInput({
               onChange={(e) => {
                 const newStart = new Date(e.target.value);
                 onStartChange((oldStart: Date | undefined) => {
-                  if (autoCalculateEnd && startDateTime && endDateTime) {
-                    if (oldStart) {
+                  if (autoCalculateEnd && newStart) {
+                    if (oldStart && endDateTime) {
                       onEndChange(new Date(endDateTime.getTime() + (newStart.getTime() - oldStart.getTime())));
-                    } else {
-                      onEndChange(new Date(endDateTime.getTime() + durationMilliseconds));
+                    } else if (oldStart && !endDateTime) {
+                      onEndChange(new Date(newStart.getTime() + durationMilliseconds));
+                    } else if (!oldStart && endDateTime) {
+                      // do nothing if endDateTime was set before already
+                    } else { // if (!oldStart && !endDateTime)
+                      onEndChange(new Date(newStart.getTime() + durationMilliseconds));
                     }
                   }
                   return newStart;
