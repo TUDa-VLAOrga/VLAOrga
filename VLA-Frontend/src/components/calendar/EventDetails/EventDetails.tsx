@@ -178,9 +178,8 @@ export default function EventDetails({
                         </button>
                       </span>
                     ))}
-                  </span>                 
+                  </span>
                 </div>
-                
               </div>
             )}
 
