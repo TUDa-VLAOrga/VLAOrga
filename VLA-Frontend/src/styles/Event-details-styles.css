@@ -112,6 +112,15 @@
 /* ========================================
    PERSONEN-LISTE MIT ICON-BUTTON
    ======================================== */
+  
+.cv-detailLabelPeople {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
 
 /* Container für Personen-Liste */
 .cv-peopleList {
