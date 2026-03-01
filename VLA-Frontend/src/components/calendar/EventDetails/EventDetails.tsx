@@ -52,9 +52,9 @@ export default function EventDetails({
   }
 
   function mailToPersons(persons:Person[]) {
-    let mails: string[] = [];
+    const mails: string[] = [];
     persons.forEach((person) => {
-      if(person.email != "") { mails.push(person.email)}
+      if(person.email != "") { mails.push(person.email);}
     });
 
     if(mails.length > 0){
@@ -153,11 +153,11 @@ export default function EventDetails({
                 <span className="cv-detailLabelPeople"> 
                   <span className="cv-detailLabel">Personen:</span>
                   <button
-                      type="button"
-                      className="cv-formBtn cv-formBtnSecondary"
-                      onClick={() => {if(event.series.lecture) mailToPersons(event.series.lecture.persons)}}
-                    >
-                      {"Email an Alle"}
+                    type="button"
+                    className="cv-formBtn cv-formBtnSecondary"
+                    onClick={() => {if(event.series.lecture) mailToPersons(event.series.lecture.persons);}}
+                  >
+                    {"Email an Alle"}
                   </button>
                 </span>
                 <div className="cv-detailValue cv-detailValuePeople">
