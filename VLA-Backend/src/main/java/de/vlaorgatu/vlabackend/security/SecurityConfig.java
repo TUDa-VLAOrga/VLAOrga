@@ -1,11 +1,7 @@
 package de.vlaorgatu.vlabackend.security;
 
-import de.vlaorgatu.vlabackend.security.securityutils.ProdSecurityUtils;
-import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
-import de.vlaorgatu.vlabackend.security.securityutils.UnsecureSecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -89,18 +85,5 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             );
         return http.build();
-    }
-
-    @Bean
-    @Primary
-    @Profile("!unsecure")
-    SecurityUtils prodSecurityUtils() {
-        return new ProdSecurityUtils();
-    }
-
-    @Bean
-    @Profile({"unsecure"})
-    SecurityUtils unsecureSecurityUtils() {
-        return new UnsecureSecurityUtils();
     }
 }
