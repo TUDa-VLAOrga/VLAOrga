@@ -55,10 +55,15 @@ public class VlaBackendEntitiesTest {
         .category(appCategory)
         .build();
 
-    Appointment appointment =
-        new Appointment(1L, appSeries, LocalDateTime.parse("2025-10-14T09:50:00"),
-            LocalDateTime.parse("2025-10-14T11:30:00"),
-            "Mit Willkommensgeschenk zum Semesterstart!");
+    Appointment appointment = Appointment.builder()
+        .id(1L)
+        .series(appSeries)
+        .startTime(LocalDateTime.parse("2025-10-14T09:50:00"))
+        .endTime(LocalDateTime.parse("2025-10-14T11:30:00"))
+        .notes("Mit Willkommensgeschenk zum Semesterstart!")
+        .deletingIntentionUser(null)
+        .build();
+
     Acceptance acceptance =
         new Acceptance(1L, appointment, LocalDateTime.parse("2025-10-13T17:00:00"),
             LocalDateTime.parse("2025-10-13T17:30:00"));
