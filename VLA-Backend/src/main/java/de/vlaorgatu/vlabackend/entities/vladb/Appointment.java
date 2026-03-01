@@ -7,11 +7,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents an appointment in our calendar.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "appointments")
@@ -33,14 +37,14 @@ public class Appointment {
     /**
      * Start time of the appointment.
      */
-    @Column(name = "start", nullable = false)
-    private LocalDateTime start;
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
 
     /**
      * End time of the appointment.
      */
-    @Column(name = "end", nullable = false)
-    private LocalDateTime end;
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
 
     /**
      * Notes for this appointment.
