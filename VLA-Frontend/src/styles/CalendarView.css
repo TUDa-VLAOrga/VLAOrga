@@ -1,15 +1,32 @@
-
-
 :root {
- --z-base: 1;
+  --z-base: 1;
   --z-dropdown: 100;
   --z-sticky: 200;
   --z-overlay: 1000;
   --z-modal: 1100;
   --z-tooltip: 1200;
+
+  /* Timeline sizing */
+  --cv-hour-height: 56px;
+  --cv-all-day-height: 56px;
+
+  /* Will be set inline from CalendarView.tsx */
+  --cv-day-count: 5;
+  /* Will be set inline from WeekGrid.tsx */
+  --cv-hour-count: 15;
+
+  --timelineRowBorderBottom: 1px dashed rgba(0, 0, 0, 0.4);
 }
-.cv-root {   
-  width: 100%;         
+
+/* ✅ IMPORTANT: avoid box model mismatches (line alignment bugs) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.cv-root {
+  width: 100%;
   margin: 0 auto;
   padding: 50px 24px 24px 24px;
   height: 100vh;
@@ -32,36 +49,44 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
-
 
 .cv-weekRow {
   display: flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   gap: 12px;
   width: 100%;
 }
 
-/* Frame: Block for Header + Grid, only visible in the border */
+/* Frame: Header + Grid in one scrollable horizontal container */
 .cv-frame {
-  --cv-cols: repeat(auto-fit, minmax(160px, auto));
-  --cv-gap: 0px; 
-  flex: 1;      
+  flex: 1;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #777;
-  background: #d9d9d9;
-  overflow: hidden;
+
+  /* wrapper only (no border here) */
+  border: none;
+  background: transparent;
+
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
-/* Header is exactly as wide as the Grid (both in the same Frame) */
+/* Header: 80px time column + N day columns */
 .cv-header {
   display: grid;
-  grid-template-columns: var(--cv-cols);
-  gap: var(--cv-gap);
-  background: #bfbfbf;     
+  grid-template-columns: 80px repeat(var(--cv-day-count), minmax(220px, 1fr));
+  background: #bfbfbf;
+
+  min-width: max-content;
+
+  /* table border */
+  border-top: 1px solid #777;
+  border-left: 1px solid #777;
+  border-right: 1px solid #777;
   border-bottom: 1px solid #777;
 }
 
@@ -85,33 +110,281 @@
   font-size: 12px;
 }
 
-/* Grid without own outer border (the Frame has the Border) */
-.cv-grid {
+/* Main grid area with shared vertical scrolling */
+.cv-gridWithTime {
   display: grid;
-  grid-template-columns: var(--cv-cols);
-  gap: var(--cv-gap);
+  grid-template-columns: 80px 1fr;
+  grid-template-rows: 1fr;
+
   min-height: 0;
-  flex: 1; 
+  flex: 1 1 0;
   background: #d9d9d9;
-  overflow: hidden;
+
+  overflow-y: auto;
+  overflow-x: visible;
+
+  min-width: max-content;
+
+  /* table border (bottom edge must be here!) */
+  border-left: 1px solid #777;
+  border-right: 1px solid #777;
+  border-bottom: 1px solid #777;
 }
 
-.cv-dayColumn {
+/* Left rail = all-day spacer (optional) + time column */
+.cv-leftRail {
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid #777;
-  padding: 10px;
-  background: transparent;
-  overflow-y: auto;
+  background: #e9ecef;
+
+  /* ✅ make rail fill the scrollable height */
   height: 100%;
 }
 
-.cv-dayColumn:last-child {
-  border-right: none;
+.cv-allDaySpacer {
+  height: var(--cv-all-day-height);
+  border-bottom: 1px solid #777;
+  background: #e9ecef;
+}
+
+/* Day columns grid */
+.cv-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cv-day-count), minmax(220px, 1fr));
+  min-height: 0;
+  flex: 1;
+  background: #d9d9d9;
+
+  min-width: max-content;
+
+  /* ✅ make grid fill the scrollable height */
+  height: 100%;
+
+  /* ✅ make day columns stretch full height */
+  align-items: stretch;
+
+  overflow: hidden;
+
+  /* ✅ needed for separator overlay */
+  position: relative;
 }
 
 
+
+/* Time column */
+.cv-timeColumn {
+  width: 80px;
+  background: #e9ecef;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* needed for bottom boundary label */
+  border-right: 1px solid #777;
+}
+
+/* Bottom boundary label (22:00) without adding a new hour row */
+.cv-timeBoundary {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+
+  /* ✅ keep label inside the table instead of pushing it below */
+  transform: translateY(-50%);
+
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* ✅ FIX: line alignment. remove padding that offsets dashed line */
+.cv-timeCell {
+  height: var(--cv-hour-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* draw the hour separator exactly at the top */
+  padding: 0;
+  margin: 0;
+  border-bottom: var(--timelineRowBorderBottom);
+}
+
+.cv-timeLabel {
+  font-size: 12px;
+  color: #333;
+  line-height: 1;
+}
+
+.cv-dayColumn {
+  position: relative;
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cv-dayColumn:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: #777;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Short events (< 90 min) */
+.cv-timeline-event.cv-event-short {
+  padding: 6px 10px;
+}
+.cv-timeline-event.cv-event-short .cv-timeline-event-title {
+  font-size: 16px;
+  line-height: 1.1;
+}
+.cv-timeline-event.cv-event-short .cv-timeline-event-time {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.05;
+}
+
+/* Very short events (< 60 min): hide time to avoid overflow */
+.cv-timeline-event.cv-event-veryShort {
+  padding: 6px 10px;
+}
+.cv-timeline-event.cv-event-veryShort .cv-timeline-event-title {
+  font-size: 15px;
+  line-height: 1.1;
+}
+.cv-timeline-event.cv-event-veryShort .cv-timeline-event-time {
+  display: none;
+}
+
+
+/* All-day / untimed row */
+.cv-allDayRow {
+  height: var(--cv-all-day-height);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #777;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.cv-allDayEmpty {
+  flex: 1;
+}
+
+.cv-allDayPill {
+  max-width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: #f9f9f9;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Timeline */
+.cv-dayTimeline {
+  padding: 0 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+.cv-timeline {
+  position: relative;
+
+  height: calc(var(--cv-hour-count) * var(--cv-hour-height));
+  min-height: calc(var(--cv-hour-count) * var(--cv-hour-height));
+}
+
+/* ✅ Avoid pixel rounding mismatches */
+.cv-timeline-grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-timeline-hour {
+  height: var(--cv-hour-height);
+  position: relative;
+  border-bottom: var(--timelineRowBorderBottom);
+}
+
+.cv-timeline-hour-label {
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  font-size: 11px;
+  color: #444;
+}
+
+/* Timeline labels inside day column are hidden (we have left time column) */
+.cv-dayColumn .cv-timeline-hour-label {
+  display: none;
+}
+
+.cv-timeline-hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.cv-timeline-events {
+  position: absolute;
+  inset: 0 6px 0 6px;
+}
+
+.cv-timeline-event {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ✅ Title + time under it (as you want) */
+.cv-timeline-event-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cv-timeline-event-time {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* ===== Toolbar / Navigation ===== */
+
 .cv-navBox {
   width: 44px;
-  height: 44px; 
+  height: 44px;
   border: 1px solid #dee2e6;
   border-radius: 6px;
   background: white;
@@ -123,6 +396,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .cv-navBox:hover {
   background: #f8f9fa;
   border-color: #adb5bd;
@@ -131,7 +405,7 @@
 }
 
 .cv-navBox:first-child::after {
-  content: '';
+  content: "";
   width: 10px;
   height: 10px;
   border-left: 2px solid #495057;
@@ -141,7 +415,7 @@
 }
 
 .cv-navBox:nth-child(3)::after {
-  content: '';
+  content: "";
   width: 10px;
   height: 10px;
   border-right: 2px solid #495057;
@@ -159,9 +433,11 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background: #e9ecef;
 }
+
 .cv-navIcon {
   display: none;
 }
+
 .cv-range {
   height: 44px;
   padding: 0px 16px;
@@ -208,6 +484,7 @@
   background: #e9ecef;
 }
 
+/* Date Picker */
 .cv-datePickerOverlay {
   position: fixed;
   top: 0;
@@ -223,8 +500,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .cv-datePickerBox {
@@ -237,8 +518,14 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .cv-datePickerTitle {
@@ -261,22 +548,6 @@
 .cv-datePickerInput:focus {
   outline: none;
   border-color: #0d6efd;
-}
-
-.cv-datePickerClose {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background: #e9ecef;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.cv-datePickerClose:hover {
-  background: #dee2e6;
 }
 
 .cv-datePickerActions {
@@ -318,7 +589,6 @@
   background: #adb5bd;
   cursor: not-allowed;
 }
-
 
 /* Event Form Overlay */
 .cv-formOverlay {
@@ -538,7 +808,7 @@
 
 .cv-event:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .cv-eventTitle {
@@ -548,35 +818,9 @@
   margin-bottom: 2px;
 }
 
-/* Event Categories (Kind) */
-.cv-event-Vorlesung {
-  border-left-color: #0066cc;
-  background: #e6f2ff;
-}
-
-.cv-event-Übung {
-  border-left-color: #00aa66;
-  background: #e6fff2;
-}
-
-.cv-event-Abnahmetermin {
-  border-left-color: #ff6600;
-  background: #fff2e6;
-}
-
-.cv-event-Ferien {
-  border-left-color: #9933cc;
-  background: #f2e6ff;
-}
-
-.cv-event-Aufbau {
-  border-left-color: #ccaa00;
-  background: #fffae6;
-}
-
-.cv-event-Abbau {
-  border-left-color: #cc3300;
-  background: #ffe6e6;
+.cv-eventSubtitle {
+  font-size: 0.8rem;
+  color: #666;
 }
 
 /* Event Status Indicators */
@@ -595,6 +839,7 @@
   background: #ffe6e6 !important;
   border-left-color: #cc0000 !important;
 }
+
 /* Event Details */
 .cv-detailsContent {
   display: flex;
@@ -623,11 +868,6 @@
   flex: 1;
 }
 
-.cv-detailRow {
-  align-items: center; /* sorgt für gleiche vertikale Ausrichtung wie andere Rows */
-}
-
-
 .cv-detailValueLecture {
   display: inline-flex;
   align-items: center;
@@ -646,7 +886,7 @@
   line-height: 1.2;
 }
 
-/* ===== NEU: Label Row für Buttons neben Labels ===== */
+/* Label row */
 .cv-formLabelRow {
   display: flex;
   justify-content: space-between;
@@ -654,7 +894,7 @@
   margin-bottom: 8px;
 }
 
-/* ===== NEU: Add Button ===== */
+/* Add button */
 .cv-addBtn {
   background: none;
   border: 1px solid #d1d5db;
@@ -672,7 +912,7 @@
   border-color: #9ca3af;
 }
 
-/* ===== NEU: Add Section (für Inline-Formulare) ===== */
+/* Inline add section */
 .cv-addSection {
   background: #f9fafb;
   padding: 12px;
@@ -685,7 +925,7 @@
   margin-bottom: 8px;
 }
 
-/* ===== NEU: Color Picker ===== */
+/* Color picker */
 .cv-colorPicker {
   display: flex;
   gap: 8px;
@@ -720,207 +960,50 @@
   background-color: #b9b9b9;
 }
 
-.cv-peopleList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px;
-  background: #f9fafb;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  max-height: 200px;
-  overflow-y: auto;
+/* Mobile: keep columns readable and avoid stacking */
+@media (max-width: 700px) {
+  .cv-header {
+    grid-template-columns: 80px repeat(var(--cv-day-count), minmax(260px, 1fr));
+  }
+  .cv-grid {
+    grid-template-columns: repeat(var(--cv-day-count), minmax(260px, 1fr));
+  }
 }
 
-.cv-personCheckbox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.2s;
+/* =========================================
+   Hide event time when event is too narrow
+   (overlapping events)
+   ========================================= */
+
+/* Enable width-based container queries */
+.cv-timeline-event {
+  container-type: inline-size;
 }
 
-.cv-personCheckbox:hover {
-  background: #f3f4f6;
+/* If event card becomes narrow, hide the time */
+@container (max-width: 140px) {
+  .cv-timeline-event-time {
+    display: none;
+  }
+
+  .cv-timeline-event-title {
+    font-size: 16px;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
 }
 
-.cv-personCheckbox input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
+/* Even narrower */
+@container (max-width: 110px) {
+  .cv-timeline-event-title {
+    font-size: 14px;
+  }
 }
-
-.cv-personInfo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-}
-
-.cv-personName {
-  font-weight: 500;
-  color: #1f2937;
-}
-
-.cv-personRole {
-  color: #6b7280;
-  font-size: 0.85rem;
+.cv-timeline-events {
+  inset: 0 10px 0 10px;
 }
 
 
-
-/* Add this to your CalendarView.css - UPDATED VERSION */
-
-/* Event Form Overlay */
-.cv-formOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--z-overlay);
-}
-
-/* Higher z-index for PersonDetails modal when it appears over EventDetails */
-.cv-personDetailsOverlay {
-  z-index: 1200 !important;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-/* Rest of your existing styles... */
-
-/* Clickable person names in event details */
-.cv-peopleLinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.cv-personLink {
-  background: none;
-  border: none;
-  color: #2563eb;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-  transition: color 0.2s ease;
-}
-
-.cv-personLink:hover {
-  color: #1d4ed8;
-}
-
-.cv-personLink:focus {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Person details modal */
-.cv-personDetailsBox {
-  max-width: 500px;
-}
-
-.cv-personDetailsTitle {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.cv-personDetailsContent {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.cv-personDetailRow {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-}
-
-.cv-personDetailRow .cv-detailLabel {
-  min-width: 80px;
-  text-align: right;
-  font-weight: 500;
-}
-
-.cv-personDetailRow .cv-detailValue {
-  flex: 1;
-  max-width: 300px;
-  text-align: left;
-}
-
-/* Notes section */
-.cv-personNotesGroup {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.cv-personNotesGroup .cv-formLabel {
-  display: block;
-  text-align: center;
-  margin-bottom: 12px;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.cv-notesTextarea {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  min-height: 100px;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 1.5;
-  resize: vertical;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.cv-notesTextarea:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.cv-notesTextarea::placeholder {
-  color: #9ca3af;
-}
-
-/* Email link */
-.cv-personEmail {
-  color: #2563eb;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.cv-personEmail:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
-}
-
-.cv-personEmail:focus {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Button layout for person details */
-.cv-personDetailsBox .cv-formActions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 24px;
-}

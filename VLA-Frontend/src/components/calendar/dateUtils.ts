@@ -28,7 +28,6 @@ export function formatDDMM(date: Date) {
   return `${dd}.${mm}.`;
 }
 
-
 /** gives a new Date that is `days` days away from `date`. */
 export function addDays(date: Date, days: number) {
   const d = new Date(date);
@@ -122,15 +121,60 @@ export function formatISODateDE(iso: string): string {
 }
 
 /**
+ * Splits a datetime-local string (yyyy-mm-ddTHH:mm) into date and time parts.
+ * @param dateTimeString - Format: "2024-01-15T09:00"
+ * @returns Object with date (yyyy-mm-dd) and time (HH:mm)
+ */
+export function splitDateTime(dateTimeString: string): {
+  date: string;
+  time: string;
+} {
+  const [date, time] = dateTimeString.split("T");
+  return { date, time };
+}
+
+/**
  * Compares two days while ignoring the clock time on a given day
  * @param a The first time to compare
  * @param b The second time to compare
- * Returns true iff a and b are on the same day in UTC
+ * Returns true iff a and b are on the same day in local time
  */
-export function compareSameDay(a: Date, b: Date){
-  // Conversion to remove time zone dependenies
+export function compareSameDay(a: Date, b: Date) {
+  return (
+    a.getDate() === b.getDate() &&
+    a.getMonth() === b.getMonth() &&
+    a.getFullYear() === b.getFullYear()
+  );
+}
 
-  return a.getDate() == b.getDate() &&
-    a.getMonth() == b.getMonth() &&
-    a.getFullYear() == b.getFullYear();
+/**
+ * Adds minutes to a datetime-local string (yyyy-mm-ddTHH:mm)
+ * and returns the result in the same format.
+ * Handles local time correctly without UTC conversion.
+ */
+export function addMinutesToDateTime(
+  dateTimeString: string,
+  minutes: number
+): string {
+  if (!dateTimeString) return "";
+
+  const date = new Date(dateTimeString);
+  date.setMinutes(date.getMinutes() + minutes);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const mins = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${mins}`;
+}
+
+export function timeToMinutes(time?: string): number | null {
+  if (!time) return null;
+  const [hhStr, mmStr] = time.split(":");
+  const hh = Number(hhStr);
+  const mm = Number(mmStr);
+  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+  return hh * 60 + mm;
 }
