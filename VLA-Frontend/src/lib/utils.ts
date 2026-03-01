@@ -1,7 +1,9 @@
 import { Logger } from "@/components/logger/Logger";
+import {toJSONLocalTime} from "@/components/calendar/dateUtils.ts";
 
-export const NotSynchronisedId = -1;
-
+/**
+ * Fetch a CSRF token from the server.
+ */
 export function fetchCSRFToken(){
   return new Promise<string>((resolve, reject) => {
     fetch('/csrf', {
@@ -17,6 +19,40 @@ export function fetchCSRFToken(){
         reject(error);
       });
   });
+}
+
+/**
+ * Wrapper for general requests to the backend server.
+ * Abstracts away
+ * - setting request headers and CSRF token.
+ * - converting dates to localtime strings w/o timezone (JSON.stringify replacer)
+ * - parsing localtime Date timestamps from returned JSON correctly (JSON.parse reviver)
+ *
+ * @throws Error if the response is not ok.
+ */
+export async function fetchBackend<T>(url: string, method: string, body?: T) {
+  // fetch CSRF only on modifying method
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+  });
+  if (method !== "GET")  {
+    headers.set('X-CSRF-Token', await fetchCSRFToken());
+  }
+  const requestContent: RequestInit = {
+    method: method,
+    headers: headers,
+  };
+  if (body) {
+    requestContent['body'] = JSON.stringify(body, toJsonFixDate);
+  }
+  Logger.info("Requesting: " + method + " " + url + " with body: " + requestContent['body']);
+  const response = await fetch(url, requestContent).then(response => {
+    if (!response.ok) {
+      throw new Error("Error from request: " + response.statusText + ".");
+    }
+    return response;
+  });
+  return JSON.parse(await response.text(), parseJsonFixDate) as T;
 }
 
 /**
@@ -39,6 +75,18 @@ export function getNotSynchronisedId() {
 export function parseJsonFixDate(_key: any, value: any) {
   if (typeof value === "string" && value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d{3}Z)?$/)) {
     return new Date(value);
+  }
+  return value;
+}
+
+/**
+ * Converts a Date object to a string in the format "yyyy-MM-ddTHH:mm:ss".
+ */
+// explicit any here, because what else should be the type annotation?
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function toJsonFixDate(_key: any, value: any) {
+  if (value instanceof Date) {
+    return toJSONLocalTime(value);
   }
   return value;
 }

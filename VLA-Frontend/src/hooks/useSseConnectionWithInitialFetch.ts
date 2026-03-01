@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useSseConnection from "./useSseConnection";
 import { Logger } from "@/components/logger/Logger";
 import type { SseMessageType } from "@/lib/databaseTypes";
+import {fetchBackend} from "@/lib/utils.ts";
 
 /**
  * Extension of {@link useSseConnection} but directly initiates a fetch for data
@@ -9,16 +10,12 @@ import type { SseMessageType } from "@/lib/databaseTypes";
  * @param defaultValue The default value to taken on before the value is fetched
  * @param apiResourceURL The api endpoint relative to the host of the JSON resource
  * @param eventHandlers Take a MessageEvent and the current value and return the new value
- * @param jsonReviver A function that will be given to JSON.parse as reviver parameter.
  * @returns The reactive variable
  */
 export default function useSseConnectionWithInitialFetch<T extends object>(
   defaultValue: T, 
   apiResourceURL : string,
-  eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>,
-  // explicit any here, because what else should be the type annotation?
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jsonReviver?: (key: any, value: any) => any
+  eventHandlers: Map<SseMessageType, (event: MessageEvent, value: T) => T>
 )
   : [T, React.Dispatch<React.SetStateAction<T>>]
 {
@@ -31,24 +28,16 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
     // If component does still exist and state can be changed
     let mounted = true;
 
-    fetch(apiResourceURL)
-      .then(response => {
-        // Trigger catch case on fetching error
-        if(!response.ok) throw new Error();
-        if (jsonReviver) {
-          return response.text().then(text => JSON.parse(text, jsonReviver));
-        }
-        return response.json();
-      })
-
+    fetchBackend<T>(apiResourceURL, "GET")
       .then(parsedObj => {
         if (mounted) {
           setsseDefaultValue(parsedObj);
         }
       })
 
-      .catch(_ => 
-        Logger.warn("Could not fetch data on state init from URL: " + apiResourceURL + ".")
+      .catch(error => {
+        Logger.error("Could not fetch data on state init from URL: " + apiResourceURL + ": " + error);
+      }
       );
 
     return () => {

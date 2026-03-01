@@ -2,6 +2,7 @@ import {type Person, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_PERSONS} from "@/lib/api.ts";
 import {Logger} from "@/components/logger/Logger.ts";
+import {fetchBackend} from "@/lib/utils.ts";
 
 
 function handlePersonCreated(event: MessageEvent, currentValue: Person[]) {
@@ -32,14 +33,7 @@ export function usePeople() {
   );
 
   async function handleAddPerson(person: Person) {
-    return fetch(API_URL_PERSONS, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(person),
-    }).then((response) => response.json())
-      .then((newPerson) => newPerson as Person)
+    return fetchBackend(API_URL_PERSONS, "POST", person)
       .catch((error) => {
         Logger.error("Error during person creation: " + error);
         return;
@@ -50,19 +44,10 @@ export function usePeople() {
     const prevPerson = people.find((person) => person.id === personId);
     if (prevPerson) {
       prevPerson.notes = notes;
-      fetch(`${API_URL_PERSONS}/${personId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(prevPerson),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during person update: " + response.statusText + ".");
-        }
-      }).catch((error) => {
-        Logger.error("Error after updating person notes: " + error);
-      });
+      fetchBackend(`${API_URL_PERSONS}/${personId}`, "PUT", prevPerson)
+        .catch((error) => {
+          Logger.error("Error after updating person notes: " + error);
+        });
     }
   }
 
