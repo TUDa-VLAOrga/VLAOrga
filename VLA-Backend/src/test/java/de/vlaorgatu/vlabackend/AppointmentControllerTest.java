@@ -18,6 +18,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("unsecure")
 public class AppointmentControllerTest {
 
     /**
@@ -93,21 +96,21 @@ public class AppointmentControllerTest {
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now())
                 .notes("")
-                .deletingIntentionUserId(null)
+                .deletingIntentionUser(null)
                 .build()
         );
 
         userRepository.save(User.builder()
             .id(null)
-            .name("")
-            .email("")
+            .name("1")
+            .email("1@example.com")
             .build()
         );
 
         userRepository.save(User.builder()
             .id(null)
-            .name("")
-            .email("")
+            .name("2")
+            .email("2@example.com")
             .build()
         );
     }
@@ -128,7 +131,7 @@ public class AppointmentControllerTest {
     void checkAppointmentSingleDeletionSetsIntent() {
         Assertions.assertNull(
             appointmentRepository.findAll().getFirst()
-                .getDeletingIntentionUserId()
+                .getDeletingIntentionUser()
         );
 
         Assertions.assertEquals(1, appointmentRepository.findAll().getFirst().getId());
@@ -136,7 +139,7 @@ public class AppointmentControllerTest {
         appointmentController.deleteAppointment(1L, 1L);
 
         Assertions.assertEquals(1L,
-            appointmentRepository.findAll().getFirst().getDeletingIntentionUserId()
+            appointmentRepository.findAll().getFirst().getDeletingIntentionUser().getId()
         );
     }
 
@@ -145,7 +148,7 @@ public class AppointmentControllerTest {
     void checkAppointmentDoubleDeletionSingleUser() {
         Assertions.assertNull(
             appointmentRepository.findAll().getFirst()
-                .getDeletingIntentionUserId()
+                .getDeletingIntentionUser()
         );
         Assertions.assertEquals(1, appointmentRepository.findAll().getFirst().getId());
 
@@ -162,7 +165,7 @@ public class AppointmentControllerTest {
     void checkAppointmentDoubleDeletionMultipleUser() {
         Assertions.assertNull(
             appointmentRepository.findAll().getFirst()
-                .getDeletingIntentionUserId()
+                .getDeletingIntentionUser()
         );
         Assertions.assertEquals(1, appointmentRepository.findAll().getFirst().getId());
 

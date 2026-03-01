@@ -1,6 +1,5 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
-import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
@@ -11,11 +10,10 @@ import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
-import de.vlaorgatu.vlabackend.security.SecurityUtils.SecurityUtils;
+import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,6 +55,9 @@ public class AppointmentController
      */
     private final ExperimentBookingService experimentBookingService;
 
+    /**
+     * Utility function for security related features.
+     */
     private final SecurityUtils securityUtils;
 
     /**

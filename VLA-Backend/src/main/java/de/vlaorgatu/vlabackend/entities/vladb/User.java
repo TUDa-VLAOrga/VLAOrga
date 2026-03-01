@@ -2,7 +2,6 @@ package de.vlaorgatu.vlabackend.entities.vladb;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,9 +55,12 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    /**
+     * Represents all appointments that a user requested to delete.
+     */
     @Nullable
     @OneToMany
     @JsonBackReference
     @JsonIgnore
-    private List<Appointment> appointments;
+    private List<Appointment> appointmentsWithDeletionIntention;
 }

@@ -1,8 +1,8 @@
 package de.vlaorgatu.vlabackend.security;
 
-import de.vlaorgatu.vlabackend.security.SecurityUtils.ProdSecurityUtils;
-import de.vlaorgatu.vlabackend.security.SecurityUtils.SecurityUtils;
-import de.vlaorgatu.vlabackend.security.SecurityUtils.UnsecureSecurityUtils;
+import de.vlaorgatu.vlabackend.security.securityutils.ProdSecurityUtils;
+import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
+import de.vlaorgatu.vlabackend.security.securityutils.UnsecureSecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -90,7 +90,7 @@ public class SecurityConfig {
             );
         return http.build();
     }
-    
+
     @Bean
     @Primary
     @Profile("!unsecure")
