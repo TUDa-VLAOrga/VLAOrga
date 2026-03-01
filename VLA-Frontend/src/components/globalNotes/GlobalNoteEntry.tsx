@@ -1,4 +1,5 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
+import { fetchCSRFToken } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 import {API_URL_GLOBAL_NOTES} from "@/lib/api.ts";
@@ -43,13 +44,17 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   });
 
   function handleNoteCreationSubmit(note: GlobalNote){
-    fetch(API_URL_GLOBAL_NOTES, {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json",
-      },
-      body: JSON.stringify(note),
-    });
+    fetchCSRFToken()
+      .then(csrfToken =>
+        fetch(API_URL_GLOBAL_NOTES, {
+          method: "POST",
+          headers: {
+            "Content-Type":"application/json",
+            'X-CSRF-TOKEN': csrfToken,
+          },
+          body: JSON.stringify(note),
+        })
+      );
 
     if(note.id === NotSynchronisedId) {
       setDraftNote!(undefined);
@@ -62,13 +67,17 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       return;
     }
 
-    fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type":"application/json",
-      },
-      body: JSON.stringify(note),
-    });
+    fetchCSRFToken()
+      .then(csrfToken => {
+        fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type":"application/json",
+            'X-CSRF-TOKEN': csrfToken,
+          },
+          body: JSON.stringify(note),
+        });
+      });
   }
 
   function handleDelete(){
@@ -77,12 +86,16 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       return;
     }
 
-    fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type":"application/json",
-      },
-    });
+    fetchCSRFToken()
+      .then(csrfToken => {
+        fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type":"application/json",
+            'X-CSRF-TOKEN': csrfToken,
+          },
+        });
+      });
   }
 
   function handleSubmit(){
