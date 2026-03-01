@@ -45,9 +45,17 @@ public class Person {
     /**
      * ID of this user in Linus, if a corresponding user exists there.
      */
-    @Column(name = "linus_user_id")
+    @Column(name = "linus_user_id", unique = true)
     @Nullable
-    private Long linusUserId;
+    private Integer linusUserId;
+
+    /**
+     * Name of this user in Linus, if a corresponding user exists there.
+     * Note: This can be derived from linus_user_id and is here for reducing API calls.
+     */
+    @Column(name = "linus_user_name", unique = true)
+    @Nullable
+    private String linusUsername;
 
     /**
      * Lectures held by this person.
@@ -62,7 +70,7 @@ public class Person {
      *
      * @param linusUserId ID of this user in Linus, if a corresponding user exists there.
      */
-    public void setLinusUserId(Long linusUserId) {
+    public void setLinusUserId(Integer linusUserId) {
         this.linusUserId = linusUserId == 0 ? null : linusUserId;
     }
 }
