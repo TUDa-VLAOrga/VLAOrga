@@ -10,8 +10,8 @@ function handleCategoryCreated(event: MessageEvent, currentValue: AppointmentCat
 }
 
 function handleCategoryDeleted(event: MessageEvent, currentValue: AppointmentCategory[]) {
-  const deletedNote = JSON.parse(event.data) as AppointmentCategory;
-  return currentValue.filter((cat) => cat.id !== deletedNote.id);
+  const deletedCategory = JSON.parse(event.data) as AppointmentCategory;
+  return currentValue.filter((cat) => cat.id !== deletedCategory.id);
 }
 
 function handleCategoryUpdated(event: MessageEvent, currentValue: AppointmentCategory[]) {
@@ -39,8 +39,10 @@ export function useCategories() {
 
   /**
    * Adds a category if it doesn't exist yet.
+   *
+   * @returns The new category or void if an error occurred.
    */
-  async function handleAddCategory(category: AppointmentCategory) {
+  async function handleAddCategory(category: AppointmentCategory): Promise<AppointmentCategory | void> {
     return fetchBackend(API_URL_APPOINTMENT_CATEGORIES, "POST", category)
       .then((newCat) => newCat as AppointmentCategory)
       .catch((error) => {

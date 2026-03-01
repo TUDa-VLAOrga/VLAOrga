@@ -32,7 +32,11 @@ export function usePeople() {
     [], API_URL_PERSONS, sseHandlers
   );
 
-  async function handleAddPerson(person: Person) {
+  /**
+   * Create new person entity in the backend.
+   * @returns The new person or void if an error occurred.
+   */
+  async function handleAddPerson(person: Person): Promise<Person | void> {
     return fetchBackend(API_URL_PERSONS, "POST", person)
       .catch((error) => {
         Logger.error("Error during person creation: " + error);
@@ -40,7 +44,10 @@ export function usePeople() {
       });
   }
 
-  function handleUpdatePersonNotes(personId: number, notes: string) {
+  /**
+   * Update the notes of a person.
+   */
+  function handleUpdatePersonNotes(personId: number, notes: string): void {
     const prevPerson = people.find((person) => person.id === personId);
     if (prevPerson) {
       prevPerson.notes = notes;

@@ -34,9 +34,10 @@ export function useLectures() {
   );
 
   /**
-   * Add a new lecture to the list.
+   * Add a new lecture in the backend.
+   * @returns The new lecture or void if an error occurred.
    */
-  async function handleAddLecture(lecture: Lecture) {
+  async function handleAddLecture(lecture: Lecture): Promise<Lecture | void> {
     return fetchBackend(API_URL_LECTURES, "POST", lecture)
       .catch((error) => {
         Logger.error("Error during lecture creation: " + error);
@@ -46,9 +47,14 @@ export function useLectures() {
 
   /**
    * Remove a lecture.
+   * @returns The deleted lecture or void if an error occurred.
    */
-  async function handleDeleteLecture(lecture: Lecture) {
-    return fetchBackend<Lecture>(`${API_URL_LECTURES}/${lecture.id}`, "DELETE");
+  async function handleDeleteLecture(lecture: Lecture): Promise<Lecture | void> {
+    return fetchBackend<Lecture>(`${API_URL_LECTURES}/${lecture.id}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Error during lecture deletion: " + error);
+        return;
+      });
   }
 
   return {

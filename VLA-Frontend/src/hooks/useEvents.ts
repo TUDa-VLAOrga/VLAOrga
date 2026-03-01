@@ -15,9 +15,6 @@ import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
   const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
-  // circumvent JSON parse bugs (not recognized as timestamp)
-  newEvent.startTime = new Date(newEvent.startTime);
-  newEvent.endTime = new Date(newEvent.endTime);
   return [...currentValue, newEvent];
 }
 
@@ -80,6 +77,7 @@ export function useEvents() {
    * @param eventId ID of the event to update
    * @param updates updates to apply to the event.
    * @param editSeries Whether to update the whole series or just this event.
+   * @returns The updated event or the old one, in case an error occurred.
    */
   async function handleUpdateEvent(
     eventId: number, updates: Partial<Appointment>, editSeries: boolean
@@ -159,7 +157,11 @@ export function useEvents() {
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
-  async function handleCreateEvent(formData: EventFormData) {
+  /**
+   * Creates new appointments and appointments series from the form data.
+   * @returns The created event or void if an error occurred.
+   */
+  async function handleCreateEvent(formData: EventFormData): Promise<Appointment | void> {
     // basic validation
     if (!(
       (formData.title || formData.lecture) && formData.category
@@ -254,10 +256,16 @@ export function useEvents() {
     }
   }
 
+  /**
+   * Update the {@link selectedEventId} state on clicking an event.
+   */
   function handleEventClick(eventId: number) {
     setSelectedEventId(eventId);
   }
 
+  /**
+   * Update the {@link selectedEventId} state on closing the event details.
+   */
   function closeEventDetails() {
     setSelectedEventId(undefined);
   }
