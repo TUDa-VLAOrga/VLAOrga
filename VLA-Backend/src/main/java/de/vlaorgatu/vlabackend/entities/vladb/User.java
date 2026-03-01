@@ -1,11 +1,17 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,6 +52,13 @@ public class User {
     /**
      * Represents the *hashed* password of the user.
      */
+    @JsonIgnore
     @Column(name = "password")
     private String password;
+
+    @Nullable
+    @OneToMany
+    @JsonBackReference
+    @JsonIgnore
+    private List<Appointment> appointments;
 }

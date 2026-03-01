@@ -16,4 +16,8 @@ public class InvalidParameterException extends ResponseStatusException {
     public InvalidParameterException(@NonNull String message) {
         super(HttpStatus.BAD_REQUEST, message);
     }
+
+    public InvalidParameterException(@NonNull HttpStatus status, @NonNull String message) {
+        super(status, message);
+    }
 }

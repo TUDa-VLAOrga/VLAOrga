@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
+import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
@@ -13,6 +14,7 @@ import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -123,11 +125,16 @@ public class AppointmentController
                 )
             );
 
-        // TODO: Authenticate user with credentials from authenticated session
+        if (!UtilityFunctions.checkUserIsSessionUser(deletingIntentUser)) {
+            throw new InvalidParameterException(
+                HttpStatus.FORBIDDEN,
+                "Appointment deletion requested for a user that is the sender of the request!"
+            );
+        }
 
         // At least two should agree that an appointment should be deleted
-        if (toDeleteAppointment.getDeletingIntentionUserId() == null) {
-            toDeleteAppointment.setDeletingIntentionUserId(deletingIntentionUserId);
+        if (toDeleteAppointment.getDeletingIntentionUser() == null) {
+            toDeleteAppointment.setDeletingIntentionUser(deletingIntentUser);
             final Appointment updatedAppointment = appointmentRepository.save(toDeleteAppointment);
 
             SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updatedAppointment);
@@ -135,7 +142,7 @@ public class AppointmentController
             return ResponseEntity.accepted().body(updatedAppointment);
         }
 
-        if (toDeleteAppointment.getDeletingIntentionUserId().equals(deletingIntentionUserId)) {
+        if (deletingIntentUser.equals(toDeleteAppointment.getDeletingIntentionUser())) {
             // User may not delete appointments by themselves
             throw new InvalidParameterException(
                 "User (id=" + deletingIntentionUserId + ") has already requested deletion of " +
