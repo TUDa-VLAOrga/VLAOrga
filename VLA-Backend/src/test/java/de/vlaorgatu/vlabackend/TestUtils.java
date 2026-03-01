@@ -20,15 +20,59 @@ public class TestUtils {
     private EntityManager vlaEntityManager;
 
     /**
+     * Entity manager for manipulating the linus db.
+     */
+    @PersistenceContext(unitName = "linusEntityManagerFactory")
+    private EntityManager linusEntityManager;
+
+    /**
+     * Disables foreign key checks for Vla db.
+     */
+    private void vlaDisableFkChecks() {
+        vlaEntityManager.createNativeQuery(
+                "SET session_replication_role = 'replica';")
+            .executeUpdate();
+    }
+
+    /**
+     * Enables foreign key checks for Vla db.
+     */
+    private void vlaEnableFkChecks() {
+        vlaEntityManager.createNativeQuery(
+                "SET session_replication_role = 'origin';")
+            .executeUpdate();
+    }
+
+    /**
+     * Disables foreign key checks for linus db.
+     */
+    private void linusDisableFkChecks() {
+        linusEntityManager.createNativeQuery(
+                "SET FOREIGN_KEY_CHECKS = 0;")
+            .executeUpdate();
+    }
+
+    /**
+     * Enable foreign key checks for linus db.
+     */
+    private void linusEnableFkChecks() {
+        linusEntityManager.createNativeQuery(
+                "SET FOREIGN_KEY_CHECKS = 1;")
+            .executeUpdate();
+    }
+
+    /**
      * Deletes all entities in the vla db.
+     * This should only be called in a sequential testing context!
      */
     @Transactional("vlaTransactionManager")
     public void clearVlaDb() {
-        Set<EntityType<?>> entities = vlaEntityManager.getMetamodel().getEntities();
+        vlaEntityManager.flush();
+        vlaEntityManager.clear();
 
-        vlaEntityManager.createNativeQuery(
-            "SET session_replication_role = 'replica';")
-            .executeUpdate();
+        vlaDisableFkChecks();
+
+        Set<EntityType<?>> entities = vlaEntityManager.getMetamodel().getEntities();
 
         for (EntityType<?> entityType : entities) {
             Class<?> javaType = entityType.getJavaType();
@@ -38,8 +82,31 @@ public class TestUtils {
             }
         }
 
-        vlaEntityManager.createNativeQuery(
-                "SET session_replication_role = 'origin';")
-            .executeUpdate();
+        vlaEnableFkChecks();
+    }
+
+    /**
+     * Deletes all entities in the linus db.
+     * If you only use one db, use @Transactional("name of correct TransactionManager")
+     * This should only be called in a sequential testing context!
+     */
+    @Transactional("linusTransactionManager")
+    public void clearLinusDb() {
+        linusEntityManager.flush();
+        linusEntityManager.clear();
+
+        Set<EntityType<?>> entities = linusEntityManager.getMetamodel().getEntities();
+
+        linusDisableFkChecks();
+
+        for (EntityType<?> entityType : entities) {
+            Class<?> javaType = entityType.getJavaType();
+            if (javaType.isAnnotationPresent(Entity.class)) {
+                String entityName = entityType.getName();
+                linusEntityManager.createQuery("DELETE FROM " + entityName).executeUpdate();
+            }
+        }
+
+        linusEnableFkChecks();
     }
 }

@@ -67,7 +67,7 @@ public class AppointmentController
      * @return OK response with the created appointment, Error response otherwise.
      */
     @PostMapping
-    public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
+    public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
         if (Objects.nonNull(appointment.getId())) {
             throw new InvalidParameterException(
                 "Received appointment with ID " + appointment.getId() +
