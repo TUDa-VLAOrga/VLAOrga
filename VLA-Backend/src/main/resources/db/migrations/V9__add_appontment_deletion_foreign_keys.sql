@@ -13,18 +13,6 @@ CREATE TABLE users_appointments_with_deletion_intention
 ALTER TABLE appointments
     ADD deleting_intention_user_id BIGINT;
 
-ALTER TABLE appointments
-    ADD end_time TIMESTAMP WITHOUT TIME ZONE;
-
-ALTER TABLE appointments
-    ADD start_time TIMESTAMP WITHOUT TIME ZONE;
-
-ALTER TABLE appointments
-    ALTER COLUMN end_time SET NOT NULL;
-
-ALTER TABLE appointments
-    ALTER COLUMN start_time SET NOT NULL;
-
 ALTER TABLE appointment_series_appointments
     ADD CONSTRAINT uc_appointment_series_appointments_appointments UNIQUE (appointments_id);
 
@@ -45,11 +33,3 @@ ALTER TABLE users_appointments_with_deletion_intention
 
 ALTER TABLE users_appointments_with_deletion_intention
     ADD CONSTRAINT fk_useappwitdelint_on_user FOREIGN KEY (user_id) REFERENCES users (id);
-
-ALTER TABLE appointments
-DROP
-COLUMN "end";
-
-ALTER TABLE appointments
-DROP
-COLUMN start;
