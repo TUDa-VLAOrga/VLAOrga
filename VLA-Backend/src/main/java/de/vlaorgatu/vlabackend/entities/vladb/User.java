@@ -28,40 +28,24 @@ public class User {
      * Primary key.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * Name of the user.
      */
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     /**
      * Email address of the user.
      */
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", unique = true)
     private String email;
 
-    // getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    /**
+     * Represents the *hashed* password of the user.
+     */
+    @Column(name = "password")
+    private String password;
 }
