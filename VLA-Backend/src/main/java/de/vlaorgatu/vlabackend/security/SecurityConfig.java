@@ -1,7 +1,11 @@
 package de.vlaorgatu.vlabackend.security;
 
+import de.vlaorgatu.vlabackend.security.SecurityUtils.ProdSecurityUtils;
+import de.vlaorgatu.vlabackend.security.SecurityUtils.SecurityUtils;
+import de.vlaorgatu.vlabackend.security.SecurityUtils.UnsecureSecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,7 +37,7 @@ public class SecurityConfig {
      * Forces a forward to / (the frontend application) on successful authentication.
      */
     @Bean
-    @Profile({"prod", "dev"})
+    @Profile("!unsecure")
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf ->
@@ -85,5 +89,18 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             );
         return http.build();
+    }
+    
+    @Bean
+    @Primary
+    @Profile("!unsecure")
+    SecurityUtils prodSecurityUtils() {
+        return new ProdSecurityUtils();
+    }
+
+    @Bean
+    @Profile({"unsecure"})
+    SecurityUtils unsecureSecurityUtils() {
+        return new UnsecureSecurityUtils();
     }
 }

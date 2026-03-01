@@ -62,11 +62,4 @@ public class UtilityFunctions {
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return jsonMapper.writeValueAsString(object);
     }
-
-    public static boolean checkUserIsSessionUser(User user) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        return userDetails.getUsername().equals(user.getId().toString());
-    }
 }

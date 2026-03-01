@@ -11,9 +11,11 @@ import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
+import de.vlaorgatu.vlabackend.security.SecurityUtils.SecurityUtils;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,6 +56,8 @@ public class AppointmentController
      * Service for managing {@link ExperimentBooking}s.
      */
     private final ExperimentBookingService experimentBookingService;
+
+    private final SecurityUtils securityUtils;
 
     /**
      * Creates a new appointment.
@@ -125,7 +129,7 @@ public class AppointmentController
                 )
             );
 
-        if (!UtilityFunctions.checkUserIsSessionUser(deletingIntentUser)) {
+        if (!securityUtils.checkUserIsSessionUser(deletingIntentUser)) {
             throw new InvalidParameterException(
                 HttpStatus.FORBIDDEN,
                 "Appointment deletion requested for a user that is the sender of the request!"
