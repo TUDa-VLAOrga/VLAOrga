@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.mariadb.jdbc:mariadb-java-client'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'

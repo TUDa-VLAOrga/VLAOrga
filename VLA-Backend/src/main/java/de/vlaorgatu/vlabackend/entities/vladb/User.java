@@ -23,19 +23,25 @@ public class User {
      * Primary key.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * Name of the user.
      */
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     /**
      * Email address of the user.
      */
     @Nullable
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
+
+    /**
+     * Represents the *hashed* password of the user.
+     */
+    @Column(name = "password")
+    private String password;
 }

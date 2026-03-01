@@ -3,13 +3,13 @@ package de.vlaorgatu.vlabackend.controller.sse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 @RestController()
 @RequestMapping("/sse")
-@CrossOrigin("*") // TODO: Configure to ensure security of application
 public class SseController {
     /**
      * Logger for this class.
@@ -57,7 +56,7 @@ public class SseController {
      * TODO: Narrow Object type to an abstract entity type
      *
      * @param sseMessageType The kind of the SSE event
-     * @param eventObject    The object to be sent
+     * @param eventObject The object to send to the frontend
      */
     public static void notifyAllOfObject(SseMessageType sseMessageType, Object eventObject) {
         for (SseEmitter connection : sseHandlers) {
@@ -66,7 +65,7 @@ public class SseController {
             String eventData;
 
             try {
-                eventData = jsonMapper.writeValueAsString(eventObject);
+                eventData = UtilityFunctions.convertObjectToJson(eventObject);
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");

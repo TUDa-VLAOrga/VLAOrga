@@ -1,9 +1,8 @@
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch";
 import { SseMessageType, type GlobalNote } from "@/lib/databaseTypes";
-import GlobalNoteEntry from "./GlobalNoteEntry";
+import GlobalNoteEntry, {NotSynchronisedId} from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css";
 import { useState } from "react";
-import { NotSynchronisedId } from "@/lib/utils";
 import { Button } from "../ui/Button";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
@@ -64,6 +63,12 @@ export default function GlobalNoteContainer() {
         onClick={() => setViewVisible(!viewVisible)}
         style={{display: viewVisible ? "none" : ""}}
       >
+        {globalNotes.length !== 0 &&
+      <>
+        <div className="globalNoteDot"></div>
+      </>
+        }
+      
       </div>
       <div className="globalNoteContainer" style={{display: viewVisible ? "" : "none"}}>
         <div className="globalNoteView">
