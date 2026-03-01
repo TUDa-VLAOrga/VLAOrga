@@ -63,7 +63,9 @@ public class LectureController
      * @return OK response with the updated lecture, Error response otherwise.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateLecture(@PathVariable Long id, @RequestBody Lecture lecture) {
+    public ResponseEntity<Lecture> updateLecture(
+        @PathVariable Long id, @RequestBody Lecture lecture
+    ) {
         if (Objects.isNull(lecture.getId())) {
             lecture.setId(id);
         } else if (!lecture.getId().equals(id)) {
@@ -87,7 +89,7 @@ public class LectureController
      * @return OK response with the deleted lecture, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
+    public ResponseEntity<Lecture> deleteLecture(@PathVariable Long id) {
         Lecture deletedLecture = lectureRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
                 "Lecture with ID " + id + " not found."));

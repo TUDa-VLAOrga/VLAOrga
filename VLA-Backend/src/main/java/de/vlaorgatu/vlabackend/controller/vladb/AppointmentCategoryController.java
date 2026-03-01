@@ -67,7 +67,7 @@ public class AppointmentCategoryController
      * @return OK response with the updated appointment category, Error response otherwise.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAppointmentCategory(
+    public ResponseEntity<AppointmentCategory> updateAppointmentCategory(
         @PathVariable Long id, @RequestBody AppointmentCategory appointmentCategory
     ) {
         if (Objects.isNull(appointmentCategory.getId())) {
@@ -96,7 +96,7 @@ public class AppointmentCategoryController
      * @return OK response with the deleted appointment category, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAppointmentCategory(@PathVariable Long id) {
+    public ResponseEntity<AppointmentCategory> deleteAppointmentCategory(@PathVariable Long id) {
         AppointmentCategory deletedAppointmentCategory = appointmentCategoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Appointment category with ID " + id + " not found."));

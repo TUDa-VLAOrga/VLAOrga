@@ -97,7 +97,7 @@ public class AppointmentSeriesController
      * @return OK response with the updated appointment series, Error response otherwise.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAppointmentSeries(
+    public ResponseEntity<AppointmentSeries> updateAppointmentSeries(
         @PathVariable Long id, @RequestBody AppointmentSeries appointmentSeries
     ) {
         if (Objects.isNull(appointmentSeries.getId())) {
@@ -124,7 +124,7 @@ public class AppointmentSeriesController
      * @return OK response with the deleted dataset.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAppointmentSeries(@PathVariable Long id) {
+    public ResponseEntity<AppointmentSeries> deleteAppointmentSeries(@PathVariable Long id) {
         AppointmentSeries deletedAppointmentSeries = appointmentSeriesRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Appointment series with ID " + id + " not found."));

@@ -62,7 +62,7 @@ public class PersonController implements
      * @return OK response with updated person, Error response otherwise.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePerson(@PathVariable Long id, @RequestBody Person person) {
+    public ResponseEntity<Person> updatePerson(@PathVariable Long id, @RequestBody Person person) {
         if (Objects.isNull(person.getId())) {
             person.setId(id);
         } else if (!person.getId().equals(id)) {
@@ -86,7 +86,7 @@ public class PersonController implements
      * @return OK response with deleted person, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePerson(@PathVariable Long id) {
+    public ResponseEntity<Person> deletePerson(@PathVariable Long id) {
         Person deletedPerson = personRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException("Person with ID " + id + " not found."));
 
