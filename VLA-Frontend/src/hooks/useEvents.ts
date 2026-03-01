@@ -128,7 +128,7 @@ export function useEvents() {
         ...updates.series,
       };
       try {
-        newSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "PUT", newSeries);
+        newSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/${newSeries.id}`, "PUT", newSeries);
       } catch (error) {
         Logger.error("Error during series update in handleUpdateEvent: " + error);
         return oldEvent;

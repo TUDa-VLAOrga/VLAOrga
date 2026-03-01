@@ -67,13 +67,15 @@ export function getNotSynchronisedId() {
   return internalNotSynchronisedId--;
 }
 
+const timestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d{3}(Z)?)?$/;
+
 /**
  * Reviver for JSON.parse, if value matches a datetime string, it will be parsed as a Date object.
  */
 // explicit any here, because what else should be the type annotation?
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parseJsonFixDate(_key: any, value: any) {
-  if (typeof value === "string" && value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d{3}Z)?$/)) {
+  if (typeof value === "string" && value.match(timestampPattern)) {
     return new Date(value);
   }
   return value;
@@ -87,6 +89,11 @@ export function parseJsonFixDate(_key: any, value: any) {
 export function toJsonFixDate(_key: any, value: any) {
   if (value instanceof Date) {
     return toJSONLocalTime(value);
+  }
+  // for some reason, during stringification JS passes a timestamp like 2026-02-28T00:00:00.000Z to this function
+  // instead of a date object. But we can deal with that, too :)
+  if (typeof value === "string" && value.match(timestampPattern)) {
+    return  toJSONLocalTime(new Date(value));
   }
   return value;
 }
