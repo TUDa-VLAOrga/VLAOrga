@@ -1,12 +1,12 @@
-import {useEffect, useRef, useState} from "react";
+import {type Dispatch, type SetStateAction, useState} from "react";
 import {DEFAULT_DURATION_MIN} from "@/components/calendar/eventUtils.ts";
 import {toDatetimeLocalString} from "@/components/calendar/dateUtils.ts";
 
 type TimeRangeInputProps = {
   startDateTime?: Date;
   endDateTime?: Date;
-  onStartChange: (value: Date) => void;
-  onEndChange: (value: Date) => void;
+  onStartChange: Dispatch<SetStateAction<Date>> | Dispatch<SetStateAction<Date | undefined>>;
+  onEndChange: Dispatch<SetStateAction<Date>> | Dispatch<SetStateAction<Date | undefined>>;
   autoCalculateEnd?: boolean; // Ob End-Zeit automatisch berechnet werden soll
   durationMilliseconds?: number;
   hintText?: string;
@@ -27,48 +27,9 @@ export default function TimeRangeInput({
   hintText,
   errorText,
 }: TimeRangeInputProps) {
-  // TODO fix bug initial duration always is durationMilliseconds = DEFAULT_DURATION
-
-  const initialDuration = (startDateTime && endDateTime)
-    ? endDateTime.getTime() - startDateTime.getTime()
-    : durationMilliseconds;
-  const duration = useRef(initialDuration);
   const [isWholeDay, setWholeDay] = useState(
     startDateTime && startDateTime.getHours() === 0 && endDateTime && endDateTime.getHours() === 23
   );
-
-  // Auto-calculate end time when start time changes, but keep duration.
-  useEffect(() => {
-    if (autoCalculateEnd && startDateTime) {
-      onEndChange(new Date(startDateTime.getTime() + duration.current));
-    }
-    if (isWholeDay && startDateTime) {
-      const newEndDate = new Date(startDateTime);
-      newEndDate.setHours(23, 59, 59, 999);
-      onEndChange(newEndDate);
-    }
-  }, [startDateTime, autoCalculateEnd, onEndChange, isWholeDay]);
-  useEffect(() => {
-    if (autoCalculateEnd && startDateTime && endDateTime) {
-      duration.current = endDateTime.getTime() - startDateTime.getTime();
-    }
-    // Consciously do not trigger effect for startDateTime. Ignore linter complaint.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endDateTime, autoCalculateEnd]);
-  // set sensible default values when swapping "ganztägig" checkbox
-  useEffect(()=> {
-    if (!startDateTime) return;
-    if (isWholeDay) {
-      const newStartDate = new Date(startDateTime);
-      newStartDate.setHours(0, 0, 0, 0);
-      onStartChange(newStartDate);
-    } else {
-      onEndChange(new Date(startDateTime?.getTime() + durationMilliseconds));
-    }
-    // Consciously do not trigger effect for startDateTime. Ignore linter complaint.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWholeDay]);
-
 
   return (
     <>
@@ -78,7 +39,26 @@ export default function TimeRangeInput({
           <input
             type="checkbox"
             checked={isWholeDay}
-            onChange={(e) => setWholeDay(e.target.checked)}
+            onChange={(e) => {
+              const newState = e.target.checked;
+              setWholeDay(prevState => {
+                if (prevState === newState) {
+                  return prevState;
+                }
+                if (newState && startDateTime) {
+                  // event should span over whole day
+                  const newDate = new Date(startDateTime.getTime());
+                  newDate.setHours(0, 0, 0, 0);
+                  onStartChange(newDate);
+                  newDate.setHours(23, 59, 59, 999);
+                  onEndChange(newDate);
+                } else if (!newState && startDateTime) {
+                  // whole day deactivated, set default duration
+                  const newDate = new Date(startDateTime.getTime() + durationMilliseconds);
+                  onEndChange(newDate);
+                }
+              });
+            }}
           />
           <span>ganztägig</span>
         </label>
@@ -92,7 +72,11 @@ export default function TimeRangeInput({
             className="cv-formInput"
             value={startDateTime ? toDatetimeLocalString(startDateTime).split("T")[0] : ""}
             // addition of T00:00 is necessary as otherwise we get 00:00 UTC, which is 01:00 in Darmstadt :(
-            onChange={(e) => onStartChange(new Date(e.target.value + "T00:00:00"))}/>
+            onChange={(e) => {
+              onStartChange(new Date(e.target.value + "T00:00:00"));
+              onEndChange(new Date(e.target.value + "T23:59:59"));
+            }}
+          />
           {hintText &&
               <div className="cv-formHint">
                 {hintText}
@@ -115,7 +99,19 @@ export default function TimeRangeInput({
               type="datetime-local"
               className="cv-formInput"
               value={startDateTime ? toDatetimeLocalString(startDateTime) : ""}
-              onChange={(e) => onStartChange(new Date(e.target.value))}
+              onChange={(e) => {
+                const newStart = new Date(e.target.value);
+                onStartChange((oldStart: Date | undefined) => {
+                  if (autoCalculateEnd && startDateTime && endDateTime) {
+                    if (oldStart) {
+                      onEndChange(new Date(endDateTime.getTime() + (newStart.getTime() - oldStart.getTime())));
+                    } else {
+                      onEndChange(new Date(endDateTime.getTime() + durationMilliseconds));
+                    }
+                  }
+                  return newStart;
+                });
+              }}
               required
             />
           </div>
@@ -129,7 +125,9 @@ export default function TimeRangeInput({
               type="datetime-local"
               className="cv-formInput"
               value={endDateTime ? toDatetimeLocalString(endDateTime) : ""}
-              onChange={(e) => onEndChange(new Date(e.target.value))}
+              onChange={(e) => {
+                onEndChange(new Date(e.target.value));
+              }}
               required
             />
             {hintText &&

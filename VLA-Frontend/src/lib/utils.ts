@@ -1,4 +1,4 @@
-import { Logger } from "@/components/logger/Logger";
+import {Logger} from "@/components/logger/Logger";
 import {toJSONLocalTime} from "@/components/calendar/dateUtils.ts";
 
 /**
@@ -14,8 +14,7 @@ export function fetchCSRFToken(){
         resolve(data.token);
       })
       .catch(error => {
-        Logger.error("CSRF could not be fetched");
-        console.log(error);
+        Logger.error("CSRF could not be fetched: " + error);
         reject(error);
       });
   });
