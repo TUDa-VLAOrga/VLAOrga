@@ -138,7 +138,7 @@ public class Linussyncservice {
      * @param end   The end of the time frame that should be synced
      */
     @Transactional("vlaTransactionManager")
-    public void syncMatchedAppointmentsExperimentBookings(LocalDateTime start, LocalDateTime end) {
+    public void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
         List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository
             .getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
 
@@ -227,10 +227,12 @@ public class Linussyncservice {
                 "appointment id=" + appointmentMatching.getAppointment().getId() + " from linus");
         }
 
-        log.warning(
-            "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
-                "with a null-matched appointment. " +
-                "According experiments that were not imported."
-        );
+        if (unmatchedBecauseAppointmentNull > 0) {
+            log.warning(
+                "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
+                    "with a null-matched appointment. " +
+                    "According experiments were not imported."
+            );
+        }
     }
 }
