@@ -50,9 +50,6 @@ COLUMN start;
 ALTER TABLE experiment_bookings
     ALTER COLUMN appointment_id SET NOT NULL;
 
-ALTER TABLE users
-    ALTER COLUMN email DROP NOT NULL;
-
 ALTER TABLE persons
 DROP
 COLUMN linus_user_id;
