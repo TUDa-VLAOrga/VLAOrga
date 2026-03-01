@@ -27,6 +27,7 @@ export default function TimeRangeInput({
   hintText,
   errorText,
 }: TimeRangeInputProps) {
+  // TODO fix bug initial duration always is durationMilliseconds = DEFAULT_DURATION
 
   const initialDuration = (startDateTime && endDateTime)
     ? endDateTime.getTime() - startDateTime.getTime()
@@ -88,7 +89,8 @@ export default function TimeRangeInput({
             type="date"
             className="cv-formInput"
             value={startDateTime ? toDatetimeLocalString(startDateTime).split("T")[0] : ""}
-            onChange={(e) => onStartChange(new Date(e.target.value))}/>
+            // addition of T00:00 is necessary as otherwise we get 00:00 UTC, which is 01:00 in Darmstadt :(
+            onChange={(e) => onStartChange(new Date(e.target.value + "T00:00:00"))}/>
           {hintText &&
               <div className="cv-formHint">
                 {hintText}
