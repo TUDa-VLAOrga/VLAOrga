@@ -51,7 +51,7 @@ export default function EventDetails({
     }
   }
 
-  function mailToPersons(persons: Person[]) {
+  function mailToPersons(persons:Person[]) {
     let mails: string[] = [];
     persons.forEach((person) => {
       if(person.email != "") { mails.push(person.email)}
@@ -150,7 +150,16 @@ export default function EventDetails({
 
             {event.series.lecture && event.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
-                <span className="cv-detailLabel">Personen:</span>
+                <span className="cv-detailLabelPeople"> 
+                  <span className="cv-detailLabel">Personen:</span>
+                  <button
+                      type="button"
+                      className="cv-formBtn cv-formBtnSecondary"
+                      onClick={() => {if(event.series.lecture) mailToPersons(event.series.lecture.persons)}}
+                    >
+                      {"Email an Alle"}
+                  </button>
+                </span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
                     {event.series.lecture?.persons.map((person) => (
@@ -169,15 +178,9 @@ export default function EventDetails({
                         </button>
                       </span>
                     ))}
-                  </span>
-                  <button
-                    type="button"
-                    className="cv-formBtn cv-formBtnSecondary"
-                    onClick={() => mailToPersons(event.series.lecture?.persons)}
-                  >
-                    {"Email an alle Personen"}
-                  </button>
+                  </span>                 
                 </div>
+                
               </div>
             )}
 
