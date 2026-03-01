@@ -39,7 +39,7 @@ public class LectureController
      * @return OK response with the created lecture, error response otherwise.
      */
     @PostMapping
-    public ResponseEntity<?> createLecture(@RequestBody Lecture lecture) {
+    public ResponseEntity<Lecture> createLecture(@RequestBody Lecture lecture) {
         if (Objects.nonNull(lecture.getId())) {
             if (lecture.getId() < 0) {
                 lecture.setId(null);

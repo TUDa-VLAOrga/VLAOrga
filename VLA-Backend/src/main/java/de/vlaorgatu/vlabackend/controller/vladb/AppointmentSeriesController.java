@@ -42,7 +42,7 @@ public class AppointmentSeriesController
      * @return OK response with the created appointment series, Error response otherwise.
      */
     @PostMapping
-    public ResponseEntity<?> createAppointmentSeries(
+    public ResponseEntity<AppointmentSeries> createAppointmentSeries(
         @RequestBody AppointmentSeries appointmentSeries) {
         if (Objects.nonNull(appointmentSeries.getId())) {
             if (appointmentSeries.getId() < 0) {

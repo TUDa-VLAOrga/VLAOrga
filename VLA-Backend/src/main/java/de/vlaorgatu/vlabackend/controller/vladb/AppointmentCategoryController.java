@@ -39,7 +39,7 @@ public class AppointmentCategoryController
      * @return OK response with the created appointment category, Error response otherwise.
      */
     @PostMapping
-    public ResponseEntity<?> createAppointmentCategory(
+    public ResponseEntity<AppointmentCategory> createAppointmentCategory(
         @RequestBody AppointmentCategory appointmentCategory) {
         if (Objects.nonNull(appointmentCategory.getId())) {
             if (appointmentCategory.getId() < 0) {

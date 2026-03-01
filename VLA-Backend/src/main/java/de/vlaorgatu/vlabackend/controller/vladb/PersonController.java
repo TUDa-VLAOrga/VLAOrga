@@ -39,7 +39,7 @@ public class PersonController implements
      * @return OK response with the created person, Error response otherwise.
      */
     @PostMapping
-    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
         if (Objects.nonNull(person.getId())) {
             if (person.getId() < 0) {
                 person.setId(null);
