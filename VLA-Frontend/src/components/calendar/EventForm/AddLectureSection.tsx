@@ -5,7 +5,7 @@ import type {Lecture, Person} from "@/lib/databaseTypes";
 type AddLectureSectionProps = {
   lectures: Lecture[];
   selectedLecture?: Lecture;
-  onLectureChange: (lecture: Lecture) => void;
+  onLectureChange: (lecture?: Lecture) => void;
   onAddLecture: (lecture: Lecture) => void;
   people?: Person[];
   onAddPerson: (person: Person) => Promise<Person | void>;
@@ -70,7 +70,8 @@ export default function AddLectureSection({
         value={selectedLecture ? selectedLecture.id : ""}
         onChange={(e) => {
           const newLecture = lectures.find((lec) => lec.id === Number(e.target.value));
-          if (newLecture) onLectureChange(newLecture);
+          if (newLecture) onLectureChange(newLecture)
+          else onLectureChange(undefined);
         }}
       >
         <option value="">Keine Zuordnung</option>
