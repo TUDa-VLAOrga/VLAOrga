@@ -79,8 +79,8 @@ export function moveEventSeries(
 
       return {
         ...e,
-        start: newEventStart,
-        end: newEventEnd,
+        startTime: newEventStart,
+        endTime: newEventEnd,
       };
     });
 }
