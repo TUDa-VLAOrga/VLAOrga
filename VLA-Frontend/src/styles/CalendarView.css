@@ -280,7 +280,8 @@
   border-bottom: 1px solid #777;
   background: rgba(255, 255, 255, 0.15);
 
-  overflow: hidden;        
+  overflow: hidden;     
+}   
 
 .cv-allDayEmpty {
   flex: 1;
