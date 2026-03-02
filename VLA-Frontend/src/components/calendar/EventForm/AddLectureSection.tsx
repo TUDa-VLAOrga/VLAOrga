@@ -70,7 +70,7 @@ export default function AddLectureSection({
         value={selectedLecture ? selectedLecture.id : ""}
         onChange={(e) => {
           const newLecture = lectures.find((lec) => lec.id === Number(e.target.value));
-          if (newLecture) onLectureChange(newLecture)
+          if (newLecture) onLectureChange(newLecture);
           else onLectureChange(undefined);
         }}
       >

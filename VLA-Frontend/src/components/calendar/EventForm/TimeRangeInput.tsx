@@ -47,16 +47,18 @@ export default function TimeRangeInput({
                 }
                 if (newState && startDateTime) {
                   // event should span over whole day
-                  const newDate = new Date(startDateTime.getTime());
-                  newDate.setHours(0, 0, 0, 0);
-                  onStartChange(newDate);
-                  newDate.setHours(23, 59, 59, 999);
-                  onEndChange(newDate);
+                  const newStartDate = new Date(startDateTime.getTime());
+                  newStartDate.setHours(0, 0, 0, 0);
+                  onStartChange(newStartDate);
+                  const newEndDate = new Date(startDateTime.getTime());
+                  newEndDate.setHours(23, 59, 59, 999);
+                  onEndChange(newEndDate);
                 } else if (!newState && startDateTime) {
                   // whole day deactivated, set default duration
                   const newDate = new Date(startDateTime.getTime() + durationMilliseconds);
                   onEndChange(newDate);
                 }
+                //return newState;
               });
             }}
           />
