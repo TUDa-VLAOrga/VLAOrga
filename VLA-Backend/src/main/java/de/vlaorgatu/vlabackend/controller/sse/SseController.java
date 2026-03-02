@@ -56,7 +56,10 @@ public class SseController {
      * @param sseMessageType The kind of the SSE event
      * @param eventObject    An object that should be processable by {@link ObjectMapper}
      */
-    public synchronized static void notifyAllOfObject(SseMessageType sseMessageType, Object eventObject) {
+    public static synchronized void notifyAllOfObject(
+        SseMessageType sseMessageType,
+        Object eventObject
+    ) {
         for (SseEmitter connection : sseHandlers) {
             String eventData;
 
