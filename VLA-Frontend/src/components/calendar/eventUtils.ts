@@ -73,7 +73,7 @@ export function moveEventSeries(
 
   return events
     .filter((e) => e.series.id === referenceEvent.series.id)
-    .map((e) => {
+    .map((e): Appointment => {
       const newEventStart = new Date(e.startTime.getTime() + timeDiffStart);
       const newEventEnd = new Date(e.endTime.getTime() + timeDiffEnd);
 

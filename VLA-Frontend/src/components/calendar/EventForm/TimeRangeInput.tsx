@@ -58,7 +58,7 @@ export default function TimeRangeInput({
                   const newDate = new Date(startDateTime.getTime() + durationMilliseconds);
                   onEndChange(newDate);
                 }
-                //return newState;
+                return newState;
               });
             }}
           />
