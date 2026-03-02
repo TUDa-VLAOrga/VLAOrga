@@ -18,7 +18,7 @@
   --timelineRowBorderBottom: 1px dashed rgba(0, 0, 0, 0.4);
 }
 
-/* ✅ IMPORTANT: avoid box model mismatches (line alignment bugs) */
+/* avoid box model mismatches (line alignment bugs) */
 *,
 *::before,
 *::after {
@@ -138,10 +138,11 @@
   border-right: 1px solid #777;
   background: #e9ecef;
 
-  /* ✅ make rail fill the scrollable height */
+  /*  make rail fill the scrollable height */
   height: 100%;
 }
 
+/* Left spacer must match all-day row height */
 .cv-allDaySpacer {
   height: var(--cv-all-day-height);
   border-bottom: 1px solid #777;
@@ -158,15 +159,15 @@
 
   min-width: max-content;
 
-  /* ✅ make grid fill the scrollable height */
+  /* make grid fill the scrollable height */
   height: 100%;
 
-  /* ✅ make day columns stretch full height */
+  /*  make day columns stretch full height */
   align-items: stretch;
 
   overflow: hidden;
 
-  /* ✅ needed for separator overlay */
+  /* needed for separator overlay */
   position: relative;
 }
 
@@ -190,7 +191,7 @@
   bottom: 0;
   height: 0;
 
-  /* ✅ keep label inside the table instead of pushing it below */
+  /*  keep label inside the table instead of pushing it below */
   transform: translateY(-50%);
 
   display: flex;
@@ -198,7 +199,7 @@
   pointer-events: none;
 }
 
-/* ✅ FIX: line alignment. remove padding that offsets dashed line */
+/* line alignment. remove padding that offsets dashed line */
 .cv-timeCell {
   height: var(--cv-hour-height);
   display: flex;
@@ -265,17 +266,21 @@
 }
 
 
-/* All-day / untimed row */
+/* All-day row: wrap + aligned height across all columns */
 .cv-allDayRow {
   height: var(--cv-all-day-height);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  align-content: flex-start;
+
+  flex-wrap: wrap; 
   gap: 8px;
   padding: 8px 10px;
+
   border-bottom: 1px solid #777;
   background: rgba(255, 255, 255, 0.15);
-  overflow: hidden;
-}
+
+  overflow: hidden;        
 
 .cv-allDayEmpty {
   flex: 1;
@@ -307,7 +312,7 @@
   min-height: calc(var(--cv-hour-count) * var(--cv-hour-height));
 }
 
-/* ✅ Avoid pixel rounding mismatches */
+/*  Avoid pixel rounding mismatches */
 .cv-timeline-grid {
   position: absolute;
   inset: 0;
@@ -360,7 +365,7 @@
   justify-content: center;
 }
 
-/* ✅ Title + time under it (as you want) */
+/* Title + time under it */
 .cv-timeline-event-title {
   font-size: 20px;
   font-weight: 700;

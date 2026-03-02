@@ -12,29 +12,27 @@ import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
 
-
-
 export default function CalendarView() {
-  const [showEventForm,setShowEventForm] = useState(false);
-  const {days,weekStart,rangeText,prevDay,nextDay,goToDate}= useCalendarNavigation();
-  const {lectures,handleAddLecture}= useLectures();
-  const {categories,handleAddCategory}= useCategories();
-  const {people, handleAddPerson, handleUpdatePersonNotes}= usePeople();
+  
+  const [showEventForm, setShowEventForm] = useState(false);
+  const { days, weekStart, rangeText, prevDay, nextDay, goToDate } =useCalendarNavigation();
+  const { lectures, handleAddLecture } = useLectures();
+  const { categories, handleAddCategory } = useCategories();
+  const { people, handleAddPerson, handleUpdatePersonNotes } = usePeople();
 
   const {
     allEvents,
     selectedEvent,
-    eventsByDate, 
-    handleCreateEvent, 
+    eventsByDate,
+    handleCreateEvent,
     handleEventClick,
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
   } = useEvents();
- 
+
   /**
    * Called by EventForm when the user submits.
-   * Creates the event(s) (including recurrence materialization) and closes the modal.
    */
   function onEventSubmit(formData: EventFormData) {
     handleCreateEvent(formData);
@@ -43,6 +41,17 @@ export default function CalendarView() {
 
   const frameStyleVars: React.CSSProperties & Record<string, number> = {
     "--cv-day-count": days.length,
+  };
+
+  const scrollContentStyle: React.CSSProperties = {
+    width: "max-content",
+    minWidth: "100%",
+
+    display: "flex",
+    flexDirection: "column",
+
+    height: "100%",
+    minHeight: 0,
   };
 
   return (
@@ -55,9 +64,7 @@ export default function CalendarView() {
           type="button"
         />
 
-        <div className="cv-range" aria-label="Datumsbereich">
-          {rangeText}
-        </div>
+        <div className="cv-range">{rangeText}</div>
 
         <button
           className="cv-navBox"
@@ -71,7 +78,6 @@ export default function CalendarView() {
         <button
           className="cv-createBtn"
           onClick={() => setShowEventForm(true)}
-          aria-label="Neuen Termin erstellen"
           type="button"
         >
           + Neuer Termin
@@ -79,12 +85,15 @@ export default function CalendarView() {
       </div>
 
       <div className="cv-frame" style={frameStyleVars}>
-        <WeekHeader days={days} />
-        <WeekGrid
-          days={days}
-          eventsByDate={eventsByDate}
-          onEventClick={handleEventClick}
-        />
+        <div style={scrollContentStyle}>
+          <WeekHeader days={days} />
+
+          <WeekGrid
+            days={days}
+            eventsByDate={eventsByDate}
+            onEventClick={handleEventClick}
+          />
+        </div>
       </div>
 
       {showEventForm && (
