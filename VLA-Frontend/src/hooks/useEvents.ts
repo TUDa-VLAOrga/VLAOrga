@@ -161,6 +161,9 @@ export function useEvents() {
   //Creates one or many CalendarEvent objects from the EventForm submission
   /**
    * Creates new appointments and appointments series from the form data.
+   * If the appointments have an associated lecture, create one separate series for every recurring weekday.
+   * Otherwise, create a single series for the all recurrences of this event.
+   *
    * @returns The created event or void if an error occurred.
    */
   async function handleCreateEvent(formData: EventFormData): Promise<Appointment | void> {
@@ -204,28 +207,50 @@ export function useEvents() {
     if (formData.recurrence && formData.recurrence.weekdays.length > 0 && formData.recurrence.endDay) {
       // create appointment series, one for each recurrence weekday
       const seriesByWeekday = new Map<Weekday, AppointmentSeries>;
-      formData.recurrence.weekdays.forEach(
-        (day) => {
-          seriesByWeekday.set(day, {
-            id: getNotSynchronisedId(),
-            lecture: formData.lecture,
-            name: formData.title.trim(),
-            category: formData.category!,
-          });
+      if (formData.lecture) {
+        // separate series only if lecture set
+        formData.recurrence.weekdays.forEach(
+          (day) => {
+            seriesByWeekday.set(day, {
+              id: getNotSynchronisedId(),
+              lecture: formData.lecture,
+              name: formData.title.trim(),
+              category: formData.category!,
+            });
+          }
+        );
+        let savedSeries: AppointmentSeries[];
+        try {
+          savedSeries = await fetchBackend(
+            `${API_URL_APPOINTMENT_SERIES}/multi`, "POST", [...seriesByWeekday.values()]
+          );
+        } catch (error) {
+          Logger.error("Error during series creation in handleCreateEvent: ", error);
+          return;
         }
-      );
-      let savedSeries: AppointmentSeries[];
-      try {
-        savedSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/multi`,"POST",[...seriesByWeekday.values()]);
-      } catch (error) {
-        Logger.error("Error during series creation in handleCreateEvent: ", error);
-        return;
+        // put saved series as reference in the weekday map
+        const savedSeriesIterator = savedSeries.values();
+        formData.recurrence.weekdays.forEach(
+          (day) => seriesByWeekday.set(day, savedSeriesIterator.next().value as AppointmentSeries)
+        );
+      } else {
+        // w/o lecture: same series for all weekdays (to keep weekday-iterating logic below the same)
+        let newSeries: AppointmentSeries = {
+          id: getNotSynchronisedId(),
+          lecture: undefined,
+          name: formData.title.trim(),
+          category: formData.category!,
+        };
+        try {
+          newSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newSeries);
+        } catch (error) {
+          Logger.error("Error during series creation in handleCreateEvent: ", error);
+          return;
+        }
+        formData.recurrence.weekdays.forEach(
+          (day) => seriesByWeekday.set(day, newSeries)
+        );
       }
-      // put saved series as reference in the weekday map
-      const savedSeriesIterator = savedSeries.values();
-      formData.recurrence.weekdays.forEach(
-        (day) => seriesByWeekday.set(day, savedSeriesIterator.next().value as AppointmentSeries)
-      );
 
       const duration = formData.endDateTime.getTime() - formData.startDateTime.getTime();
       const endDate = new Date(formData.recurrence.endDay.date);

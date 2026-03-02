@@ -130,6 +130,7 @@ export default function EventCreationForm({
   const [isValidTimeRange, timeRangeHintText] = verifyValidTimeRange(startDateTime, endDateTime);
   const isValid =
     hasTitle && category && startDateTime && endDateTime && isValidTimeRange;
+  const recurrenceHint = lecture ? "Für jeden Wochentag wird eine eigene Terminserie erstellt." : "";
 
   return (
     <div className="cv-formOverlay">
@@ -183,6 +184,7 @@ export default function EventCreationForm({
             onWeekdaysChange={(weekdays) => setRecurrence({ ...recurrence, weekdays })}
             endDay={recurrence.endDay}
             onEndDayChange={(endDay) => setRecurrence({ ...recurrence, endDay })}
+            hintText={recurrenceHint}
           />
 
           <div className="cv-formGroup">
