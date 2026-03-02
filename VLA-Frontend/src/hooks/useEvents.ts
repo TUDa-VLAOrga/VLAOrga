@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react";
+import {useState, useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
-import { addDays } from "../components/calendar/dateUtils";
-import type {Appointment, AppointmentSeries} from "@/lib/databaseTypes";
+import {addDays} from "../components/calendar/dateUtils";
+import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -9,8 +9,19 @@ import {
   verifyValidTimeRange
 } from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
-import {getNotSynchronisedId} from "@/lib/utils.ts";
+import {fetchBackend, getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.ts";
+import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
+import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
 
+function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
+  const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
+  return [...currentValue, newEvent];
+}
+
+function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment[]) {
+  const updatedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
+  return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
+}
 
 /**
  * useEvents manages:
@@ -19,17 +30,47 @@ import {getNotSynchronisedId} from "@/lib/utils.ts";
  * - creation logic, including recurrence materialization
  * - a derived "eventsByDate" map for efficient rendering in the grid
  */
-
 export function useEvents() {
-  const [allEvents, setEvents] = useState<Appointment[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<Appointment>();
+  const [selectedEventId, setSelectedEventId] = useState<number>();
+
+  /**
+   * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
+   */
+  function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
+    const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
+    if (deletedEvent.id === selectedEventId) {
+      // TODO: figure out whether this has some weird react race conditions,
+      //  since the result of this function is also passed to a setState
+      setSelectedEventId(undefined);
+    }
+    return currentValue.filter((event) => event.id !== deletedEvent.id);
+  }
+
+  // SSE handlers for appointments
+  const sseHandlersAppointments = new Map<
+    SseMessageType,
+    (event: MessageEvent, currentValue: Appointment[]) => Appointment[]
+  >();
+  sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
+  sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
+  sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
+  const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+    [], API_URL_APPOINTMENTS, sseHandlersAppointments
+  );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
-    // TODO: Backend request
-    setEvents((prev) =>
-      prev.map(event => event.id === eventId ? {...event, notes} : event)
-    );
-    setSelectedEvent(prev => prev?.id === eventId ? {...prev, notes} : prev);
+    const event = allEvents.find(e => e.id === eventId);
+    if (event) {
+      event.notes = notes;
+      fetchBackend<Appointment>(
+        `${API_URL_APPOINTMENTS}/${eventId}`,
+        "PUT",
+        {...event, notes: notes}
+      )
+        .catch((error) => {
+          Logger.error("Error after updating event notes: ", error);
+        });
+    }
   }
 
   /**
@@ -38,16 +79,19 @@ export function useEvents() {
    * @param eventId ID of the event to update
    * @param updates updates to apply to the event.
    * @param editSeries Whether to update the whole series or just this event.
+   * @returns The updated event or the old one, in case an error occurred.
    */
-  function handleUpdateEvent(eventId: number, updates: Partial<Appointment>, editSeries: boolean) {
-    if (updates.start && updates.end && !verifyValidTimeRange(updates.start, updates.end)) {
+  async function handleUpdateEvent(
+    eventId: number, updates: Partial<Appointment>, editSeries: boolean
+  ): Promise<Appointment> {
+    if (updates.startTime && updates.endTime && !verifyValidTimeRange(updates.startTime, updates.endTime)) {
       Logger.error("Invalid time range for event");
-      return;
+      throw new Error("Invalid time range for event");
     }
     const oldEvent = allEvents.find(e => e.id === eventId);
     if (!oldEvent) {
       Logger.error("Event not found");
-      return;
+      throw new Error("Event not found");
     }
     // case 1: only this event should be updated
     if (!editSeries || !checkPartOfSeries(oldEvent, allEvents)) {
@@ -59,42 +103,67 @@ export function useEvents() {
           ...updates.series,
           id: getNotSynchronisedId(),
         };
-        // TODO: backend request to create new series
+        try {
+          newSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newSeries);
+        } catch (error) {
+          Logger.error("Error during series creation in handleUpdateEvent: ", error);
+          return oldEvent;
+        }
       }
-      setEvents((prev) =>
-        prev.map((event) =>
-          event.id === eventId
-            ? {
-              ...event,
-              ...updates,
-              series: newSeries || event.series,
-            }
-            : event
-        )
-      );
-      // TODO: backend request to update event
+
+      const newEvent = {
+        ...oldEvent,
+        ...updates,
+        series: newSeries || oldEvent.series,
+      };
+      try {
+        return fetchBackend(
+          `${API_URL_APPOINTMENTS}/${eventId}`, "PUT", newEvent
+        );
+      } catch (error) {
+        Logger.error("Error during appointment update in handleUpdateEvent: ", error);
+        return oldEvent;
+      }
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
-      const newSeries = {
+      let newSeries = {
         ...oldEvent.series,
         ...updates.series,
       };
-      // TODO: backend request to update series
-      let movedEvents: Appointment[] = allEvents;
-      if (updates.start && updates.end) {
+      try {
+        newSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/${newSeries.id}`, "PUT", newSeries);
+      } catch (error) {
+        Logger.error("Error during series update in handleUpdateEvent: ", error);
+        return oldEvent;
+      }
+      let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
+        ...e,
+        series: newSeries,
+      }));
+      if (updates.startTime && updates.endTime) {
         // calculate new start and end for every event, if changed
-        movedEvents = moveEventSeries(allEvents, oldEvent, updates.start, updates.end);
+        movedEvents = moveEventSeries(allEvents, oldEvent, updates.startTime, updates.endTime);
       }
       // set events to moved ones with updated series
-      setEvents(movedEvents.map(event =>
-        event.series.id === oldEvent.series.id ? {...event, series: newSeries} : event)
-      );
-      // TODO: backend request to update events
+      try {
+        movedEvents.forEach(event => fetchBackend(
+          `${API_URL_APPOINTMENTS}/${event.id}`, "PUT", event));
+      } catch (error) {
+        Logger.error("Error during appointment update in handleUpdateEvent: ", error);
+        return oldEvent;
+      }
+      return movedEvents.find(e => e.id === eventId)!;
+    } else {
+      Logger.error("Impossible: Event neither part of series nor single event.");
+      return oldEvent;
     }
-    setSelectedEvent(allEvents.find(e => e.id === eventId));
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
-  function handleCreateEvent(formData: EventFormData) {
+  /**
+   * Creates new appointments and appointments series from the form data.
+   * @returns The created event or void if an error occurred.
+   */
+  async function handleCreateEvent(formData: EventFormData): Promise<Appointment | void> {
     // basic validation
     if (!(
       (formData.title || formData.lecture) && formData.category
@@ -110,17 +179,23 @@ export function useEvents() {
     // even w/o recurrence we need one series to conform with our data model.
     // Also, create a single series if initial event date is not on one recurring day.
     if (!formData.recurrence || !formData.recurrence.weekdays.includes(formData.startDateTime.getDay() as Weekday)) {
-      const newAppSeries: AppointmentSeries = {
+      let newAppSeries: AppointmentSeries = {
         id: getNotSynchronisedId(),
         lecture: formData.lecture,
         name: formData.title.trim(),
         category: formData.category,
       };
+      try {
+        newAppSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newAppSeries);
+      } catch (error) {
+        Logger.error("Error during series creation in handleCreateEvent: ", error);
+        return;
+      }
       newEvents.push({
         id: getNotSynchronisedId(),
         series: newAppSeries,
-        start: formData.startDateTime,
-        end: formData.endDateTime,
+        startTime: formData.startDateTime,
+        endTime: formData.endDateTime,
         notes: formData.notes || "",
       });
     }
@@ -139,6 +214,18 @@ export function useEvents() {
           });
         }
       );
+      let savedSeries: AppointmentSeries[];
+      try {
+        savedSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/multi`,"POST",[...seriesByWeekday.values()]);
+      } catch (error) {
+        Logger.error("Error during series creation in handleCreateEvent: ", error);
+        return;
+      }
+      // put saved series as reference in the weekday map
+      const savedSeriesIterator = savedSeries.values();
+      formData.recurrence.weekdays.forEach(
+        (day) => seriesByWeekday.set(day, savedSeriesIterator.next().value as AppointmentSeries)
+      );
 
       const duration = formData.endDateTime.getTime() - formData.startDateTime.getTime();
       const endDate = new Date(formData.recurrence.endDay.date);
@@ -151,26 +238,38 @@ export function useEvents() {
           newEvents.push({
             id: getNotSynchronisedId(),
             series: seriesByWeekday.get(weekday)!,
-            start: currentDate,
-            end: new Date(currentDate.getTime() + duration),
+            startTime: currentDate,
+            endTime: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
           });
         }
         currentDate = addDays(currentDate, 1);
       }
     }
-    // TODO: Backend - POST request to /api/appointmentSeries
-    // TODO: Backend - POST request to /api/appointments
-    // Append newly created events to state
-    setEvents((prev) => [...prev, ...newEvents]);
+    try {
+      const savedEvents = await fetchBackend(
+        `${API_URL_APPOINTMENTS}/multi`, "POST", newEvents
+      );
+      // return event with earliest start date
+      return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
+    } catch (error) {
+      Logger.error("Error during appointment creation in handleCreateEvent: ", error);
+      return;
+    }
   }
 
-  function handleEventClick(event: Appointment) {
-    setSelectedEvent(event);
+  /**
+   * Update the {@link selectedEventId} state on clicking an event.
+   */
+  function handleEventClick(eventId: number) {
+    setSelectedEventId(eventId);
   }
 
+  /**
+   * Update the {@link selectedEventId} state on closing the event details.
+   */
   function closeEventDetails() {
-    setSelectedEvent(undefined);
+    setSelectedEventId(undefined);
   }
 
   /**
@@ -191,7 +290,7 @@ export function useEvents() {
 
   return {
     allEvents,
-    selectedEvent,
+    selectedEventId,
     eventsByDate,
     handleCreateEvent,
     handleEventClick,

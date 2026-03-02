@@ -65,6 +65,7 @@ public class SseController {
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");
+                logger.error(e.getMessage());
                 return;
             }
 

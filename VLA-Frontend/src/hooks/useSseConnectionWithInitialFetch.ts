@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import useSseConnection from "./useSseConnection";
 import { Logger } from "@/components/logger/Logger";
 import type { SseMessageType } from "@/lib/databaseTypes";
+import {fetchBackend} from "@/lib/utils.ts";
 
 /**
  * Extension of {@link useSseConnection} but directly initiates a fetch for data
+ *
  * @param defaultValue The default value to taken on before the value is fetched
  * @param apiResourceURL The api endpoint relative to the host of the JSON resource
  * @param eventHandlers Take a MessageEvent and the current value and return the new value
@@ -26,21 +28,16 @@ export default function useSseConnectionWithInitialFetch<T extends object>(
     // If component does still exist and state can be changed
     let mounted = true;
 
-    fetch(apiResourceURL)
-      .then(response => {
-        // Trigger catch case on fetching error
-        if(!response.ok) throw new Error();
-        return response.json();
-      })
-
+    fetchBackend<T>(apiResourceURL, "GET")
       .then(parsedObj => {
-        if (mounted){
+        if (mounted) {
           setsseDefaultValue(parsedObj);
         }
       })
 
-      .catch(_ => 
-        Logger.warn("Could not fetch data")
+      .catch(error => {
+        Logger.error("Could not fetch data on state init from URL: " + apiResourceURL + ": ", error);
+      }
       );
 
     return () => {

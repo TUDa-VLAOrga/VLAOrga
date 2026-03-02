@@ -21,6 +21,19 @@ export function toDatetimeLocalString(d: Date) {
   return `${toISODateLocal(d)}T${hours}:${minutes}`;
 }
 
+/**
+ * Convert to string without timezone, but in current timezone (not necessarily UTC).
+ *
+ * Needed for sending to the server, where we work with LocalTime objects that also do not respect timezone.
+ * Standard {@link JSON.stringify} does not work here, because it would give the UTC timestamp.
+ */
+export function toJSONLocalTime(d: Date) {
+  const hours = d.getHours().toString().padStart(2, "0");
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+  const seconds = d.getSeconds().toString().padStart(2, "0");
+  return `${toISODateLocal(d)}T${hours}:${minutes}:${seconds}`;
+}
+
 /** Formats a date as "dd.mm." (e.g., "19.12."). */
 export function formatDDMM(date: Date) {
   const dd = String(date.getDate()).padStart(2, "0");

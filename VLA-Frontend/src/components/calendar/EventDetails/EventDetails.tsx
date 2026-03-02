@@ -17,9 +17,9 @@ type EventDetailsProps = {
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
-  onAddCategory: (category: AppointmentCategory) => void;
-  onAddPerson: (person: Person) => void;
-  onAddLecture: (lecture: Lecture) => void;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
+  onAddPerson: (person: Person) => Promise<Person | void>;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
 };
 
 /**
@@ -129,7 +129,7 @@ export default function EventDetails({
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Zeit:</span>
               <span className="cv-detailValue">
-                {formatTimeRangeShortDE(event.start, event.end)}
+                {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </span>
             </div>
 
@@ -193,7 +193,7 @@ export default function EventDetails({
             <button
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
-              disabled={eventNotes.trim() === event.notes}
+              disabled={typeof eventNotes === "string" && eventNotes.trim() === event.notes}
               onClick={() => {
                 onUpdateEventNotes(event.id, eventNotes);
                 onClose();
