@@ -5,8 +5,8 @@ import {toDatetimeLocalString} from "@/components/calendar/dateUtils.ts";
 type TimeRangeInputProps = {
   startDateTime?: Date;
   endDateTime?: Date;
-  onStartChange: Dispatch<SetStateAction<Date>> | Dispatch<SetStateAction<Date | undefined>>;
-  onEndChange: Dispatch<SetStateAction<Date>> | Dispatch<SetStateAction<Date | undefined>>;
+  onStartChange: Dispatch<SetStateAction<Date | undefined>>;
+  onEndChange: Dispatch<SetStateAction<Date | undefined>>;
   autoCalculateEnd?: boolean; // Ob End-Zeit automatisch berechnet werden soll
   durationMilliseconds?: number;
   hintText?: string;
@@ -31,6 +31,56 @@ export default function TimeRangeInput({
     startDateTime && startDateTime.getHours() === 0 && endDateTime && endDateTime.getHours() === 23
   );
 
+  /**
+   * Events spanning over a whole day should span from 0:00 to 23:59.
+   * Handle this checkbox change accordingly.
+   *
+   * @param newState state the checkbox was changed to.
+   */
+  function handleWholeDayChange(newState: boolean) {
+    setWholeDay(prevState => {
+      if (prevState === newState) {
+        return prevState;
+      }
+      if (newState && startDateTime) {
+        // event should span over whole day
+        const newStartDate = new Date(startDateTime.getTime());
+        newStartDate.setHours(0, 0, 0, 0);
+        onStartChange(newStartDate);
+        const newEndDate = new Date(startDateTime.getTime());
+        newEndDate.setHours(23, 59, 59, 999);
+        onEndChange(newEndDate);
+      } else if (!newState && startDateTime) {
+        // whole day deactivated, set default duration
+        const newDate = new Date(startDateTime.getTime() + durationMilliseconds);
+        onEndChange(newDate);
+      }
+      return newState;
+    });
+  }
+
+  /**
+   * Handle change of start time by shifting end time accordingly.
+   * @param newStart
+   */
+  function handleStartChange(newStart: Date) {
+    console.log("handleStartChange", newStart);
+    onStartChange((oldStart: Date | undefined) => {
+      if (autoCalculateEnd && newStart) {
+        if (oldStart && endDateTime) {
+          onEndChange(new Date(endDateTime.getTime() + (newStart.getTime() - oldStart.getTime())));
+        } else if (oldStart && !endDateTime) {
+          onEndChange(new Date(newStart.getTime() + durationMilliseconds));
+        } else if (!oldStart && endDateTime) {
+          // do nothing if endDateTime was set before already
+        } else { // if (!oldStart && !endDateTime)
+          onEndChange(new Date(newStart.getTime() + durationMilliseconds));
+        }
+      }
+      return newStart;
+    });
+  }
+
   return (
     <>
 
@@ -39,28 +89,7 @@ export default function TimeRangeInput({
           <input
             type="checkbox"
             checked={isWholeDay}
-            onChange={(e) => {
-              const newState = e.target.checked;
-              setWholeDay(prevState => {
-                if (prevState === newState) {
-                  return prevState;
-                }
-                if (newState && startDateTime) {
-                  // event should span over whole day
-                  const newStartDate = new Date(startDateTime.getTime());
-                  newStartDate.setHours(0, 0, 0, 0);
-                  onStartChange(newStartDate);
-                  const newEndDate = new Date(startDateTime.getTime());
-                  newEndDate.setHours(23, 59, 59, 999);
-                  onEndChange(newEndDate);
-                } else if (!newState && startDateTime) {
-                  // whole day deactivated, set default duration
-                  const newDate = new Date(startDateTime.getTime() + durationMilliseconds);
-                  onEndChange(newDate);
-                }
-                return newState;
-              });
-            }}
+            onChange={(e) => handleWholeDayChange(e.target.checked)}
           />
           <span>ganztägig</span>
         </label>
@@ -102,21 +131,11 @@ export default function TimeRangeInput({
               className="cv-formInput"
               value={startDateTime ? toDatetimeLocalString(startDateTime) : ""}
               onChange={(e) => {
-                const newStart = new Date(e.target.value);
-                onStartChange((oldStart: Date | undefined) => {
-                  if (autoCalculateEnd && newStart) {
-                    if (oldStart && endDateTime) {
-                      onEndChange(new Date(endDateTime.getTime() + (newStart.getTime() - oldStart.getTime())));
-                    } else if (oldStart && !endDateTime) {
-                      onEndChange(new Date(newStart.getTime() + durationMilliseconds));
-                    } else if (!oldStart && endDateTime) {
-                      // do nothing if endDateTime was set before already
-                    } else { // if (!oldStart && !endDateTime)
-                      onEndChange(new Date(newStart.getTime() + durationMilliseconds));
-                    }
-                  }
-                  return newStart;
-                });
+                if (e.target.value) {
+                  handleStartChange(new Date(e.target.value));
+                } else {
+                  onStartChange(undefined);
+                }
               }}
               required
             />
@@ -132,7 +151,11 @@ export default function TimeRangeInput({
               className="cv-formInput"
               value={endDateTime ? toDatetimeLocalString(endDateTime) : ""}
               onChange={(e) => {
-                onEndChange(new Date(e.target.value));
+                if (e.target.value) {
+                  onEndChange(new Date(e.target.value));
+                } else {
+                  onEndChange(undefined);
+                }
               }}
               required
             />

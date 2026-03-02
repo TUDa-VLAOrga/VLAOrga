@@ -40,8 +40,8 @@ export default function EventEditForm({
   const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);
   const [notes, setNotes] = useState(event.notes);
 
-  const [startDateTime, setStartDateTime] = useState(event.startTime);
-  const [endDateTime, setEndDateTime] = useState(event.endTime);
+  const [startDateTime, setStartDateTime] = useState<Date | undefined>(event.startTime);
+  const [endDateTime, setEndDateTime] = useState<Date | undefined>(event.endTime);
 
   function handleAddCategory(category: AppointmentCategory) {
     onAddCategory(category);
