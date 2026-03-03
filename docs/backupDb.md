@@ -1,12 +1,12 @@
 # Backup of VLAOrga Database
 
 ## Check environment
-Check that the .env file is correct
+Check that the .env file is correct.
 
 ## Create Backup
-For this, the docker of the database has to run.
-If there is no backups folder in VLAOrga, create one.
-In the VLAOrga folder, run the command:
+1. For this, the docker of the database has to run.
+2. If there is no backups folder in VLAOrga, create one.
+3. In the VLAOrga folder, run the command:
 
     ./scripts/createDbBackup.sh 
 
