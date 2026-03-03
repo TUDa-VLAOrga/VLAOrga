@@ -16,3 +16,4 @@ cat $PG_FILE | docker exec -i $CONTAINER_NAME psql -q -X -U $POSTGRES_USER -d $P
 # some errors here are normal, see https://www.postgresql.org/docs/current/app-pg-dumpall.html under notes
 
 echo Dump restored
+

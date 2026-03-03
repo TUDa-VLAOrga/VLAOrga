@@ -1,7 +1,7 @@
 # Backup of VLAOrga Database
 
 ## Check environment
-Check that the .env is correct
+Check that the .env file is correct
 
 ## Create Backup
 For this, the docker of the database has to run.
@@ -18,8 +18,4 @@ In the VLAOrga folder, run the command:
     ./scripts/applyDbBackup.sh backups/file_name.sql
     
 This deletes all data from the database and restores the state of the backup.
-
-
-
-
 
