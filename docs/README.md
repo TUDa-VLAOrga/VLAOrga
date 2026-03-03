@@ -1,6 +1,7 @@
 # Documentation of VLAOrga
 
 * [Setup instructions for production use](./setup.md)
+* [Backup instructions for the VLAOrga database](./backupDb.md)
 * For development
     * [Setup instructions](./setup-development.md)
     * [Code-Syle configurations (linter etc.)](./code-style.md)
