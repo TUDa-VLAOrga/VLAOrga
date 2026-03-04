@@ -24,7 +24,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
-import de.vlaorgatu.vlabackend.security.securityutils.UnsecureSecurityUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -305,7 +304,7 @@ public class BookingServiceTest {
             .build()
         );
 
-        appointmentController.deleteAppointment(appointment.getId(),1L);
+        appointmentController.deleteAppointment(appointment.getId(), 1L);
 
         Appointment finalAppointment = appointment;
         Assertions.assertThrows(

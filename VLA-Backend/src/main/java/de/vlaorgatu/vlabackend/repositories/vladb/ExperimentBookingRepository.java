@@ -19,6 +19,7 @@ public interface ExperimentBookingRepository extends JpaRepository<ExperimentBoo
      * @return All {@link ExperimentBooking}s that are assigned to the appointment
      */
     List<ExperimentBooking> findExperimentBookingsByAppointment(Appointment appointment);
+
     /**
      * Retrieves the {@link ExperimentBooking} with a given linus id.
      *

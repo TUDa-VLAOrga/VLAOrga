@@ -22,6 +22,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     Optional<Appointment> getAppointmentBySeriesAndStartTimeIsAfterOrderByStartTime(
         AppointmentSeries series, LocalDateTime startTime);
+
     /**
      * Finds an appointment by its id.
      *
