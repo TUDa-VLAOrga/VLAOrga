@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Import(TestcontainersConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Rollback
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 public class VlaBackendEntitiesTest {
