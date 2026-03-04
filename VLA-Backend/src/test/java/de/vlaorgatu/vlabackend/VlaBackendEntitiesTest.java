@@ -14,17 +14,24 @@ import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Tests for backend entity operations, using the Controller classes.
  */
 @Import(TestcontainersConfiguration.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Rollback
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 public class VlaBackendEntitiesTest {
 
@@ -42,8 +49,7 @@ public class VlaBackendEntitiesTest {
         .name("Dr. Alberner Stein")
         .email("")
         .notes("bitte grünen Laserpointer")
-        .linusUserId(42L)
-        .lectures(null)
+        .linusUserId(42)
         .build();
 
     AppointmentCategory appCategory = new AppointmentCategory(1L, "Vorlesung");
@@ -55,18 +61,22 @@ public class VlaBackendEntitiesTest {
         .category(appCategory)
         .build();
 
-    Appointment appointment = Appointment.builder()
-        .id(1L)
-        .series(appSeries)
-        .startTime(LocalDateTime.parse("2025-10-14T09:50:00"))
-        .endTime(LocalDateTime.parse("2025-10-14T11:30:00"))
-        .notes("Mit Willkommensgeschenk zum Semesterstart!")
-        .deletingIntentionUser(null)
-        .build();
+    Appointment appointment =
+        Appointment.builder()
+            .id(1L)
+            .series(appSeries)
+            .startTime(LocalDateTime.parse("2025-10-14T09:50:00"))
+            .endTime(LocalDateTime.parse("2025-10-14T11:30:00"))
+            .notes("Mit Willkommensgeschenk zum Semesterstart!")
+            .bookings(List.of())
+            .build();
 
-    Acceptance acceptance =
-        new Acceptance(1L, appointment, LocalDateTime.parse("2025-10-13T17:00:00"),
-            LocalDateTime.parse("2025-10-13T17:30:00"));
+    Acceptance acceptance = Acceptance.builder()
+        .id(1L)
+        .appointment(appointment)
+        .startTime(LocalDateTime.parse("2025-10-13T17:00:00"))
+        .endTime(LocalDateTime.parse("2025-10-13T17:30:00"))
+        .build();
 
     // Controllers
     @Autowired
@@ -82,7 +92,8 @@ public class VlaBackendEntitiesTest {
     @Autowired
     AcceptanceController acceptanceController;
 
-    @Transactional("vlaTransactionManager")
+    @Rollback
+    @Transactional
     @Test
     void entityCreationTest() {
         Assertions.assertThrows(InvalidParameterException.class,

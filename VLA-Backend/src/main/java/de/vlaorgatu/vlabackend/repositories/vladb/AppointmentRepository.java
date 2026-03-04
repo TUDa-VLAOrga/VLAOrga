@@ -1,6 +1,9 @@
 package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -21,4 +24,23 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     Optional<Appointment> getAppointmentBySeriesAndStartTimeIsAfterOrderByStartTime(
         AppointmentSeries series, LocalDateTime startTime);
+    /**
+     * Finds an appointment by its id.
+     *
+     * @param id The id of the appointment
+     * @return The Appointment if existent
+     */
+    Optional<Appointment> getAppointmentById(Long id);
+
+    /**
+     * Finds all appointments that begin before a start time and end after an end time.
+     *
+     * @param start The start of the event
+     * @param end   The end of the event
+     * @return All appointments that contain this event
+     */
+    List<Appointment> findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+        LocalDateTime start,
+        LocalDateTime end
+    );
 }

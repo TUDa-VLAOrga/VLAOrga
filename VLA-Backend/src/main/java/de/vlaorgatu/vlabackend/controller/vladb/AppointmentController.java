@@ -5,6 +5,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
@@ -12,16 +13,23 @@ import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -61,6 +69,25 @@ public class AppointmentController
     private final SecurityUtils securityUtils;
 
     /**
+     * Returns all appointments where eventTime is in their timeframe.
+     *
+     * @param eventTime The specified time as an ISO string
+     * @return All appointments that contain the eventTime
+     */
+    @GetMapping("/includeTime")
+    public ResponseEntity<List<Appointment>> getAppointmentsDuringTime(
+        @RequestParam("eventTime")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
+    ) {
+        List<Appointment> appointmentsInTimeFrame =
+            appointmentRepository.findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+                eventTime, eventTime
+            );
+
+        return ResponseEntity.ok(appointmentsInTimeFrame);
+    }
+
+    /**
      * Creates a new appointment.
      *
      * @param appointment Appointment to create, must not contain an ID (auto-generated).
@@ -69,13 +96,16 @@ public class AppointmentController
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
         if (Objects.nonNull(appointment.getId())) {
-            throw new InvalidParameterException(
-                "Received appointment with ID " + appointment.getId() +
-                    " when creating a new appointment.");
+            if (appointment.getId() < 0) {
+                appointment.setId(null);
+            } else {
+                throw new InvalidParameterException(
+                    "Received appointment with ID " + appointment.getId() +
+                        " when creating a new appointment.");
+            }
         }
         Appointment savedAppointment = appointmentRepository.save(appointment);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment created: " + savedAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCREATED, savedAppointment);
         return ResponseEntity.ok(savedAppointment);
     }
 
@@ -88,7 +118,7 @@ public class AppointmentController
      * @return OK response with the updated appointment, Error response otherwise.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAppointment(@PathVariable Long id,
+    public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id,
                                                @RequestBody Appointment appointment) {
         if (Objects.isNull(appointment.getId())) {
             appointment.setId(id);
@@ -103,9 +133,33 @@ public class AppointmentController
         }
 
         Appointment updated = appointmentRepository.save(appointment);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment updated: " + updated);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updated);
         return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Creates multiple appointments.
+     *
+     * @param appointmentList List of datasets for creation.
+     * @return OK response with the created appointment list, Error response otherwise.
+     */
+    @PostMapping("/multi")
+    public ResponseEntity<Appointment[]> createAppointmentsMulti(
+        @RequestBody Appointment[] appointmentList) {
+        if (Arrays.stream(appointmentList).map(Appointment::getId).filter(Objects::nonNull)
+            .anyMatch(id -> id > 0)) {
+            throw new InvalidParameterException(
+                "Received appointment with ID > 0 when bulk-creating appointments.");
+        }
+        Arrays.stream(appointmentList).forEach((appointment) -> {
+            appointment.setId(null);
+        });
+
+        List<Appointment> saved = appointmentRepository.saveAll(Arrays.asList(appointmentList));
+        saved.forEach((appointment) -> {
+            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCREATED, appointment);
+        });
+        return ResponseEntity.ok(saved.toArray(Appointment[]::new));
     }
 
     /**

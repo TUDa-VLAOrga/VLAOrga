@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.controller.sse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
@@ -52,11 +51,15 @@ public class SseController {
 
     /**
      * Sends an SSE message with the JSON representation of an object to all connected clients.
+     * TODO: Narrow Object type to an abstract entity type
      *
      * @param sseMessageType The kind of the SSE event
-     * @param eventObject    An object that should be processable by {@link ObjectMapper}
+     * @param eventObject The object to send to the frontend
      */
-    public static void notifyAllOfObject(SseMessageType sseMessageType, Object eventObject) {
+    public static synchronized void notifyAllOfObject(
+        SseMessageType sseMessageType,
+        Object eventObject
+    ) {
         for (SseEmitter connection : sseHandlers) {
             String eventData;
 
@@ -65,6 +68,7 @@ public class SseController {
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");
+                logger.error(e.getMessage());
                 return;
             }
 
@@ -85,7 +89,7 @@ public class SseController {
      * @return The SSE Connection for the frontend
      */
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter connect() {
+    public synchronized SseEmitter connect() {
         // Set timeout to never occur automatically
         SseEmitter connectionHandler = new SseEmitter(Long.MAX_VALUE);
 
@@ -115,7 +119,7 @@ public class SseController {
      */
     @PostMapping("/manualNotification")
     // TODO: Remove this endpoint after testing stage
-    public String notifyAllSse() {
+    public synchronized String notifyAllSse() {
         for (SseEmitter connection : sseHandlers) {
             try {
                 connection.send(SseEmitter.event().name(SseMessageType.DEBUG.getValue())
@@ -131,7 +135,7 @@ public class SseController {
     }
 
     @GetMapping("/getTestData")
-    public String getTestData() {
+    public synchronized String getTestData() {
         return "{\"message\":\"Something incredible has happened with this SSE request\"}";
     }
 }

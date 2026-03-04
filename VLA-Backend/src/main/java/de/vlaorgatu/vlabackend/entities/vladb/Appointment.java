@@ -3,13 +3,18 @@ package de.vlaorgatu.vlabackend.entities.vladb;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nullable;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,10 +25,10 @@ import lombok.Setter;
  * Represents an appointment in our calendar.
  */
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Setter
+@AllArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "appointments")
 public class Appointment {
@@ -59,6 +64,13 @@ public class Appointment {
      */
     @Column(name = "notes", nullable = false)
     private String notes = "";
+
+    /**
+     * List of {@link ExperimentBooking}s of this appointment.
+     */
+    @JsonManagedReference
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private List<ExperimentBooking> bookings = new ArrayList<>();
 
     /**
      * The id of a {@link User} that intents on deleting this appointment.

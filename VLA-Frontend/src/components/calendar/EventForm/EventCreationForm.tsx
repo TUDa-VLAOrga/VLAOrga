@@ -31,10 +31,10 @@ type EventFormProps = {
   onCancel: () => void;
   lectures: Lecture[];
   categories: AppointmentCategory[];
-  onAddLecture: (lecture: Lecture) => void;
-  onAddCategory: (category: AppointmentCategory) => void;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   people: Person[];
-  onAddPerson?: (person: Person) => void;
+  onAddPerson: (person: Person) => Promise<Person | void>;
 };
 
 /**
@@ -49,11 +49,11 @@ type EventFormProps = {
 export default function EventCreationForm({
   onSubmit,
   onCancel,
-  lectures= [],
-  categories=[],
+  lectures,
+  categories,
   onAddLecture,
   onAddCategory,
-  people= [],
+  people,
   onAddPerson,
 }: EventFormProps) {
   // Basic form fields.
@@ -73,8 +73,11 @@ export default function EventCreationForm({
    */
 
   const handleAddLecture = (lecture: Lecture) => {
-    onAddLecture?.(lecture);
-    setLecture(lecture);
+    onAddLecture(lecture).then((lecture) => {
+      if (lecture) {
+        setLecture(lecture);
+      }
+    });
   };
   
   /**
@@ -83,8 +86,11 @@ export default function EventCreationForm({
    * - auto-select it for the current event
    */
   const handleAddCategory = (category: AppointmentCategory) => {
-    onAddCategory?.(category);
-    setCategory(category);
+    onAddCategory(category).then((category) => {
+      if (category) {
+        setCategory(category);
+      }
+    });
   };
 
   /**
@@ -124,6 +130,7 @@ export default function EventCreationForm({
   const [isValidTimeRange, timeRangeHintText] = verifyValidTimeRange(startDateTime, endDateTime);
   const isValid =
     hasTitle && category && startDateTime && endDateTime && isValidTimeRange;
+  const recurrenceHint = lecture ? "Für jeden Wochentag wird eine eigene Terminserie erstellt." : "";
 
   return (
     <div className="cv-formOverlay">
@@ -177,6 +184,7 @@ export default function EventCreationForm({
             onWeekdaysChange={(weekdays) => setRecurrence({ ...recurrence, weekdays })}
             endDay={recurrence.endDay}
             onEndDayChange={(endDay) => setRecurrence({ ...recurrence, endDay })}
+            hintText={recurrenceHint}
           />
 
           <div className="cv-formGroup">

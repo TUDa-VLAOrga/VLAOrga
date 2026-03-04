@@ -46,6 +46,25 @@ public class UtilityFunctions {
     }
 
     /**
+     * Truncates a string to a specified length if neccessary.
+     *
+     * @param string    The string to possibly truncate
+     * @param maxLength The maximum length the string may have
+     * @return A string with limited length, ending in "..." if truncated
+     */
+    public static String truncateStringIfNeccessary(String string, int maxLength) {
+        if (string == null) {
+            return "";
+        }
+
+        if (string.length() <= maxLength) {
+            return string;
+        }
+
+        return string.substring(0, maxLength - 4) + "...";
+    }
+
+    /**
      * Converts an object to JSON.
      *
      * @param object An object that should be processable by {@link ObjectMapper}

@@ -6,13 +6,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents that an experiment is booked for an appointment.
  */
+@Builder
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 // table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/ReservationExperiment.php
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation_experiment")

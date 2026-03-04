@@ -18,10 +18,10 @@ import lombok.Setter;
  * in the frontend.
  */
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
 @Entity
 @Table(name = "appointment_categories")
 public class AppointmentCategory {
