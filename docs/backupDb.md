@@ -1,23 +1,20 @@
 # Backup of VLAOrga Database
 
-## Check environment
-Check that the .env file is correct.
-
 ## Create Backup
-For this, the docker of the database has to run.
-
-If there is no backups folder in VLAOrga, create one.
+For this, the docker container of the database (`db`)  has to run.
 
 In the VLAOrga folder, run the command:
 
-    ./scripts/createDbBackup.sh 
+    ./scripts/createBackup.sh 
 
-A sql dump file should be created in the backups folder.
+A sql dump file will be created in the backups folder.
 
 ## Restore database with backup
 In the VLAOrga folder, run the command:
 
-    ./scripts/applyDbBackup.sh backups/file_name.sql
+    ./scripts/restoreBackup.sh backups/file_name.sql
     
 This deletes all data from the database and restores the state of the backup.
+
+In this process, some errors are normal, see https://www.postgresql.org/docs/current/app-pg-dumpall.html under notes.
 

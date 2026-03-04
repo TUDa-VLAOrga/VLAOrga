@@ -1,14 +1,15 @@
 #!/bin/bash
 CONTAINER_NAME=vlaorga-db-1
 
-PG_FILE=${1}
+PG_FILE=$1
 if [[ ! -f $PG_FILE ]]; then
-    echo "Please specify a existing PostgreSQL file."
+    echo "Please specify an existing PostgreSQL file."
     echo "Example: ./applyDbBackup.sh backups/vladb_dump_2026-03-02_15_53_47.sql"
     exit 1
 fi
 
 source .env
+docker compose stop prod-app
 docker compose down --volumes db # deletes current db
 docker compose up db -d
 sleep 5s # wait for docker to boot
