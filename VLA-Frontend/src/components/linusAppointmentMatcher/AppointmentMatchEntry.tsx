@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
 import { Button } from "../ui/Button";
 import { getTimeStringOfDate } from "../calendar/dateUtils";
+import { fetchBackend } from "@/lib/utils";
+import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
 
 interface AppointmentMatchEntryProps {
   matching: AppointmentMatching,
@@ -11,12 +13,9 @@ interface AppointmentMatchEntryProps {
 }
 
 function postMatching(matchingId: number, matchedAppointmentId: number){
-  fetch("/api/appointmentMatchings/" + matchingId, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(matchedAppointmentId),
+  fetchBackend(API_URL_APPOINTMENTMATCHINGS + "/" + matchingId, "POST", JSON.stringify(matchedAppointmentId))
+  .catch(error => {
+    Logger.error("AppointmentMatching could not be posted", error)
   });
 }
 
@@ -33,9 +32,8 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
     )
       .then(response => response.json())
       .then(appointments => setAvailableAppointments(appointments))
-      .catch(e => {
-        Logger.warn("Could not fetch appointments for matching.");
-        console.log(e);
+      .catch(error => {
+        Logger.warn("Could not fetch appointments for matching.", error);
       });
   }, [matching, appointments]);
     
