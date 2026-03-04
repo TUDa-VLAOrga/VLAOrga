@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.controller.sse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.vlaorgatu.vlabackend.UtilityFunctions;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import java.io.IOException;
@@ -52,9 +51,10 @@ public class SseController {
 
     /**
      * Sends an SSE message with the JSON representation of an object to all connected clients.
+     * TODO: Narrow Object type to an abstract entity type
      *
      * @param sseMessageType The kind of the SSE event
-     * @param eventObject    An object that should be processable by {@link ObjectMapper}
+     * @param eventObject The object to send to the frontend
      */
     public static synchronized void notifyAllOfObject(
         SseMessageType sseMessageType,

@@ -200,6 +200,7 @@ export function useEvents() {
         startTime: formData.startDateTime,
         endTime: formData.endDateTime,
         notes: formData.notes || "",
+        bookings: [],
       });
     }
 
@@ -266,6 +267,7 @@ export function useEvents() {
             startTime: currentDate,
             endTime: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
+            bookings: [],
           });
         }
         currentDate = addDays(currentDate, 1);

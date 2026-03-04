@@ -19,10 +19,10 @@ import lombok.Setter;
  * Example: Physik 1 WS25/26 Donnerstags (where Physik 1 WS25/26 is a lecture)
  */
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "appointment_series")
 public class AppointmentSeries {

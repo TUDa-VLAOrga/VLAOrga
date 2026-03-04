@@ -6,16 +6,21 @@ import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -33,6 +38,25 @@ public class AppointmentController
      * Repository used for appointment persistence operations.
      */
     private final AppointmentRepository appointmentRepository;
+
+    /**
+     * Returns all appointments where eventTime is in their timeframe.
+     *
+     * @param eventTime The specified time as an ISO string
+     * @return All appointments that contain the eventTime
+     */
+    @GetMapping("/includeTime")
+    public ResponseEntity<List<Appointment>> getAppointmentsDuringTime(
+        @RequestParam("eventTime")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
+    ) {
+        List<Appointment> appointmentsInTimeFrame =
+            appointmentRepository.findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+                eventTime, eventTime
+            );
+
+        return ResponseEntity.ok(appointmentsInTimeFrame);
+    }
 
     /**
      * Creates a new appointment.
@@ -115,14 +139,21 @@ public class AppointmentController
      * @param id ID of the appointment to delete.
      * @return OK response with the deleted appointment, Error response otherwise.
      */
-    @PostMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id) {
-        Appointment deletedAppointment = appointmentRepository.findById(id).orElseThrow(
+        Appointment toBeDeletedAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
                 "Appointment with ID " + id + " not found."));
+
+        if (!toBeDeletedAppointment.getBookings().isEmpty()) {
+            throw new InvalidParameterException(
+                "Appointments with assigned experimentBookings may not be deleted"
+            );
+        }
+
         appointmentRepository.deleteById(id);
-        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, deletedAppointment);
-        return ResponseEntity.ok(deletedAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, toBeDeletedAppointment);
+        return ResponseEntity.ok(toBeDeletedAppointment);
     }
 
     /**
