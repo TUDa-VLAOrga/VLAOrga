@@ -1,12 +1,11 @@
 
 import DayColumn from "./DayColumn";
 import type { CalendarDay, CalendarEventsByDateISO } from "./CalendarTypes";
-import type {Appointment} from "@/lib/databaseTypes";
 
 type Props = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
-  onEventClick?: (event: Appointment) => void;
+  onEventClick?: (eventId: number) => void;
 };
 
 /**

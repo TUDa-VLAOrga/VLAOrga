@@ -43,13 +43,13 @@ public class Acceptance {
     /**
      * Start time of the acceptance.
      */
-    @Column(name = "start", nullable = false)
-    private LocalDateTime start;
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
 
     /**
      * End time of the acceptance.
      */
-    @Column(name = "end", nullable = false)
-    private LocalDateTime end;
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
 }
 
