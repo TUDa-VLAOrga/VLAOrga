@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentCategoryRepository;
@@ -41,15 +42,19 @@ public class AppointmentCategoryController
     public ResponseEntity<AppointmentCategory> createAppointmentCategory(
         @RequestBody AppointmentCategory appointmentCategory) {
         if (Objects.nonNull(appointmentCategory.getId())) {
-            throw new InvalidParameterException(
-                "Received appointment category with ID " + appointmentCategory.getId() +
-                    " when creating a new appointment category.");
+            if (appointmentCategory.getId() < 0) {
+                appointmentCategory.setId(null);
+            } else {
+                throw new InvalidParameterException(
+                    "Received appointment category with ID " + appointmentCategory.getId() +
+                        " when creating a new appointment category.");
+            }
         }
 
         AppointmentCategory savedAppointmentCategory =
             appointmentCategoryRepository.save(appointmentCategory);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Appointment category created: " + savedAppointmentCategory);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCATEGORYCREATED,
+            savedAppointmentCategory);
         return ResponseEntity.ok(savedAppointmentCategory);
     }
 
@@ -62,7 +67,7 @@ public class AppointmentCategoryController
      * @return OK response with the updated appointment category, Error response otherwise.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAppointmentCategory(
+    public ResponseEntity<AppointmentCategory> updateAppointmentCategory(
         @PathVariable Long id, @RequestBody AppointmentCategory appointmentCategory
     ) {
         if (Objects.isNull(appointmentCategory.getId())) {
@@ -79,9 +84,8 @@ public class AppointmentCategoryController
 
         AppointmentCategory updatedAppointmentCategory =
             appointmentCategoryRepository.save(appointmentCategory);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest(
-            "Appointment category updated: " + updatedAppointmentCategory);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCATEGORYUPDATED,
+            updatedAppointmentCategory);
         return ResponseEntity.ok(updatedAppointmentCategory);
     }
 
@@ -92,14 +96,13 @@ public class AppointmentCategoryController
      * @return OK response with the deleted appointment category, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAppointmentCategory(@PathVariable Long id) {
+    public ResponseEntity<AppointmentCategory> deleteAppointmentCategory(@PathVariable Long id) {
         AppointmentCategory deletedAppointmentCategory = appointmentCategoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Appointment category with ID " + id + " not found."));
         appointmentCategoryRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest(
-            "Appointment category deleted: " + deletedAppointmentCategory);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTCATEGORYDELETED,
+            deletedAppointmentCategory);
         return ResponseEntity.ok(deletedAppointmentCategory);
     }
 

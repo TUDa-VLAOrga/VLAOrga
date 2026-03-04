@@ -5,10 +5,10 @@ import type {Lecture, Person} from "@/lib/databaseTypes";
 type AddLectureSectionProps = {
   lectures: Lecture[];
   selectedLecture?: Lecture;
-  onLectureChange: (lecture: Lecture) => void;
+  onLectureChange: (lecture?: Lecture) => void;
   onAddLecture: (lecture: Lecture) => void;
   people?: Person[];
-  onAddPerson?: (person: Person) => void; 
+  onAddPerson: (person: Person) => Promise<Person | void>;
 };
 
 /**
@@ -26,7 +26,7 @@ export default function AddLectureSection({
   onAddPerson,
 }: AddLectureSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
- 
+
 
   /**
    * Creates a new Lecture object and sends it to the parent.
@@ -71,12 +71,13 @@ export default function AddLectureSection({
         onChange={(e) => {
           const newLecture = lectures.find((lec) => lec.id === Number(e.target.value));
           if (newLecture) onLectureChange(newLecture);
+          else onLectureChange(undefined);
         }}
       >
         <option value="">Keine Zuordnung</option>
         {lectures.map((lec) => (
           <option key={lec.id} value={lec.id}>
-            {lec.name}
+            {lec.name} {lec.semester && `(${lec.semester})`}
           </option>
         ))}
       </select>
