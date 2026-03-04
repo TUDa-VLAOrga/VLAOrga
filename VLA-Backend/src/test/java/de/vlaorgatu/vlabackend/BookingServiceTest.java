@@ -197,6 +197,7 @@ public class BookingServiceTest {
     /**
      * Check that nothing happens if nothing is in the {@link TimeFrame}.
      */
+    @Rollback
     @Transactional("vlaTransactionManager")
     @Test
     void checkNoAppointmentsPlannedInTimeFrame() {
@@ -216,6 +217,7 @@ public class BookingServiceTest {
      * multiple appointments per day are all added
      */
     @Transactional("vlaTransactionManager")
+    @Rollback
     @Test
     void checkTwoAppointmentsOnOneDay() {
         appointmentMatchingController.matchAppointments(
@@ -234,6 +236,7 @@ public class BookingServiceTest {
      * Deletion of appointment does not delete bookings
      */
     @Transactional("vlaTransactionManager")
+    @Rollback
     @Test
     void checkBookingBehavior() {
 
