@@ -47,13 +47,13 @@ public class Appointment {
      * Start time of the appointment.
      */
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime start;
+    private LocalDateTime startTime;
 
     /**
      * End time of the appointment.
      */
     @Column(name = "end_time", nullable = false)
-    private LocalDateTime end;
+    private LocalDateTime endTime;
 
     /**
      * Notes for this appointment.

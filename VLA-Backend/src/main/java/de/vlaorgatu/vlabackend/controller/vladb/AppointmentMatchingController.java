@@ -132,7 +132,7 @@ public class AppointmentMatchingController implements
     public synchronized ResponseEntity<String> matchExperimentBookings(
         @RequestBody TimeFrame timeFrame) {
         linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
-        linusSyncService.syncMatchedAppointmentsExperimentBookings(
+        linusSyncService.syncExperimentBookings(
             timeFrame.getCommence(),
             timeFrame.getTerminate()
         );

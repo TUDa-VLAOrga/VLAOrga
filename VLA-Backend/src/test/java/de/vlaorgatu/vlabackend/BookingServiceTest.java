@@ -26,11 +26,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -39,6 +42,9 @@ import org.springframework.transaction.annotation.Transactional;
  * {@link Linussyncservice}
  */
 @SpringBootTest
+@Rollback
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(TestcontainersConfiguration.class)
 public class BookingServiceTest {
 
@@ -82,7 +88,7 @@ public class BookingServiceTest {
      * Repository for the appropriate entity.
      */
     @Autowired
-    private AppointmentSeriesRepository appointmentSeriesRepositorys;
+    private AppointmentSeriesRepository appointmentSeriesRepository;
 
     /**
      * Repository for the appropriate entity.
@@ -114,11 +120,8 @@ public class BookingServiceTest {
      * LinusAppointment 2 -> LinusBooking 2 -> LinusExperiment 1
      * Lonely LinusExperiment 2
      */
-    @BeforeEach
+    @BeforeAll
     void setup() {
-        testUtils.clearVlaDb();
-        testUtils.clearLinusDb();
-
         final ArrayList<Object> vlaEntities = new ArrayList<>();
         final ArrayList<Object> linusEntities = new ArrayList<>();
 
@@ -243,13 +246,13 @@ public class BookingServiceTest {
             .category(appointmentCategory)
             .build();
 
-        appointmentSeries = appointmentSeriesRepositorys.save(appointmentSeries);
+        appointmentSeries = appointmentSeriesRepository.save(appointmentSeries);
 
         Appointment appointment = Appointment.builder()
             .id(null)
             .series(appointmentSeries)
-            .start(LocalDateTime.of(2026, 3, 1, 0, 0))
-            .end(LocalDateTime.of(2026, 3, 1, 2, 0))
+            .startTime(LocalDateTime.of(2026, 3, 1, 0, 0))
+            .endTime(LocalDateTime.of(2026, 3, 1, 2, 0))
             .notes("")
             .bookings(List.of())
             .build();

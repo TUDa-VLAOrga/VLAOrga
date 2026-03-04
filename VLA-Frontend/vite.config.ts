@@ -5,7 +5,10 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -13,7 +16,23 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // Required for SSE communication
       '/sse': 'http://localhost:8080',
+
+      // Allows fetching of CSRF authentication tokens
+      '/csrf': 'http://localhost:8080',
+
+      // Allows accessing login page *without* HRM and sending auth requests 
+      '/login.html': {
+        target: 'http://localhost:8080',
+        bypass(req) {
+          if (req.method !== 'POST') {
+            return '/login.html';
+          }
+        },
+      },
+
+      // Required for testing API calls
       '/api': 'http://localhost:8080',
     },
   },

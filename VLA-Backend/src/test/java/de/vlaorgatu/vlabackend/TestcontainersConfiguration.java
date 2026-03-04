@@ -23,7 +23,6 @@ class TestcontainersConfiguration {
         return new MariaDBContainer<>(DockerImageName.parse("mariadb:10.5.29"));
     }
 
-    // TODO: move to config?
     @Bean
     public DynamicPropertyRegistrar databaseProperties(
         MariaDBContainer<?> mariadbContainer, PostgreSQLContainer<?> postgreSqlContainer) {
