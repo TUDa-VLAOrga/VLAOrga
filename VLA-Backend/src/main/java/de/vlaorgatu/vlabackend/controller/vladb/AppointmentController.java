@@ -9,7 +9,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;

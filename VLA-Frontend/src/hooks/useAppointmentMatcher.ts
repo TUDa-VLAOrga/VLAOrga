@@ -67,39 +67,39 @@ export function useAppointmentMatcher({days, allEvents} : useAppointmentMatcherP
 
     // Update appointments and bookings when navigating
     fetchCSRFToken()
-    .then(csrfToken => {
-      fetch(API_URL_APPOINTMENTMATCHINGS + "/match/experimentBookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify(timeFrame),
-      })
-        .catch(e => {
-          Logger.warn("Initiating the experimentBooking matching has errored");
-          console.log(e);
+      .then(csrfToken => {
+        fetch(API_URL_APPOINTMENTMATCHINGS + "/match/experimentBookings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken,
+          },
+          body: JSON.stringify(timeFrame),
         })
-        .finally(() =>
-        // Get currently relevant data
-          fetch(
-            API_URL_APPOINTMENTMATCHINGS + "/nulledAppointments?" +
+          .catch(e => {
+            Logger.warn("Initiating the experimentBooking matching has errored");
+            console.log(e);
+          })
+          .finally(() =>
+          // Get currently relevant data
+            fetch(
+              API_URL_APPOINTMENTMATCHINGS + "/nulledAppointments?" +
                   "commence=" + firstFetchDay.toISOString() + "&" +
                   "terminate=" + lastFetchDay.toISOString() 
-          )
-            .then(response => {
-              if(!response.ok) throw new Error("Response was not ok");  
-              return response.json()
-            })
-            .then(appointmentMatchings => 
-              setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
             )
-            .catch(e => {
-              Logger.error("An error has occured during appointmentMatching fetch");
-              console.log(e);
-            })
-        );
-    });
+              .then(response => {
+                if(!response.ok) throw new Error("Response was not ok");  
+                return response.json();
+              })
+              .then(appointmentMatchings => 
+                setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
+              )
+              .catch(e => {
+                Logger.error("An error has occured during appointmentMatching fetch");
+                console.log(e);
+              })
+          );
+      });
   }, [days, allEvents, setNullAppointmentMatchings]);
     
   return nullAppointmentMatchings;

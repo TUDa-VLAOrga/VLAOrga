@@ -14,9 +14,9 @@ interface AppointmentMatchEntryProps {
 
 function postMatching(matchingId: number, matchedAppointmentId: number){
   fetchBackend(API_URL_APPOINTMENTMATCHINGS + "/" + matchingId, "POST", JSON.stringify(matchedAppointmentId))
-  .catch(error => {
-    Logger.error("AppointmentMatching could not be posted", error)
-  });
+    .catch(error => {
+      Logger.error("AppointmentMatching could not be posted", error);
+    });
 }
 
 export default function AppointmentMatchEntry({matching, appointments} : AppointmentMatchEntryProps) {   
@@ -32,13 +32,13 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
     )
       .then(response => {
         if(!response.ok) throw new Error("Bad response!");
-        return response.text()
+        return response.text();
       })
       .then(responseJSON => {
-        return JSON.parse(responseJSON, parseJsonFixDate) as Appointment[]
+        return JSON.parse(responseJSON, parseJsonFixDate) as Appointment[];
       })
       .then(appointments => {
-        setAvailableAppointments(appointments)
+        setAvailableAppointments(appointments);
       })
       .catch(error => {
         Logger.warn("Could not fetch appointments for matching.", error);

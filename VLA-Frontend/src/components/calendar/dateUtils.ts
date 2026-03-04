@@ -61,7 +61,7 @@ export function addDaysPresentFuture(baseDate: Date, daysToAdd: number) {
   const result = addDays(baseDate, daysToAdd);
   const now = new Date();
 
-  return false && result < now ? now : result;
+  return result < now ? now : result;
 }
 
 /** True, if date is Saturday or Sunday. */
