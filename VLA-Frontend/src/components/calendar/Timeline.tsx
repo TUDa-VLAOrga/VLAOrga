@@ -67,7 +67,7 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
       clusterMaxEnd = Math.max(clusterMaxEnd, it.end);
     }
   }
-  if (cluster.length) clusters.push(cluster);
+  if (cluster.length > 0) clusters.push(cluster);
 
   // 2) For each cluster, assign columns greedily
   const positioned: PositionedItem[] = [];

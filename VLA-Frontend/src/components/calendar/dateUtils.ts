@@ -5,7 +5,7 @@
  */
 
 export const WORKDAY_COUNT = 5;
-export const NON_WORKDAYS = [0, 6];  // days that are no workdays
+export const NON_WORKDAYS = [0, 6]; // days that are no workdays
 
 export function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
@@ -19,6 +19,19 @@ export function toDatetimeLocalString(d: Date) {
   const minutes = d.getMinutes().toString().padStart(2, "0");
 
   return `${toISODateLocal(d)}T${hours}:${minutes}`;
+}
+
+/**
+ * Convert to string without timezone, but in current timezone (not necessarily UTC).
+ *
+ * Needed for sending to the server, where we work with LocalTime objects that also do not respect timezone.
+ * Standard {@link JSON.stringify} does not work here, because it would give the UTC timestamp.
+ */
+export function toJSONLocalTime(d: Date) {
+  const hours = d.getHours().toString().padStart(2, "0");
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+  const seconds = d.getSeconds().toString().padStart(2, "0");
+  return `${toISODateLocal(d)}T${hours}:${minutes}:${seconds}`;
 }
 
 /** Formats a date as "dd.mm." (e.g., "19.12."). */
@@ -98,8 +111,10 @@ export function formatTimeRangeShortDE(start: Date, end: Date) {
   if (compareSameDay(start, end)) {
     return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${timeFormat.format(end)}`;
   }
-  return `${dayFormat.format(start)}, ${timeFormat.format(start)}`
-    + ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`;
+  return (
+    `${dayFormat.format(start)}, ${timeFormat.format(start)}` +
+    ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`
+  );
 }
 
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */
@@ -121,60 +136,21 @@ export function formatISODateDE(iso: string): string {
 }
 
 /**
- * Splits a datetime-local string (yyyy-mm-ddTHH:mm) into date and time parts.
- * @param dateTimeString - Format: "2024-01-15T09:00"
- * @returns Object with date (yyyy-mm-dd) and time (HH:mm)
- */
-export function splitDateTime(dateTimeString: string): {
-  date: string;
-  time: string;
-} {
-  const [date, time] = dateTimeString.split("T");
-  return { date, time };
-}
-
-/**
  * Compares two days while ignoring the clock time on a given day
  * @param a The first time to compare
  * @param b The second time to compare
- * Returns true iff a and b are on the same day in local time
+ * Returns true iff a and b are on the same day in UTC
  */
 export function compareSameDay(a: Date, b: Date) {
+  // Conversion to remove time zone dependenies
+
   return (
-    a.getDate() === b.getDate() &&
-    a.getMonth() === b.getMonth() &&
-    a.getFullYear() === b.getFullYear()
+    a.getDate() == b.getDate() &&
+    a.getMonth() == b.getMonth() &&
+    a.getFullYear() == b.getFullYear()
   );
 }
 
-/**
- * Adds minutes to a datetime-local string (yyyy-mm-ddTHH:mm)
- * and returns the result in the same format.
- * Handles local time correctly without UTC conversion.
- */
-export function addMinutesToDateTime(
-  dateTimeString: string,
-  minutes: number
-): string {
-  if (!dateTimeString) return "";
-
-  const date = new Date(dateTimeString);
-  date.setMinutes(date.getMinutes() + minutes);
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const mins = String(date.getMinutes()).padStart(2, "0");
-
-  return `${year}-${month}-${day}T${hours}:${mins}`;
-}
-
-export function timeToMinutes(time?: string): number | null {
-  if (!time) return null;
-  const [hhStr, mmStr] = time.split(":");
-  const hh = Number(hhStr);
-  const mm = Number(mmStr);
-  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
-  return hh * 60 + mm;
+export function formatHourLabel(hour: number): string {
+  return `${String(hour).padStart(2, "0")}:00`;
 }

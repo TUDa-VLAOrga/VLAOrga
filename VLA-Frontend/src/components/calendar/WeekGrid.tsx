@@ -13,6 +13,8 @@ type Props = {
   endHour?: number;
 };
 
+// default height for the all-day row
+const DEFAULT_ALL_DAY_HEIGHT = 56;
 /**
  * WeekGrid renders the week layout:
  * - left rail: TimeColumn
@@ -64,12 +66,12 @@ export default function WeekGrid({
    * so separators & borders align perfectly between columns.
    */
   const rootRef = useRef<HTMLDivElement>(null);
-  const [allDayHeight, setAllDayHeight] = useState(56);
+  const [allDayHeight, setAllDayHeight] = useState(DEFAULT_ALL_DAY_HEIGHT);
 
   useLayoutEffect(() => {
     if (!showAllDayRow) {
       // fallback height when row is not used
-      setAllDayHeight(56);
+      setAllDayHeight(DEFAULT_ALL_DAY_HEIGHT);
       return;
     }
     if (!rootRef.current) return;
@@ -84,7 +86,7 @@ export default function WeekGrid({
       const max = rows.reduce((acc, r) => Math.max(acc, r.scrollHeight), 0);
 
       // if nothing found, keep fallback
-      setAllDayHeight(max > 0 ? max : 56);
+      setAllDayHeight(max > 0 ? max : DEFAULT_ALL_DAY_HEIGHT);
     };
 
     compute();
