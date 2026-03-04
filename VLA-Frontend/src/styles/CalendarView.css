@@ -524,6 +524,11 @@
   background: #e9ecef;
 }
 
+/* Float elements, e.g. buttons, right inside parent element */
+.cv-floatRight {
+  float: right;
+}
+
 /* Event Cards */
 .cv-event {
   padding: 12px;

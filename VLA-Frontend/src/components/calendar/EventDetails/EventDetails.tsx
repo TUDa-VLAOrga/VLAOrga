@@ -5,6 +5,7 @@ import EventEditForm from "./EventEditForm";
 import "../../../styles/Event-details-styles.css";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {checkPartOfSeries, getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
+import AddAcceptanceForm from "@/components/calendar/EventForm/AddAcceptanceForm.tsx";
 
 
 type EventDetailsProps = {
@@ -40,9 +41,13 @@ export default function EventDetails({
   onAddPerson,
   onAddLecture,
 }: EventDetailsProps) {
+  // toggles for other popups
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
+  const [showCreateAcceptanceDialog, setShowCreateAcceptanceDialog] = useState(false);
+
+  // local state for note editing
   const [eventNotes, setEventNotes] = useState(event.notes);
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
@@ -98,11 +103,32 @@ export default function EventDetails({
       />
     );
   }
+  if (showCreateAcceptanceDialog) {
+    return (
+      <AddAcceptanceForm
+        event={event}
+        allEvents={allEvents}
+        onSubmit={(_eventId, _startTime, _endTime) => {
+          // TODO: implement
+          return new Promise((_resolve, _reject) => {return;});
+        }}
+        onClose={() => setShowCreateAcceptanceDialog(false)}
+      />
+    );
+  }
   return (
     <>
       <div className="cv-formOverlay">
         <div className="cv-formBox">
-          <h2 className="cv-formTitle">{getEventTitle(event)}</h2>
+          <div>
+            <button
+              className="cv-floatRight cv-formBtn cv-formBtnSecondary"
+              onClick={() => setShowCreateAcceptanceDialog(true)}
+            >
+              +&nbsp;Abnahmetermin
+            </button>
+            <h2 className="cv-formTitle">{getEventTitle(event)}</h2>
+          </div>
 
           <div className="cv-detailsContent">
             <div className="cv-detailRow">
