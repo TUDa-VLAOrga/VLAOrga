@@ -1,5 +1,4 @@
 #!/bin/bash
-CONTAINER_NAME=vlaorga-db-1
 
 PG_FILE=$1
 if [[ ! -f $PG_FILE ]]; then
@@ -9,12 +8,13 @@ if [[ ! -f $PG_FILE ]]; then
 fi
 
 source .env
-docker compose stop prod-app
+docker compose --file docker-compose.prod.yml stop prod-app
 docker compose down --volumes db # deletes current db
-docker compose up db -d
+docker compose --file docker-compose.prod.yml up db -d
 sleep 5s # wait for docker to boot
-cat $PG_FILE | docker exec -i $CONTAINER_NAME psql -q -X -U $POSTGRES_USER -d $POSTGRES_DB
+cat $PG_FILE | docker compose exec --no-tty db psql --quiet --no-psqlrc --username=$POSTGRES_USER --dbname=$POSTGRES_DB
 # some errors here are normal, see https://www.postgresql.org/docs/current/app-pg-dumpall.html under notes
-
 echo Dump restored
+
+docker compose --file docker-compose.prod.yml up prod-app -d
 
