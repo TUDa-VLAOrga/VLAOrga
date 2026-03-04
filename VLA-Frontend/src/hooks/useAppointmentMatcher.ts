@@ -4,14 +4,14 @@ import useSseConnection from "./useSseConnection";
 import { useEffect } from "react";
 import { addDaysPresentFuture } from "@/components/calendar/dateUtils";
 import { Logger } from "@/components/logger/Logger";
+import { fetchBackend, fetchCSRFToken } from "@/lib/utils";
+import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
 
 const weeksToCheckBeforeCalendarStartDate = 1;
 const weeksToCheckAfterCalendarStartDate = 2;
 
 const daysToCheckBeforeCalendarStartDate = weeksToCheckBeforeCalendarStartDate * 7;
 const daysToCheckAfterCalendarStartDate = weeksToCheckAfterCalendarStartDate * 7;
-
-const API_BASE_URL = "/api/appointmentMatchings";
 
 function handleAppointmentMatchingCreated(event: MessageEvent, previousState: AppointmentMatching[]){
   const createdMatchings = JSON.parse(event.data) as AppointmentMatching[];
@@ -66,33 +66,37 @@ export function useAppointmentMatcher({days, allEvents} : useAppointmentMatcherP
     };
 
     // Update appointments and bookings when navigating
-    fetch(API_BASE_URL + "/match/experimentBookings", {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json",
-      },
-      body: JSON.stringify(timeFrame),
-    })
-      .catch(e => {
-        Logger.warn("Initiating the experimentBooking matching has errored");
-        console.log(e);
+    fetchCSRFToken()
+    .then(csrfToken => {
+      fetch(API_URL_APPOINTMENTMATCHINGS + "/match/experimentBookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify(timeFrame),
       })
-      .finally(() =>
-      // Get currently relevant data
-        fetch(
-          API_BASE_URL + "/nulledAppointments?" +
-                "commence=" + firstFetchDay.toISOString() + "&" +
-                "terminate=" + lastFetchDay.toISOString() 
-        )
-          .then(response => response.json())
-          .then(appointmentMatchings => 
-            setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
+        .catch(e => {
+          Logger.warn("Initiating the experimentBooking matching has errored");
+          console.log(e);
+        })
+        .finally(() =>
+        // Get currently relevant data
+          fetch(
+            API_URL_APPOINTMENTMATCHINGS + "/nulledAppointments?" +
+                  "commence=" + firstFetchDay.toISOString() + "&" +
+                  "terminate=" + lastFetchDay.toISOString() 
           )
-          .catch(e => {
-            Logger.error("An error has occured during appointmentMatching fetch");
-            console.log(e);
-          })
-      );
+            .then(response => response.json())
+            .then(appointmentMatchings => 
+              setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
+            )
+            .catch(e => {
+              Logger.error("An error has occured during appointmentMatching fetch");
+              console.log(e);
+            })
+        );
+    });
   }, [days, allEvents, setNullAppointmentMatchings]);
     
   return nullAppointmentMatchings;
