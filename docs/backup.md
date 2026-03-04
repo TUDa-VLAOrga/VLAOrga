@@ -7,7 +7,7 @@ In the VLAOrga folder, run the command:
 
     ./scripts/createBackup.sh 
 
-A sql dump file will be created in the backups folder.
+A sql dump file will be created in the backups folder. The folder will be created if a backup is created for the first time.
 
 ## Restore database with backup
 In the VLAOrga folder, run the command:

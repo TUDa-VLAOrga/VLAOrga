@@ -3,5 +3,5 @@
 source .env
 mkdir -p backups
 docker compose exec -t db pg_dumpall --clean --username=$POSTGRES_USER > backups/vladb_dump_`date +%Y-%m-%d"_"%H_%M_%S`.sql
-echo Dump created
+echo Backup successfully created
 
