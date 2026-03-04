@@ -7,6 +7,9 @@ import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -42,16 +45,21 @@ public class AppointmentController
     /**
      * Returns all appointments where eventTime is in their timeframe.
      *
-     * @param eventTime The specified time as an ISO string
+     * @param offsetEventTime The specified time as an ISO string
      * @return All appointments that contain the eventTime
      */
     @GetMapping("/includeTime")
     public ResponseEntity<List<Appointment>> getAppointmentsDuringTime(
         @RequestParam("eventTime")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime offsetEventTime
     ) {
-        List<Appointment> appointmentsInTimeFrame =
-            appointmentRepository.findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+
+        LocalDateTime eventTime = offsetEventTime
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
+
+        List<Appointment> appointmentsInTimeFrame = appointmentRepository
+            .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
                 eventTime, eventTime
             );
 

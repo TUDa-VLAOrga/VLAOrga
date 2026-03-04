@@ -4,7 +4,7 @@ import useSseConnection from "./useSseConnection";
 import { useEffect } from "react";
 import { addDaysPresentFuture } from "@/components/calendar/dateUtils";
 import { Logger } from "@/components/logger/Logger";
-import { fetchBackend, fetchCSRFToken } from "@/lib/utils";
+import { fetchCSRFToken } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
 
 const weeksToCheckBeforeCalendarStartDate = 1;
@@ -87,7 +87,10 @@ export function useAppointmentMatcher({days, allEvents} : useAppointmentMatcherP
                   "commence=" + firstFetchDay.toISOString() + "&" +
                   "terminate=" + lastFetchDay.toISOString() 
           )
-            .then(response => response.json())
+            .then(response => {
+              if(!response.ok) throw new Error("Response was not ok");  
+              return response.json()
+            })
             .then(appointmentMatchings => 
               setNullAppointmentMatchings(appointmentMatchings as AppointmentMatching[])
             )

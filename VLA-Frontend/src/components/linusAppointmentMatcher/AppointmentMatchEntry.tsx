@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
 import { Button } from "../ui/Button";
 import { getTimeStringOfDate } from "../calendar/dateUtils";
-import { fetchBackend } from "@/lib/utils";
+import { fetchBackend, parseJsonFixDate } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
 
 interface AppointmentMatchEntryProps {
@@ -30,8 +30,16 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
       "/api/appointments/includeTime?" + 
             "eventTime=" + linusAppointmentTime.toISOString()
     )
-      .then(response => response.json())
-      .then(appointments => setAvailableAppointments(appointments))
+      .then(response => {
+        if(!response.ok) throw new Error("Bad response!");
+        return response.text()
+      })
+      .then(responseJSON => {
+        return JSON.parse(responseJSON, parseJsonFixDate) as Appointment[]
+      })
+      .then(appointments => {
+        setAvailableAppointments(appointments)
+      })
       .catch(error => {
         Logger.warn("Could not fetch appointments for matching.", error);
       });

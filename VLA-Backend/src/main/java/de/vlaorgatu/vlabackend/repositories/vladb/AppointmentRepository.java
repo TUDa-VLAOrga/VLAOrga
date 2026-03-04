@@ -22,12 +22,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     /**
      * Finds all appointments that begin before a start time and end after an end time.
+     * Borders are inclusive.
      *
      * @param start The start of the event
      * @param end   The end of the event
      * @return All appointments that contain this event
      */
-    List<Appointment> findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+    List<Appointment> findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
         LocalDateTime start,
         LocalDateTime end
     );
