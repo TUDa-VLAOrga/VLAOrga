@@ -1,11 +1,8 @@
 package de.vlaorgatu.vlabackend;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.metamodel.EntityType;
 import java.util.ArrayList;
-import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,30 +60,6 @@ public class TestUtils {
     }
 
     /**
-     * Deletes all entities in the vla db.
-     * This should only be called in a sequential testing context!
-     */
-    @Transactional("vlaTransactionManager")
-    public void clearVlaDb() {
-        vlaEntityManager.flush();
-        vlaEntityManager.clear();
-
-        vlaDisableFkChecks();
-
-        Set<EntityType<?>> entities = vlaEntityManager.getMetamodel().getEntities();
-
-        for (EntityType<?> entityType : entities) {
-            Class<?> javaType = entityType.getJavaType();
-            if (javaType.isAnnotationPresent(Entity.class)) {
-                String entityName = entityType.getName();
-                vlaEntityManager.createQuery("DELETE FROM " + entityName).executeUpdate();
-            }
-        }
-
-        vlaEnableFkChecks();
-    }
-
-    /**
      * Populates linus with the specified entities.
      * Should be Linus entities
      */
@@ -112,30 +85,5 @@ public class TestUtils {
         vlaEntityManager.flush();
 
         vlaEnableFkChecks();
-    }
-
-    /**
-     * Deletes all entities in the linus db.
-     * If you only use one db, use @Transactional("name of correct TransactionManager")
-     * This should only be called in a sequential testing context!
-     */
-    @Transactional("linusTransactionManager")
-    public void clearLinusDb() {
-        linusEntityManager.flush();
-        linusEntityManager.clear();
-
-        linusDisableFkChecks();
-
-        Set<EntityType<?>> entities = linusEntityManager.getMetamodel().getEntities();
-
-        for (EntityType<?> entityType : entities) {
-            Class<?> javaType = entityType.getJavaType();
-            if (javaType.isAnnotationPresent(Entity.class)) {
-                String entityName = entityType.getName();
-                linusEntityManager.createQuery("DELETE FROM " + entityName).executeUpdate();
-            }
-        }
-
-        linusEnableFkChecks();
     }
 }
