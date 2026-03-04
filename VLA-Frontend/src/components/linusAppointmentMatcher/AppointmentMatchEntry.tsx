@@ -68,9 +68,9 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
                   {appointment.series.category.title}<br/><br/>
 
                   <b>Terminzeit</b><br/>
-                  {getTimeStringOfDate(new Date(appointment.start))}
+                  {getTimeStringOfDate(new Date(appointment.startTime))}
                   <span> - </span>
-                  {getTimeStringOfDate(new Date(appointment.end))}<br/><br/>
+                  {getTimeStringOfDate(new Date(appointment.endTime))}<br/><br/>
 
                   <Button text={"Termin zuweisen"} onClick={() => postMatching(matching.id, appointment.id)}/>
                   <br/>

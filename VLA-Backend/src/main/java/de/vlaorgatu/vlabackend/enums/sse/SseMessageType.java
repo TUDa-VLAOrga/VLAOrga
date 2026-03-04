@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.enums.sse;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
-import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
