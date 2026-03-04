@@ -96,7 +96,7 @@ public class Linussyncservice {
 
             // Auto-assign if one appointment is in that time frame
             List<Appointment> appointmentsInThisTimeFrame =
-                appointmentRepository.findAppointmentsByStartBeforeAndEndAfter(
+                appointmentRepository.findAppointmentsByStartTimeBeforeAndEndTimeAfter(
                     linusAppointment.getAppointmentTime(),
                     linusAppointment.getAppointmentTime());
 

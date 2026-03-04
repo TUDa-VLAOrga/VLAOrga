@@ -27,6 +27,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * @param end   The end of the event
      * @return All appointments that contain this event
      */
-    List<Appointment> findAppointmentsByStartBeforeAndEndAfter(LocalDateTime start,
-                                                               LocalDateTime end);
+    List<Appointment> findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+        LocalDateTime start,
+        LocalDateTime end
+    );
 }
