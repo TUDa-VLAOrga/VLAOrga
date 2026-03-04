@@ -14,6 +14,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class VlaBackendEntitiesTest {
         .name("Dr. Alberner Stein")
         .email("")
         .notes("bitte grünen Laserpointer")
-        .linusUserId(42L)
+        .linusUserId(42)
         .build();
 
     AppointmentCategory appCategory = new AppointmentCategory(1L, "Vorlesung");
@@ -55,12 +56,21 @@ public class VlaBackendEntitiesTest {
         .build();
 
     Appointment appointment =
-        new Appointment(1L, appSeries, LocalDateTime.parse("2025-10-14T09:50:00"),
-            LocalDateTime.parse("2025-10-14T11:30:00"),
-            "Mit Willkommensgeschenk zum Semesterstart!");
-    Acceptance acceptance =
-        new Acceptance(1L, appointment, LocalDateTime.parse("2025-10-13T17:00:00"),
-            LocalDateTime.parse("2025-10-13T17:30:00"));
+        Appointment.builder()
+            .id(1L)
+            .series(appSeries)
+            .startTime(LocalDateTime.parse("2025-10-14T09:50:00"))
+            .endTime(LocalDateTime.parse("2025-10-14T11:30:00"))
+            .notes("Mit Willkommensgeschenk zum Semesterstart!")
+            .bookings(List.of())
+            .build();
+
+    Acceptance acceptance = Acceptance.builder()
+        .id(1L)
+        .appointment(appointment)
+        .startTime(LocalDateTime.parse("2025-10-13T17:00:00"))
+        .endTime(LocalDateTime.parse("2025-10-13T17:30:00"))
+        .build();
 
     // Controllers
     @Autowired

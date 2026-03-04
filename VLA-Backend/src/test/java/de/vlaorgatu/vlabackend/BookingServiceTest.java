@@ -248,8 +248,8 @@ public class BookingServiceTest {
         Appointment appointment = Appointment.builder()
             .id(null)
             .series(appointmentSeries)
-            .start(LocalDateTime.of(2026, 3, 1, 0, 0))
-            .end(LocalDateTime.of(2026, 3, 1, 2, 0))
+            .startTime(LocalDateTime.of(2026, 3, 1, 0, 0))
+            .endTime(LocalDateTime.of(2026, 3, 1, 2, 0))
             .notes("")
             .bookings(List.of())
             .build();
