@@ -58,7 +58,10 @@ public class SseController {
      * @param sseMessageType The kind of the SSE event
      * @param eventObject The object to send to the frontend
      */
-    public static void notifyAllOfObject(SseMessageType sseMessageType, Object eventObject) {
+    public static synchronized void notifyAllOfObject(
+        SseMessageType sseMessageType,
+        Object eventObject
+    ) {
         for (SseEmitter connection : sseHandlers) {
             ObjectMapper jsonMapper = new ObjectMapper();
             jsonMapper.registerModule(new JavaTimeModule());
@@ -90,7 +93,7 @@ public class SseController {
      * @return The SSE Connection for the frontend
      */
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter connect() {
+    public synchronized SseEmitter connect() {
         // Set timeout to never occur automatically
         SseEmitter connectionHandler = new SseEmitter(Long.MAX_VALUE);
 
@@ -120,7 +123,7 @@ public class SseController {
      */
     @PostMapping("/manualNotification")
     // TODO: Remove this endpoint after testing stage
-    public String notifyAllSse() {
+    public synchronized String notifyAllSse() {
         for (SseEmitter connection : sseHandlers) {
             try {
                 connection.send(SseEmitter.event().name(SseMessageType.DEBUG.getValue())
@@ -136,7 +139,7 @@ public class SseController {
     }
 
     @GetMapping("/getTestData")
-    public String getTestData() {
+    public synchronized String getTestData() {
         return "{\"message\":\"Something incredible has happened with this SSE request\"}";
     }
 }

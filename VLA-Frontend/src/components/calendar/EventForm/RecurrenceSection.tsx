@@ -11,6 +11,7 @@ type RecurrenceSectionProps = {
   onWeekdaysChange: (weekdays: Weekday[]) => void;
   endDay?: CalendarDay;
   onEndDayChange: (day: CalendarDay) => void;
+  hintText?: string;
 };
 
 /**
@@ -27,6 +28,7 @@ export default function RecurrenceSection({
   onWeekdaysChange,
   endDay,
   onEndDayChange,
+  hintText,
 }: RecurrenceSectionProps) {
   return (
     <>
@@ -50,9 +52,11 @@ export default function RecurrenceSection({
               selectedDays={weekdays}
               onDaysChange={onWeekdaysChange}
             />
-            <div className="cv-formHint">
-              Für jeden Wochentag wird eine eigene Terminserie erstellt.
-            </div>
+            {hintText &&
+              <div className="cv-formHint">
+                {hintText}
+              </div>
+            }
           </div>
 
           <div className="cv-formGroup">
