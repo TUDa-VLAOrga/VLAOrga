@@ -12,6 +12,7 @@ import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentMatching;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
+import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates.TimeFrame;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
@@ -22,6 +23,8 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
+import de.vlaorgatu.vlabackend.security.securityutils.UnsecureSecurityUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(TestcontainersConfiguration.class)
+@ActiveProfiles("unsecure")
 public class BookingServiceTest {
 
     /**
@@ -114,6 +119,9 @@ public class BookingServiceTest {
     @Autowired
     private AppointmentController appointmentController;
 
+    @Autowired
+    private UserRepository userRepository;
+
     /**
      * Sets up...
      * LinusAppointment 1 -> LinusBooking 1 -> LinusExperiment 1
@@ -122,7 +130,6 @@ public class BookingServiceTest {
      */
     @BeforeAll
     void setup() {
-        final ArrayList<Object> vlaEntities = new ArrayList<>();
         final ArrayList<Object> linusEntities = new ArrayList<>();
 
         linusEntities.add(LinusExperiment.builder()
@@ -175,7 +182,6 @@ public class BookingServiceTest {
             .build()
         );
 
-        testUtils.populateVlaDb(vlaEntities);
         testUtils.populateLinusDb(linusEntities);
     }
 
@@ -292,10 +298,20 @@ public class BookingServiceTest {
             appointmentRepository.findById(1L).get().getBookings().size()
         );
 
+        userRepository.save(User.builder()
+            .id(null)
+            .name("")
+            .appointmentsWithDeletionIntention(null)
+            .build()
+        );
+
+        appointmentController.deleteAppointment(appointment.getId(),1L);
+
         Appointment finalAppointment = appointment;
         Assertions.assertThrows(
             InvalidParameterException.class,
-            () -> appointmentController.deleteAppointment(finalAppointment.getId())
+            () -> appointmentController.deleteAppointment(finalAppointment.getId(),
+                1L)
         );
     }
 }

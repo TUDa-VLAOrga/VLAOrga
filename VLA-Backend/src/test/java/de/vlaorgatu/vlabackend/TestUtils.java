@@ -18,30 +18,6 @@ public class TestUtils {
     private EntityManager linusEntityManager;
 
     /**
-     * Entity manager for manipulating the vla db.
-     */
-    @PersistenceContext(unitName = "vlaEntityManagerFactory")
-    private EntityManager vlaEntityManager;
-
-    /**
-     * Disables foreign key checks for Vla db.
-     */
-    private void vlaDisableFkChecks() {
-        vlaEntityManager.createNativeQuery(
-                "SET session_replication_role = 'replica';")
-            .executeUpdate();
-    }
-
-    /**
-     * Enables foreign key checks for Vla db.
-     */
-    private void vlaEnableFkChecks() {
-        vlaEntityManager.createNativeQuery(
-                "SET session_replication_role = 'origin';")
-            .executeUpdate();
-    }
-
-    /**
      * Disables foreign key checks for linus db.
      */
     private void linusDisableFkChecks() {
@@ -67,23 +43,9 @@ public class TestUtils {
     void populateLinusDb(ArrayList<Object> linusEntities) {
         linusDisableFkChecks();
 
-        linusEntities.forEach(linusEntityManager::persist);
+        linusEntities.forEach(linusEntityManager::merge);
         linusEntityManager.flush();
 
         linusEnableFkChecks();
-    }
-
-    /**
-     * Populates the vla db with the specified entities.
-     * Should be VLA entities
-     */
-    @Transactional("vlaTransactionManager")
-    void populateVlaDb(ArrayList<Object> vlaEntities) {
-        vlaDisableFkChecks();
-
-        vlaEntities.forEach(vlaEntityManager::persist);
-        vlaEntityManager.flush();
-
-        vlaEnableFkChecks();
     }
 }

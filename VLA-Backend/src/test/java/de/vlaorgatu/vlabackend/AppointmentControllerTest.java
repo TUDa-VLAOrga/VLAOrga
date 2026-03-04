@@ -69,8 +69,6 @@ public class AppointmentControllerTest {
 
     @BeforeAll
     void beforeAll() {
-        testUtils.clearVlaDb();
-
         AppointmentCategory category = appointmentCategoryRepository.save(
             AppointmentCategory.builder()
                 .id(null)
