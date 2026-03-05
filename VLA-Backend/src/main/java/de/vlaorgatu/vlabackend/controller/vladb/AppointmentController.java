@@ -168,19 +168,14 @@ public class AppointmentController
      */
     @DeleteMapping("/{id}")
     public synchronized ResponseEntity<?> deleteAppointment(
-        @PathVariable Long id,
-        @RequestBody Long deletingIntentionUserId
+        @PathVariable Long id
     ) {
         Appointment toDeleteAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
                 "Appointment with ID " + id + " not found.")
         );
 
-        User deletingIntentUser = userRepository.findById(deletingIntentionUserId)
-            .orElseThrow(() -> new EntityNotFoundException(
-                    "User with Id " + deletingIntentionUserId + " not found."
-                )
-            );
+        User deletingIntentUser = securityUtils.getCurrentUser();
 
         if (!securityUtils.checkUserIsSessionUser(deletingIntentUser)) {
             throw new InvalidParameterException(
@@ -202,7 +197,7 @@ public class AppointmentController
         if (deletingIntentUser.equals(toDeleteAppointment.getDeletingIntentionUser())) {
             // User may not delete appointments by themselves
             throw new InvalidParameterException(
-                "User (id=" + deletingIntentionUserId + ") has already requested deletion of " +
+                "User (id=" + deletingIntentUser.getId() + ") has already requested deletion of " +
                     " appointment (id=" + toDeleteAppointment.getId() + ")."
             );
         }
