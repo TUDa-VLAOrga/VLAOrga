@@ -22,9 +22,9 @@ export default function CalendarView() {
 
   const {
     allEvents,
-    selectedEvent,
-    eventsByDate,
-    handleCreateEvent,
+    selectedEventId,
+    eventsByDate, 
+    handleCreateEvent, 
     handleEventClick,
     closeEventDetails,
     handleUpdateEventNotes,
@@ -35,8 +35,7 @@ export default function CalendarView() {
    * Called by EventForm when the user submits.
    */
   function onEventSubmit(formData: EventFormData) {
-    handleCreateEvent(formData);
-    setShowEventForm(false);
+    handleCreateEvent(formData).then(() => setShowEventForm(false));
   }
 
   const frameStyleVars: React.CSSProperties & Record<string, number> = {
@@ -100,10 +99,10 @@ export default function CalendarView() {
           onAddPerson={handleAddPerson}
         />
       )}
-
-      {selectedEvent && (
+      {/* Modal overlay: event details */}
+      {selectedEventId && (
         <EventDetails
-          event={selectedEvent}
+          event={allEvents.find(e => e.id === selectedEventId)!}
           allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}

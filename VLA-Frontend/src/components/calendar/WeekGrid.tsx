@@ -8,7 +8,7 @@ import TimeColumn from "./TimeColumn";
 type Props = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
-  onEventClick?: (event: Appointment) => void;
+  onEventClick?: (eventId: number) => void;
   startHour?: number;
   endHour?: number;
 };

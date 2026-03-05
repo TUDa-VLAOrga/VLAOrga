@@ -6,7 +6,7 @@ import { getEventTitle, getEventStatus } from "./eventUtils";
 type DayColumnProps = {
   day: CalendarDay;
   events: Appointment[];
-  onEventClick?: (event: Appointment) => void;
+  onEventClick?: (eventId: number) => void;
   startHour?: number;
   endHour?: number;
   showAllDayRow?: boolean;
@@ -107,7 +107,6 @@ export default function DayColumn({
               const name = getEventTitle(event);
 
               const eventProps = {
-                key: event.id,
                 className: `cv-event cv-event-${event.series.category} cv-event-${getEventStatus(
                   event
                 )}`,
@@ -115,12 +114,12 @@ export default function DayColumn({
                   ? { backgroundColor: color, borderColor: color }
                   : undefined,
                 title: name,
-                ...(onEventClick && { onClick: () => onEventClick(event) }),
+                ...(onEventClick && { onClick: () => onEventClick(event.id) }),
               };
 
               return (
                 <div
-                  {...eventProps}
+                   key={event.id} {...eventProps}
                   className={`cv-allDayPill ${eventProps.className}`}
                 >
                   <div className="cv-eventTitle">{name}</div>

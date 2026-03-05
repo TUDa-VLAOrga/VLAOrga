@@ -1,6 +1,6 @@
 package de.vlaorgatu.vlabackend.enums.sse;
 
-import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,18 +15,42 @@ public enum SseMessageType {
      * Used for sending Debug messages to the frontend for SSE.
      */
     SSEDEBUG("SSEDEBUG"),
+
     /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been created.
+     * Used for sending SSE Events after a {@link Appointment}s have been updated.
+     * This update contains all new bookings imported from Linus.
+     * TODO: Frontend handling
      */
+    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
+
+    // CRUD Mesages for all entities
     GLOBALNOTECREATED("GLOBALNOTECREATED"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
-     */
     GLOBALNOTEUPDATED("GLOBALNOTEUPDATED"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
-     */
     GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
+
+    APPOINTMENTMATCHINGCREATE("APPOINTMENTMATCHINGCREATE"),
+    APPOINTMENTMATCHINGUPDATE("APPOINTMENTMATCHINGUPDATE"),
+
+    APPOINTMENTCATEGORYCREATED("APPOINTMENTCATEGORYCREATED"),
+    APPOINTMENTCATEGORYUPDATED("APPOINTMENTCATEGORYUPDATED"),
+    APPOINTMENTCATEGORYDELETED("APPOINTMENTCATEGORYDELETED"),
+
+    PERSONCREATED("PERSONCREATED"),
+    PERSONUPDATED("PERSONUPDATED"),
+    PERSONDELETED("PERSONDELETED"),
+
+    LECTURECREATED("LECTURECREATED"),
+    LECTUREUPDATED("LECTUREUPDATED"),
+    LECTUREDELETED("LECTUREDELETED"),
+
+    APPOINTMENTSERIESCREATED("APPOINTMENTSERIESCREATED"),
+    APPOINTMENTSERIESUPDATED("APPOINTMENTSERIESUPDATED"),
+    APPOINTMENTSERIESDELETED("APPOINTMENTSERIESDELETED"),
+
+    APPOINTMENTCREATED("APPOINTMENTCREATED"),
+    APPOINTMENTUPDATED("APPOINTMENTUPDATED"),
+    APPOINTMENTDELETED("APPOINTMENTDELETED"),
+
     /**
      * Used for sending Debug messages to the frontend.
      */
