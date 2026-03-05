@@ -1,4 +1,5 @@
 import type { Appointment } from "@/lib/databaseTypes";
+import { getEventTitle } from "./eventUtils";
 
 type Props = {
   /** Timed events for a single day column. */
@@ -164,7 +165,7 @@ export default function Timeline({
           const leftPct = col * widthPct;
 
           const color = getEventColor?.(event) ?? event.series?.lecture?.color;
-          const title = event.series?.name ?? "Termin";
+          const title = getEventTitle(event);
 
           const shortClass =
             durationMin < 60
