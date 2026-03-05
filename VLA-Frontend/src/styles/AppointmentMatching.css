@@ -60,4 +60,14 @@
 
 .linusMatchEntry {
     word-wrap: anywhere;
+    position: sticky;
+    top: 0;
+}
+
+.appointmentMatchingSeperator{
+    border-bottom: 5px solid #AAA;
+}
+
+.appointmentMatchEntryHighlight:has(button:hover) {
+    background-color: #00F2;
 }

@@ -68,10 +68,17 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
               {availableAppointments.length !== 0 &&
             <>
               {availableAppointments.map(appointment => 
-                <span key={appointment.id}>
+                <span key={appointment.id} className="appointmentMatchEntryHighlight">
                   <br/>
                   <b>Terminkategorie</b><br/>
                   {appointment.series.category.title}<br/><br/>
+
+                  {appointment.series.lecture &&
+                  <>
+                    <b>Vorlesung</b><br/>
+                    {appointment.series.lecture.name}<br/><br/>
+                  </>
+                  }
 
                   <b>Terminzeit</b><br/>
                   {getTimeStringOfDate(new Date(appointment.startTime))}
@@ -80,6 +87,11 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
 
                   <Button text={"Termin zuweisen"} onClick={() => postMatching(matching.id, appointment.id)}/>
                   <br/>
+                  {availableAppointments.lastIndexOf(appointment) != availableAppointments.length - 1 &&
+                  <>
+                    <hr className="appointmentMatchingSeperator"/>
+                  </>
+                  }
                 </span>
               )}
             </>
