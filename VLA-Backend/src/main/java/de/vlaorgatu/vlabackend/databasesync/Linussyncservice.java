@@ -74,7 +74,9 @@ public class Linussyncservice {
     @Transactional("vlaTransactionManager")
     public void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
-            linusAppointmentRepository.findByAppointmentTimeBetween(start, end);
+            linusAppointmentRepository
+            .findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual
+                (start, end);
 
         List<AppointmentMatching> toBeSavedAppointmentMatching = new ArrayList<>();
 

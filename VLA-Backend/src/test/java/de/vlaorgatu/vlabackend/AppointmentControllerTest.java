@@ -26,7 +26,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Transactional
 @Testcontainers
 @Import(TestcontainersConfiguration.class)
-@ActiveProfiles("unsecure")
 public class AppointmentControllerTest {
 
     @Autowired
