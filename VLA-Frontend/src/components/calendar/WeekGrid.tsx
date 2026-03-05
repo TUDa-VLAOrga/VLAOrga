@@ -40,8 +40,8 @@ export default function WeekGrid({
   const windowEndMin = endHour * 60;
 
   function isUntimedForView(e: Appointment) {
-    const startMin = e.start.getHours() * 60 + e.start.getMinutes();
-    const endMin = e.end.getHours() * 60 + e.end.getMinutes();
+    const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
+    const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
 
     // Invalid range -> untimed
     if (!(endMin > startMin)) return true;

@@ -51,13 +51,13 @@ export default function DayColumn({
    */
   for (const e of events) {
     // Missing start/end → treat as all-day event
-    if (!e.start || !e.end) {
+    if (!e.startTime || !e.endTime) {
       untimed.push(e);
       continue;
     }
 
-    const startMin = e.start.getHours() * 60 + e.start.getMinutes();
-    const endMin = e.end.getHours() * 60 + e.end.getMinutes();
+    const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
+    const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
 
     /** 
      * Prevent invalid time ranges from breaking
@@ -119,7 +119,7 @@ export default function DayColumn({
 
               return (
                 <div
-                   key={event.id} {...eventProps}
+                  key={event.id} {...eventProps}
                   className={`cv-allDayPill ${eventProps.className}`}
                 >
                   <div className="cv-eventTitle">{name}</div>

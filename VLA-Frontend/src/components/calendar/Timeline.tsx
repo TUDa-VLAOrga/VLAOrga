@@ -7,7 +7,7 @@ type Props = {
   startHour?: number;
   /** Last visible hour boundary (exclusive for rows; used as end boundary). */
   endHour?: number;
-  onEventClick?: (event: Appointment) => void;
+  onEventClick?: (eventId: number) => void;
   getEventColor?: (event: Appointment) => string | undefined;
 };
 
@@ -117,10 +117,10 @@ export default function Timeline({
    * This prevents events starting before 07:00 or ending after 22:00 from rendering outside.
    */
   const timed: TimedItem[] = events
-    .filter((e) => e.start && e.end)
+    .filter((e) => e.startTime && e.endTime)
     .map((e) => {
-      const rawStart = minutesSinceStartHour(e.start, startHour);
-      const rawEnd = minutesSinceStartHour(e.end, startHour);
+      const rawStart = minutesSinceStartHour(e.startTime, startHour);
+      const rawEnd = minutesSinceStartHour(e.endTime, startHour);
 
       // Clamp to [0, minutesVisible]
       const start = Math.max(0, Math.min(minutesVisible, rawStart));
@@ -185,15 +185,15 @@ export default function Timeline({
                 backgroundColor: color ?? undefined,
                 borderColor: color ?? undefined,
               }}
-              onClick={onEventClick ? () => onEventClick(event) : undefined}
-              title={`${title} (${timeFmt.format(event.start)} – ${timeFmt.format(
-                event.end
+              onClick={onEventClick ? () => onEventClick(event.id) : undefined}
+              title={`${title} (${timeFmt.format(event.startTime)} – ${timeFmt.format(
+                event.endTime
               )})`}
             >
               <div className="cv-timeline-event-title">{title}</div>
 
               <div className="cv-timeline-event-time">
-                {timeFmt.format(event.start)} – {timeFmt.format(event.end)}
+                {timeFmt.format(event.startTime)} – {timeFmt.format(event.endTime)}
               </div>
             </div>
           );
