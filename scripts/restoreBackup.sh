@@ -11,7 +11,11 @@ source .env
 docker compose --file docker-compose.prod.yml stop prod-app
 docker compose down --volumes db # deletes current db
 docker compose --file docker-compose.prod.yml up db -d
-sleep 5s # wait for docker to boot
+# wait for db to reboot
+while [ "" = "$(docker ps --filter name=vlaorga-db-1 | grep healthy)" ]; do
+  echo waiting for db to reboot
+  sleep 2s
+done
 cat $PG_FILE | docker compose exec --no-tty db psql --quiet --no-psqlrc --username=$POSTGRES_USER --dbname=$POSTGRES_DB
 # some errors here are normal, see https://www.postgresql.org/docs/current/app-pg-dumpall.html under notes
 echo Dump restored successfully
