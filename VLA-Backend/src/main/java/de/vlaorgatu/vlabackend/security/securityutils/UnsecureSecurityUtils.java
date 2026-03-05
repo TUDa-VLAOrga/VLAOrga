@@ -12,13 +12,14 @@ import org.springframework.stereotype.Component;
 @Profile("unsecure")
 @AllArgsConstructor
 public class UnsecureSecurityUtils implements SecurityUtils {
-    public static User unsecureUser = User.builder()
-        .id(null)
-        .name("Unsecured User")
-        .email("unsecure@unsecure.unsecure")
-        .password("UNSECURE")
-        .appointmentsWithDeletionIntention(null)
-        .build();
+    public static User getUnsecureUserCopyWithoutId() {
+        return User.builder()
+            .name("Unsecured User")
+            .email("unsecure@unsecure.unsecure")
+            .password("UNSECURE")
+            .appointmentsWithDeletionIntention(null)
+            .build();
+    }
 
     /**
      * Checks if the provided user is the same as the user in the current session.
@@ -38,6 +39,6 @@ public class UnsecureSecurityUtils implements SecurityUtils {
      */
     @Override
     public User getCurrentUser() {
-        return unsecureUser;
+        return getUnsecureUserCopyWithoutId();
     }
 }
