@@ -17,7 +17,7 @@ public interface LinusAppointmentRepository extends ReadOnlyRepository<LinusAppo
      * @return All {@link LinusAppointment}s in this time frame
      */
     List<LinusAppointment>
-    findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
+        findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
         LocalDateTime start, LocalDateTime end
     );
 }

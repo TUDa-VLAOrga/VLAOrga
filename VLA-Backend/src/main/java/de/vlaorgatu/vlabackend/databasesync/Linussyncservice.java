@@ -75,8 +75,9 @@ public class Linussyncservice {
     public void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository
-            .findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual
-                (start, end);
+            .findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
+                start, end
+            );
 
         List<AppointmentMatching> toBeSavedAppointmentMatching = new ArrayList<>();
 
