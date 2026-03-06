@@ -10,6 +10,7 @@ import { useEvents } from "@/hooks/useEvents";
 import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
+import LogoutButton from "./LogoutButton.tsx";
 
 
 /**
@@ -78,6 +79,8 @@ export default function CalendarView() {
         >
           + Neuer Termin
         </button>
+
+        <LogoutButton/>
       </div>
 
       {/* Main frame: header row (weekdays) + grid with day columns */}
