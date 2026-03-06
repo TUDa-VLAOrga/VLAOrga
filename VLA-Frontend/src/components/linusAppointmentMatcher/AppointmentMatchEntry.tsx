@@ -71,11 +71,11 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
               {availableAppointments.map(appointment => 
                 <span key={appointment.id} className="appointmentMatchEntryHighlight">
                   <br/>
-                  <b>Terminkategorie</b><br/>
-                  {appointment.series.category.title}<br/><br/>
-
                   <b>Termintitel</b><br/>
                   {getEventTitle(appointment)}<br/><br/>
+
+                  <b>Terminkategorie</b><br/>
+                  {appointment.series.category.title}<br/><br/>
 
                   <b>Terminzeit</b><br/>
                   {getTimeStringOfDate(new Date(appointment.startTime))}
