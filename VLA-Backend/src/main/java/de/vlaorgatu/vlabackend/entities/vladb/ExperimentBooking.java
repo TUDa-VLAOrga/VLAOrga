@@ -1,6 +1,5 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -58,7 +57,6 @@ public class ExperimentBooking {
      * Appointment this experiment is booked for.
      */
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 

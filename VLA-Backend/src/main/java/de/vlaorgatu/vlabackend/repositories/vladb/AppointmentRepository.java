@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     /**
+     * Gets the first appointment in a series that is after the startTime.
+     *
+     * @param series    The {@link AppointmentSeries} the appointment belongs to
+     * @param startTime The time the appointment should start after
+     * @return An appointment, if exists, matching the criteria
+     */
+    Optional<Appointment> getAppointmentBySeriesAndStartTimeIsAfterOrderByStartTime(
+        AppointmentSeries series, LocalDateTime startTime);
+
+    /**
      * Finds an appointment by its id.
      *
      * @param id The id of the appointment
@@ -22,12 +33,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     /**
      * Finds all appointments that begin before a start time and end after an end time.
+     * Borders are inclusive.
      *
      * @param start The start of the event
      * @param end   The end of the event
      * @return All appointments that contain this event
      */
-    List<Appointment> findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+    List<Appointment> findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
         LocalDateTime start,
         LocalDateTime end
     );

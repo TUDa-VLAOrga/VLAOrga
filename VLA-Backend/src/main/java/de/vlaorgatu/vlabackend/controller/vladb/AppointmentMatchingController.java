@@ -10,6 +10,8 @@ import de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates.TimeFrame;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentMatchingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,23 +52,33 @@ public class AppointmentMatchingController implements
 
     /**
      * Returns all appointmentMatchings without an assigned Appointment in a time frame.
+     * Bounds are inclusive
      *
-     * @param startDate The start of the time frame in the iso format
-     * @param endDate   The end of the time frame in the iso format
+     * @param startOffsetDate The start of the time frame in the iso format
+     * @param endOffsetDate   The end of the time frame in the iso format
      * @return {@link AppointmentMatching}s without an assigned {@link Appointment}
      */
     @Transactional("vlaTransactionManager")
     @GetMapping("/nulledAppointments")
+    @SuppressWarnings({"checkstyle:indentation", "checkstyle:linelength"})
     public ResponseEntity<List<AppointmentMatching>> getUnmatchedAppointmentsInTimeFrame(
         @RequestParam("commence")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startOffsetDate,
         @RequestParam("terminate")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endOffsetDate
     ) {
+
+        LocalDateTime startDate = startOffsetDate
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
+
+        LocalDateTime endDate = endOffsetDate
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
 
         List<AppointmentMatching> appointmentMatchings =
             appointmentMatchingRepository
-                .findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeBetween(
+                .findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeGreaterThanEqualAndLinusAppointmentTimeLessThanEqual(
                     startDate,
                     endDate
                 );
@@ -116,7 +128,15 @@ public class AppointmentMatchingController implements
     @Transactional("vlaTransactionManager")
     @PostMapping("/match/appointments")
     public synchronized ResponseEntity<String> matchAppointments(@RequestBody TimeFrame timeFrame) {
-        linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
+        LocalDateTime commence = timeFrame.getCommence()
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
+
+        LocalDateTime terminate = timeFrame.getTerminate()
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
+
+        linusSyncService.matchAppointments(commence, terminate);
         return ResponseEntity.ok("");
     }
 
@@ -131,10 +151,19 @@ public class AppointmentMatchingController implements
     @PostMapping("/match/experimentBookings")
     public synchronized ResponseEntity<String> matchExperimentBookings(
         @RequestBody TimeFrame timeFrame) {
-        linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
+
+        LocalDateTime commence = timeFrame.getCommence()
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
+
+        LocalDateTime terminate = timeFrame.getTerminate()
+            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
+            .toLocalDateTime();
+
+        linusSyncService.matchAppointments(commence, terminate);
         linusSyncService.syncExperimentBookings(
-            timeFrame.getCommence(),
-            timeFrame.getTerminate()
+            commence,
+            terminate
         );
         return ResponseEntity.ok("");
     }

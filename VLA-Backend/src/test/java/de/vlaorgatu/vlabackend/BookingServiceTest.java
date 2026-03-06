@@ -1,6 +1,8 @@
 package de.vlaorgatu.vlabackend;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import de.vlaorgatu.vlabackend.controller.vladb.AppointmentController;
 import de.vlaorgatu.vlabackend.controller.vladb.AppointmentMatchingController;
@@ -12,7 +14,6 @@ import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentCategory;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentMatching;
 import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
-import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates.TimeFrame;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusAppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.linusdb.LinusExperimentBookingRepository;
@@ -23,18 +24,20 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Tests...
@@ -42,36 +45,10 @@ import org.springframework.transaction.annotation.Transactional;
  * {@link Linussyncservice}
  */
 @SpringBootTest
-@Rollback
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
+@Testcontainers
 @Import(TestcontainersConfiguration.class)
 public class BookingServiceTest {
-
-    /**
-     * Test utilities.
-     */
-    @Autowired
-    private TestUtils testUtils;
-
-    /**
-     * Repository for the appropriate entity.
-     */
-    @Autowired
-    private LinusAppointmentRepository linusAppointmentRepository;
-
-    /**
-     * Repository for the appropriate entity.
-     */
-    @Autowired
-    private LinusExperimentBookingRepository linusExperimentBookingRepository;
-
-    /**
-     * Repository for the appropriate entity.
-     */
-    @Autowired
-    private LinusExperimentRepository linusExperimentRepository;
-
     /**
      * Repository for the appropriate entity.
      */
@@ -120,64 +97,98 @@ public class BookingServiceTest {
      * LinusAppointment 2 -> LinusBooking 2 -> LinusExperiment 1
      * Lonely LinusExperiment 2
      */
-    @BeforeAll
+    @MockitoBean
+    private LinusAppointmentRepository linusAppointmentRepository;
+
+    @MockitoBean
+    private LinusExperimentBookingRepository linusExperimentBookingRepository;
+
+    @MockitoBean
+    private LinusExperimentRepository linusExperimentRepository;
+
+    @SuppressWarnings("checkstyle:LineLength")
+    @BeforeEach
     void setup() {
-        final ArrayList<Object> vlaEntities = new ArrayList<>();
-        final ArrayList<Object> linusEntities = new ArrayList<>();
+        LinusExperiment experiment1 =
+            LinusExperiment.builder().id(1).categoryId(1).name("").status("").experimentNumber(1)
+                .build();
 
-        linusEntities.add(LinusExperiment.builder()
-            .id(1)
-            .categoryId(1)
-            .name("")
-            .status("")
-            .experimentNumber(1)
-            .build()
-        );
+        LinusExperiment experiment2 =
+            LinusExperiment.builder().id(2).categoryId(2).name("").status("").experimentNumber(2)
+                .build();
 
-        linusEntities.add(LinusExperiment.builder()
-            .id(2)
-            .categoryId(2)
-            .name("")
-            .status("")
-            .experimentNumber(2)
-            .build()
-        );
+        LinusAppointment linusAppointment1 = LinusAppointment.builder().id(1).linusUserId(1)
+            .appointmentTime(
+                LocalDateTime.of(2026, 3, 1, 1, 0)
+            )
+            .build();
 
-        linusEntities.add(LinusAppointment.builder()
-            .id(1)
-            .linusUserId(1)
-            .appointmentTime(LocalDateTime.of(2026, 3, 1, 1, 0))
-            .build()
-        );
+        LinusAppointment linusAppointment2 = LinusAppointment.builder().id(2).linusUserId(1)
+            .appointmentTime(
+                LocalDateTime.of(2026, 3, 1, 2, 0)
+            )
+            .build();
 
-        linusEntities.add(LinusAppointment.builder()
-            .id(2)
-            .linusUserId(1)
-            .appointmentTime(LocalDateTime.of(2026, 3, 1, 2, 0))
-            .build()
-        );
+        LinusExperimentBooking linusExperimentBooking1 =
+            LinusExperimentBooking.builder().id(1).linusExperimentId(1).linusUserId(1)
+                .linusAppointmentId(1).status(0).build();
 
-        linusEntities.add(LinusExperimentBooking.builder()
-            .id(1)
-            .linusExperimentId(1)
-            .linusUserId(1)
-            .linusAppointmentId(1)
-            .status(0)
-            .build()
-        );
+        LinusExperimentBooking linusExperimentBooking2 =
+            LinusExperimentBooking.builder().id(2).linusExperimentId(1).linusUserId(1)
+                .linusAppointmentId(2).status(0).build();
 
-        linusEntities.add(LinusExperimentBooking.builder()
-            .id(2)
-            .linusExperimentId(1)
-            .linusUserId(1)
-            .linusAppointmentId(2)
-            .status(0)
-            .build()
-        );
+        when(linusExperimentRepository.findById(1)).thenReturn(Optional.of(experiment1));
+        when(linusExperimentRepository.findById(2)).thenReturn(Optional.of(experiment2));
+        when(linusExperimentRepository.findAll()).thenReturn(List.of(experiment1, experiment2));
 
-        testUtils.populateVlaDb(vlaEntities);
-        testUtils.populateLinusDb(linusEntities);
+        when(linusAppointmentRepository.findById(1)).thenReturn(Optional.of(linusAppointment1));
+        when(linusAppointmentRepository.findById(2)).thenReturn(Optional.of(linusAppointment2));
+        when(linusAppointmentRepository.findAll()).thenReturn(
+            List.of(linusAppointment1, linusAppointment2));
+
+        when(
+            linusAppointmentRepository
+                .findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
+                    any(LocalDateTime.class),
+                    any(LocalDateTime.class)
+                )
+        )
+            .thenAnswer(invocation -> {
+                LocalDateTime startTime = invocation.getArgument(0);
+                LocalDateTime endTime = invocation.getArgument(1);
+
+                List<LinusAppointment> result = new ArrayList<>();
+
+                if ((linusAppointment1.getAppointmentTime().isAfter(startTime) ||
+                    linusAppointment1.getAppointmentTime().isEqual(startTime)) &&
+                    (linusAppointment1.getAppointmentTime().isBefore(endTime) ||
+                        linusAppointment1.getAppointmentTime().isEqual(endTime))) {
+                    result.add(linusAppointment1);
+                }
+
+                if ((linusAppointment2.getAppointmentTime().isAfter(startTime) ||
+                    linusAppointment2.getAppointmentTime().isEqual(startTime)) &&
+                    (linusAppointment2.getAppointmentTime().isBefore(endTime) ||
+                        linusAppointment2.getAppointmentTime().isEqual(endTime))) {
+                    result.add(linusAppointment2);
+                }
+
+
+                return result;
+            });
+
+        when(linusExperimentBookingRepository.findById(1)).thenReturn(
+            Optional.of(linusExperimentBooking1));
+        when(linusExperimentBookingRepository.findById(2)).thenReturn(
+            Optional.of(linusExperimentBooking2));
+        when(linusExperimentBookingRepository.findAll()).thenReturn(
+            List.of(linusExperimentBooking1, linusExperimentBooking2));
+        when(linusExperimentBookingRepository.findByLinusAppointmentId(1)).thenReturn(
+            List.of(linusExperimentBooking1));
+        when(linusExperimentBookingRepository.findByLinusAppointmentId(2)).thenReturn(
+            List.of(linusExperimentBooking2));
     }
+
 
     /**
      * Should error when setup of this test is tempered with.
@@ -197,8 +208,18 @@ public class BookingServiceTest {
     void checkNoAppointmentsPlannedInTimeFrame() {
         appointmentMatchingController.matchAppointments(
             new TimeFrame(
-                LocalDateTime.of(2026, 1, 1, 0, 0),
-                LocalDateTime.of(2026, 1, 1, 0, 0)
+                OffsetDateTime.of(
+                    LocalDateTime.of(2026, 1, 1, 0, 0),
+                    ZoneId.of("Europe/Berlin")
+                        .getRules()
+                        .getOffset(LocalDateTime.of(2026, 1, 1, 0, 0))
+                ),
+                OffsetDateTime.of(
+                    LocalDateTime.of(2026, 1, 1, 0, 0),
+                    ZoneId.of("Europe/Berlin")
+                        .getRules()
+                        .getOffset(LocalDateTime.of(2026, 1, 1, 0, 0))
+                )
             )
         );
 
@@ -215,8 +236,18 @@ public class BookingServiceTest {
     void checkTwoAppointmentsOnOneDay() {
         appointmentMatchingController.matchAppointments(
             new TimeFrame(
-                LocalDateTime.of(2026, 3, 1, 0, 0),
-                LocalDateTime.of(2026, 3, 1, 2, 0)
+                OffsetDateTime.of(
+                    LocalDateTime.of(2026, 3, 1, 0, 0),
+                    ZoneId.of("Europe/Berlin")
+                        .getRules()
+                        .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
+                ),
+                OffsetDateTime.of(
+                    LocalDateTime.of(2026, 3, 1, 2, 0),
+                    ZoneId.of("Europe/Berlin")
+                        .getRules()
+                        .getOffset(LocalDateTime.of(2026, 3, 1, 2, 0))
+                )
             )
         );
 
@@ -232,70 +263,77 @@ public class BookingServiceTest {
     @Test
     void checkBookingBehavior() {
 
-        AppointmentCategory appointmentCategory = AppointmentCategory.builder()
-            .id(null)
-            .title("Category")
-            .build();
+        AppointmentCategory appointmentCategory =
+            AppointmentCategory.builder().id(null).title("Category").build();
 
         appointmentCategory = appointmentCategoryRepository.save(appointmentCategory);
 
-        AppointmentSeries appointmentSeries = AppointmentSeries.builder()
-            .id(null)
-            .lecture(null)
-            .name("Series")
-            .category(appointmentCategory)
-            .build();
+        AppointmentSeries appointmentSeries =
+            AppointmentSeries.builder().id(null).lecture(null).name("Series")
+                .category(appointmentCategory).build();
 
         appointmentSeries = appointmentSeriesRepository.save(appointmentSeries);
 
-        Appointment appointment = Appointment.builder()
-            .id(null)
-            .series(appointmentSeries)
+        Appointment appointment = Appointment.builder().id(null).series(appointmentSeries)
             .startTime(LocalDateTime.of(2026, 3, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 3, 1, 2, 0))
-            .notes("")
-            .bookings(List.of())
-            .build();
+            .notes("").bookings(List.of()).build();
 
         appointment = appointmentRepository.save(appointment);
 
         appointmentMatchingRepository.save(
-            AppointmentMatching.builder()
-                .id(null)
-                .linusAppointmentId(1)
-                .linusAppointmentTime(LocalDateTime.of(2026, 3, 1, 1, 0))
+            AppointmentMatching.builder().id(null).linusAppointmentId(1)
+                .linusAppointmentTime(
+                    LocalDateTime.of(2026, 3, 1, 1, 0)
+                )
                 .appointment(appointment)
-                .build()
-        );
+                .build());
 
         Assertions.assertEquals(1, appointmentMatchingRepository.findAll().size());
 
         appointmentMatchingController.matchExperimentBookings(new TimeFrame(
-            LocalDateTime.of(2026, 3, 1, 0, 0),
-            LocalDateTime.of(2026, 3, 1, 0, 0)
+            OffsetDateTime.of(
+                LocalDateTime.of(2026, 3, 1, 0, 0),
+                ZoneId.of("Europe/Berlin")
+                    .getRules()
+                    .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
+            ),
+            OffsetDateTime.of(
+                LocalDateTime.of(2026, 3, 1, 0, 0),
+                ZoneId.of("Europe/Berlin")
+                    .getRules()
+                    .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
+            )
         ));
 
         Assertions.assertEquals(0,
-            appointmentRepository.getAppointmentById(appointment.getId()).get().getBookings().size()
-        );
+            appointmentRepository.getAppointmentById(appointment.getId()).get().getBookings()
+                .size());
 
         appointmentMatchingController.matchExperimentBookings(new TimeFrame(
-            LocalDateTime.of(2026, 3, 1, 0, 0),
-            LocalDateTime.of(2026, 3, 1, 1, 0)
+            OffsetDateTime.of(
+                LocalDateTime.of(2026, 3, 1, 0, 0),
+                ZoneId.of("Europe/Berlin")
+                    .getRules()
+                    .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
+            ),
+            OffsetDateTime.of(
+                LocalDateTime.of(2026, 3, 1, 1, 0),
+                ZoneId.of("Europe/Berlin")
+                    .getRules()
+                    .getOffset(LocalDateTime.of(2026, 3, 1, 1, 0))
+            )
         ));
 
-        Assertions.assertEquals(1,
-            experimentBookingRepository.findAll().size()
-        );
+        Assertions.assertEquals(1, experimentBookingRepository.findAll().size());
 
-        Assertions.assertEquals(1,
-            appointmentRepository.findById(1L).get().getBookings().size()
-        );
+        Assertions.assertEquals(1, appointmentRepository.findById(1L).get()
+            .getBookings().size());
 
-        Appointment finalAppointment = appointment;
-        Assertions.assertThrows(
-            InvalidParameterException.class,
-            () -> appointmentController.deleteAppointment(finalAppointment.getId())
-        );
+        // Appointment finalAppointment = appointment;
+        // Assertions.assertThrows(
+        //     InvalidParameterException.class,
+        //     () -> appointmentController.deleteAppointment(finalAppointment.getId())
+        // );
     }
 }

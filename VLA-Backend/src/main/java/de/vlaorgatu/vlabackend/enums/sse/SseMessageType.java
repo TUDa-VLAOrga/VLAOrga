@@ -50,12 +50,10 @@ public enum SseMessageType {
     APPOINTMENTCREATED("APPOINTMENTCREATED"),
     APPOINTMENTUPDATED("APPOINTMENTUPDATED"),
     APPOINTMENTDELETED("APPOINTMENTDELETED"),
-
     /**
      * Used for sending Debug messages to the frontend.
      */
     DEBUG("DEBUG");
-
     /**
      * The actual value of the enum object.
      */
