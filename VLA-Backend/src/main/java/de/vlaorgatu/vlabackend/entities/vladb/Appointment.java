@@ -43,7 +43,6 @@ public class Appointment {
      * Appointment series this appointment belongs to.
      */
     @ManyToOne(optional = false)
-    @JsonBackReference
     private AppointmentSeries series;
 
     /**
