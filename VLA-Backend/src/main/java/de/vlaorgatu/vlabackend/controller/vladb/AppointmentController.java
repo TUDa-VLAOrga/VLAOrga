@@ -4,11 +4,9 @@ import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
-import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
-import java.util.List;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -110,7 +108,7 @@ public class AppointmentController
      */
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id,
-                                               @RequestBody Appointment appointment) {
+                                                         @RequestBody Appointment appointment) {
         if (Objects.isNull(appointment.getId())) {
             appointment.setId(id);
         } else if (!appointment.getId().equals(id)) {

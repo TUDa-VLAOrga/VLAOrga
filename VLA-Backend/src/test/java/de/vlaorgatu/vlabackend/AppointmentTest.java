@@ -24,10 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Tests for the appointment endpoint.
@@ -36,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
+@Testcontainers
+@ActiveProfiles("unsecure")
 public class AppointmentTest {
     /**
      * The MVC mock for requesting.
@@ -82,8 +86,8 @@ public class AppointmentTest {
 
         Appointment appointment = Appointment.builder()
             .series(appointmentSeries)
-            .start(LocalDateTime.of(2026, 1, 1, 0, 0))
-            .end(LocalDateTime.of(2026, 1, 1, 1, 0))
+            .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
             .notes("Note that.")
             .bookings(List.of())
             .build();
@@ -132,8 +136,8 @@ public class AppointmentTest {
 
         Appointment appointment = Appointment.builder()
             .series(appointmentSeries)
-            .start(LocalDateTime.of(2026, 1, 1, 0, 0))
-            .end(LocalDateTime.of(2026, 1, 1, 1, 0))
+            .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
             .notes("Note that.")
             .bookings(List.of())
             .build();

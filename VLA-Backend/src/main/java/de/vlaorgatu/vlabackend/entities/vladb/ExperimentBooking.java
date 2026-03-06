@@ -1,8 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -17,10 +15,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Represents a booked experiment for a certain appointment.
@@ -46,7 +40,6 @@ public class ExperimentBooking {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     @JsonBackReference
-    @JsonIgnore
     private Appointment appointment;
 
     /**
