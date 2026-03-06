@@ -1,11 +1,4 @@
 :root {
-  --z-base: 1;
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-overlay: 1000;
-  --z-modal: 1100;
-  --z-tooltip: 1200;
-
   /* Timeline sizing */
   --cv-hour-height: 56px;
   --cv-all-day-height: 56px;
@@ -236,7 +229,7 @@
   width: 1px;
   background: #777;
   pointer-events: none;
-  z-index: 20;
+  z-index: var(--cv-z-dayColumn-not-last-child-after)
 }
 
 /* Short events (< 90 min) */
@@ -501,7 +494,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-overlay);
+  z-index: var(--cv-z-overlay);
   animation: fadeIn 0.2s;
 }
 
@@ -607,7 +600,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-overlay);
+  z-index: var(--cv-z-overlay);
 }
 
 .cv-formBox {
@@ -1083,12 +1076,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-overlay);
+  z-index: var(--cv-z-overlay);
 }
 
 /* Higher z-index for PersonDetails modal when it appears over EventDetails */
 .cv-personDetailsOverlay {
-  z-index: 1200 !important;
+  z-index: var(--cv-z-person-details-overlay);
   background: rgba(0, 0, 0, 0.3);
 }
 
