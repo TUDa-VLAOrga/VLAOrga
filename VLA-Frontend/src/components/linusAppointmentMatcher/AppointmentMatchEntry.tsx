@@ -6,6 +6,7 @@ import { Button } from "../ui/Button";
 import { getTimeStringOfDate } from "../calendar/dateUtils";
 import { fetchBackend, parseJsonFixDate } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
+import { getEventTitle } from "../calendar/eventUtils";
 
 interface AppointmentMatchEntryProps {
   matching: AppointmentMatching,
@@ -73,12 +74,8 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
                   <b>Terminkategorie</b><br/>
                   {appointment.series.category.title}<br/><br/>
 
-                  {appointment.series.lecture &&
-                  <>
-                    <b>Vorlesung</b><br/>
-                    {appointment.series.lecture.name}<br/><br/>
-                  </>
-                  }
+                  <b>Termintitel</b><br/>
+                  {getEventTitle(appointment)}<br/><br/>
 
                   <b>Terminzeit</b><br/>
                   {getTimeStringOfDate(new Date(appointment.startTime))}
