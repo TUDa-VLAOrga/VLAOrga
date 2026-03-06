@@ -58,7 +58,6 @@ public class ExperimentBooking {
      * Appointment this experiment is booked for.
      */
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
