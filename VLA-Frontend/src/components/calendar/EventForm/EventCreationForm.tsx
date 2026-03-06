@@ -137,6 +137,11 @@ export default function EventCreationForm({
       <div className="cv-formBox" >
         <h2 className="cv-formTitle">Neuer Termin</h2>
 
+        <p className="cv-moveDialogInfo">
+          Um Abnahmetermine für eine Vorlesung zu erstellen,
+          bitte den Knopf in der Detailansicht der Vorlesung benutzen.
+        </p>
+
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">
             <label htmlFor="title" className="cv-formLabel">

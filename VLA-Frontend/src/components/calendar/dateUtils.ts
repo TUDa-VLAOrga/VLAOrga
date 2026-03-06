@@ -41,6 +41,31 @@ export function formatDDMM(date: Date) {
   return `${dd}.${mm}.`;
 }
 
+/** Formats a date with time as "dd.mm HH:mm" (e.g., "19.12. 11:30"). */
+export function formatDDMMHHMM(date: Date) {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${day}.${month} ${hours}:${minutes}`;
+}
+
+/** Outputs how many days before a reference date. */
+export function daysBefore(date: Date, referenceDate: Date): string {
+  const startDate = new Date(date);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(referenceDate);
+  endDate.setHours(0, 0, 0, 0);
+  const oneDay = 24 * 60 * 60 * 1000;
+  const diff = Math.round((endDate.getTime() - startDate.getTime()) / oneDay);
+  return diff + " Tage";
+}
+
+/** Format just the time of a date. */
+export function formatTime(date: Date) {
+  return timeFormat.format(date);
+}
+
 
 /** gives a new Date that is `days` days away from `date`. */
 export function addDays(date: Date, days: number) {
