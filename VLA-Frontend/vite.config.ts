@@ -35,7 +35,7 @@ export default defineConfig({
       // Required for testing API calls
       '/api': 'http://localhost:8080',
 
-      '/logout': 'http://localhost:8080'
+      '/logout': 'http://localhost:8080',
     },
   },
 });
