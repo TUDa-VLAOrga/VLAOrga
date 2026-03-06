@@ -1,6 +1,8 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,6 +43,7 @@ public class Appointment {
      * Appointment series this appointment belongs to.
      */
     @ManyToOne(optional = false)
+    @JsonBackReference
     private AppointmentSeries series;
 
     /**
@@ -67,4 +70,12 @@ public class Appointment {
     @JsonManagedReference
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
     private List<ExperimentBooking> bookings = new ArrayList<>();
+
+    /**
+     * The id of a {@link User} that intents on deleting this appointment.
+     */
+    @Nullable
+    @ManyToOne // We avoid the @ManyToMany as we only need 2 approvals
+    @JsonManagedReference
+    private User deletingIntentionUser;
 }

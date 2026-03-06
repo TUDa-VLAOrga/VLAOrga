@@ -10,11 +10,14 @@ import java.util.List;
 public interface LinusAppointmentRepository extends ReadOnlyRepository<LinusAppointment, Integer> {
     /**
      * Searches for all linus reservations in a given time frame.
+     * Inclusive bounds
      *
      * @param start The start of the time frame
      * @param end   The end of the time frame
      * @return All {@link LinusAppointment}s in this time frame
      */
-    List<LinusAppointment> findByAppointmentTimeBetween(LocalDateTime start,
-                                                        LocalDateTime end);
+    List<LinusAppointment>
+        findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
+        LocalDateTime start, LocalDateTime end
+    );
 }

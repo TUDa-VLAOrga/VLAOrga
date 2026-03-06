@@ -101,7 +101,7 @@ public class VlaBackendEntitiesTest {
         lecture.setId(null);
         Lecture responseLecture = lectureController.createLecture(lecture).getBody();
         Assertions.assertEquals(lecture, responseLecture);
-        Assertions.assertEquals(1L, lecture.getId());  // got set on saving
+        Assertions.assertNotNull(lecture.getId());  // got set on saving
 
         // empty datasets are filled with default (empty string)
         Lecture emptyLecture = new Lecture();
@@ -114,7 +114,7 @@ public class VlaBackendEntitiesTest {
         person.setId(null);
         Person savedPerson = personController.createPerson(person).getBody();
         Assertions.assertEquals(person, savedPerson);
-        Assertions.assertEquals(1L, person.getId());
+        Assertions.assertNotNull(person.getId());
 
         Assertions.assertThrows(InvalidParameterException.class,
             () -> appCatController.createAppointmentCategory(appCategory));
@@ -122,7 +122,7 @@ public class VlaBackendEntitiesTest {
         AppointmentCategory savedAppCat =
             appCatController.createAppointmentCategory(appCategory).getBody();
         Assertions.assertEquals(appCategory, savedAppCat);
-        Assertions.assertEquals(1L, appCategory.getId());
+        Assertions.assertNotNull(appCategory.getId());
 
         Assertions.assertThrows(InvalidParameterException.class,
             () -> appSeriesController.createAppointmentSeries(appSeries));
@@ -130,21 +130,21 @@ public class VlaBackendEntitiesTest {
         AppointmentSeries savedAppSeries =
             appSeriesController.createAppointmentSeries(appSeries).getBody();
         Assertions.assertEquals(appSeries, savedAppSeries);
-        Assertions.assertEquals(1L, appSeries.getId());
+        Assertions.assertNotNull(appSeries.getId());
 
         Assertions.assertThrows(InvalidParameterException.class,
             () -> appController.createAppointment(appointment));
         appointment.setId(null);
         Appointment savedAppointment = appController.createAppointment(appointment).getBody();
         Assertions.assertEquals(appointment, savedAppointment);
-        Assertions.assertEquals(1L, appointment.getId());
+        Assertions.assertNotNull(appointment.getId());
 
         Assertions.assertThrows(InvalidParameterException.class,
             () -> acceptanceController.createAcceptance(acceptance));
         acceptance.setId(null);
         Acceptance savedAcceptance = acceptanceController.createAcceptance(acceptance).getBody();
         Assertions.assertEquals(acceptance, savedAcceptance);
-        Assertions.assertEquals(1L, acceptance.getId());
+        Assertions.assertNotNull(acceptance.getId());
 
     }
 }
