@@ -35,6 +35,14 @@ public class ExperimentBooking {
     private Long id;
 
     /**
+     * ID of the booked-for appointment.
+     */
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    @JsonBackReference
+    private Appointment appointment;
+
+    /**
      * ID of the booked experiment in Linus.
      */
     @Column(name = "linus_experiment_id", nullable = false)
@@ -53,14 +61,6 @@ public class ExperimentBooking {
     @ManyToOne
     @Nullable
     private Person person;
-
-    /**
-     * Appointment this experiment is booked for.
-     */
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "appointment_id", nullable = false)
-    private Appointment appointment;
 
     /**
      * Notes for this booking, probably taken from linus reservation at init.

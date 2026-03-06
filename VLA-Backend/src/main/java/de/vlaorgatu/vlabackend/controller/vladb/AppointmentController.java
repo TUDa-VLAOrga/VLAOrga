@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
@@ -59,6 +60,23 @@ public class AppointmentController
     }
 
     /**
+     * Returns all {@link ExperimentBooking}s associated with an {@link Appointment}.
+     *
+     * @param id The id of the appointment
+     * @return All ExperimentBookings of this appointment
+     */
+    @GetMapping("/{id}/experimentbookings")
+    public ResponseEntity<List<ExperimentBooking>> getAllAppointments(@PathVariable Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Appointment with id " + id + " was not found"
+                )
+            );
+        return ResponseEntity.ok(appointment.getBookings());
+    }
+
+    /**
      * Creates a new appointment.
      *
      * @param appointment Appointment to create, must not contain an ID (auto-generated).
@@ -90,7 +108,7 @@ public class AppointmentController
      */
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id,
-                                               @RequestBody Appointment appointment) {
+                                                         @RequestBody Appointment appointment) {
         if (Objects.isNull(appointment.getId())) {
             appointment.setId(id);
         } else if (!appointment.getId().equals(id)) {

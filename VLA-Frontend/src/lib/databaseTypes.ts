@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-03-04 05:00:00.
+// Generated using typescript-generator version 3.2.1263 on 2026-03-06 09:17:25.
 
 export interface LinusAppointment {
     id: number;
@@ -108,7 +108,6 @@ export interface ExperimentBooking {
     person?: Person;
     notes: string;
     status: ExperimentPreparationStatus;
-    appointment: Appointment;
 }
 
 export interface ExperimentBookingBuilder {
@@ -147,7 +146,7 @@ export interface PersonBuilder {
 export interface User {
     id: number;
     name: string;
-    email?: string;
+    email: string;
     password: string;
 }
 
@@ -167,7 +166,6 @@ export enum ExperimentPreparationStatus {
 
 export enum SseMessageType {
     SSEDEBUG = "SSEDEBUG",
-    LINUSBOOKINGSIMPORT = "LINUSBOOKINGSIMPORT",
     GLOBALNOTECREATED = "GLOBALNOTECREATED",
     GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
     GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
@@ -188,5 +186,7 @@ export enum SseMessageType {
     APPOINTMENTCREATED = "APPOINTMENTCREATED",
     APPOINTMENTUPDATED = "APPOINTMENTUPDATED",
     APPOINTMENTDELETED = "APPOINTMENTDELETED",
+    LINUSBOOKINGSIMPORT = "LINUSBOOKINGSIMPORT",
+    EXPERIMENTBOOKINGUPDATED = "EXPERIMENTBOOKINGUPDATED",
     DEBUG = "DEBUG",
 }

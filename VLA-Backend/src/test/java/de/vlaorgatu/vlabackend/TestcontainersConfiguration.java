@@ -31,6 +31,7 @@ class TestcontainersConfiguration {
             properties.add("spring.datasource.vla.url", postgreSqlContainer::getJdbcUrl);
             properties.add("spring.datasource.vla.username", postgreSqlContainer::getUsername);
             properties.add("spring.datasource.vla.password", postgreSqlContainer::getPassword);
+
             properties.add("spring.flyway.vla.url", postgreSqlContainer::getJdbcUrl);
             properties.add("spring.flyway.vla.user", postgreSqlContainer::getUsername);
             properties.add("spring.flyway.vla.password", postgreSqlContainer::getPassword);
