@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-21 11:54:41.
+// Generated using typescript-generator version 3.2.1263 on 2026-03-06 09:17:25.
 
 export interface LinusAppointment {
     id: number;
@@ -10,6 +10,9 @@ export interface LinusAppointment {
     appointmentTime?: Date;
     comment?: string;
     name?: string;
+}
+
+export interface LinusAppointmentBuilder {
 }
 
 export interface LinusExperiment {
@@ -25,6 +28,9 @@ export interface LinusExperiment {
     experimentNumber: number;
 }
 
+export interface LinusExperimentBuilder {
+}
+
 export interface LinusExperimentBooking {
     id: number;
     linusAppointmentId?: number;
@@ -32,6 +38,9 @@ export interface LinusExperimentBooking {
     linusUserId: number;
     status: number;
     pinnedOn?: Date;
+}
+
+export interface LinusExperimentBookingBuilder {
 }
 
 export interface LinusUser {
@@ -45,15 +54,18 @@ export interface LinusUser {
 export interface Acceptance {
     id: number;
     appointment: Appointment;
-    start: Date;
-    end: Date;
+    startTime: Date;
+    endTime: Date;
+}
+
+export interface AcceptanceBuilder {
 }
 
 export interface Appointment {
     id: number;
     series: AppointmentSeries;
-    start: Date;
-    end: Date;
+    startTime: Date;
+    endTime: Date;
     notes: string;
     bookings: ExperimentBooking[];
 }
@@ -67,6 +79,16 @@ export interface AppointmentCategory {
 }
 
 export interface AppointmentCategoryBuilder {
+}
+
+export interface AppointmentMatching {
+    id: number;
+    linusAppointmentId: number;
+    linusAppointmentTime: Date;
+    appointment?: Appointment;
+}
+
+export interface AppointmentMatchingBuilder {
 }
 
 export interface AppointmentSeries {
@@ -83,9 +105,9 @@ export interface ExperimentBooking {
     id: number;
     linusExperimentId: number;
     linusExperimentBookingId?: number;
+    person?: Person;
     notes: string;
     status: ExperimentPreparationStatus;
-    person?: Person;
 }
 
 export interface ExperimentBookingBuilder {
@@ -106,19 +128,34 @@ export interface Lecture {
     persons: Person[];
 }
 
+export interface LectureBuilder {
+}
+
 export interface Person {
     id: number;
     name: string;
     email: string;
     notes: string;
     linusUserId?: number;
-    lectures: Lecture[];
+    linusUsername?: string;
+}
+
+export interface PersonBuilder {
 }
 
 export interface User {
     id: number;
     name: string;
     email: string;
+    password: string;
+}
+
+export interface TimeFrame {
+    commence: Date;
+    terminate: Date;
+}
+
+export interface TimeFrameBuilder {
 }
 
 export enum ExperimentPreparationStatus {
@@ -132,9 +169,24 @@ export enum SseMessageType {
     GLOBALNOTECREATED = "GLOBALNOTECREATED",
     GLOBALNOTEUPDATED = "GLOBALNOTEUPDATED",
     GLOBALNOTEDELETED = "GLOBALNOTEDELETED",
-    EXPERIMENTBOOKINGUPDATED = "EXPERIMENTBOOKINGUPDATED",
+    APPOINTMENTMATCHINGCREATE = "APPOINTMENTMATCHINGCREATE",
+    APPOINTMENTMATCHINGUPDATE = "APPOINTMENTMATCHINGUPDATE",
+    APPOINTMENTCATEGORYCREATED = "APPOINTMENTCATEGORYCREATED",
+    APPOINTMENTCATEGORYUPDATED = "APPOINTMENTCATEGORYUPDATED",
+    APPOINTMENTCATEGORYDELETED = "APPOINTMENTCATEGORYDELETED",
+    PERSONCREATED = "PERSONCREATED",
+    PERSONUPDATED = "PERSONUPDATED",
+    PERSONDELETED = "PERSONDELETED",
+    LECTURECREATED = "LECTURECREATED",
+    LECTUREUPDATED = "LECTUREUPDATED",
+    LECTUREDELETED = "LECTUREDELETED",
+    APPOINTMENTSERIESCREATED = "APPOINTMENTSERIESCREATED",
+    APPOINTMENTSERIESUPDATED = "APPOINTMENTSERIESUPDATED",
+    APPOINTMENTSERIESDELETED = "APPOINTMENTSERIESDELETED",
     APPOINTMENTCREATED = "APPOINTMENTCREATED",
     APPOINTMENTUPDATED = "APPOINTMENTUPDATED",
     APPOINTMENTDELETED = "APPOINTMENTDELETED",
+    LINUSBOOKINGSIMPORT = "LINUSBOOKINGSIMPORT",
+    EXPERIMENTBOOKINGUPDATED = "EXPERIMENTBOOKINGUPDATED",
     DEBUG = "DEBUG",
 }

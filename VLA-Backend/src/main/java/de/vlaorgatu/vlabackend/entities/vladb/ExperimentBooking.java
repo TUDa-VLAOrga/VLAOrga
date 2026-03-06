@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import jakarta.annotation.Nullable;
@@ -13,6 +14,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,9 +26,10 @@ import lombok.NoArgsConstructor;
  * Represents a booked experiment for a certain appointment.
  */
 @Builder
-@AllArgsConstructor
+@Setter
+@Getter
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 @Entity
 @Table(name = "experiment_bookings")
 public class ExperimentBooking {
@@ -56,9 +63,16 @@ public class ExperimentBooking {
     private Integer linusExperimentBookingId;  // Integer instead of int to allow nullability
 
     /**
+     * Person who booked the experiment.
+     */
+    @ManyToOne
+    @Nullable
+    private Person person;
+
+    /**
      * Notes for this booking, probably taken from linus reservation at init.
      */
-    @Column(name = "notes", nullable = false)
+    @Column(name = "notes", nullable = false, length = 4096)
     private String notes = "";
 
     /**
@@ -66,11 +80,4 @@ public class ExperimentBooking {
      */
     @Column(name = "status", nullable = false)
     private ExperimentPreparationStatus status = ExperimentPreparationStatus.PENDING;
-
-    /**
-     * Person who booked the experiment.
-     */
-    @ManyToOne
-    @Nullable
-    private Person person;
 }

@@ -38,7 +38,7 @@ public class AcceptanceController
      * @return OK response with the created acceptance, Error response otherwise.
      */
     @PostMapping
-    public ResponseEntity<?> createAcceptance(@RequestBody Acceptance acceptance) {
+    public ResponseEntity<Acceptance> createAcceptance(@RequestBody Acceptance acceptance) {
         if (Objects.nonNull(acceptance.getId())) {
             throw new InvalidParameterException(
                 "Received acceptance with ID " + acceptance.getId() +

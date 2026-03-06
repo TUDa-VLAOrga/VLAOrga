@@ -5,6 +5,7 @@ import de.vlaorgatu.vlabackend.exceptions.UserNotFoundException;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,21 +22,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserController implements
     DefaultGettingForJpaReposInterface<User, UserRepository> {
-
+    /**
+     * Default injected Password Encoder defined by the SecurityConfig.
+     */
+    private final PasswordEncoder passwordEncoder;
     /**
      * Repository used for user persistence operations.
      */
     private final UserRepository userRepository;
 
-
     /**
      * Creates a new user.
+     * Encrypts the password using the password encoder injected by the security configuration
      *
      * @param user user to create
      * @return created user
      */
     @PostMapping
     public User createUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

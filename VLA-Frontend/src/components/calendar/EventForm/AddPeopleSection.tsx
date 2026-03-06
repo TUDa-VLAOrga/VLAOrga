@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type {Person} from "@/lib/databaseTypes";
+import {getNotSynchronisedId} from "@/lib/utils.ts";
 
 
 
@@ -20,18 +21,16 @@ export default function AddPeopleSection({
   const [newPersonName, setNewPersonName] = useState("");
   const [newPersonEmail, setNewPersonEmail] = useState("");
   //const [newPersonRole, setNewPersonRole] = useState("");
-  let notSynchronisedId = -1;  // negative ID signals a not-yet-saved entity
 
   const handleAdd = () => {
     // TODO: Backend - POST request to create new person
     if (newPersonName.trim()) {
       const newPerson: Person = {
-        id: notSynchronisedId--,
+        id: getNotSynchronisedId(),
         name: newPersonName.trim(),
         email: newPersonEmail.trim(),
         // role: newPersonRole.trim() || undefined,
         notes: "",
-        lectures: [],
         linusUserId: undefined,
       };
       onAddPerson(newPerson);
@@ -117,7 +116,7 @@ export default function AddPeopleSection({
             <label key={person.id} className="cv-personCheckbox">
               <input
                 type="checkbox"
-                checked={selectedPeople.includes(person)}
+                checked={selectedPeople.map(p => p.id).includes(person.id)}
                 onChange={() => handleTogglePerson(person)}
               />
               <span className="cv-personInfo">

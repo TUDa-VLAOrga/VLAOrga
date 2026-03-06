@@ -3,6 +3,7 @@ package de.vlaorgatu.vlabackend.enums.sse;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.GlobalNote;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,34 +18,38 @@ public enum SseMessageType {
      * Used for sending Debug messages to the frontend for SSE.
      */
     SSEDEBUG("SSEDEBUG"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been created.
-     */
+
+    // CRUD Mesages for all entities
     GLOBALNOTECREATED("GLOBALNOTECREATED"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
-     */
     GLOBALNOTEUPDATED("GLOBALNOTEUPDATED"),
-    /**
-     * Used for sending SSE Events after a {@link GlobalNote} has been updated.
-     */
     GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
-    /**
-     * Used for sending SSE Events after a {@link ExperimentBooking} has been updated.
-     */
-    EXPERIMENTBOOKINGUPDATED("EXPERIMENTBOOKINGUPDATED"),
-    /**
-     * Used for sending SSE Events after a {@link Appointment} has been created.
-     */
+
+    APPOINTMENTMATCHINGCREATE("APPOINTMENTMATCHINGCREATE"),
+    APPOINTMENTMATCHINGUPDATE("APPOINTMENTMATCHINGUPDATE"),
+
+    APPOINTMENTCATEGORYCREATED("APPOINTMENTCATEGORYCREATED"),
+    APPOINTMENTCATEGORYUPDATED("APPOINTMENTCATEGORYUPDATED"),
+    APPOINTMENTCATEGORYDELETED("APPOINTMENTCATEGORYDELETED"),
+
+    PERSONCREATED("PERSONCREATED"),
+    PERSONUPDATED("PERSONUPDATED"),
+    PERSONDELETED("PERSONDELETED"),
+
+    LECTURECREATED("LECTURECREATED"),
+    LECTUREUPDATED("LECTUREUPDATED"),
+    LECTUREDELETED("LECTUREDELETED"),
+
+    APPOINTMENTSERIESCREATED("APPOINTMENTSERIESCREATED"),
+    APPOINTMENTSERIESUPDATED("APPOINTMENTSERIESUPDATED"),
+    APPOINTMENTSERIESDELETED("APPOINTMENTSERIESDELETED"),
+
     APPOINTMENTCREATED("APPOINTMENTCREATED"),
-    /**
-     * Used for sending SSE Events after a {@link Appointment} has been updated.
-     */
     APPOINTMENTUPDATED("APPOINTMENTUPDATED"),
-    /**
-     * Used for sending SSE Events after a {@link Appointment} has been deleted.
-     */
     APPOINTMENTDELETED("APPOINTMENTDELETED"),
+
+    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
+
+    EXPERIMENTBOOKINGUPDATED("EXPERIMENTBOOKINGUPDATED"),
     /**
      * Used for sending Debug messages to the frontend.
      */

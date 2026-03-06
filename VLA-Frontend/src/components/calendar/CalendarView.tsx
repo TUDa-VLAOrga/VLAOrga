@@ -27,7 +27,7 @@ export default function CalendarView() {
 
   const {
     allEvents,
-    selectedEvent,
+    selectedEventId,
     eventsByDate, 
     handleCreateEvent, 
     handleEventClick,
@@ -41,8 +41,7 @@ export default function CalendarView() {
    * Creates the event(s) (including recurrence materialization) and closes the modal.
    */
   function onEventSubmit(formData: EventFormData) {
-    handleCreateEvent(formData);
-    setShowEventForm(false);
+    handleCreateEvent(formData).then(() => setShowEventForm(false));
   }
 
   return (
@@ -104,9 +103,9 @@ export default function CalendarView() {
         />
       )}
       {/* Modal overlay: event details */}
-      {selectedEvent && (
+      {selectedEventId && (
         <EventDetails
-          event={selectedEvent}
+          event={allEvents.find(e => e.id === selectedEventId)!}
           allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}

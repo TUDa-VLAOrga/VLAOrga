@@ -18,9 +18,9 @@ type EventDetailsProps = {
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
-  onAddCategory: (category: AppointmentCategory) => void;
-  onAddPerson: (person: Person) => void;
-  onAddLecture: (lecture: Lecture) => void;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
+  onAddPerson: (person: Person) => Promise<Person | void>;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
 };
 
 /**
@@ -49,6 +49,13 @@ export default function EventDetails({
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes.trim());
+    }
+  }
+
+  function mailToPersons(persons:Person[]) {
+    const mails: string[] = persons.filter(person => person.email != "").map(person => person.email);
+    if(mails.length > 0){
+      window.location.href = "mailto:" + mails.join(",");
     }
   }
 
@@ -130,7 +137,7 @@ export default function EventDetails({
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Zeit:</span>
               <span className="cv-detailValue">
-                {formatTimeRangeShortDE(event.start, event.end)}
+                {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </span>
             </div>
 
@@ -138,7 +145,16 @@ export default function EventDetails({
 
             {event.series.lecture && event.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
-                <span className="cv-detailLabel">Personen:</span>
+                <span className="cv-detailLabelPeople"> 
+                  <span className="cv-detailLabel">Personen:</span>
+                  <button
+                    type="button"
+                    className="cv-formBtn cv-formBtnSecondary"
+                    onClick={() => mailToPersons(event.series.lecture!.persons)}
+                  >
+                    {"Email an Alle"}
+                  </button>
+                </span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
                     {event.series.lecture?.persons.map((person) => (
@@ -196,7 +212,7 @@ export default function EventDetails({
             <button
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
-              disabled={eventNotes.trim() === event.notes}
+              disabled={typeof eventNotes === "string" && eventNotes.trim() === event.notes}
               onClick={() => {
                 onUpdateEventNotes(event.id, eventNotes);
                 onClose();

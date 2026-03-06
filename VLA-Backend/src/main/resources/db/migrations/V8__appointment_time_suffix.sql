@@ -17,6 +17,3 @@ COLUMN "end";
 ALTER TABLE appointments
 DROP
 COLUMN start;
-
-ALTER TABLE experiment_bookings
-    ALTER COLUMN appointment_id SET NOT NULL;

@@ -25,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api/globalNotes")
 public class GlobalNoteController
-    implements GetAndGetByIdDefaultInterface<GlobalNote, GlobalNoteRepository> {
+    implements DefaultGettingForJpaReposInterface<GlobalNote, GlobalNoteRepository> {
     /**
      * Repository that contains all globalNote entities.
      */

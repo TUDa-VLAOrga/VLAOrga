@@ -1,10 +1,10 @@
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch";
 import { SseMessageType, type GlobalNote } from "@/lib/databaseTypes";
-import GlobalNoteEntry from "./GlobalNoteEntry";
+import GlobalNoteEntry, {NotSynchronisedId} from "./GlobalNoteEntry";
 import "@/styles/GlobalNote.css";
 import { useState } from "react";
-import { NotSynchronisedId } from "@/lib/utils";
 import { Button } from "../ui/Button";
+import {API_URL_GLOBAL_NOTES} from "@/lib/api.ts";
 
 function handleGlobalNoteCreated(event: MessageEvent, currentState: GlobalNote[]): GlobalNote[]{
   const createdGlobalNote = JSON.parse(event.data) as GlobalNote;
@@ -41,7 +41,7 @@ export default function GlobalNoteContainer() {
   const [globalNotes, _setGlobalNotes] = 
     useSseConnectionWithInitialFetch<GlobalNote[]>(
       [],
-      "/api/globalNotes",
+      API_URL_GLOBAL_NOTES,
       sseHandlers
     );
   const [draftNote, setDraftNote] = useState<GlobalNote | undefined>(undefined);
@@ -64,6 +64,12 @@ export default function GlobalNoteContainer() {
         onClick={() => setViewVisible(!viewVisible)}
         style={{display: viewVisible ? "none" : ""}}
       >
+        {globalNotes.length !== 0 &&
+      <>
+        <div className="globalNoteDot"></div>
+      </>
+        }
+      
       </div>
       <div className="globalNoteContainer" style={{display: viewVisible ? "" : "none"}}>
         <div className="globalNoteView">

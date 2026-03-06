@@ -1,7 +1,6 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { SseObserver } from "./SseObserver";
 import { Logger } from "../logger/Logger";
-import { LogEvent } from "../logger/LoggerTypes";
 import { SseMessageType } from "@/lib/databaseTypes";
 
 /**
@@ -30,7 +29,7 @@ export class SSEHandler {
      */
   static initialize(setComponentStatus: RefObject<Dispatch<SetStateAction<boolean>>>) {
     if(this.eventSource) return;
-    Logger.info("Sse is initializing...", LogEvent.SseRelated);
+    Logger.info("Sse is initializing...");
 
     this.setComponentStatus = setComponentStatus;
 
@@ -59,7 +58,7 @@ export class SSEHandler {
      * @param _ Received Window event
      */
   private static handleSseError(_: unknown){
-    Logger.error("Sse has errored", LogEvent.SseRelated);
+    Logger.error("Sse has errored");
     SSEHandler.setComponentStatus.current(true);
   }
 
@@ -68,7 +67,7 @@ export class SSEHandler {
      * Cannot be reopened without a reload
      */
   private static closeConnection(){
-    Logger.warn("Sse connection was closed", LogEvent.SseRelated);
+    Logger.warn("Sse connection was closed");
     SSEHandler.eventSource.close();
   }
 

@@ -9,6 +9,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,9 +23,10 @@ import lombok.NoArgsConstructor;
  * Example: Physik 1 WS25/26 Donnerstags (where Physik 1 WS25/26 is a lecture)
  */
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 @Table(name = "appointment_series")
 public class AppointmentSeries {
