@@ -57,6 +57,7 @@ public class AppointmentMatchingController implements
      */
     @Transactional("vlaTransactionManager")
     @GetMapping("/nulledAppointments")
+    @SuppressWarnings({"checkstyle:indentation", "checkstyle:linelength"})
     public ResponseEntity<List<AppointmentMatching>> getUnmatchedAppointmentsInTimeFrame(
         @RequestParam("commence")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -66,7 +67,7 @@ public class AppointmentMatchingController implements
 
         List<AppointmentMatching> appointmentMatchings =
             appointmentMatchingRepository
-                .findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeBetween(
+                .findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeGreaterThanEqualAndLinusAppointmentTimeLessThanEqual(
                     startDate,
                     endDate
                 );
