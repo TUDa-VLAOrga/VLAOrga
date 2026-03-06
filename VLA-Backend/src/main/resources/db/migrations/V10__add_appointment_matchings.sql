@@ -1,35 +1,45 @@
-CREATE TABLE appointment_series_appointments
+CREATE SEQUENCE IF NOT EXISTS appointment_matching_seq START WITH 1 INCREMENT BY 50;
+
+CREATE TABLE appointment_matching
 (
-    appointment_series_id BIGINT NOT NULL,
-    appointments_id       BIGINT NOT NULL
+    id                     BIGINT  NOT NULL,
+    linus_appointment_id   INTEGER NOT NULL,
+    linus_appointment_time TIMESTAMP WITHOUT TIME ZONE,
+    appointment_id         BIGINT,
+    CONSTRAINT pk_appointmentmatching PRIMARY KEY (id)
 );
 
-CREATE TABLE users_appointments_with_deletion_intention
-(
-    user_id                                 BIGINT NOT NULL,
-    appointments_with_deletion_intention_id BIGINT NOT NULL
-);
+ALTER TABLE persons
+    ADD linus_user_name VARCHAR(255);
 
-ALTER TABLE appointments
-    ADD deleting_intention_user_id BIGINT;
+ALTER TABLE appointment_matching
+    ADD CONSTRAINT uc_appointmentmatching_appointment UNIQUE (appointment_id);
 
-ALTER TABLE appointment_series_appointments
-    ADD CONSTRAINT uc_appointment_series_appointments_appointments UNIQUE (appointments_id);
+ALTER TABLE appointment_matching
+    ADD CONSTRAINT uc_appointmentmatching_linus_appointment UNIQUE (linus_appointment_id);
 
-ALTER TABLE users_appointments_with_deletion_intention
-    ADD CONSTRAINT uc_usersappointmentswithdeletion_appointmentswithdeletioninten UNIQUE (appointments_with_deletion_intention_id);
+ALTER TABLE persons
+    ADD CONSTRAINT uc_persons_linus_user UNIQUE (linus_user_id);
 
-ALTER TABLE appointments
-    ADD CONSTRAINT FK_APPOINTMENTS_ON_DELETINGINTENTIONUSER FOREIGN KEY (deleting_intention_user_id) REFERENCES users (id);
+ALTER TABLE persons
+    ADD CONSTRAINT uc_persons_linus_user_name UNIQUE (linus_user_name);
 
-ALTER TABLE appointment_series_appointments
-    ADD CONSTRAINT fk_appserapp_on_appointment FOREIGN KEY (appointments_id) REFERENCES appointments (id);
+ALTER TABLE appointment_matching
+    ADD CONSTRAINT FK_APPOINTMENTMATCHING_ON_APPOINTMENT FOREIGN KEY (appointment_id) REFERENCES appointments (id);
 
-ALTER TABLE appointment_series_appointments
-    ADD CONSTRAINT fk_appserapp_on_appointment_series FOREIGN KEY (appointment_series_id) REFERENCES appointment_series (id);
+ALTER TABLE experiment_bookings
+    ALTER COLUMN appointment_id SET NOT NULL;
 
-ALTER TABLE users_appointments_with_deletion_intention
-    ADD CONSTRAINT fk_useappwitdelint_on_appointment FOREIGN KEY (appointments_with_deletion_intention_id) REFERENCES appointments (id);
+ALTER TABLE persons
+DROP
+COLUMN linus_user_id;
 
-ALTER TABLE users_appointments_with_deletion_intention
-    ADD CONSTRAINT fk_useappwitdelint_on_user FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE persons
+    ADD linus_user_id INTEGER;
+
+ALTER TABLE persons
+    ADD CONSTRAINT uc_persons_linus_user UNIQUE (linus_user_id);
+
+ALTER TABLE experiment_bookings
+ALTER
+COLUMN notes TYPE VARCHAR(4096) USING (notes::VARCHAR(4096));
