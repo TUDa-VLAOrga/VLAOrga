@@ -1,4 +1,4 @@
-import { URL_LOGIN, URL_LOGOUT } from "@/lib/api";
+import { URL_LOGOUT } from "@/lib/api";
 import { fetchCSRFToken } from "@/lib/utils";
 import { Logger } from "../logger/Logger";
 
@@ -12,9 +12,13 @@ function logout(){
                 'X-CSRF-TOKEN': csrfToken,
             }
         })
-        // This errors as this already does not have permissions anymore
+        // This triggers in the production case
+        .then(_ => {
+            window.location.reload();
+        })
+        // This triggers in dev mode due to CORS
         .catch(_ => {
-            window.location.href = URL_LOGIN;
+            window.location.reload();
         });
     })
     .catch(err => 

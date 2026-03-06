@@ -8,5 +8,4 @@ export const API_URL_APPOINTMENT_CATEGORIES = `${API_BASE_URL}/appointmentCatego
 export const API_URL_APPOINTMENT_SERIES = `${API_BASE_URL}/appointmentSeries`;
 export const API_URL_APPOINTMENTS = `${API_BASE_URL}/appointments`;
 
-export const URL_LOGIN = `/login.html`;
 export const URL_LOGOUT = `/logout`;
