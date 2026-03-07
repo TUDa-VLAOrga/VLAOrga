@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,7 +65,13 @@ public class Appointment {
     /**
      * List of {@link ExperimentBooking}s of this appointment.
      */
-    @JsonManagedReference
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appointment")
     private List<ExperimentBooking> bookings = new ArrayList<>();
+
+    /**
+     * The id of a {@link User} that intents on deleting this appointment.
+     */
+    @Nullable
+    @ManyToOne // We avoid the @ManyToMany as we only need 2 approvals
+    private User deletingIntentionUser;
 }

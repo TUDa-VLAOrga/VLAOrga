@@ -31,6 +31,7 @@ public class VlaUserDetailsService implements UserDetailsService {
     /**
      * Interacts with the database and creates a {@link UserDetails}.
      * This object is used for checking the authentication credentials.
+     * The "username" is the stringified id of the user.
      */
     @Override
     public UserDetails loadUserByUsername(String username) {

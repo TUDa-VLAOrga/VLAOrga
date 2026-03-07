@@ -1,17 +1,29 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * Represents a user in the system.
  */
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -40,6 +52,16 @@ public class User {
     /**
      * Represents the *hashed* password of the user.
      */
+    @JsonIgnore
     @Column(name = "password")
     private String password;
+
+    /**
+     * Represents all appointments that a user requested to delete.
+     */
+    @Nullable
+    @OneToMany(mappedBy = "deletingIntentionUser")
+    @JsonManagedReference
+    @JsonIgnore
+    private List<Appointment> appointmentsWithDeletionIntention;
 }

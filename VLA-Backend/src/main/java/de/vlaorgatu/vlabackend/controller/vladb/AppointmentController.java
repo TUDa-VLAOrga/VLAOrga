@@ -2,16 +2,23 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
+import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
+import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +47,26 @@ public class AppointmentController
     private final AppointmentRepository appointmentRepository;
 
     /**
+     * Repository used for ExperimentBooking persistence operations.
+     */
+    private final ExperimentBookingRepository experimentBookingRepository;
+
+    /**
+     * Repository managing all {@link UserRepository}.
+     */
+    private final UserRepository userRepository;
+
+    /**
+     * Service for managing {@link ExperimentBooking}s.
+     */
+    private final ExperimentBookingService experimentBookingService;
+
+    /**
+     * Utility function for security related features.
+     */
+    private final SecurityUtils securityUtils;
+
+    /**
      * Returns all appointments where eventTime is in their timeframe.
      *
      * @param eventTime The specified time as an ISO string
@@ -51,9 +78,10 @@ public class AppointmentController
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
     ) {
         List<Appointment> appointmentsInTimeFrame =
-            appointmentRepository.findAppointmentsByStartTimeBeforeAndEndTimeAfter(
-                eventTime, eventTime
-            );
+            appointmentRepository
+                .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+                    eventTime, eventTime
+                );
 
         return ResponseEntity.ok(appointmentsInTimeFrame);
     }
@@ -90,7 +118,7 @@ public class AppointmentController
      */
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id,
-                                               @RequestBody Appointment appointment) {
+                                                         @RequestBody Appointment appointment) {
         if (Objects.isNull(appointment.getId())) {
             appointment.setId(id);
         } else if (!appointment.getId().equals(id)) {
@@ -140,20 +168,51 @@ public class AppointmentController
      * @return OK response with the deleted appointment, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id) {
-        Appointment toBeDeletedAppointment = appointmentRepository.findById(id).orElseThrow(
+    public synchronized ResponseEntity<Appointment> deleteAppointment(
+        @PathVariable Long id
+    ) {
+        Appointment toDeleteAppointment = appointmentRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException(
-                "Appointment with ID " + id + " not found."));
+                "Appointment with ID " + id + " not found.")
+        );
 
-        if (!toBeDeletedAppointment.getBookings().isEmpty()) {
+        User deletetingIntentionUser = securityUtils.getCurrentUser();
+
+        if (!securityUtils.checkUserIsSessionUser(deletetingIntentionUser)) {
             throw new InvalidParameterException(
-                "Appointments with assigned experimentBookings may not be deleted"
+                HttpStatus.FORBIDDEN,
+                "Appointment deletion requested for a user that is the sender of the request!"
             );
         }
 
+        // At least two should agree that an appointment should be deleted
+        if (toDeleteAppointment.getDeletingIntentionUser() == null) {
+            toDeleteAppointment.setDeletingIntentionUser(deletetingIntentionUser);
+            final Appointment updatedAppointment = appointmentRepository.save(toDeleteAppointment);
+
+            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updatedAppointment);
+
+            return ResponseEntity.accepted().body(updatedAppointment);
+        }
+
+        if (deletetingIntentionUser.equals(toDeleteAppointment.getDeletingIntentionUser())) {
+            // User may not delete appointments by themselves
+            throw new InvalidParameterException(
+                "User (id=" + deletetingIntentionUser.getId() +
+                    ") has already requested deletion of " +
+                    " appointment (id=" + toDeleteAppointment.getId() + ")."
+            );
+        }
+
+        experimentBookingService.moveExperimentBookingsBeforeAppointmentDeletion(
+            toDeleteAppointment
+        );
+
         appointmentRepository.deleteById(id);
-        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, toBeDeletedAppointment);
-        return ResponseEntity.ok(toBeDeletedAppointment);
+
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTDELETED, toDeleteAppointment);
+
+        return ResponseEntity.ok(toDeleteAppointment);
     }
 
     /**
