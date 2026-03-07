@@ -50,8 +50,6 @@ public class ExperimentBookingService {
             return;
         }
 
-        Lecture appointmentLecture = toDeleteAppointment.getSeries().getLecture();
-
         Appointment nextAppointment = getNextValidExperimentBookingAppointmentFromSeries(
             toDeleteAppointment
         );
