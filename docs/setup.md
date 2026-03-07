@@ -6,19 +6,19 @@ This setup requires `git` and `docker` installed. Also, the access parameters to
 ## Preparation
 1. Clone the git repository:
 
-    git clone https://github.com/TUDa-VLAOrga/VLAOrga.git
+        git clone https://github.com/TUDa-VLAOrga/VLAOrga.git
 
 2. In the VLAOrga folder, copy the `.env.template` file to a file named `.env`.
 3. Change all `LINUS_` variables in `.env` to a correct value.
 
 ## Starting the Software
-Start the software by running (in VLAOrga folder):
+To start the software, run (in VLAOrga folder):
 
     docker compose --file docker-compose.prod.yml up -d
 
-The Software can now be accessed under: http://<servername>:8080/
+The Software can now be accessed under: http://servername:8080/
 
-To stop the Software, run (in VLAOrga folder):
+To stop the Software, run in VLAOrga folder:
 
     docker compose --file docker-compose.prod.yml stop
 
