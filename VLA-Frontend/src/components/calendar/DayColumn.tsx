@@ -103,7 +103,7 @@ export default function DayColumn({
               const name = getEventTitle(event);
 
               const eventProps = {
-                className: `cv-event cv-event-${event.series.category.title}`,
+                className: `cv-event`,
                 style: color
                   ? { backgroundColor: color, borderColor: color }
                   : undefined,
