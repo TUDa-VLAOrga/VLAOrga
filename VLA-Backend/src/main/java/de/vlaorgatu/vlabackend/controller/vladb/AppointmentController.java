@@ -117,7 +117,7 @@ public class AppointmentController
      */
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id,
-                                               @RequestBody Appointment appointment) {
+                                                         @RequestBody Appointment appointment) {
         if (Objects.isNull(appointment.getId())) {
             appointment.setId(id);
         } else if (!appointment.getId().equals(id)) {
@@ -167,7 +167,7 @@ public class AppointmentController
      * @return OK response with the deleted appointment, Error response otherwise.
      */
     @DeleteMapping("/{id}")
-    public synchronized ResponseEntity<?> deleteAppointment(
+    public synchronized ResponseEntity<Appointment> deleteAppointment(
         @PathVariable Long id
     ) {
         Appointment toDeleteAppointment = appointmentRepository.findById(id).orElseThrow(
@@ -175,9 +175,9 @@ public class AppointmentController
                 "Appointment with ID " + id + " not found.")
         );
 
-        User deletingIntentUser = securityUtils.getCurrentUser();
+        User deletetingIntentionUser = securityUtils.getCurrentUser();
 
-        if (!securityUtils.checkUserIsSessionUser(deletingIntentUser)) {
+        if (!securityUtils.checkUserIsSessionUser(deletetingIntentionUser)) {
             throw new InvalidParameterException(
                 HttpStatus.FORBIDDEN,
                 "Appointment deletion requested for a user that is the sender of the request!"
@@ -186,7 +186,7 @@ public class AppointmentController
 
         // At least two should agree that an appointment should be deleted
         if (toDeleteAppointment.getDeletingIntentionUser() == null) {
-            toDeleteAppointment.setDeletingIntentionUser(deletingIntentUser);
+            toDeleteAppointment.setDeletingIntentionUser(deletetingIntentionUser);
             final Appointment updatedAppointment = appointmentRepository.save(toDeleteAppointment);
 
             SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, updatedAppointment);
@@ -194,10 +194,11 @@ public class AppointmentController
             return ResponseEntity.accepted().body(updatedAppointment);
         }
 
-        if (deletingIntentUser.equals(toDeleteAppointment.getDeletingIntentionUser())) {
+        if (deletetingIntentionUser.equals(toDeleteAppointment.getDeletingIntentionUser())) {
             // User may not delete appointments by themselves
             throw new InvalidParameterException(
-                "User (id=" + deletingIntentUser.getId() + ") has already requested deletion of " +
+                "User (id=" + deletetingIntentionUser.getId() +
+                    ") has already requested deletion of " +
                     " appointment (id=" + toDeleteAppointment.getId() + ")."
             );
         }
