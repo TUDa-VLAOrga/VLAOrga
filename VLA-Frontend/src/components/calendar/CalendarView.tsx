@@ -12,6 +12,11 @@ import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
 
+/*
+ * CalendarView is the main screen for the calendar UI.
+ * It wires together navigation (week/day range), event CRUD (currently create + view),
+ * and meta data (lectures, categories) that can be used by the form and the event tiles.
+ */
 export default function CalendarView() {
   
   const [showEventForm, setShowEventForm] = useState(false);
@@ -38,9 +43,7 @@ export default function CalendarView() {
     handleCreateEvent(formData).then(() => setShowEventForm(false));
   }
 
-  const frameStyleVars: React.CSSProperties & Record<string, number> = {
-    "--cv-day-count": days.length,
-  };
+ 
 
   return (
     <div className="cv-root">
@@ -75,7 +78,10 @@ export default function CalendarView() {
         </button>
       </div>
 
-      <div className="cv-frame" style={frameStyleVars}>
+      <div
+        className="cv-frame"
+        style={{ "--cv-day-count": String(days.length) } as React.CSSProperties}
+      >
         <div className="cv-scrollContent">
           <WeekHeader days={days} />
 
@@ -102,7 +108,7 @@ export default function CalendarView() {
       {/* Modal overlay: event details */}
       {selectedEventId && (
         <EventDetails
-          event={allEvents.find(e => e.id === selectedEventId)!}
+          event={allEvents.find((e) => e.id === selectedEventId)!}
           allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}

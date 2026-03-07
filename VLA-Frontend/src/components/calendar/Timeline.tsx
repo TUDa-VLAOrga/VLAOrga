@@ -39,6 +39,11 @@ type PositionedItem = {
   colCount: number;
 };
 
+type TempItem = {
+  it: TimedItem;
+  col: number;
+};
+
 /**
  * Layout events into columns for each overlap cluster.
  * - Builds overlap clusters by time scanning
@@ -75,7 +80,7 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
 
   for (const cl of clusters) {
     const colEnds: number[] = [];
-    const temp: { it: TimedItem; col: number }[] = [];
+    const temp: TempItem[] = [];
 
     for (const it of cl) {
       // find first column that is free (end <= start)
@@ -118,7 +123,6 @@ export default function Timeline({
    * This prevents events starting before 07:00 or ending after 22:00 from rendering outside.
    */
   const timed: TimedItem[] = events
-    .filter((e) => e.startTime && e.endTime)
     .map((e) => {
       const rawStart = minutesSinceStartHour(e.startTime, startHour);
       const rawEnd = minutesSinceStartHour(e.endTime, startHour);
@@ -155,7 +159,7 @@ export default function Timeline({
           const height = ((end - start) / minutesVisible) * 100;
 
           /**
-           * Apply "short event" classes based on duration after clamping in CalenandarView.css:
+           * Apply "short event" classes based on duration after clamping in CalendarView.css:
            *   cv-event-short     (< 90 min)
            *   cv-event-veryShort (< 60 min)
            */

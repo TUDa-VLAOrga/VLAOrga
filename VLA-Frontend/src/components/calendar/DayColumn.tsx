@@ -1,7 +1,7 @@
 import type { CalendarDay } from "./CalendarTypes";
 import Timeline from "./Timeline";
 import type { Appointment } from "@/lib/databaseTypes";
-import { getEventTitle, getEventStatus } from "./eventUtils";
+import { getEventTitle } from "./eventUtils";
 
 type DayColumnProps = {
   day: CalendarDay;
@@ -50,12 +50,7 @@ export default function DayColumn({
    * the visible timeline window.
    */
   for (const e of events) {
-    // Missing start/end → treat as all-day event
-    if (!e.startTime || !e.endTime) {
-      untimed.push(e);
-      continue;
-    }
-
+   
     const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
     const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
 
@@ -90,9 +85,10 @@ export default function DayColumn({
       (startMin < windowStartMin && endMin > windowEndMin)
     ) {
       untimed.push(e);
-    } else {
-      timed.push(e);
+      continue;
     }
+
+    timed.push(e);
   }
 
   return (
@@ -107,9 +103,7 @@ export default function DayColumn({
               const name = getEventTitle(event);
 
               const eventProps = {
-                className: `cv-event cv-event-${event.series.category} cv-event-${getEventStatus(
-                  event
-                )}`,
+                className: `cv-event cv-event-${event.series.category.title}`,
                 style: color
                   ? { backgroundColor: color, borderColor: color }
                   : undefined,
