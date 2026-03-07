@@ -52,14 +52,22 @@ public class ExperimentBookingService {
 
         Lecture appointmentLecture = toDeleteAppointment.getSeries().getLecture();
 
-        Appointment nextAppointment;
+        Appointment nextAppointment = getNextValidExperimentBookingAppointmentFromSeries(
+            toDeleteAppointment
+        );
+
+        moveExperimentBookings(toDeleteAppointment, nextAppointment);
+    }
+
+    public Appointment getNextValidExperimentBookingAppointmentFromSeries(Appointment previous) {
+        Lecture appointmentLecture = previous.getSeries().getLecture();
 
         if (appointmentLecture == null) {
-            // Series without lecture
-            nextAppointment = appointmentRepository
+            // Appointment has no lecture
+            return appointmentRepository
                 .findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
-                    toDeleteAppointment.getId(),
-                    toDeleteAppointment.getStartTime()
+                    previous.getId(),
+                    previous.getStartTime()
                 )
                 .orElseThrow(
                     () -> new InvalidRequestInCurrentServerState(
@@ -68,11 +76,11 @@ public class ExperimentBookingService {
                     )
                 );
         } else {
-            // Series with lecture
-            nextAppointment = appointmentRepository
+            // Appointment has lecture
+            return appointmentRepository
                 .findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
                     appointmentLecture.getId(),
-                    toDeleteAppointment.getStartTime()
+                    previous.getStartTime()
                 )
                 .orElseThrow(
                     () -> new InvalidRequestInCurrentServerState(
@@ -81,8 +89,6 @@ public class ExperimentBookingService {
                     )
                 );
         }
-
-        moveExperimentBookings(toDeleteAppointment, nextAppointment);
     }
 
     public synchronized void moveExperimentBookings(Appointment source, Appointment target) {
