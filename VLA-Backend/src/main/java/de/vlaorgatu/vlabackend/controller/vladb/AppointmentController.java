@@ -78,9 +78,10 @@ public class AppointmentController
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
     ) {
         List<Appointment> appointmentsInTimeFrame =
-            appointmentRepository.findAppointmentsByStartTimeBeforeAndEndTimeAfter(
-                eventTime, eventTime
-            );
+            appointmentRepository
+                .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+                    eventTime, eventTime
+                );
 
         return ResponseEntity.ok(appointmentsInTimeFrame);
     }

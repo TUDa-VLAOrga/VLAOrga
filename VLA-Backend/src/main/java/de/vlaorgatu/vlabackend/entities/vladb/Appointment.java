@@ -65,8 +65,7 @@ public class Appointment {
     /**
      * List of {@link ExperimentBooking}s of this appointment.
      */
-    @JsonManagedReference
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appointment")
     private List<ExperimentBooking> bookings = new ArrayList<>();
 
     /**
@@ -74,6 +73,5 @@ public class Appointment {
      */
     @Nullable
     @ManyToOne // We avoid the @ManyToMany as we only need 2 approvals
-    @JsonManagedReference
     private User deletingIntentionUser;
 }

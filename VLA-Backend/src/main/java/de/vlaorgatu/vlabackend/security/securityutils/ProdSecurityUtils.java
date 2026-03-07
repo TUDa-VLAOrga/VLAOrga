@@ -48,6 +48,7 @@ public class ProdSecurityUtils implements SecurityUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
+        // Spring security uses our user id as the username.
         Long id = Long.parseLong(userDetails.getUsername());
 
         User user = userRepository.findById(id).orElseThrow(() ->
