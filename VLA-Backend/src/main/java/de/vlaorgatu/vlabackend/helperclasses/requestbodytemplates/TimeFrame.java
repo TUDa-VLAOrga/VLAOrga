@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,11 +20,11 @@ public class TimeFrame {
      * Start of the time frame.
      */
     @JsonInclude
-    private OffsetDateTime commence;
+    private LocalDateTime commence;
 
     /**
      * End of the time frame.
      */
     @JsonInclude
-    private OffsetDateTime terminate;
+    private LocalDateTime terminate;
 }

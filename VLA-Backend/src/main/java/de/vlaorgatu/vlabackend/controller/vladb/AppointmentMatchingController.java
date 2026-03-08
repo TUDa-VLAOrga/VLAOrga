@@ -54,8 +54,8 @@ public class AppointmentMatchingController implements
      * Returns all appointmentMatchings without an assigned Appointment in a time frame.
      * Bounds are inclusive
      *
-     * @param startOffsetDate The start of the time frame in the iso format
-     * @param endOffsetDate   The end of the time frame in the iso format
+     * @param startDate The start of the time frame in the iso format
+     * @param endDate   The end of the time frame in the iso format
      * @return {@link AppointmentMatching}s without an assigned {@link Appointment}
      */
     @Transactional("vlaTransactionManager")
@@ -63,18 +63,10 @@ public class AppointmentMatchingController implements
     @SuppressWarnings({"checkstyle:indentation", "checkstyle:linelength"})
     public ResponseEntity<List<AppointmentMatching>> getUnmatchedAppointmentsInTimeFrame(
         @RequestParam("commence")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startOffsetDate,
+        LocalDateTime startDate,
         @RequestParam("terminate")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endOffsetDate
+        LocalDateTime endDate
     ) {
-
-        LocalDateTime startDate = startOffsetDate
-            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
-            .toLocalDateTime();
-
-        LocalDateTime endDate = endOffsetDate
-            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
-            .toLocalDateTime();
 
         List<AppointmentMatching> appointmentMatchings =
             appointmentMatchingRepository
@@ -128,14 +120,6 @@ public class AppointmentMatchingController implements
     @Transactional("vlaTransactionManager")
     @PostMapping("/match/appointments")
     public synchronized ResponseEntity<String> matchAppointments(@RequestBody TimeFrame timeFrame) {
-        LocalDateTime commence = timeFrame.getCommence()
-            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
-            .toLocalDateTime();
-
-        LocalDateTime terminate = timeFrame.getTerminate()
-            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
-            .toLocalDateTime();
-
         linusSyncService.matchAppointments(commence, terminate);
         return ResponseEntity.ok("");
     }
@@ -151,14 +135,6 @@ public class AppointmentMatchingController implements
     @PostMapping("/match/experimentBookings")
     public synchronized ResponseEntity<String> matchExperimentBookings(
         @RequestBody TimeFrame timeFrame) {
-
-        LocalDateTime commence = timeFrame.getCommence()
-            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
-            .toLocalDateTime();
-
-        LocalDateTime terminate = timeFrame.getTerminate()
-            .atZoneSameInstant(ZoneId.of("Europe/Berlin"))
-            .toLocalDateTime();
 
         linusSyncService.matchAppointments(commence, terminate);
         linusSyncService.syncExperimentBookings(
