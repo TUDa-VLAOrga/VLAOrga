@@ -50,7 +50,7 @@ export default function EventDetails({
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   const [eventNotes, setEventNotes] = useState(event.notes);
-  const [isDeletionPending, setIsDeletionPending] = useState(false);
+  const [isDeletionPending, setIsDeletionPending] = useState(Boolean(event.deletingIntentionUser));
   const deletingUser = event.deletingIntentionUser;
   const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
   const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
@@ -193,16 +193,16 @@ export default function EventDetails({
               </div>
             )}
 
-            {deletingUser && (
+            {isDeletionPending &&
               <div className="cv-deletionRequestBanner">
                 <span className="cv-deletionRequestIcon">⚠️</span>
                 <span>
                   {isOwnDeletionRequest
                     ? "Du hast die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
-                    : `${deletingUser.name} hat die Löschung dieses Termins beantragt. Du kannst sie ausführen.`}
+                    : `${deletingUser!.name} hat die Löschung dieses Termins beantragt. Du kannst sie ausführen.`}
                 </span>
               </div>
-            )}     
+            }
 
             <textarea
               id="eventNotes"
@@ -247,8 +247,15 @@ export default function EventDetails({
                 Serie bearbeiten
               </button>
             }
+            <button
+              type="button"
+              className="cv-formBtn cv-formBtnSecondary"
+              onClick={() => setShowEditSingleDialog(true)}
+            >
+              {isPartOfSeries ? "Einzeln bearbeiten" : "Bearbeiten"}
+            </button>
 
-            {!deletingUser && (
+            {!isDeletionPending && (
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
@@ -260,16 +267,6 @@ export default function EventDetails({
                 Löschen
               </button>
             )}
-            {isOwnDeletionRequest && (
-              <button
-                type="button"
-                className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
-                onClick={() => onCancelDeletionRequest(event.id).then(() => setIsDeletionPending(false))}
-              >
-                Löschanfrage zurückziehen
-              </button>
-            )}
-
             {canConfirmDeletion && (
               <button
                 type="button"
@@ -279,16 +276,18 @@ export default function EventDetails({
                 Löschung bestätigen
               </button>
             )}
+            {isDeletionPending &&
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
+                onClick={() => onCancelDeletionRequest(event.id).then(() => setIsDeletionPending(false))}
+              >
+                Löschanfrage zurückziehen
+              </button>
+            }
 
 
 
-            <button
-              type="button"
-              className="cv-formBtn cv-formBtnSecondary"
-              onClick={() => setShowEditSingleDialog(true)}
-            >
-              {isPartOfSeries ? "Einzeln bearbeiten" : "Bearbeiten"}
-            </button>
           </div>
         </div>
       </div>
