@@ -4,7 +4,7 @@ import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
 import type {Appointment, AppointmentCategory, AppointmentSeries, Lecture, Person} from "@/lib/databaseTypes";
 import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
-import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
+import {formatTimeRangeLongerDE} from "@/components/calendar/dateUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
@@ -120,7 +120,7 @@ export default function EventEditForm({
             endDateTime={endDateTime}
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
-            hintText={"Ursprüngliche Zeit: " + formatTimeRangeShortDE(event.startTime, event.endTime)}
+            hintText={"Ursprüngliche Zeit: " + formatTimeRangeLongerDE(event.startTime, event.endTime)}
             errorText={timeRangeHintText}
           />
           <div className="cv-detailsContent">

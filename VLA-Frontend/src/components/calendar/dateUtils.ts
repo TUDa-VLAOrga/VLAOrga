@@ -130,8 +130,24 @@ export function formatTime(date: Date) {
   return timeFormat.format(date);
 }
 
-/** formats a time range like 11:30 - 13:10, includes days if spanning over multiple days */
+/**
+ * Formats a time range like 11:30 - 13:10.
+ * Includes date only if spanning over multiple days
+ */
 export function formatTimeRangeShortDE(start: Date, end: Date) {
+  if (compareSameDay(start, end)) {
+    return `${formatTime(start)} - ${formatTime(end)}`;
+  }
+  return (
+    `${formatDay(start)}, ${formatTime(start)} - ${formatDay(end)}, ${formatTime(end)}`
+  );
+}
+
+/**
+ * Formats a time range like 11:30 - 13:10.
+ * Always includes the date.
+ */
+export function formatTimeRangeLongerDE(start: Date, end: Date) {
   if (compareSameDay(start, end)) {
     return `${formatDay(start)}, ${formatTime(start)} - ${formatTime(end)}`;
   }
@@ -139,7 +155,6 @@ export function formatTimeRangeShortDE(start: Date, end: Date) {
     `${formatDay(start)}, ${formatTime(start)} - ${formatDay(end)}, ${formatTime(end)}`
   );
 }
-
 /**
  *  Formats a date with time, e.g. "19.12. 09:30".
  */

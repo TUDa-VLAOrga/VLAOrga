@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {formatDateAndTime, formatTimeRangeShortDE} from "../dateUtils";
+import {formatDateAndTime, formatTimeRangeLongerDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import "../../../styles/Event-details-styles.css";
@@ -183,7 +183,7 @@ export default function EventDetails({
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Zeit:</span>
               <span className="cv-detailValue">
-                {formatTimeRangeShortDE(event.startTime, event.endTime)}
+                {formatTimeRangeLongerDE(event.startTime, event.endTime)}
               </span>
             </div>
 
