@@ -9,4 +9,3 @@ export const API_URL_APPOINTMENT_SERIES = `${API_BASE_URL}/appointmentSeries`;
 export const API_URL_APPOINTMENTS = `${API_BASE_URL}/appointments`;
 
 export const URL_LOGOUT = `/logout`;
-export const API_URL_DELETION_REQUESTS = `${API_BASE_URL}/deletionRequests`;
