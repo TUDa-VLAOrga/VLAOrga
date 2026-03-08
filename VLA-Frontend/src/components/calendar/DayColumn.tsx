@@ -5,10 +5,11 @@ import { getEventTitle } from "./eventUtils";
 
 type DayColumnProps = {
   day: CalendarDay;
-  events: Appointment[];
+  eventsAllDay: Appointment[];
+  eventsTimed: Appointment[];
   onEventClick?: (eventId: number) => void;
-  startHour?: number;
-  endHour?: number;
+  startHour: number;
+  endHour: number;
   showAllDayRow?: boolean;
 };
 
@@ -19,86 +20,22 @@ type DayColumnProps = {
  */
 export default function DayColumn({
   day,
-  events,
+  eventsAllDay,
+  eventsTimed,
   onEventClick,
-  startHour = 7,
-  endHour = 22,
+  startHour,
+  endHour,
   showAllDayRow = true,
 }: DayColumnProps) {
-  /** 
-   * Define visible working-hour window (07:00–22:00).
-   * Events are now filtered against this range before
-   * being passed to Timeline.
-   */
-  const windowStartMin = startHour * 60;
-  const windowEndMin = endHour * 60;
-
-  /** 
-   * Events are split into:
-   * - timed   → rendered inside Timeline
-   * - untimed → rendered in All-Day row
-   *
-   * Previously all events went directly into Timeline,
-   * which caused overflow and layout issues.
-   */
-  const timed: Appointment[] = [];
-  const untimed: Appointment[] = [];
-
-  /**
-   * 
-   * Classify events depending on whether they intersect
-   * the visible timeline window.
-   */
-  for (const e of events) {
-   
-    const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
-    const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
-
-    /** 
-     * Prevent invalid time ranges from breaking
-     * timeline positioning logic.
-     */
-    if (!(endMin > startMin)) {
-      untimed.push(e);
-      continue;
-    }
-
-    /**
-     * 
-     * Check if event overlaps the visible working window.
-     * Example:
-     *   Window 07–22
-     *   Event 06–08 → still visible
-     */
-    const intersectsWindow = startMin < windowEndMin && endMin > windowStartMin;
-
-    /**
-     * 
-     * Move events to All-Day row when:
-     *  - completely outside working hours OR
-     *  - spanning the entire visible window
-     *
-     * This prevents oversized/clipped timeline events
-     */
-    if (
-      !intersectsWindow ||
-      (startMin < windowStartMin && endMin > windowEndMin)
-    ) {
-      untimed.push(e);
-      continue;
-    }
-
-    timed.push(e);
-  }
 
   return (
     <div className="cv-dayColumn" data-date={day.iso}>
       {showAllDayRow && (
         <div className="cv-allDayRow" aria-label="Ganztägige Termine">
-          {untimed.length === 0 ? (
+          {eventsAllDay.length === 0 ? (
             <div className="cv-allDayEmpty" />
           ) : (
-            untimed.map((event) => {
+            eventsAllDay.map((event) => {
               const color = event.series.lecture?.color;
               const name = getEventTitle(event);
 
@@ -132,7 +69,7 @@ export default function DayColumn({
       */}
       <div className="cv-dayTimeline">
         <Timeline
-          events={timed}
+          events={eventsTimed}
           onEventClick={onEventClick}
           startHour={startHour}
           endHour={endHour}

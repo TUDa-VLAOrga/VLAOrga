@@ -13,8 +13,9 @@ type Props = {
   endHour?: number;
 };
 
-// default height for the all-day row
+// default height for the all-day row in pixels
 const DEFAULT_ALL_DAY_HEIGHT = 56;
+
 /**
  * WeekGrid renders the week layout:
  * - left rail: TimeColumn
@@ -39,7 +40,11 @@ export default function WeekGrid({
   const windowStartMin = startHour * 60;
   const windowEndMin = endHour * 60;
 
-  function isUntimedForView(e: Appointment) {
+  /**
+   * Determine whether an event is completely inside the displayed time range.
+   * Otherwise, it will be displayed as for the whole day above the time scale.
+   */
+  function isUntimedForView(e: Appointment): boolean {
     const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
     const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
 
@@ -124,7 +129,8 @@ export default function WeekGrid({
           <DayColumn
             key={day.iso}
             day={day}
-            events={eventsByDate[day.iso] || []}
+            eventsAllDay={(eventsByDate[day.iso] || []).filter((e) => isUntimedForView(e))}
+            eventsTimed={(eventsByDate[day.iso] || []).filter((e) => !isUntimedForView(e))}
             onEventClick={onEventClick}
             startHour={startHour}
             endHour={endHour}

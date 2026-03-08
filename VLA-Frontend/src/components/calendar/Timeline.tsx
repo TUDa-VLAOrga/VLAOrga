@@ -5,9 +5,9 @@ type Props = {
   /** Timed events for a single day column. */
   events: Appointment[];
   /** First visible hour (inclusive). */
-  startHour?: number;
+  startHour: number;
   /** Last visible hour boundary (exclusive for rows; used as end boundary). */
-  endHour?: number;
+  endHour: number;
   onEventClick?: (eventId: number) => void;
   getEventColor?: (event: Appointment) => string | undefined;
 };
@@ -111,8 +111,8 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
  */
 export default function Timeline({
   events,
-  startHour = 7,
-  endHour = 22,
+  startHour,
+  endHour,
   onEventClick,
   getEventColor,
 }: Props) {
