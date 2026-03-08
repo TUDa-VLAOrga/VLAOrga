@@ -12,6 +12,35 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+
+    /**
+     * Searches for next appointment in a series with lectures.
+     *
+     * @param seriesLectureId The id of the lecture
+     * @param startTime         The lower exclusive time bound for start of event.
+     * @return The first appointment that is for the same lecture and starts after startTime
+     */
+    @SuppressWarnings("checkstyle:indentation")
+    Optional<Appointment>
+    findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+        Long seriesLectureId,
+        LocalDateTime startTime
+    );
+
+    /**
+     * Searches for the next appointment in a series.
+     *
+     * @param seriesId The id of the series to search in
+     * @param startTime The lower exclusive time bound for start of event.
+     * @return Appointment in the specified series that starts after the startTime
+     */
+    @SuppressWarnings("checkstyle:indentation")
+    Optional<Appointment>
+    findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+        Long seriesId,
+        LocalDateTime startTime
+    );
+
     /**
      * Finds an appointment by its id.
      *
@@ -22,12 +51,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     /**
      * Finds all appointments that begin before a start time and end after an end time.
+     * Bounds inclusive
      *
      * @param start The start of the event
      * @param end   The end of the event
      * @return All appointments that contain this event
      */
-    List<Appointment> findAppointmentsByStartTimeBeforeAndEndTimeAfter(
+    List<Appointment> findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
         LocalDateTime start,
         LocalDateTime end
     );

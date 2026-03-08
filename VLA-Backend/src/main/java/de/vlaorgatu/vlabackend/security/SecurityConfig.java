@@ -33,7 +33,7 @@ public class SecurityConfig {
      * Forces a forward to / (the frontend application) on successful authentication.
      */
     @Bean
-    @Profile({"prod", "dev"})
+    @Profile("!unsecure")
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf ->
@@ -49,6 +49,9 @@ public class SecurityConfig {
                 .loginPage("/login.html")
                 .permitAll()
                 .defaultSuccessUrl("/", true)
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
             );
 
         return http.build();
