@@ -372,7 +372,7 @@
 }
 
 .cv-timeline-event-time {
-  margin-top: 6px;
+  margin-bottom: 2px;
   font-size: 16px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.8);
@@ -1214,4 +1214,40 @@
   justify-content: center;
   gap: 12px;
   margin-top: 24px;
+}
+
+.calendarExperimentIndicatorContainer {
+  border-radius: 20px;
+  overflow: hidden;
+  width: 80%;
+  height: 30%;
+  margin-left: 10%;
+}
+
+.calendarExperimentIndicator {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;  
+}
+
+.cei-experimentsPending {
+  overflow: hidden;
+  background-color: #b71d13;
+  color: white;
+  font-weight: bold;
+}
+
+.cei-experimentsInProgress {
+  overflow: hidden;
+  background-color: #bb8f00;
+  color: white;
+  font-weight: bold;
+}
+
+.cei-experimentsFinished {
+  overflow: hidden;
+  background-color: #008550;
+  color: white;
+  font-weight: bold;
 }

@@ -1,6 +1,7 @@
 import { ExperimentPreparationStatus, type ExperimentBooking, type LinusExperiment } from "@/lib/databaseTypes";
 import { useState } from "react";
-import { Logger } from "../logger/Logger";
+import { fetchBackend, getExperimentPreperationsStatusGermanMap } from "@/lib/utils";
+import { API_URL_EXPERIMENTBOOKINGS } from "@/lib/api";
 
 interface ExperimentOverviewProps {
   linusExperiment: LinusExperiment,
@@ -10,23 +11,14 @@ interface ExperimentOverviewProps {
 }
 
 function updateAppointmentStatus(experimentBooking: ExperimentBooking, status: ExperimentPreparationStatus){
-  const updatedExperimentBooking: ExperimentBooking = {
-    ...experimentBooking,
-    status: status,
-  };
-
-  fetch("/api/experimentBookings/" + experimentBooking.id, {
-    method: "PUT",
-    body: JSON.stringify(updatedExperimentBooking),
-  })
-    .then(response => {
-      if(!response.ok) throw new Error("Experimentbooking could not be updated");
-    })
-    .catch(e => {
-      Logger.info(e.message);
-      console.log(e);
-    });
+  fetchBackend(
+    `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/status`,
+    "PUT",
+    Object.keys(ExperimentPreparationStatus).indexOf(status).toString()
+  );
 }
+
+const translationMap = getExperimentPreperationsStatusGermanMap()
 
 export default function ExperimentOverview({
   linusExperiment,
@@ -39,7 +31,7 @@ export default function ExperimentOverview({
   return (
     <div className="experimentOverview">
       <div className="experimentPropertyGrid">
-        <div className="experimentOverviewTitle" style={{gridColumnStart: "span 2"}}>
+        <div className="experimentOverviewTitle">
           {linusExperiment.name}
         </div>  
 
@@ -54,13 +46,15 @@ export default function ExperimentOverview({
                   return (
                     <>
                       <option  
+                        key={status}
                         value={status}
-                        onClick={() => {
+                        onClick={e => {
+                          e.stopPropagation();
                           updateAppointmentStatus(experimentBooking, status);
                           setIsEditingStatus(false);
                         }}
                       >
-                        {status}
+                        {translationMap.get(status)}
                       </option>
                     </>
                   );
@@ -79,7 +73,7 @@ export default function ExperimentOverview({
                 }}
                 onClick={() => setIsEditingStatus(true)}
               >
-                {experimentBooking.status}
+                {translationMap.get(experimentBooking.status)}
               </span>
             </>
           }
