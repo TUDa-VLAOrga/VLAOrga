@@ -329,13 +329,13 @@ export function useEvents() {
   }, [allEvents]);
 
   /**
-   * Erster Schritt: User beantragt Löschung eines Termins.
+   * User beantragt oder bestätigt Löschung eines Termins.
    */
-  async function handleRequestDeletion(appointmentId: number): Promise<void> {
+  async function handleDeletion(appointmentId: number): Promise<void> {
     await fetchBackend<Appointment>(
       `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
       .catch((error) => {
-        Logger.error("Fehler beim Erstellen der Löschanfrage: ", error);
+        Logger.error("Error on appointment deletion: ", error);
       });
   }
   /**
@@ -349,16 +349,7 @@ export function useEvents() {
       deletingIntentionUser: null,
     })
       .catch((error) => {
-        Logger.error("Fehler beim Abbrechen der Löschanfrage: ", error);
-      });
-  }
-  /**
-   * Zweiter Schritt: Zweiter User bestätigt die Löschung.
-   */
-  async function handleConfirmDeletion(appointmentId: number): Promise<void> {
-    await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
-      .catch((error) => {
-        Logger.error("Fehler beim Bestätigen der Löschung: ", error);
+        Logger.error("Error on cancellation of appointment deletion: ", error);
       });
   }
 
@@ -371,8 +362,7 @@ export function useEvents() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
-    handleRequestDeletion,
+    handleDeletion,
     handleCancelDeletionRequest,
-    handleConfirmDeletion,
   };
 }

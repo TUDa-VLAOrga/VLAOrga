@@ -37,9 +37,8 @@ export default function CalendarView() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
-    handleRequestDeletion,
+    handleDeletion,
     handleCancelDeletionRequest,
-    handleConfirmDeletion,
   } = useEvents();
 
   /**
@@ -128,9 +127,8 @@ export default function CalendarView() {
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
-          onRequestDeletion={handleRequestDeletion}
+          onDeletion={handleDeletion}
           onCancelDeletionRequest={handleCancelDeletionRequest}
-          onConfirmDeletion={handleConfirmDeletion}
           currentUserId={currentUserId}
         />
       )}

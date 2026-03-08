@@ -20,9 +20,8 @@ type EventDetailsProps = {
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
-  onRequestDeletion: (eventId: number) => Promise<void>;
+  onDeletion: (eventId: number) => Promise<void>;
   onCancelDeletionRequest: (eventId: number) => Promise<void>;
-  onConfirmDeletion: (eventId: number) => Promise<void>;
   currentUserId?: number;
 };
 
@@ -43,9 +42,8 @@ export default function EventDetails({
   onAddCategory,
   onAddPerson,
   onAddLecture,
-  onRequestDeletion,
+  onDeletion,
   onCancelDeletionRequest,
-  onConfirmDeletion,
   currentUserId,
 }: EventDetailsProps) {
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
@@ -256,7 +254,7 @@ export default function EventDetails({
                 className="cv-formBtn cv-formBtnDanger"
                 disabled={isDeletionPending}
                 onClick={() => {
-                  onRequestDeletion(event.id).then(() => setIsDeletionPending(true));
+                  onDeletion(event.id).then(() => setIsDeletionPending(true));
                 }}
               >
                 Löschen
@@ -276,7 +274,7 @@ export default function EventDetails({
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
-                onClick={() => onConfirmDeletion(event.id).then(() => onClose())}
+                onClick={() => onDeletion(event.id).then(() => onClose())}
               >
                 Löschung bestätigen
               </button>
