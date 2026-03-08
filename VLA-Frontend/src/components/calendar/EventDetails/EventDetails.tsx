@@ -250,8 +250,8 @@ export default function EventDetails({
                   <span className="cv-deletionRequestIcon">⚠️</span>
                   <span>
                     {isOwnDeletionRequest
-                      ? "Du hast die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
-                      : `${deletingUser.name} hat die Löschung dieses Termins beantragt. Du kannst sie ausführen.`}
+                      ? "Sie haben die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
+                      : `${deletingUser.name} hat die Löschung dieses Termins beantragt. Sie können sie ausführen.`}
                   </span>
                 </div>
             }
