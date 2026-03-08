@@ -13,6 +13,8 @@ import {fetchBackend, getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
 
+
+
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
   const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
   return [...currentValue, newEvent];
@@ -326,6 +328,31 @@ export function useEvents() {
     return grouped;
   }, [allEvents]);
 
+  /**
+   * User beantragt oder bestätigt Löschung eines Termins.
+   */
+  async function handleDeletion(appointmentId: number): Promise<void> {
+    await fetchBackend<Appointment>(
+      `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Error on appointment deletion: ", error);
+      });
+  }
+  /**
+   * Löschanfrage zurückziehen.
+   */
+  async function handleCancelDeletionRequest(appointmentId: number): Promise<void> {
+    const event = allEvents.find(e => e.id === appointmentId);
+    if (!event) return;
+    await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "PUT",{
+      ...event,
+      deletingIntentionUser: null,
+    })
+      .catch((error) => {
+        Logger.error("Error on cancellation of appointment deletion: ", error);
+      });
+  }
+
   return {
     allEvents,
     selectedEventId,
@@ -335,5 +362,7 @@ export function useEvents() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
+    handleDeletion,
+    handleCancelDeletionRequest,
   };
 }

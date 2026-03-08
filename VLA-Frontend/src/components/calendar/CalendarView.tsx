@@ -14,6 +14,7 @@ import { usePeople } from "@/hooks/usePeople";
 import AppointmentMatchingButton from "../linusAppointmentMatcher/AppointmentMatchingButton.tsx";
 import { useAppointmentMatcher } from "@/hooks/useAppointmentMatcher.ts";
 import LogoutButton from "./LogoutButton.tsx";
+import {useUsers} from "@/hooks/useUsers.ts";
 
 /*
  * CalendarView is the main screen for the calendar UI.
@@ -24,9 +25,10 @@ export default function CalendarView() {
   
   const [showEventForm, setShowEventForm] = useState(false);
   const { days, weekStart, rangeText, prevDay, nextDay, goToDate } = useCalendarNavigation();
-  const { lectures, handleAddLecture } = useLectures();
+  const { lectures, handleAddLecture, handleUpdateLecture } = useLectures();
   const { categories, handleAddCategory } = useCategories();
   const { people, handleAddPerson, handleUpdatePersonNotes } = usePeople();
+  const { currentUserId } = useUsers();
 
   const {
     allEvents,
@@ -37,6 +39,8 @@ export default function CalendarView() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
+    handleDeletion,
+    handleCancelDeletionRequest,
   } = useEvents();
 
   const missingAppointmentMatchings = useAppointmentMatcher({days, allEvents});
@@ -115,7 +119,7 @@ export default function CalendarView() {
         />
       )}
       {/* Modal overlay: event details */}
-      {selectedEventId && (
+      {selectedEventId && allEvents.find(e => e.id === selectedEventId) && (
         <EventDetails
           event={allEvents.find((e) => e.id === selectedEventId)!}
           allEvents={allEvents}
@@ -129,6 +133,10 @@ export default function CalendarView() {
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
+          onUpdateLecture={handleUpdateLecture}
+          onDeletion={handleDeletion}
+          onCancelDeletionRequest={handleCancelDeletionRequest}
+          currentUserId={currentUserId}
         />
       )}
     </div>

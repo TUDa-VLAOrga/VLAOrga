@@ -1257,3 +1257,10 @@
   color: white;
   font-weight: bold;
 }
+
+.cv-editPenIcon {
+  width: 15px;
+  height: 15px;
+  background-image: url("/public/DetailsIcons/pencil-icon.png");
+  background-size: cover;
+}

@@ -46,6 +46,18 @@ export function useLectures() {
   }
 
   /**
+   * Updates a lecture in the backend.
+   * @returns The updated lecture or void if an error occurred.
+   */
+  async function handleUpdateLecture(lecture: Lecture): Promise<Lecture | void> {
+    return fetchBackend(`${API_URL_LECTURES}/${lecture.id}`, "PUT", lecture)
+      .catch((error) => {
+        Logger.error("Error during lecture update in handleUpdateLecture: ", error);
+        return lectures.find(l => l.id === lecture.id);
+      });
+  }
+
+  /**
    * Remove a lecture.
    * @returns The deleted lecture or void if an error occurred.
    */
@@ -60,6 +72,7 @@ export function useLectures() {
   return {
     lectures,
     handleAddLecture,
+    handleUpdateLecture,
     handleDeleteLecture,
   };
 }
