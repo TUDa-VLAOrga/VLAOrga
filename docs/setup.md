@@ -1,7 +1,7 @@
 # Setup of VLAOrga
 
 ## Requirements
-This setup requires `git` and `docker` installed. Also, the access parameters to a running database of a linus instance have to be known.
+This setup requires `git` and `docker` installed. Also, the credentials to a running database of a linus instance have to be known.
 
 ## Preparation
 1. Clone the git repository:
@@ -9,7 +9,7 @@ This setup requires `git` and `docker` installed. Also, the access parameters to
         git clone https://github.com/TUDa-VLAOrga/VLAOrga.git
 
 2. In the VLAOrga folder, copy the `.env.template` file to a file named `.env`.
-3. Change all `LINUS_` variables in `.env` to a correct value.
+3. In `.env`, change all `LINUS_` variables to the credentials of the linus instance, and all `POSTGRES_` variables to secure values.
 
 ## Starting the Software
 Make sure that linus is running and reachable.
