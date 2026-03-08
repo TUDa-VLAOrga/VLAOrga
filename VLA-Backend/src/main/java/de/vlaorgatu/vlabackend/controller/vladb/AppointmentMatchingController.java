@@ -121,7 +121,7 @@ public class AppointmentMatchingController implements
         LocalDateTime terminate = timeFrame.getTerminate();
 
         linusSyncService.matchAppointments(commence, terminate);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("[]");
     }
 
     /**
@@ -144,7 +144,8 @@ public class AppointmentMatchingController implements
             commence,
             terminate
         );
-        return ResponseEntity.ok("");
+
+        return ResponseEntity.ok("[]");
     }
 
     /**

@@ -233,12 +233,13 @@ public class Linussyncservice {
                 "appointment id=" + appointmentMatching.getAppointment().getId() + " from linus");
         }
 
-        if (unmatchedBecauseAppointmentNull > 0) {
-            log.warning(
-                "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
-                    "with a null-matched appointment. " +
-                    "According experiments were not imported."
-            );
-        }
+        // Comment this in for debug information about unmatched bookings.
+        //if (unmatchedBecauseAppointmentNull > 0) {
+        //    log.warning(
+        //        "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
+        //            "with a null-matched appointment. " +
+        //            "According experiments were not imported."
+        //    );
+        //}
     }
 }

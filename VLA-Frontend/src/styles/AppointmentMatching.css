@@ -5,7 +5,7 @@
     background-color: white;
     box-shadow: 4px 4px 8px #777;
     border-radius: 20px;
-    z-index: 2;
+    z-index: var(--z-appointmentMatcher);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

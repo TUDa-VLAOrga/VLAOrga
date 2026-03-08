@@ -3,9 +3,9 @@ import "@/styles/AppointmentMatching.css";
 import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
 import { Button } from "../ui/Button";
-import { getTimeStringOfDate } from "../calendar/dateUtils";
+import { getTimeStringOfDate, toJSONLocalTime } from "../calendar/dateUtils";
 import { fetchBackend, parseJsonFixDate } from "@/lib/utils";
-import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
+import { API_URL_APPOINTMENTMATCHINGS, API_URL_APPOINTMENTS } from "@/lib/api";
 import { getEventTitle } from "../calendar/eventUtils";
 
 interface AppointmentMatchEntryProps {
@@ -27,23 +27,13 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
   useEffect(() => {
     const linusAppointmentTime = new Date(matching.linusAppointmentTime);
 
-    fetch(
-      "/api/appointments/includeTime?" + 
-            "eventTime=" + linusAppointmentTime.toISOString()
+    fetchBackend<Appointment[]>(
+      `${API_URL_APPOINTMENTS}/includeTime?eventTime=${toJSONLocalTime(linusAppointmentTime)}`,
+      "GET"
     )
-      .then(response => {
-        if(!response.ok) throw new Error("Bad response!");
-        return response.text();
-      })
-      .then(responseJSON => {
-        return JSON.parse(responseJSON, parseJsonFixDate) as Appointment[];
-      })
-      .then(appointments => {
-        setAvailableAppointments(appointments);
-      })
-      .catch(error => {
-        Logger.warn("Could not fetch appointments for matching.", error);
-      });
+    .then(appointments => {
+      setAvailableAppointments(appointments);
+    })
   }, [matching, appointments]);
     
   return (
