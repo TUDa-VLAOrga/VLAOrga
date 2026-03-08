@@ -1,47 +1,26 @@
 import {useState, useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
-import {addDays, toJSONLocalTime} from "../components/calendar/dateUtils";
+import {addDays} from "../components/calendar/dateUtils";
 import {type Appointment, type AppointmentSeries, type DeletionRequest, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
-  fixupDates,
   getEventDateISO,
   moveEventSeries,
   verifyValidTimeRange
 } from "@/components/calendar/eventUtils.ts";
 import {Logger} from "@/components/logger/Logger.ts";
-import {getNotSynchronisedId} from "@/lib/utils.ts";
+import {fetchBackend, getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
 import { API_URL_DELETION_REQUESTS } from "@/lib/api.ts"; // TODO Backend: Endpunkt anlegen
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
-  const newEvent = JSON.parse(event.data) as Appointment;
-  // circumvent JSON parse bugs (not recognized as timestamp)
-  newEvent.startTime = new Date(newEvent.startTime);
-  newEvent.endTime = new Date(newEvent.endTime);
+  const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
   return [...currentValue, newEvent];
 }
 
 function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment[]) {
-  console.log("DEBUG: handleAppointmentUpdated called. event:", event.data)
-  const updatedEvent = JSON.parse(event.data) as Appointment;
-  console.log("DEBUG: handleAppointmentUpdated called. initial start time:", updatedEvent.startTime)
-  // circumvent JSON parse bugs (not recognized as timestamp)
-  const rawStart = updatedEvent.startTime as unknown as number[];
-  const newStartTime = new Date()
-  newStartTime.setFullYear(rawStart[0], rawStart[1] - 1, rawStart[2])
-  newStartTime.setHours(rawStart[3], rawStart[4]);
-  updatedEvent.startTime = newStartTime;
-
-
-  const rawEnd = updatedEvent.endTime as unknown as number[];
-  const newEndTime = new Date()
-  newEndTime.setFullYear(rawEnd[0], rawEnd[1] - 1, rawEnd[2])
-  newEndTime.setHours(rawEnd[3], rawEnd[4]);
-  updatedEvent.endTime = newEndTime;
-  console.log("DEBUG: handleAppointmentUpdated called. updated start time:", updatedEvent.startTime)
-  console.log("DEBUG: handleAppointmentUpdated called. Updated event:", updatedEvent)
+  const updatedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
@@ -74,28 +53,6 @@ function getJSONEvent(event: Appointment) {
   });
 }
 
-function handleDeletionRequestCreated(event: MessageEvent, currentValue: Appointment[]) {
-  
-  const request = JSON.parse(event.data) as DeletionRequest;
-  return currentValue.map((appointment) =>
-    appointment.id === request.appointment.id
-      ? { ...appointment, pendingDeletionRequest: request }
-      : appointment
-  );
-}
-function handleDeletionRequestCancelled(event: MessageEvent, currentValue: Appointment[]) {
-  const request = JSON.parse(event.data) as DeletionRequest;
-  return currentValue.map((appointment) =>
-    appointment.id === request.appointment.id
-      ? { ...appointment, pendingDeletionRequest: undefined }
-      : appointment
-  );
-}
-function handleDeletionRequestConfirmed(event: MessageEvent, currentValue: Appointment[]) {
-  const request = JSON.parse(event.data) as DeletionRequest;
-  return currentValue.filter((appointment) => appointment.id !== request.appointment.id);
-}
-
 /**
  * useEvents manages:
  * - the list of calendar events (local state for now)
@@ -106,46 +63,14 @@ function handleDeletionRequestConfirmed(event: MessageEvent, currentValue: Appoi
 export function useEvents() {
   const [selectedEventId, setSelectedEventId] = useState<number>();
 
-  // SSE handlers for appointment series
-  const sseHandlersSeries = new Map<
-    SseMessageType,
-    (event: MessageEvent, currentValue: AppointmentSeries[]) => AppointmentSeries[]
-  >();
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESCREATED, handleAppointmentSeriesCreated);
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESDELETED, handleAppointmentSeriesDeleted);
-  sseHandlersSeries.set(SseMessageType.APPOINTMENTSERIESUPDATED, handleAppointmentSeriesUpdated);
-  const [allSeries, _setSeries] = useSseConnectionWithInitialFetch<AppointmentSeries[]>(
-    [], API_URL_APPOINTMENT_SERIES, sseHandlersSeries
-  );
-
-  /**
-   * Replace appointment series with their corresponding events.
-   * Also convert Dates to Date objects using {@link fixupDates}.
-   *
-   * @param events list of events to replace series in.
-   */
-  function appointmentsFetchedPostProcess(events: Appointment[]) {
-    events = fixupDates(events);
-    events.map(event => {
-      if (event.series) {
-        const series = allSeries.find(s => s.id === event.series.id);
-        if (series) {
-          event.series = series;
-        }
-      }
-    });
-    return events;
-  }
-
   /**
    * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
    */
   function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
-    const deletedEvent = JSON.parse(event.data) as Appointment;
-    // circumvent JSON parse bugs (not recognized as timestamp)
-    deletedEvent.startTime = new Date(deletedEvent.startTime);
-    deletedEvent.endTime = new Date(deletedEvent.endTime);
+    const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
     if (deletedEvent.id === selectedEventId) {
+      // TODO: figure out whether this has some weird react race conditions,
+      //  since the result of this function is also passed to a setState
       setSelectedEventId(undefined);
     }
     return currentValue.filter((event) => event.id !== deletedEvent.id);
@@ -170,17 +95,14 @@ export function useEvents() {
     const event = allEvents.find(e => e.id === eventId);
     if (event) {
       event.notes = notes;
-      fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: getJSONEvent({...event, notes: notes}),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during appointment update: " + response.statusText + ".");
-        }
-      });
+      fetchBackend<Appointment>(
+        `${API_URL_APPOINTMENTS}/${eventId}`,
+        "PUT",
+        {...event, notes: notes}
+      )
+        .catch((error) => {
+          Logger.error("Error after updating event notes: ", error);
+        });
     }
   }
 
@@ -190,6 +112,7 @@ export function useEvents() {
    * @param eventId ID of the event to update
    * @param updates updates to apply to the event.
    * @param editSeries Whether to update the whole series or just this event.
+   * @returns The updated event or the old one, in case an error occurred.
    */
   async function handleUpdateEvent(
     eventId: number, updates: Partial<Appointment>, editSeries: boolean
@@ -213,18 +136,23 @@ export function useEvents() {
           ...updates.series,
           id: getNotSynchronisedId(),
         };
-        newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newSeries),
-        }).then((response) => {
-          if (!response.ok) {
-            throw new Error("Error during series creation: " + response.statusText + ".");
+        try {
+          newSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newSeries);
+        } catch (error) {
+          Logger.error("Error during series creation in handleUpdateEvent: ", error);
+          return oldEvent;
+        }
+      } else {
+        // maybe series got updated, save it to the server
+        if (updates.series) {
+          try {
+            newSeries = await fetchBackend(
+              `${API_URL_APPOINTMENT_SERIES}/${oldEvent.series.id}`, "PUT", updates.series
+            );
+          } catch (error) {
+            Logger.error("Error during series update in handleUpdateEvent: ", error);
           }
-          return response.json();
-        }).then((series) => series as AppointmentSeries);
+        }
       }
 
       const newEvent = {
@@ -232,37 +160,25 @@ export function useEvents() {
         ...updates,
         series: newSeries || oldEvent.series,
       };
-      return fetch(`${API_URL_APPOINTMENTS}/${eventId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: getJSONEvent(newEvent),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during appointment update: " + response.statusText + ".");
-        }
-        return response.json();
-      }).then((event) => {
-        return fixupDates([event as Appointment])[0];
-      });
+      try {
+        return fetchBackend(
+          `${API_URL_APPOINTMENTS}/${eventId}`, "PUT", newEvent
+        );
+      } catch (error) {
+        Logger.error("Error during appointment update in handleUpdateEvent: ", error);
+        return oldEvent;
+      }
     } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
         ...updates.series,
       };
-      newSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newSeries),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during series update: " + response.statusText + ".");
-        }
-        return response.json();
-      }).then((series) => series as AppointmentSeries);
+      try {
+        newSeries = await fetchBackend(`${API_URL_APPOINTMENT_SERIES}/${newSeries.id}`, "PUT", newSeries);
+      } catch (error) {
+        Logger.error("Error during series update in handleUpdateEvent: ", error);
+        return oldEvent;
+      }
       let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
         ...e,
         series: newSeries,
@@ -272,28 +188,29 @@ export function useEvents() {
         movedEvents = moveEventSeries(allEvents, oldEvent, updates.startTime, updates.endTime);
       }
       // set events to moved ones with updated series
-      movedEvents.forEach(event => {
-        fetch(`${API_URL_APPOINTMENTS}/${event.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: getJSONEvent(event),
-        }).then((response) => {
-          if (!response.ok) {
-            throw new Error("Error during appointment update: " + response.statusText + ".");
-          }
-        });
-      });
+      try {
+        movedEvents.forEach(event => fetchBackend(
+          `${API_URL_APPOINTMENTS}/${event.id}`, "PUT", event));
+      } catch (error) {
+        Logger.error("Error during appointment update in handleUpdateEvent: ", error);
+        return oldEvent;
+      }
       return movedEvents.find(e => e.id === eventId)!;
     } else {
       Logger.error("Impossible: Event neither part of series nor single event.");
-      throw new Error("Impossible: Event neither part of series nor single event.");
+      return oldEvent;
     }
   }
 
   //Creates one or many CalendarEvent objects from the EventForm submission
-  async function handleCreateEvent(formData: EventFormData) {
+  /**
+   * Creates new appointments and appointments series from the form data.
+   * If the appointments have an associated lecture, create one separate series for every recurring weekday.
+   * Otherwise, create a single series for the all recurrences of this event.
+   *
+   * @returns The created event or void if an error occurred.
+   */
+  async function handleCreateEvent(formData: EventFormData): Promise<Appointment | void> {
     // basic validation
     if (!(
       (formData.title || formData.lecture) && formData.category
@@ -315,24 +232,19 @@ export function useEvents() {
         name: formData.title.trim(),
         category: formData.category,
       };
-      newAppSeries = await fetch(API_URL_APPOINTMENT_SERIES, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newAppSeries),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during series creation: " + response.statusText + ".");
-        }
-        return response.json();
-      }).then((series) => series as AppointmentSeries);
+      try {
+        newAppSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newAppSeries);
+      } catch (error) {
+        Logger.error("Error during series creation in handleCreateEvent: ", error);
+        return;
+      }
       newEvents.push({
         id: getNotSynchronisedId(),
         series: newAppSeries,
         startTime: formData.startDateTime,
         endTime: formData.endDateTime,
         notes: formData.notes || "",
+        bookings: [],
       });
     }
 
@@ -340,33 +252,50 @@ export function useEvents() {
     if (formData.recurrence && formData.recurrence.weekdays.length > 0 && formData.recurrence.endDay) {
       // create appointment series, one for each recurrence weekday
       const seriesByWeekday = new Map<Weekday, AppointmentSeries>;
-      formData.recurrence.weekdays.forEach(
-        (day) => {
-          seriesByWeekday.set(day, {
-            id: getNotSynchronisedId(),
-            lecture: formData.lecture,
-            name: formData.title.trim(),
-            category: formData.category!,
-          });
+      if (formData.lecture) {
+        // separate series only if lecture set
+        formData.recurrence.weekdays.forEach(
+          (day) => {
+            seriesByWeekday.set(day, {
+              id: getNotSynchronisedId(),
+              lecture: formData.lecture,
+              name: formData.title.trim(),
+              category: formData.category!,
+            });
+          }
+        );
+        let savedSeries: AppointmentSeries[];
+        try {
+          savedSeries = await fetchBackend(
+            `${API_URL_APPOINTMENT_SERIES}/multi`, "POST", [...seriesByWeekday.values()]
+          );
+        } catch (error) {
+          Logger.error("Error during series creation in handleCreateEvent: ", error);
+          return;
         }
-      );
-      const savedSeries = await fetch(`${API_URL_APPOINTMENT_SERIES}/multi`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([...seriesByWeekday.values()]),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during series creation: " + response.statusText + ".");
+        // put saved series as reference in the weekday map
+        const savedSeriesIterator = savedSeries.values();
+        formData.recurrence.weekdays.forEach(
+          (day) => seriesByWeekday.set(day, savedSeriesIterator.next().value as AppointmentSeries)
+        );
+      } else {
+        // w/o lecture: same series for all weekdays (to keep weekday-iterating logic below the same)
+        let newSeries: AppointmentSeries = {
+          id: getNotSynchronisedId(),
+          lecture: undefined,
+          name: formData.title.trim(),
+          category: formData.category!,
+        };
+        try {
+          newSeries = await fetchBackend(API_URL_APPOINTMENT_SERIES, "POST", newSeries);
+        } catch (error) {
+          Logger.error("Error during series creation in handleCreateEvent: ", error);
+          return;
         }
-        return response.json();
-      }).then((series) => series as AppointmentSeries[]);
-      // put saved series as reference in the weekday map
-      const savedSeriesIterator = savedSeries.values();
-      formData.recurrence.weekdays.forEach(
-        (day) => seriesByWeekday.set(day, savedSeriesIterator.next().value as AppointmentSeries)
-      );
+        formData.recurrence.weekdays.forEach(
+          (day) => seriesByWeekday.set(day, newSeries)
+        );
+      }
 
       const duration = formData.endDateTime.getTime() - formData.startDateTime.getTime();
       const endDate = new Date(formData.recurrence.endDay.date);
@@ -382,33 +311,34 @@ export function useEvents() {
             startTime: currentDate,
             endTime: new Date(currentDate.getTime() + duration),
             notes: formData.notes || "",
+            bookings: [],
           });
         }
         currentDate = addDays(currentDate, 1);
       }
     }
-    let savedEvents = await fetch(`${API_URL_APPOINTMENTS}/multi`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: "[" + newEvents.map(e => getJSONEvent(e)).join(",") + "]",
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Error during appointment creation: " + response.statusText + ".");
-      }
-      return response.json();
-    }).then((events) => events as Appointment[]);
-    savedEvents = fixupDates(savedEvents);
-    console.log("savedEvents", savedEvents);
-    // return event with earliest start date
-    return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
+    try {
+      const savedEvents = await fetchBackend(
+        `${API_URL_APPOINTMENTS}/multi`, "POST", newEvents
+      );
+      // return event with earliest start date
+      return savedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
+    } catch (error) {
+      Logger.error("Error during appointment creation in handleCreateEvent: ", error);
+      return;
+    }
   }
 
+  /**
+   * Update the {@link selectedEventId} state on clicking an event.
+   */
   function handleEventClick(eventId: number) {
     setSelectedEventId(eventId);
   }
 
+  /**
+   * Update the {@link selectedEventId} state on closing the event details.
+   */
   function closeEventDetails() {
     setSelectedEventId(undefined);
   }

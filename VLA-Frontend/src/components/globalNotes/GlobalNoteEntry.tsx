@@ -1,7 +1,9 @@
 import type { GlobalNote } from "@/lib/databaseTypes";
+import {fetchBackend} from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 import {API_URL_GLOBAL_NOTES} from "@/lib/api.ts";
+import {Logger} from "@/components/logger/Logger.ts";
 
 export const NotSynchronisedId = -1;
 
@@ -43,13 +45,11 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
   });
 
   function handleNoteCreationSubmit(note: GlobalNote){
-    fetch(API_URL_GLOBAL_NOTES, {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json",
-      },
-      body: JSON.stringify(note),
-    });
+    fetchBackend(API_URL_GLOBAL_NOTES, "POST", note).catch(
+      (error) => {
+        Logger.error("Error on note creation:", error);
+      }
+    );
 
     if(note.id === NotSynchronisedId) {
       setDraftNote!(undefined);
@@ -62,13 +62,11 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       return;
     }
 
-    fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type":"application/json",
-      },
-      body: JSON.stringify(note),
-    });
+    fetchBackend(`${API_URL_GLOBAL_NOTES}/${note.id}`, "PUT", note).catch(
+      (error) => {
+        Logger.error("Error on note update:", error);
+      }
+    );
   }
 
   function handleDelete(){
@@ -77,12 +75,11 @@ export default function GlobalNoteEntry({note, setDraftNote: setDraftNote} : Glo
       return;
     }
 
-    fetch(`${API_URL_GLOBAL_NOTES}/${note.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type":"application/json",
-      },
-    });
+    fetchBackend(`${API_URL_GLOBAL_NOTES}/${note.id}`, "DELETE").catch(
+      (error) => {
+        Logger.error("Error on note deletion:", error);
+      }
+    );
   }
 
   function handleSubmit(){

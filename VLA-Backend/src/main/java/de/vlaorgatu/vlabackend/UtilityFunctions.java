@@ -1,5 +1,10 @@
 package de.vlaorgatu.vlabackend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 /**
  * Class for frequently reusable functions.
  */
@@ -38,5 +43,38 @@ public class UtilityFunctions {
         }
 
         return true;
+    }
+
+    /**
+     * Truncates a string to a specified length if neccessary.
+     *
+     * @param string    The string to possibly truncate
+     * @param maxLength The maximum length the string may have
+     * @return A string with limited length, ending in "..." if truncated
+     */
+    public static String truncateStringIfNeccessary(String string, int maxLength) {
+        if (string == null) {
+            return "";
+        }
+
+        if (string.length() <= maxLength) {
+            return string;
+        }
+
+        return string.substring(0, maxLength - 4) + "...";
+    }
+
+    /**
+     * Converts an object to JSON.
+     *
+     * @param object An object that should be processable by {@link ObjectMapper}
+     * @return The JSON of the object
+     * @throws JsonProcessingException if object is not processable
+     */
+    public static String convertObjectToJson(Object object) throws JsonProcessingException {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        jsonMapper.registerModule(new JavaTimeModule());
+        jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return jsonMapper.writeValueAsString(object);
     }
 }

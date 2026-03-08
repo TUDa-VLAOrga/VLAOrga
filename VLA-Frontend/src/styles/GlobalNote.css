@@ -3,7 +3,7 @@
     height: 100dvh;
     width: 100dvw;
     top: 0;
-    z-index: 2;
+    z-index: var(--z-global-note-container);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -120,4 +120,14 @@
 
 .displayedNoteContent {
     white-space: pre-line;
+}
+
+.globalNoteDot {
+    position: absolute;
+    border-radius: 100%;
+    right: 0px;
+    top: -8px;
+    aspect-ratio: 1 / 1;
+    width: 20px;
+    background-color: red;
 }

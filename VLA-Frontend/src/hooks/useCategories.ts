@@ -1,6 +1,8 @@
 import {type AppointmentCategory, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_APPOINTMENT_CATEGORIES} from "@/lib/api.ts";
+import {Logger} from "@/components/logger/Logger.ts";
+import {fetchBackend} from "@/lib/utils.ts";
 
 function handleCategoryCreated(event: MessageEvent, currentValue: AppointmentCategory[]) {
   const newCategory = JSON.parse(event.data) as AppointmentCategory;
@@ -8,8 +10,8 @@ function handleCategoryCreated(event: MessageEvent, currentValue: AppointmentCat
 }
 
 function handleCategoryDeleted(event: MessageEvent, currentValue: AppointmentCategory[]) {
-  const deletedNote = JSON.parse(event.data) as AppointmentCategory;
-  return currentValue.filter((cat) => cat.id !== deletedNote.id);
+  const deletedCategory = JSON.parse(event.data) as AppointmentCategory;
+  return currentValue.filter((cat) => cat.id !== deletedCategory.id);
 }
 
 function handleCategoryUpdated(event: MessageEvent, currentValue: AppointmentCategory[]) {
@@ -37,20 +39,16 @@ export function useCategories() {
 
   /**
    * Adds a category if it doesn't exist yet.
+   *
+   * @returns The new category or void if an error occurred.
    */
-  async function handleAddCategory(category: AppointmentCategory): Promise<AppointmentCategory> {
-    return fetch(API_URL_APPOINTMENT_CATEGORIES, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(category),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Error during category creation: " + response.statusText + ".");
-      }
-      return response.json();
-    }).then((newCat) => newCat as AppointmentCategory);
+  async function handleAddCategory(category: AppointmentCategory): Promise<AppointmentCategory | void> {
+    return fetchBackend(API_URL_APPOINTMENT_CATEGORIES, "POST", category)
+      .then((newCat) => newCat as AppointmentCategory)
+      .catch((error) => {
+        Logger.error("Error during category creation: ", error);
+        return;
+      });
   }
 
   return {

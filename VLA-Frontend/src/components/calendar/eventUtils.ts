@@ -73,14 +73,14 @@ export function moveEventSeries(
 
   return events
     .filter((e) => e.series.id === referenceEvent.series.id)
-    .map((e) => {
+    .map((e): Appointment => {
       const newEventStart = new Date(e.startTime.getTime() + timeDiffStart);
       const newEventEnd = new Date(e.endTime.getTime() + timeDiffEnd);
 
       return {
         ...e,
-        start: newEventStart,
-        end: newEventEnd,
+        startTime: newEventStart,
+        endTime: newEventEnd,
       };
     });
 }
@@ -100,21 +100,4 @@ export function getEventStatus(_event: Appointment) {
   // TODO: implement, extract experiments? probably with a @OneToMany attribute
   //  appointment.bookedExperiments in the backend
   return "" as EventStatus;
-}
-
-/**
- * Convert start and end of all appointments to Date objects from strings.
- *
- * Sadly typeScript is dumb at runtime and cannot do this at rertieving automatically...
- */
-export function fixupDates(appointments: Appointment[]): Appointment[] {
-  return appointments.map((event) => {
-    console.log(event.startTime);
-    console.log(new Date(event.startTime));
-    return {
-      ...event,
-      startTime: new Date(event.startTime),
-      endTime: new Date(event.endTime),
-    };
-  });
 }

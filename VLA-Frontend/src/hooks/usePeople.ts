@@ -1,6 +1,8 @@
 import {type Person, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_PERSONS} from "@/lib/api.ts";
+import {Logger} from "@/components/logger/Logger.ts";
+import {fetchBackend} from "@/lib/utils.ts";
 
 
 function handlePersonCreated(event: MessageEvent, currentValue: Person[]) {
@@ -30,31 +32,29 @@ export function usePeople() {
     [], API_URL_PERSONS, sseHandlers
   );
 
-  async function handleAddPerson(person: Person) {
-    return fetch(API_URL_PERSONS, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(person),
-    }).then((response) => response.json()).then((newPerson) => newPerson as Person);
+  /**
+   * Create new person entity in the backend.
+   * @returns The new person or void if an error occurred.
+   */
+  async function handleAddPerson(person: Person): Promise<Person | void> {
+    return fetchBackend(API_URL_PERSONS, "POST", person)
+      .catch((error) => {
+        Logger.error("Error during person creation: ", error);
+        return;
+      });
   }
 
-  function handleUpdatePersonNotes(personId: number, notes: string) {
+  /**
+   * Update the notes of a person.
+   */
+  function handleUpdatePersonNotes(personId: number, notes: string): void {
     const prevPerson = people.find((person) => person.id === personId);
     if (prevPerson) {
       prevPerson.notes = notes;
-      fetch(`${API_URL_PERSONS}/${personId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(prevPerson),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error("Error during person update: " + response.statusText + ".");
-        }
-      });
+      fetchBackend(`${API_URL_PERSONS}/${personId}`, "PUT", prevPerson)
+        .catch((error) => {
+          Logger.error("Error after updating person notes: ", error);
+        });
     }
   }
 

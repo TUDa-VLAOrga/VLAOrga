@@ -8,14 +8,14 @@ import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
-  lectures?: Lecture[];
-  people?: Person[];
-  categories?: AppointmentCategory[];
+  lectures: Lecture[];
+  people: Person[];
+  categories: AppointmentCategory[];
   onSave: (updates: Partial<Appointment>) => void;
   onCancel: () => void;
-  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory>;
-  onAddPerson: (person: Person) => Promise<Person>;
-  onAddLecture: (lecture: Lecture) => Promise<Lecture>;
+  onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
+  onAddPerson: (person: Person) => Promise<Person | void>;
+  onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
   isSeries: boolean;
 };
 
@@ -24,9 +24,9 @@ type EventEditFormProps = {
  */
 export default function EventEditForm({
   event,
-  lectures = [],
-  categories = [],
-  people = [],
+  lectures,
+  categories,
+  people,
   onSave,
   onCancel,
   onAddCategory,
@@ -34,14 +34,13 @@ export default function EventEditForm({
   onAddLecture,
   isSeries,
 }: EventEditFormProps) {
-  // TODO: proper copying, do not modify existing entity
   const [title, setTitle] = useState(event.series.name);
   const [category, setCategory] = useState<AppointmentCategory>(event.series.category);
   const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);
   const [notes, setNotes] = useState(event.notes);
 
-  const [startDateTime, setStartDateTime] = useState(event.startTime);
-  const [endDateTime, setEndDateTime] = useState(event.endTime);
+  const [startDateTime, setStartDateTime] = useState<Date | undefined>(event.startTime);
+  const [endDateTime, setEndDateTime] = useState<Date | undefined>(event.endTime);
 
   function handleAddCategory(category: AppointmentCategory) {
     onAddCategory(category);
@@ -49,7 +48,11 @@ export default function EventEditForm({
   }
 
   function handleAddLecture(lecture: Lecture) {
-    onAddLecture(lecture).then(setLecture);
+    onAddLecture(lecture).then((result) => {
+      if (result) {
+        setLecture(result);
+      }
+    });
   }
  
   function handleSubmit(e: FormEvent) {

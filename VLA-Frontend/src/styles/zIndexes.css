@@ -1,0 +1,20 @@
+:root {
+    --cv-z-base: 1;
+    --cv-z-dropdown: 100;
+    --cv-z-sticky: 200;
+    --cv-z-overlay: 1000;
+    --cv-z-modal: 1100;
+    --cv-z-tooltip: 1200;
+    --cv-z-dayColumn-not-last-child-after: 20;
+    --cv-z-person-details-overlay: 1200 !important;
+
+    --z-dragcontainer: 999;
+    --z-dragcomponent: 998;
+
+    --z-global-note-container: 21;
+
+    --z-logger-container: 999;
+    /* Attention when changing this: See SseError.tsx, there is one z-Index 9998
+     which should be the highest of all, except for this logger. */
+    --z-logger-toggle: 9999;
+}

@@ -1,6 +1,8 @@
 import {type Lecture, SseMessageType} from "@/lib/databaseTypes";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_LECTURES} from "@/lib/api.ts";
+import {Logger} from "@/components/logger/Logger.ts";
+import {fetchBackend} from "@/lib/utils.ts";
 
 
 function handleLectureCreated(event: MessageEvent, currentValue: Lecture[]) {
@@ -32,30 +34,27 @@ export function useLectures() {
   );
 
   /**
-   * Add a new lecture to the list.
+   * Add a new lecture in the backend.
+   * @returns The new lecture or void if an error occurred.
    */
-  async function handleAddLecture(lecture: Lecture) {
-    return fetch(API_URL_LECTURES, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(lecture),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Error during lecture creation: " + response.statusText + ".");
-      }
-      return response.json();
-    }).then((newLecture) => newLecture as Lecture);
+  async function handleAddLecture(lecture: Lecture): Promise<Lecture | void> {
+    return fetchBackend(API_URL_LECTURES, "POST", lecture)
+      .catch((error) => {
+        Logger.error("Error during lecture creation: ", error);
+        return;
+      });
   }
 
   /**
    * Remove a lecture.
+   * @returns The deleted lecture or void if an error occurred.
    */
-  async function handleDeleteLecture(lecture: Lecture) {
-    return fetch(`${API_URL_LECTURES}/${lecture.id}`, {
-      method: "DELETE",
-    }).then((response) => response.json()).then((deletedLecture) => deletedLecture as Lecture);
+  async function handleDeleteLecture(lecture: Lecture): Promise<Lecture | void> {
+    return fetchBackend<Lecture>(`${API_URL_LECTURES}/${lecture.id}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Error during lecture deletion: ", error);
+        return;
+      });
   }
 
   return {

@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.enums.sse;
 
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,10 +16,20 @@ public enum SseMessageType {
      */
     SSEDEBUG("SSEDEBUG"),
 
+    /**
+     * Used for sending SSE Events after a {@link Appointment}s have been updated.
+     * This update contains all new bookings imported from Linus.
+     * TODO: Frontend handling
+     */
+    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
+
     // CRUD Mesages for all entities
     GLOBALNOTECREATED("GLOBALNOTECREATED"),
     GLOBALNOTEUPDATED("GLOBALNOTEUPDATED"),
     GLOBALNOTEDELETED("GLOBALNOTEDELETED"),
+
+    APPOINTMENTMATCHINGCREATE("APPOINTMENTMATCHINGCREATE"),
+    APPOINTMENTMATCHINGUPDATE("APPOINTMENTMATCHINGUPDATE"),
 
     APPOINTMENTCATEGORYCREATED("APPOINTMENTCATEGORYCREATED"),
     APPOINTMENTCATEGORYUPDATED("APPOINTMENTCATEGORYUPDATED"),
@@ -44,7 +55,6 @@ public enum SseMessageType {
      * Used for sending Debug messages to the frontend.
      */
     DEBUG("DEBUG");
-
     /**
      * The actual value of the enum object.
      */
