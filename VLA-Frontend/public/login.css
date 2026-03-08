@@ -14,6 +14,10 @@ body {
   color: #111827;
 }
 
+body {
+  min-height: 100vh;
+}
+
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -88,6 +92,22 @@ body {
   color: #0f172a;
 }
 
+.login-message {
+  display: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.login-message.visible {
+  display: block;
+}
+
 .login-input {
   width: 100%;
   padding: 1rem 1.1rem;
@@ -146,7 +166,6 @@ body {
     0 16px 32px rgba(11, 92, 255, 0.25);
 }
 
-
 @media (min-width: 801px) {
   .login-form {
     max-width: 560px;
@@ -168,7 +187,6 @@ body {
     font-size: 1.05rem;
   }
 }
-
 
 @media (max-width: 800px) {
   .login-container {
