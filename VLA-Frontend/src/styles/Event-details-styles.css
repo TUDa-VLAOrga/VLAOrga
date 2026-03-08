@@ -386,3 +386,20 @@
 .cv-formBtnDanger.cv-formBtnOutline:hover {
   background-color: #fee2e2;
 }
+.cv-deletionRequestBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fff3cd;
+  border-left: 4px solid #f59e0b;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #92400e;
+  margin-bottom: 0.5rem;
+}
+
+.cv-deletionRequestIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}

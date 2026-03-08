@@ -28,6 +28,7 @@ export default function CalendarView() {
 
   const {
     allEvents,
+    currentUserId,
     selectedEventId,
     eventsByDate, 
     handleCreateEvent, 
@@ -129,7 +130,7 @@ export default function CalendarView() {
           onRequestDeletion={handleRequestDeletion}
           onCancelDeletionRequest={handleCancelDeletionRequest}
           onConfirmDeletion={handleConfirmDeletion}
-          currentUserId={2}// temporär für mock test
+          currentUserId={currentUserId}
         />
       )}
     </div>

@@ -1,7 +1,7 @@
-import {useState, useMemo} from "react";
+import {useState, useMemo, useEffect} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import {addDays} from "../components/calendar/dateUtils";
-import {type Appointment, type AppointmentSeries, type DeletionRequest, SseMessageType} from "@/lib/databaseTypes";
+import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -12,7 +12,8 @@ import {Logger} from "@/components/logger/Logger.ts";
 import {fetchBackend, getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
 import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
-import { API_URL_DELETION_REQUESTS } from "@/lib/api.ts"; // TODO Backend: Endpunkt anlegen
+
+
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
   const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
@@ -24,35 +25,6 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
-function handleAppointmentSeriesCreated(event: MessageEvent, currentValue: AppointmentSeries[]) {
-  const newSeries = JSON.parse(event.data) as AppointmentSeries;
-  return [...currentValue, newSeries];
-}
-
-function handleAppointmentSeriesDeleted(event: MessageEvent, currentValue: AppointmentSeries[]) {
-  const deletedSeries = JSON.parse(event.data) as AppointmentSeries;
-  return currentValue.filter((series) => series.id !== deletedSeries.id);
-}
-
-function handleAppointmentSeriesUpdated(event: MessageEvent, currentValue: AppointmentSeries[]) {
-  const updatedSeries = JSON.parse(event.data) as AppointmentSeries;
-  // TODO: update reference in all events belonging to this series?
-  //  -> would sadly lead to a circular function definition order.
-  return currentValue.map((series) => (series.id === updatedSeries.id ? updatedSeries : series));
-}
-
-/**
- * Generate JSON representation of an event for the backend.
- * Takes care of handling dates properly.
- */
-function getJSONEvent(event: Appointment) {
-  return JSON.stringify({
-    ...event,
-    startTime: toJSONLocalTime(event.startTime),
-    endTime: toJSONLocalTime(event.endTime),
-  });
-}
-
 /**
  * useEvents manages:
  * - the list of calendar events (local state for now)
@@ -62,7 +34,14 @@ function getJSONEvent(event: Appointment) {
  */
 export function useEvents() {
   const [selectedEventId, setSelectedEventId] = useState<number>();
-
+  const [currentUserId, setCurrentUserId] = useState<number|undefined>();
+  useEffect(() => {
+    fetchBackend<{id: number}>("/api/user/me" , "GET")
+      .then((user) => setCurrentUserId(user.id))
+      .catch((error) => {
+        Logger.error("Error fetching current user: ", error);
+      });
+  }, []);
   /**
    * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
    */
@@ -84,11 +63,8 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
-  sseHandlersAppointments.set(SseMessageType.DELETIONREQUESTCREATED, handleDeletionRequestCreated);
-  sseHandlersAppointments.set(SseMessageType.DELETIONREQUESTCANCELLED, handleDeletionRequestCancelled);
-  sseHandlersAppointments.set(SseMessageType.DELETIONREQUESTCONFIRMED, handleDeletionRequestConfirmed);
-    const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
-    [], API_URL_APPOINTMENTS, sseHandlersAppointments, appointmentsFetchedPostProcess
+   const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+    [], API_URL_APPOINTMENTS, sseHandlersAppointments
   );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
@@ -364,55 +340,28 @@ export function useEvents() {
  * TODO Backend: POST /api/deletion-requests { appointmentId }
  * TODO Backend: Gibt DeletionRequest zurück, sendet SSE DELETIONREQUESTCREATED an alle Clients
  */
-async function handleRequestDeletion(eventId: number , currentUserId: number | null ): Promise<void> {
-  //TODO backend: fetch einkommentieren + Mock bock löschen
-  //Mock:
-     const targetEvent = allEvents.find(e => e.id === eventId);
-  if (!targetEvent) return;
-  const fakeRequest: DeletionRequest = {
-    id: 999,
-    appointment: targetEvent,
-    requestedBy: { id: currentUserId ?? 0, name: "Max Mustermann", email: "max@mustermann.de" },
-    requestedAt: new Date(),
-  };
-  _setEvents(current =>
-    current.map(a => a.id === eventId ? { ...a, pendingDeletionRequest: fakeRequest } : a)
-  );
-  return;
-  // ---- MOCK END ----
-
-  await fetch(`${API_URL_DELETION_REQUESTS}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ appointmentId: eventId }),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Fehler beim Erstellen der Löschanfrage: " + response.statusText);
-    }
-  });
+async function handleRequestDeletion(appointmentId: number): Promise<void> {
+  await fetchBackend<Appointment>(
+    `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
+    .catch((error) => {
+      Logger.error("Fehler beim Erstellen der Löschanfrage: ", error);
+    });
 }
 /**
  * Löschanfrage zurückziehen.
  * TODO Backend: DELETE /api/deletion-requests/{requestId}
  * TODO Backend: Sendet SSE DELETIONREQUESTCANCELLED an alle Clients
  */
-async function handleCancelDeletionRequest(requestId: number): Promise<void> {
-  // ---- MOCK START ----
-  _setEvents(current =>
-    current.map(a => a.pendingDeletionRequest?.id === requestId
-      ? { ...a, pendingDeletionRequest: undefined }
-      : a
-    )
-  );
-  return;
-  
-  await fetch(`${API_URL_DELETION_REQUESTS}/${requestId}`, {
-    method: "DELETE",
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Fehler beim Abbrechen der Löschanfrage: " + response.statusText);
-    }
-  });
+async function handleCancelDeletionRequest(appointmentId: number): Promise<void> {
+  const event = allEvents.find(e => e.id === appointmentId);
+  if (!event) return;
+  await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "PUT",{
+    ...event,
+    deletingIntentionUser: null,
+  })
+   .catch((error) => {
+      Logger.error("Fehler beim Abbrechen der Löschanfrage: ", error);
+    });
 }
 /**
  * Zweiter Schritt: Zweiter User bestätigt die Löschung.
@@ -420,26 +369,16 @@ async function handleCancelDeletionRequest(requestId: number): Promise<void> {
  * TODO Backend: Löscht den Termin, sendet SSE DELETIONREQUESTCONFIRMED + APPOINTMENTDELETED
  * TODO Backend: Validieren, dass der confirmierende User != der requestende User ist
  */
-async function handleConfirmDeletion(requestId: number): Promise<void> {
-  // TODO Backend: Mock-Block löschen + fetch einkommentieren wenn Backend bereit
-  // ---- MOCK START ----
-  _setEvents(current =>
-    current.filter(a => a.pendingDeletionRequest?.id !== requestId)
-  );
-  return;
-  // ---- MOCK END ----
-
-  await fetch(`${API_URL_DELETION_REQUESTS}/${requestId}/confirm`, {
-    method: "POST",
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Fehler beim Bestätigen der Löschung: " + response.statusText);
-    }
-  });
+async function handleConfirmDeletion(appointmentId: number): Promise<void> {
+  await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
+    .catch((error) => {
+      Logger.error("Fehler beim Bestätigen der Löschung: ", error);
+    });
 }
 
   return {
     allEvents,
+    currentUserId,
     selectedEventId,
     eventsByDate,
     handleCreateEvent,
