@@ -22,7 +22,7 @@ export default function CalendarView() {
   
   const [showEventForm, setShowEventForm] = useState(false);
   const { days, weekStart, rangeText, prevDay, nextDay, goToDate } = useCalendarNavigation();
-  const { lectures, handleAddLecture } = useLectures();
+  const { lectures, handleAddLecture, handleUpdateLecture } = useLectures();
   const { categories, handleAddCategory } = useCategories();
   const { people, handleAddPerson, handleUpdatePersonNotes } = usePeople();
 
@@ -123,6 +123,7 @@ export default function CalendarView() {
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
+          onUpdateLecture={handleUpdateLecture}
         />
       )}
     </div>
