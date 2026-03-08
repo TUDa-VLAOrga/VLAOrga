@@ -1,14 +1,12 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
-import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
-import java.util.Arrays;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -92,6 +90,13 @@ public class ExperimentBookingController
         return ResponseEntity.ok(updatedExperimentBooking);
     }
 
+    /**
+     * Updates the state of a ExperimentBooking.
+     *
+     * @param id id of the experimentBooking
+     * @param experimentPreparationStatus The ordinal of the preparation enum
+     * @return The updated booking
+     */
     @PutMapping("/{id}/status")
     public ResponseEntity<ExperimentBooking> updateExperimentBooking(
         @PathVariable Long id,

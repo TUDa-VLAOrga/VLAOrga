@@ -18,7 +18,7 @@ function updateAppointmentStatus(experimentBooking: ExperimentBooking, status: E
   );
 }
 
-const translationMap = getExperimentPreperationsStatusGermanMap()
+const translationMap = getExperimentPreperationsStatusGermanMap();
 
 export default function ExperimentOverview({
   linusExperiment,

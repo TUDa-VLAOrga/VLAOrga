@@ -3,7 +3,6 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
-import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.User;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;

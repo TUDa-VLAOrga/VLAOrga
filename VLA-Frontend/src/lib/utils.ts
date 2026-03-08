@@ -100,9 +100,9 @@ export function toJsonFixDate(_key: any, value: any) {
 export function getExperimentPreperationsStatusGermanMap(){
   const experimentPreperationStatusGermanMap = new Map<ExperimentPreparationStatus, string>();
   
-  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.FINISHED, "Aufgebaut")  
-  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.IN_PROGRESS, "In Arbeit")  
-  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.PENDING, "Unbearbeitet")  
+  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.FINISHED, "Aufgebaut");  
+  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.IN_PROGRESS, "In Arbeit");  
+  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.PENDING, "Unbearbeitet");  
   
   return experimentPreperationStatusGermanMap;
 }
