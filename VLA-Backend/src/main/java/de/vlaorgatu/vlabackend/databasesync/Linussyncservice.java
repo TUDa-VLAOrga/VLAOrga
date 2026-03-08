@@ -130,7 +130,8 @@ public class Linussyncservice {
             );
 
             log.info(
-                "Created " + newAppointmentMatchings.size() + " matchings for linus reservations"
+                "Created " + newAppointmentMatchings.size() + " matchings " +
+                    "for linus reservations"
             );
         }
     }
@@ -229,8 +230,14 @@ public class Linussyncservice {
                     savedExperimentBookings);
             }
 
-            log.info("Imported " + savedExperimentBookings.size() + " experiment(s) for " +
-                "appointment id=" + appointmentMatching.getAppointment().getId() + " from linus");
+            if(!savedExperimentBookings.isEmpty()) {
+                log.info(
+                    "Imported " + savedExperimentBookings.size() + " experiment(s) for " +
+                    "appointment id=" + appointmentMatching.getAppointment().getId() +
+                    " from linus"
+                );
+            }
+
         }
 
         // Comment this in for debug information about unmatched bookings.

@@ -1,5 +1,7 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,6 +66,7 @@ public class Appointment {
      * List of {@link ExperimentBooking}s of this appointment.
      */
     @OneToMany(mappedBy = "appointment")
+    @JsonManagedReference
     private List<ExperimentBooking> bookings = new ArrayList<>();
 
     /**
@@ -72,4 +75,10 @@ public class Appointment {
     @Nullable
     @ManyToOne // We avoid the @ManyToMany as we only need 2 approvals
     private User deletingIntentionUser;
+
+    @Nullable
+    @OneToMany(mappedBy = "appointment")
+    @JsonManagedReference
+    @JsonIgnore
+    private List<AppointmentMatching> appointmentMatchings = new ArrayList<>();
 }
