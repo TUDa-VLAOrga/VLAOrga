@@ -4,7 +4,7 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
 import GoToMenu from "./GoToButton";
-import EventCreationForm, { type EventFormData } from "./EventForm/EventCreationForm.tsx";
+import AddEventForm, { type EventFormData } from "./EventForm/AddEventForm.tsx";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
@@ -97,7 +97,7 @@ export default function CalendarView() {
       </div>
 
       {showEventForm && (
-        <EventCreationForm
+        <AddEventForm
           onSubmit={onEventSubmit}
           onCancel={() => setShowEventForm(false)}
           lectures={lectures}

@@ -1,8 +1,7 @@
 import type React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import DayColumn from "./DayColumn";
-import type { CalendarDay, CalendarEventsByDateISO } from "./CalendarTypes";
-import type { Appointment } from "@/lib/databaseTypes";
+import type {CalendarDay, CalendarEvent, CalendarEventsByDateISO} from "./CalendarTypes";
 import TimeColumn from "./TimeColumn";
 
 type Props = {
@@ -44,7 +43,7 @@ export default function WeekGrid({
    * Determine whether an event is completely inside the displayed time range.
    * Otherwise, it will be displayed as for the whole day above the time scale.
    */
-  function isUntimedForView(e: Appointment): boolean {
+  function isUntimedForView(e: CalendarEvent): boolean {
     const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
     const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
 

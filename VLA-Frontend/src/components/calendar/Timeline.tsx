@@ -1,21 +1,16 @@
-import type { Appointment } from "@/lib/databaseTypes";
-import { getEventTitle } from "./eventUtils";
+import {getEventColor, getEventTitle} from "./eventUtils";
+import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 type Props = {
   /** Timed events for a single day column. */
-  events: Appointment[];
+  events: CalendarEvent[];
   /** First visible hour (inclusive). */
   startHour: number;
   /** Last visible hour boundary (exclusive for rows; used as end boundary). */
   endHour: number;
   onEventClick?: (eventId: number) => void;
-  getEventColor?: (event: Appointment) => string | undefined;
 };
-
-const timeFmt = new Intl.DateTimeFormat("de-DE", {
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 /**
  * Convert a Date to minutes relative to the visible start hour.
@@ -26,7 +21,7 @@ function minutesSinceStartHour(d: Date, startHour: number): number {
 }
 
 type TimedItem = {
-  event: Appointment;
+  event: CalendarEvent;
   start: number; // clamped minutes since startHour
   end: number; // clamped minutes since startHour
   rawStart: number; // unclamped
@@ -114,7 +109,6 @@ export default function Timeline({
   startHour,
   endHour,
   onEventClick,
-  getEventColor,
 }: Props) {
   const minutesVisible = (endHour - startHour) * 60;
 
@@ -168,7 +162,7 @@ export default function Timeline({
           const widthPct = 100 / colCount;
           const leftPct = col * widthPct;
 
-          const color = getEventColor?.(event) ?? event.series?.lecture?.color;
+          const color = getEventColor(event);
           const title = getEventTitle(event);
 
           const shortClass =
@@ -191,14 +185,12 @@ export default function Timeline({
                 borderColor: color ?? undefined,
               }}
               onClick={onEventClick ? () => onEventClick(event.id) : undefined}
-              title={`${title} (${timeFmt.format(event.startTime)} – ${timeFmt.format(
-                event.endTime
-              )})`}
+              title={`${title} (${formatTimeRangeShortDE(event.startTime, event.endTime)})`}
             >
               <div className="cv-timeline-event-title">{title}</div>
 
               <div className="cv-timeline-event-time">
-                {timeFmt.format(event.startTime)} – {timeFmt.format(event.endTime)}
+                {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </div>
             </div>
           );

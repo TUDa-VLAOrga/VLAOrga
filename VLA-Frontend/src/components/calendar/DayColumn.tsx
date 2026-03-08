@@ -1,12 +1,11 @@
-import type { CalendarDay } from "./CalendarTypes";
+import type {CalendarDay, CalendarEvent} from "./CalendarTypes";
 import Timeline from "./Timeline";
-import type { Appointment } from "@/lib/databaseTypes";
-import { getEventTitle } from "./eventUtils";
+import {getEventColor, getEventTitle} from "./eventUtils";
 
 type DayColumnProps = {
   day: CalendarDay;
-  eventsAllDay: Appointment[];
-  eventsTimed: Appointment[];
+  eventsAllDay: CalendarEvent[];
+  eventsTimed: CalendarEvent[];
   onEventClick?: (eventId: number) => void;
   startHour: number;
   endHour: number;
@@ -36,7 +35,7 @@ export default function DayColumn({
             <div className="cv-allDayEmpty" />
           ) : (
             eventsAllDay.map((event) => {
-              const color = event.series.lecture?.color;
+              const color = getEventColor(event);
               const name = getEventTitle(event);
 
               const eventProps = {

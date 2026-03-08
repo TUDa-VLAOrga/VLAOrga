@@ -1,12 +1,13 @@
 import type {Appointment} from "@/lib/databaseTypes.ts";
 import TimeRangeInput from "@/components/calendar/EventForm/TimeRangeInput.tsx";
 import {useState} from "react";
-import {getEventTitle} from "@/components/calendar/eventUtils.ts";
-import {daysBefore, formatDDMMHHMM, formatTime} from "@/components/calendar/dateUtils.ts";
+import {getEventTitle, isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
+import {daysBefore, formatDateAndTime, formatTime} from "@/components/calendar/dateUtils.ts";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 type AddAcceptanceFormProps = {
   event: Appointment,
-  allEvents: Appointment[],
+  allEvents: CalendarEvent[],
   onSubmit: (eventId: number, startTime: Date, endTime: Date) => Promise<void>,
   onClose: () => void
 };
@@ -22,7 +23,9 @@ export default function AddAcceptanceForm({
   const [startTime, setStartTime] = useState<Date | undefined>();
   const [endTime, setEndTime] = useState<Date | undefined>();
   // help values for display in form
-  const seriesEventCount = allEvents.filter(e => e.series.id === event.series.id).length;
+  const seriesEventCount = allEvents.filter(
+    e => !isCalendarEventAcceptance(e) && e.series.id === event.series.id
+  ).length;
   const diff = startTime
     ? `${daysBefore(startTime, event.startTime)} vor dem Termin um ${formatTime(startTime)} Uhr`
     : "entsprechend";
@@ -51,7 +54,7 @@ export default function AddAcceptanceForm({
               onStartChange={setStartTime}
               onEndChange={setEndTime}
               autoCalculateEnd={false}
-              hintText={"Referenz: " + getEventTitle(event) + " am " + formatDDMMHHMM(event.startTime)}
+              hintText={"Referenz: " + getEventTitle(event) + " am " + formatDateAndTime(event.startTime)}
             />
 
             <div className="cv-formGroup">

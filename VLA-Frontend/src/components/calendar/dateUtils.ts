@@ -41,15 +41,6 @@ export function formatDDMM(date: Date) {
   return `${dd}.${mm}.`;
 }
 
-/** Formats a date with time as "dd.mm HH:mm" (e.g., "19.12. 11:30"). */
-export function formatDDMMHHMM(date: Date) {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${day}.${month} ${hours}:${minutes}`;
-}
-
 /** Outputs how many days before a reference date. */
 export function daysBefore(date: Date, referenceDate: Date): string {
   const startDate = new Date(date);
@@ -59,11 +50,6 @@ export function daysBefore(date: Date, referenceDate: Date): string {
   const oneDay = 24 * 60 * 60 * 1000;
   const diff = Math.round((endDate.getTime() - startDate.getTime()) / oneDay);
   return diff + " Tage";
-}
-
-/** Format just the time of a date. */
-export function formatTime(date: Date) {
-  return timeFormat.format(date);
 }
 
 
@@ -122,9 +108,16 @@ const dayFormat = new Intl.DateTimeFormat("de-DE", {
   year: "numeric",
 });
 
+/**
+ * Format the day part of a date, e.g. 19.12.
+ */
+export function formatDay(date: Date) {
+  return dayFormat.format(date);
+}
+
 /** formats a range like "Fr 19.12 – Do 25.12" */
 export function formatDayRangeShortDE(start: Date, end: Date) {
-  return `${dayFormat.format(start)} – ${dayFormat.format(end)}`;
+  return `${formatDay(start)} – ${formatDay(end)}`;
 }
 
 const timeFormat = new Intl.DateTimeFormat("de-DE", {
@@ -132,15 +125,26 @@ const timeFormat = new Intl.DateTimeFormat("de-DE", {
   minute: "2-digit",
 });
 
+/** Format just the time of a date, like 09:30. */
+export function formatTime(date: Date) {
+  return timeFormat.format(date);
+}
+
 /** formats a time range like 11:30 - 13:10, includes days if spanning over multiple days */
 export function formatTimeRangeShortDE(start: Date, end: Date) {
   if (compareSameDay(start, end)) {
-    return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${timeFormat.format(end)}`;
+    return `${formatDay(start)}, ${formatTime(start)} - ${formatTime(end)}`;
   }
   return (
-    `${dayFormat.format(start)}, ${timeFormat.format(start)}` +
-    ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`
+    `${formatDay(start)}, ${formatTime(start)} - ${formatDay(end)}, ${formatTime(end)}`
   );
+}
+
+/**
+ *  Formats a date with time, e.g. "19.12. 09:30".
+ */
+export function formatDateAndTime(date: Date) {
+  return `${formatDDMM(date)} ${formatTime(date)}`;
 }
 
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */

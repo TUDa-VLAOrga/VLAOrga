@@ -1,20 +1,27 @@
 import { useState } from "react";
-import {formatTimeRangeShortDE} from "../dateUtils";
+import {formatDateAndTime, formatTimeRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import "../../../styles/Event-details-styles.css";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {checkPartOfSeries, getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
+import {
+  checkPartOfSeries,
+  getEventNotes,
+  getEventStatus,
+  getEventTitle,
+  isCalendarEventAcceptance
+} from "@/components/calendar/eventUtils.ts";
 import AddAcceptanceForm from "@/components/calendar/EventForm/AddAcceptanceForm.tsx";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 
 type EventDetailsProps = {
-  event: Appointment;
-  allEvents: Appointment[];
+  event: CalendarEvent;
+  allEvents: CalendarEvent[];
   onClose: () => void;
-  lectures?: Lecture[];
+  lectures: Lecture[];
   people: Person[];
-  categories?: AppointmentCategory[];
+  categories: AppointmentCategory[];
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
@@ -31,9 +38,9 @@ export default function EventDetails({
   event,
   allEvents,
   onClose,
-  lectures = [],
+  lectures,
   people,
-  categories = [],
+  categories,
   onUpdatePersonNotes,
   onUpdateEventNotes,
   onUpdateEvent,
@@ -48,7 +55,7 @@ export default function EventDetails({
   const [showCreateAcceptanceDialog, setShowCreateAcceptanceDialog] = useState(false);
 
   // local state for note editing
-  const [eventNotes, setEventNotes] = useState(event.notes);
+  const [eventNotes, setEventNotes] = useState(getEventNotes(event));
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
@@ -64,8 +71,10 @@ export default function EventDetails({
   }
 
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
+  const isAcceptance = isCalendarEventAcceptance(event);
+  const referenceEvent: Appointment = isAcceptance ? event.appointment : event;
 
-  if (showEditSingleDialog) {
+  if (showEditSingleDialog && !isAcceptance) {
     return (
       <EventEditForm
         event={event}
@@ -83,8 +92,10 @@ export default function EventDetails({
         onCancel={() => setShowEditSingleDialog(false)}
       />
     );
+  } else if (showEditSingleDialog && isAcceptance) {
+    // ToDo: show EditAcceptanceForm w/o series
   }
-  if (showMoveSeriesDialog) {
+  if (showMoveSeriesDialog && !isAcceptance) {
     return (
       <EventEditForm
         event={event}
@@ -103,7 +114,7 @@ export default function EventDetails({
       />
     );
   }
-  if (showCreateAcceptanceDialog) {
+  if (showCreateAcceptanceDialog && !isAcceptance) {
     return (
       <AddAcceptanceForm
         event={event}
@@ -120,6 +131,7 @@ export default function EventDetails({
     <>
       <div className="cv-formOverlay">
         <div className="cv-formBox">
+          {!isAcceptance &&
           <div>
             <button
               className="cv-floatRight cv-formBtn cv-formBtnSecondary"
@@ -129,33 +141,42 @@ export default function EventDetails({
             </button>
             <h2 className="cv-formTitle">{getEventTitle(event)}</h2>
           </div>
+          }
+          {isAcceptance &&
+              <div>
+                <h2 className="cv-formTitle">Abnahmetermin</h2>
+                <h5 className="cv-formTitle">
+                  für {getEventTitle(event.appointment)} am {formatDateAndTime(event.appointment.startTime)}
+                </h5>
+              </div>
+          }
 
           <div className="cv-detailsContent">
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Kategorie:</span>
-              <span className="cv-detailValue">{event.series.category.title}</span>
+              <span className="cv-detailValue">{referenceEvent.series.category.title}</span>
             </div>
 
             {/* Lecture details (only if lecture is assigned) */}
-            {event.series.lecture && (
+            {referenceEvent.series.lecture && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Vorlesung:</span>
                 <span className="cv-detailValue">
                   <span className="cv-detailValueLecture ">
                     <span
                       className="cv-lectureSwatch"
-                      style={{ backgroundColor: event.series.lecture.color }}
+                      style={{ backgroundColor: referenceEvent.series.lecture.color }}
                     />
-                    <span className="cv-lectureName">{event.series.lecture.name}</span>
+                    <span className="cv-lectureName">{referenceEvent.series.lecture.name}</span>
                   </span>
                 </span>
               </div>
             )}
 
-            {event.series.lecture?.semester && (
+            {referenceEvent.series.lecture?.semester && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Semester:</span>
-                <span className="cv-detailValue">{event.series.lecture.semester}</span>
+                <span className="cv-detailValue">{referenceEvent.series.lecture.semester}</span>
               </div>
             )}
 
@@ -166,21 +187,21 @@ export default function EventDetails({
               </span>
             </div>
 
-            {event.series.lecture && event.series.lecture?.persons.length > 0 && (
+            {referenceEvent.series.lecture && referenceEvent.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabelPeople"> 
                   <span className="cv-detailLabel">Personen:</span>
                   <button
                     type="button"
                     className="cv-formBtn cv-formBtnSecondary"
-                    onClick={() => mailToPersons(event.series.lecture!.persons)}
+                    onClick={() => mailToPersons(referenceEvent.series.lecture!.persons)}
                   >
                     {"Email an Alle"}
                   </button>
                 </span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
-                    {event.series.lecture?.persons.map((person) => (
+                    {referenceEvent.series.lecture?.persons.map((person) => (
                       <span key={person.id} className="cv-personItem">
                         {/* Need to use people (state from usePeople) here, since lecture.persons
                          include probably old versions of the person entity. */}
@@ -202,7 +223,7 @@ export default function EventDetails({
             )}
 
             {/* Status is optional; used for UI highlighting elsewhere */}
-            {getEventStatus(event) && (
+            {!isAcceptance && getEventStatus(event) && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Status:</span>
                 <span className="cv-detailValue">{getEventStatus(event)}</span>
@@ -235,7 +256,7 @@ export default function EventDetails({
             <button
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
-              disabled={typeof eventNotes === "string" && eventNotes.trim() === event.notes}
+              disabled={typeof eventNotes === "string" && eventNotes.trim() === getEventNotes(event)}
               onClick={() => {
                 onUpdateEventNotes(event.id, eventNotes);
                 onClose();
@@ -243,7 +264,8 @@ export default function EventDetails({
             >
               Notizen speichern
             </button>
-            {isPartOfSeries &&
+            {isPartOfSeries && !isAcceptance &&
+              // We do not allow editing acceptances in series for simplicity of code logic
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnSecondary"

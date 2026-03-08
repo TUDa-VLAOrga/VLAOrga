@@ -1,7 +1,7 @@
 import {useState, useMemo} from "react";
-import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
+import type { EventFormData, Weekday } from "../components/calendar/EventForm/AddEventForm.tsx";
 import {addDays} from "../components/calendar/dateUtils";
-import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
+import {type Acceptance, type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -11,7 +11,8 @@ import {
 import {Logger} from "@/components/logger/Logger.ts";
 import {fetchBackend, getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
-import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
+import {API_URL_ACCEPTANCES, API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 function handleAppointmentCreated(event: MessageEvent, currentValue: Appointment[]) {
   const newEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
@@ -54,12 +55,22 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
-  const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+  const [allAppointments, _setAppointments] = useSseConnectionWithInitialFetch<Appointment[]>(
     [], API_URL_APPOINTMENTS, sseHandlersAppointments
+  );
+  const sseHandlersAcceptances = new Map<
+    SseMessageType, (event: MessageEvent, currentValue: Acceptance[]) => Acceptance[]
+  >();
+  const [allAcceptances, _setAcceptances] = useSseConnectionWithInitialFetch<Acceptance[]>(
+    [], API_URL_ACCEPTANCES, sseHandlersAcceptances
+  );
+  const allEvents: CalendarEvent[] = useMemo(
+    () => [...allAppointments, ...allAcceptances],
+    [allAcceptances, allAppointments]
   );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
-    const event = allEvents.find(e => e.id === eventId);
+    const event = allAppointments.find(e => e.id === eventId);
     if (event) {
       event.notes = notes;
       fetchBackend<Appointment>(
@@ -88,16 +99,16 @@ export function useEvents() {
       Logger.error("Invalid time range for event");
       throw new Error("Invalid time range for event");
     }
-    const oldEvent = allEvents.find(e => e.id === eventId);
+    const oldEvent = allAppointments.find(e => e.id === eventId);
     if (!oldEvent) {
       Logger.error("Event not found");
       throw new Error("Event not found");
     }
     // case 1: only this event should be updated
-    if (!editSeries || !checkPartOfSeries(oldEvent, allEvents)) {
+    if (!editSeries || !checkPartOfSeries(oldEvent, allAppointments)) {
       let newSeries: AppointmentSeries | undefined;
       // create new series for event, if not already alone in a series
-      if (checkPartOfSeries(oldEvent, allEvents)) {
+      if (checkPartOfSeries(oldEvent, allAppointments)) {
         newSeries = {
           ...oldEvent.series,
           ...updates.series,
@@ -135,7 +146,7 @@ export function useEvents() {
         Logger.error("Error during appointment update in handleUpdateEvent: ", error);
         return oldEvent;
       }
-    } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
+    } else if (checkPartOfSeries(oldEvent, allAppointments)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
         ...updates.series,
@@ -146,13 +157,13 @@ export function useEvents() {
         Logger.error("Error during series update in handleUpdateEvent: ", error);
         return oldEvent;
       }
-      let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
+      let movedEvents: Appointment[] = allAppointments.filter(e => e.series.id === oldEvent.series.id).map(e => ({
         ...e,
         series: newSeries,
       }));
       if (updates.startTime && updates.endTime) {
         // calculate new start and end for every event, if changed
-        movedEvents = moveEventSeries(allEvents, oldEvent, updates.startTime, updates.endTime);
+        movedEvents = moveEventSeries(allAppointments, oldEvent, updates.startTime, updates.endTime);
       }
       // set events to moved ones with updated series
       try {
@@ -315,8 +326,8 @@ export function useEvents() {
    * dateISO -> list of events on that date.
    */
   const eventsByDate = useMemo(() => {
-    const grouped: Record<string, Appointment[]> = {};
-    allEvents.forEach((event) => {
+    const grouped: Record<string, CalendarEvent[]> = {};
+    allAppointments.forEach((event) => {
       const eventDateISO = getEventDateISO(event);
       if (!grouped[eventDateISO]) {
         grouped[eventDateISO] = [];
@@ -324,7 +335,7 @@ export function useEvents() {
       grouped[eventDateISO].push(event);
     });
     return grouped;
-  }, [allEvents]);
+  }, [allAppointments]);
 
   return {
     allEvents,
