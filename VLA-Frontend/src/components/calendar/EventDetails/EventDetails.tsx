@@ -2,6 +2,7 @@ import { useState } from "react";
 import {formatTimeRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
+import LectureEditForm from "./LectureEditForm";
 import "../../../styles/Event-details-styles.css";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {checkPartOfSeries, getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
@@ -20,6 +21,7 @@ type EventDetailsProps = {
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
+  onUpdateLecture: (lecture: Lecture) => Promise<Lecture | void>;
   onDeletion: (eventId: number) => Promise<void>;
   onCancelDeletionRequest: (eventId: number) => Promise<void>;
   currentUserId?: number;
@@ -42,6 +44,7 @@ export default function EventDetails({
   onAddCategory,
   onAddPerson,
   onAddLecture,
+  onUpdateLecture,
   onDeletion,
   onCancelDeletionRequest,
   currentUserId,
@@ -49,6 +52,7 @@ export default function EventDetails({
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
+  const [showEditLectureDialog, setShowEditLectureDialog] = useState(false);
   const [eventNotes, setEventNotes] = useState(event.notes);
   const [isDeletionPending, setIsDeletionPending] = useState(Boolean(event.deletingIntentionUser));
   const deletingUser = event.deletingIntentionUser;
@@ -131,6 +135,14 @@ export default function EventDetails({
                       style={{ backgroundColor: event.series.lecture.color }}
                     />
                     <span className="cv-lectureName">{event.series.lecture.name}</span>
+                    <button
+                      type="button"
+                      className="cv-personDetailsBtn"
+                      onClick={() => setShowEditLectureDialog(true)}
+                      title="Vorlesung bearbeiten"
+                    >
+                      <span className="cv-editPenIcon"></span>
+                    </button>
                   </span>
                 </span>
               </div>
@@ -297,6 +309,18 @@ export default function EventDetails({
           person={people.find((p) => p.id === selectedPersonId)!}
           onClose={() => setSelectedPersonId(undefined)}
           onSaveNotes={handlePersonNotesUpdate}
+        />
+      )}
+      {showEditLectureDialog && (
+        <LectureEditForm
+          lecture={event.series.lecture!}
+          people={people}
+          onCancel={() => setShowEditLectureDialog(false)}
+          onSubmit={(lecture) => {
+            onUpdateLecture(lecture)
+              .then(() => setShowEditLectureDialog(false));
+          }}
+          onAddPerson={onAddPerson}
         />
       )}
     </>

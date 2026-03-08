@@ -1222,3 +1222,9 @@
   margin-top: 24px;
 }
 
+.cv-editPenIcon {
+  width: 15px;
+  height: 15px;
+  background-image: url("/public/DetailsIcons/pencil-icon.png");
+  background-size: cover;
+}
