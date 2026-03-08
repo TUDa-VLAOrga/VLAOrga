@@ -12,11 +12,13 @@ This setup requires `git` and `docker` installed. Also, the access parameters to
 3. Change all `LINUS_` variables in `.env` to a correct value.
 
 ## Starting the Software
+Make sure that linus is running and reachable.
+
 To start the software, run (in VLAOrga folder):
 
     docker compose --file docker-compose.prod.yml up -d
 
-The Software can now be accessed under: http://servername:8080/
+The application will launch on port 8080.
 
 To stop the Software, run in VLAOrga folder:
 
