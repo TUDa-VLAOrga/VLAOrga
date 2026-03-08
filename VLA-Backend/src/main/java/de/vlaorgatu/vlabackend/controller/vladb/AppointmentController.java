@@ -91,7 +91,7 @@ public class AppointmentController
      * @param id The id of the appointment
      * @return All ExperimentBookings of this appointment
      */
-    @GetMapping("/{id}/experimentbookings")
+    @GetMapping("/{id}/experimentBookings")
     public ResponseEntity<List<ExperimentBooking>> getAllExperimentBookingsFromAppointment(
         @PathVariable Long id
     ) {
