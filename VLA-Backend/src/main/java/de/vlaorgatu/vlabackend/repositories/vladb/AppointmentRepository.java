@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
-import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

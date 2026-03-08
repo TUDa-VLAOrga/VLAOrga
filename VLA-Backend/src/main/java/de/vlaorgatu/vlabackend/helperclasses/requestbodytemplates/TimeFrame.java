@@ -2,7 +2,6 @@ package de.vlaorgatu.vlabackend.helperclasses.requestbodytemplates;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
