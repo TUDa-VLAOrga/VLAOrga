@@ -8,7 +8,6 @@ import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.LectureRepository;
-
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -89,8 +88,10 @@ public class LectureController
         Lecture updatedLecture = lectureRepository.save(lecture);
         SseController.notifyAllOfObject(SseMessageType.LECTUREUPDATED, updatedLecture);
         // update all appointments with this lecture
-        List<Appointment> appointmentsToUpdate = appointmentRepository.findAppointmentsBySeries_Lecture(updatedLecture);
-        appointmentsToUpdate.forEach((appointment -> SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED,appointment)));
+        List<Appointment> appointmentsToUpdate =
+            appointmentRepository.findAppointmentsBySeriesLecture(updatedLecture);
+        appointmentsToUpdate.forEach((appointment ->
+            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, appointment)));
         return ResponseEntity.ok(updatedLecture);
     }
 

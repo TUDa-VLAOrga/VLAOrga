@@ -41,7 +41,7 @@ export default function EventDetails({
   onAddCategory,
   onAddPerson,
   onAddLecture,
-  onUpdateLecture
+  onUpdateLecture,
 }: EventDetailsProps) {
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
