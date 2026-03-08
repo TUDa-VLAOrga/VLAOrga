@@ -2,19 +2,15 @@ package de.vlaorgatu.vlabackend.services;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
-import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.InvalidRequestInCurrentServerState;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -57,6 +53,13 @@ public class ExperimentBookingService {
         moveExperimentBookings(toDeleteAppointment, nextAppointment);
     }
 
+    /**
+     * Gets the next valid appointment for an experimentBooking.
+     * Errors with {@link InvalidRequestInCurrentServerState} if there is no valid appointment.
+     *
+     * @param previous The appointment to look in the future of
+     * @return The next valid appointment if existent
+     */
     public Appointment getNextValidExperimentBookingAppointmentFromSeries(Appointment previous) {
         Lecture appointmentLecture = previous.getSeries().getLecture();
 
@@ -89,6 +92,12 @@ public class ExperimentBookingService {
         }
     }
 
+    /**
+     * Moves all {@link ExperimentBooking}s from one {@link Appointment} to another.
+     *
+     * @param source The source appointment of experimentBookings
+     * @param target The target appointment of experimentBookings
+     */
     public synchronized void moveExperimentBookings(Appointment source, Appointment target) {
         List<ExperimentBooking> bookingsToMove = source.getBookings();
 
@@ -108,5 +117,6 @@ public class ExperimentBookingService {
 
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, source);
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, target);
+        // Sending an update to the appointment should also update the savedBookings
     }
 }

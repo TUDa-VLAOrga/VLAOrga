@@ -71,6 +71,7 @@ public class Linussyncservice {
      * @param start The start of the time frame that should be matched
      * @param end   The end of the time frame that should be matched
      */
+    @SuppressWarnings("linelength")
     @Transactional("vlaTransactionManager")
     public void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =

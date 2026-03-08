@@ -1,8 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

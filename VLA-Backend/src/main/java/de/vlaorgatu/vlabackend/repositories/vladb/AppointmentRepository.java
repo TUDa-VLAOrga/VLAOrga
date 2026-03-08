@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
-import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,28 +16,28 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     /**
      * Searches for next appointment in a series with lectures.
      *
-     * @param series_lecture_id The id of the lecture
+     * @param seriesLectureId The id of the lecture
      * @param startTime         The lower exclusive time bound for start of event.
      * @return The first appointment that is for the same lecture and starts after startTime
      */
     @SuppressWarnings("checkstyle:indentation")
     Optional<Appointment>
     findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
-        Long series_lecture_id,
+        Long seriesLectureId,
         LocalDateTime startTime
     );
 
     /**
      * Searches for the next appointment in a series.
      *
-     * @param series_id The id of the series to search in
+     * @param seriesId The id of the series to search in
      * @param startTime The lower exclusive time bound for start of event.
-     * @return
+     * @return Appointment in the specified series that starts after the startTime
      */
     @SuppressWarnings("checkstyle:indentation")
     Optional<Appointment>
     findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
-        Long series_id,
+        Long seriesId,
         LocalDateTime startTime
     );
 

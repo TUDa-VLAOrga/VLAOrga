@@ -181,7 +181,7 @@ public class AppointmentController
         if (!securityUtils.checkUserIsSessionUser(deletetingIntentionUser)) {
             throw new InvalidParameterException(
                 HttpStatus.FORBIDDEN,
-                "Appointment deletion requested for a user that is the sender of the request!"
+                "Appointment deletion requested from a user that is not the sender of the request!"
             );
         }
 

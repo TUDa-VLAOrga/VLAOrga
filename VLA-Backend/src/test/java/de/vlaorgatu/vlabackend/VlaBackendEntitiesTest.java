@@ -17,22 +17,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Tests for backend entity operations, using the Controller classes.
  */
-@Import(TestcontainersConfiguration.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Rollback
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
+@Transactional
+@Testcontainers
+@Import(TestcontainersConfiguration.class)
 public class VlaBackendEntitiesTest {
 
     // Sample Data
