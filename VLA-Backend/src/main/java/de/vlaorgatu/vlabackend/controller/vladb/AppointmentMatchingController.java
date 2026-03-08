@@ -117,6 +117,9 @@ public class AppointmentMatchingController implements
     @Transactional("vlaTransactionManager")
     @PostMapping("/match/appointments")
     public synchronized ResponseEntity<String> matchAppointments(@RequestBody TimeFrame timeFrame) {
+        LocalDateTime commence = timeFrame.getCommence();
+        LocalDateTime terminate = timeFrame.getTerminate();
+
         linusSyncService.matchAppointments(commence, terminate);
         return ResponseEntity.ok("");
     }
@@ -132,6 +135,9 @@ public class AppointmentMatchingController implements
     @PostMapping("/match/experimentBookings")
     public synchronized ResponseEntity<String> matchExperimentBookings(
         @RequestBody TimeFrame timeFrame) {
+
+        LocalDateTime commence = timeFrame.getCommence();
+        LocalDateTime terminate = timeFrame.getTerminate();
 
         linusSyncService.matchAppointments(commence, terminate);
         linusSyncService.syncExperimentBookings(
