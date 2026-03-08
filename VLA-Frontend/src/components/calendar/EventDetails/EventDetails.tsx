@@ -21,7 +21,7 @@ type EventDetailsProps = {
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
   onRequestDeletion: (eventId: number) => Promise<void>;
-  onCancelDeletionRequest: (eventId: number) => void;
+  onCancelDeletionRequest: (eventId: number) => Promise<void>;
   onConfirmDeletion: (eventId: number) => Promise<void>;
   currentUserId?: number;
 };
@@ -266,7 +266,7 @@ export default function EventDetails({
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
-                onClick={() => onCancelDeletionRequest(event.id)}
+                onClick={() => onCancelDeletionRequest(event.id).then(() => setIsDeletionPending(false))}
               >
                 Löschanfrage zurückziehen
               </button>
