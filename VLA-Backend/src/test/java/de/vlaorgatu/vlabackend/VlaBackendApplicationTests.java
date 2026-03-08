@@ -6,9 +6,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Import(TestcontainersConfiguration.class)
 @SpringBootTest
+@Transactional
+@Testcontainers
+@Import(TestcontainersConfiguration.class)
 class VlaBackendApplicationTests {
 
     @Test

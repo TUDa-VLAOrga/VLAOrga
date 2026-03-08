@@ -64,7 +64,6 @@ export default function TimeRangeInput({
    * @param newStart
    */
   function handleStartChange(newStart: Date) {
-    console.log("handleStartChange", newStart);
     onStartChange((oldStart: Date | undefined) => {
       if (autoCalculateEnd && newStart) {
         if (oldStart && endDateTime) {

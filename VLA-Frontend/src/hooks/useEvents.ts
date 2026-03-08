@@ -109,6 +109,17 @@ export function useEvents() {
           Logger.error("Error during series creation in handleUpdateEvent: ", error);
           return oldEvent;
         }
+      } else {
+        // maybe series got updated, save it to the server
+        if (updates.series) {
+          try {
+            newSeries = await fetchBackend(
+              `${API_URL_APPOINTMENT_SERIES}/${oldEvent.series.id}`, "PUT", updates.series
+            );
+          } catch (error) {
+            Logger.error("Error during series update in handleUpdateEvent: ", error);
+          }
+        }
       }
 
       const newEvent = {

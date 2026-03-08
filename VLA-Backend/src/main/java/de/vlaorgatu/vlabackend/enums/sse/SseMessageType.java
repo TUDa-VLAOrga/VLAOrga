@@ -50,7 +50,6 @@ public enum SseMessageType {
      * Used for sending Debug messages to the frontend.
      */
     DEBUG("DEBUG");
-
     /**
      * The actual value of the enum object.
      */

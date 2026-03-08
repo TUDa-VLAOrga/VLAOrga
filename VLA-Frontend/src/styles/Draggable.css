@@ -5,8 +5,8 @@ html, body {
 
 .DragComponent {
     position: fixed;
-    z-index: 998;
     user-select: none;
+    z-index: var(--z-dragcomponent);
 }
 
 .dragClose {
