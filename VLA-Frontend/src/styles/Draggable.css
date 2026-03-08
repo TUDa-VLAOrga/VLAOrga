@@ -5,5 +5,13 @@ html, body {
 
 .DragComponent {
     position: fixed;
+    user-select: none;
     z-index: var(--z-dragcomponent);
+}
+
+.dragClose {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 10px;
 }

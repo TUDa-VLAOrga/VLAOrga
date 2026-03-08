@@ -224,8 +224,11 @@ public class Linussyncservice {
             updatedExperimentBookings.addAll(savedExperimentBookings);
 
             appointment.setBookings(updatedExperimentBookings);
+            appointment = appointmentRepository.save(appointment);
 
             if (!savedExperimentBookings.isEmpty()) {
+                SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, appointment);
+
                 SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
                     savedExperimentBookings);
             }
@@ -233,8 +236,8 @@ public class Linussyncservice {
             if (!savedExperimentBookings.isEmpty()) {
                 log.info(
                     "Imported " + savedExperimentBookings.size() + " experiment(s) for " +
-                    "appointment id=" + appointmentMatching.getAppointment().getId() +
-                    " from linus"
+                        "appointment id=" + appointmentMatching.getAppointment().getId() +
+                        " from linus"
                 );
             }
 

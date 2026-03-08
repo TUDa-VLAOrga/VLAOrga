@@ -1,5 +1,6 @@
 import type { Appointment } from "@/lib/databaseTypes";
 import { getEventTitle } from "./eventUtils";
+import CalendarExperimentIndicator from "./CalendarExperimentIndicator";
 
 type Props = {
   /** Timed events for a single day column. */
@@ -200,6 +201,8 @@ export default function Timeline({
               <div className="cv-timeline-event-time">
                 {timeFmt.format(event.startTime)} – {timeFmt.format(event.endTime)}
               </div>
+
+              <CalendarExperimentIndicator appointment={event}/>
             </div>
           );
         })}

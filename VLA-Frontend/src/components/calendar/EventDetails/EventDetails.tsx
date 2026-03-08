@@ -5,7 +5,8 @@ import EventEditForm from "./EventEditForm";
 import LectureEditForm from "./LectureEditForm";
 import "../../../styles/Event-details-styles.css";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
-import {checkPartOfSeries, getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
+import ExperimentSection from "@/components/experiments/ExperimentSection";
+import {getEventStatus, checkPartOfSeries, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
 
 type EventDetailsProps = {
@@ -161,6 +162,8 @@ export default function EventDetails({
                 {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </span>
             </div>
+
+            <ExperimentSection appointment={event} />
 
             {event.series.lecture && event.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">

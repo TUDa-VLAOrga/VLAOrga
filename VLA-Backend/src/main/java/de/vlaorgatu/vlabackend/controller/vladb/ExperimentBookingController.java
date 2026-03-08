@@ -2,11 +2,14 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +37,7 @@ public class ExperimentBookingController
 
     /**
      * Creates a new experiment booking.
+     * TODO: Think about this mapping and implement SSE accordingly
      *
      * @param experimentBooking The dataset for creation. Must not contain an ID (auto-generated).
      * @return OK response with the created experiment booking, Error response otherwise.
@@ -79,13 +83,62 @@ public class ExperimentBookingController
 
         ExperimentBooking updatedExperimentBooking =
             experimentBookingRepository.save(experimentBooking);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Experiment booking updated: " + updatedExperimentBooking);
+
+        SseController.notifyAllOfObject(SseMessageType.EXPERIMENTBOOKINGUPDATED,
+            updatedExperimentBooking);
+
+        return ResponseEntity.ok(updatedExperimentBooking);
+    }
+
+    /**
+     * Updates the state of a ExperimentBooking.
+     *
+     * @param id id of the experimentBooking
+     * @param experimentPreparationStatus The ordinal of the preparation enum
+     * @return The updated booking
+     */
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ExperimentBooking> updateExperimentBooking(
+        @PathVariable Long id,
+        @RequestBody Integer experimentPreparationStatus
+    ) {
+        int experimentPreparationStatusIndex = -1;
+
+        for (ExperimentPreparationStatus status : ExperimentPreparationStatus.values()) {
+            if (status.ordinal() == experimentPreparationStatus) {
+                experimentPreparationStatusIndex = status.ordinal();
+            }
+        }
+
+        if (experimentPreparationStatusIndex == -1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        ExperimentBooking toUpdate = experimentBookingRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Experiment booking with ID " + id + " not found."
+            )
+        );
+
+        toUpdate.setStatus(ExperimentPreparationStatus.values()[experimentPreparationStatusIndex]);
+
+        ExperimentBooking updatedExperimentBooking =
+            experimentBookingRepository.save(toUpdate);
+
+        SseController.notifyAllOfObject(
+            SseMessageType.EXPERIMENTBOOKINGUPDATED, updatedExperimentBooking
+        );
+
+        SseController.notifyAllOfObject(
+            SseMessageType.APPOINTMENTUPDATED, toUpdate.getAppointment()
+        );
+
         return ResponseEntity.ok(updatedExperimentBooking);
     }
 
     /**
      * Deletes an experiment booking by its ID.
+     * TODO: Think about this mapping and implement SSE accordingly
      *
      * @param id ID of the experiment booking to delete.
      * @return OK response with the deleted experiment booking, Error response otherwise.
