@@ -32,6 +32,9 @@ public class VlaUserDetailsService implements UserDetailsService {
      * Interacts with the database and creates a {@link UserDetails}.
      * This object is used for checking the authentication credentials.
      * The "username" is the stringified id of the user.
+     *
+     * @param username The username of the user
+     * @return The {@link UserDetails} for Spring Boot Security
      */
     @Override
     public UserDetails loadUserByUsername(String username) {
