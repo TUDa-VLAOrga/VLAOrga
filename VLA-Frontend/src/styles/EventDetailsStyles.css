@@ -152,7 +152,10 @@
   height: 18px;
   padding: 0;
   margin-left: 0.15rem;
-  background: none;
+  background-image: url("/public/icons/EditIcon.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   color: #6c757d;  /* Dezentes Grau */
   border: none;
   cursor: pointer;

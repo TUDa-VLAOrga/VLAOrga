@@ -2,7 +2,7 @@ import { useState } from "react";
 import {formatTimeRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
-import "../../../styles/Event-details-styles.css";
+import "../../../styles/EventDetailsStyles.css";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {checkPartOfSeries, getEventStatus, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
@@ -166,7 +166,6 @@ export default function EventDetails({
                           aria-label={`Details zu ${people.find((p) => p.id == selectedPersonId)?.name} anzeigen`}
                           title="Details anzeigen"
                         >
-                          ⓘ
                         </button>
                       </span>
                     ))}
