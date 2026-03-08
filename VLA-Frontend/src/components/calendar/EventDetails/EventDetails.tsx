@@ -193,17 +193,6 @@ export default function EventDetails({
               </div>
             )}
 
-            {isDeletionPending &&
-              <div className="cv-deletionRequestBanner">
-                <span className="cv-deletionRequestIcon">⚠️</span>
-                <span>
-                  {isOwnDeletionRequest
-                    ? "Du hast die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
-                    : `${deletingUser!.name} hat die Löschung dieses Termins beantragt. Du kannst sie ausführen.`}
-                </span>
-              </div>
-            }
-
             <textarea
               id="eventNotes"
               className="cv-notesTextarea"
@@ -254,7 +243,18 @@ export default function EventDetails({
             >
               {isPartOfSeries ? "Einzeln bearbeiten" : "Bearbeiten"}
             </button>
-
+          </div>
+          <div className="cv-formActions">
+            {deletingUser &&
+                <div className="cv-deletionRequestBanner">
+                  <span className="cv-deletionRequestIcon">⚠️</span>
+                  <span>
+                    {isOwnDeletionRequest
+                      ? "Du hast die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
+                      : `${deletingUser.name} hat die Löschung dieses Termins beantragt. Du kannst sie ausführen.`}
+                  </span>
+                </div>
+            }
             {!isDeletionPending && (
               <button
                 type="button"
