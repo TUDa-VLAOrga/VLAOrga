@@ -61,7 +61,6 @@ public class AppointmentSeries {
     /**
      * List of appointments that this series references.
      */
-    @JsonManagedReference
     @OneToMany(mappedBy = "series")
     @JsonIgnore
     private List<Appointment> appointments;

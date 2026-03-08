@@ -60,7 +60,6 @@ public class User {
      */
     @Nullable
     @OneToMany(mappedBy = "deletingIntentionUser")
-    @JsonManagedReference
     @JsonIgnore
     private List<Appointment> appointmentsWithDeletionIntention;
 }

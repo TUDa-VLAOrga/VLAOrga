@@ -66,7 +66,6 @@ public class Appointment {
      * List of {@link ExperimentBooking}s of this appointment.
      */
     @OneToMany(mappedBy = "appointment")
-    @JsonManagedReference
     private List<ExperimentBooking> bookings = new ArrayList<>();
 
     /**
@@ -78,7 +77,6 @@ public class Appointment {
 
     @Nullable
     @OneToMany(mappedBy = "appointment")
-    @JsonManagedReference
     @JsonIgnore
     private List<AppointmentMatching> appointmentMatchings = new ArrayList<>();
 }
