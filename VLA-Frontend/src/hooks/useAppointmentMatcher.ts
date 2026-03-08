@@ -3,8 +3,7 @@ import { SseMessageType, type Appointment, type AppointmentMatching, type TimeFr
 import useSseConnection from "./useSseConnection";
 import { useEffect } from "react";
 import { addDaysPresentFuture, toJSONLocalTime } from "@/components/calendar/dateUtils";
-import { Logger } from "@/components/logger/Logger";
-import { fetchBackend, fetchCSRFToken, toJsonFixDate } from "@/lib/utils";
+import { fetchBackend } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
 
 const weeksToCheckBeforeCalendarStartDate = 1;
@@ -71,15 +70,16 @@ export function useAppointmentMatcher({days, allEvents} : useAppointmentMatcherP
       "POST",
       timeFrame
     )
-    .then(() => {
-      fetchBackend<AppointmentMatching[]>(
-        `${API_URL_APPOINTMENTMATCHINGS}/nulledAppointments?commence=${toJSONLocalTime(firstFetchDay)}&terminate=${toJSONLocalTime(lastFetchDay)}`,
-        "GET"
-      )
-      .then(appointmentMatchings => 
-        setNullAppointmentMatchings(appointmentMatchings)
-      )
-    })
+      .then(() => {
+        fetchBackend<AppointmentMatching[]>(
+          `${API_URL_APPOINTMENTMATCHINGS}/nulledAppointments` +
+          `?commence=${toJSONLocalTime(firstFetchDay)}&terminate=${toJSONLocalTime(lastFetchDay)}`,
+          "GET"
+        )
+          .then(appointmentMatchings => 
+            setNullAppointmentMatchings(appointmentMatchings)
+          );
+      });
   }, [days, allEvents, setNullAppointmentMatchings]);
     
   return nullAppointmentMatchings;

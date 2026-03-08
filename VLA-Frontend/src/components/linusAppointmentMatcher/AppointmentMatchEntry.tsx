@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
 import { Button } from "../ui/Button";
 import { getTimeStringOfDate, toJSONLocalTime } from "../calendar/dateUtils";
-import { fetchBackend, parseJsonFixDate } from "@/lib/utils";
+import { fetchBackend } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS, API_URL_APPOINTMENTS } from "@/lib/api";
 import { getEventTitle } from "../calendar/eventUtils";
 
@@ -31,9 +31,9 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
       `${API_URL_APPOINTMENTS}/includeTime?eventTime=${toJSONLocalTime(linusAppointmentTime)}`,
       "GET"
     )
-    .then(appointments => {
-      setAvailableAppointments(appointments);
-    })
+      .then(appointments => {
+        setAvailableAppointments(appointments);
+      });
   }, [matching, appointments]);
     
   return (

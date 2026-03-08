@@ -18,7 +18,7 @@ export default function LinusAppointmentMatchEntry({linusAppointmentId} : LinusA
       `${API_URL_LINUSAPPOINTMENTS}/${linusAppointmentId}`,
       "GET" 
     )
-    .then(linusAppointment => setLinusAppointment(linusAppointment))
+      .then(linusAppointment => setLinusAppointment(linusAppointment));
   }, [linusAppointmentId]);
     
   return (

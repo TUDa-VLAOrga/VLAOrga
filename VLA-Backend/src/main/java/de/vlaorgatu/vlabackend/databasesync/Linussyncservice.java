@@ -234,12 +234,12 @@ public class Linussyncservice {
         }
 
         // Comment this in for debug information about unmatched bookings.
-        //if (unmatchedBecauseAppointmentNull > 0) {
-        //    log.warning(
-        //        "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
-        //            "with a null-matched appointment. " +
-        //            "According experiments were not imported."
-        //    );
-        //}
+        // if (unmatchedBecauseAppointmentNull > 0) {
+        //     log.warning(
+        //         "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
+        //             "with a null-matched appointment. " +
+        //             "According experiments were not imported."
+        //     );
+        // }
     }
 }
