@@ -6,7 +6,7 @@ This setup requires `git` and `docker` installed. Also, the credentials to a run
 ## Preparation
 1. Clone the git repository:
 
-        git clone https://github.com/TUDa-VLAOrga/VLAOrga.git
+        git clone --branch deployed https://github.com/TUDa-VLAOrga/VLAOrga.git
 
 2. In the VLAOrga folder, copy the `.env.template` file to a file named `.env`.
 3. In `.env`, change all `LINUS_` variables to the credentials of the linus instance, and all `POSTGRES_` variables to secure values.
