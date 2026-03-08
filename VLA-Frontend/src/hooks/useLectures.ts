@@ -50,14 +50,11 @@ export function useLectures() {
    * @returns The updated lecture or void if an error occurred.
    */
   async function handleUpdateLecture(lecture: Lecture): Promise<Lecture | void> {
-    try {
-      return fetchBackend(
-        `${API_URL_LECTURES}/${lecture.id}`, "PUT", lecture
-      );
-    } catch (error) {
-      Logger.error("Error during lecture update in handleUpdateLecture: ", error);
-      return lectures.find(l => l.id === lecture.id);
-    }
+    return fetchBackend(`${API_URL_LECTURES}/${lecture.id}`, "PUT", lecture)
+      .catch((error) => {
+        Logger.error("Error during lecture update in handleUpdateLecture: ", error);
+        return lectures.find(l => l.id === lecture.id);
+      });
   }
 
   /**
