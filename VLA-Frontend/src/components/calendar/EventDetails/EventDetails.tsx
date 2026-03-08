@@ -22,6 +22,9 @@ type EventDetailsProps = {
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
   onUpdateLecture: (lecture: Lecture) => Promise<Lecture | void>;
+  onDeletion: (eventId: number) => Promise<void>;
+  onCancelDeletionRequest: (eventId: number) => Promise<void>;
+  currentUserId?: number;
 };
 
 /**
@@ -42,13 +45,20 @@ export default function EventDetails({
   onAddPerson,
   onAddLecture,
   onUpdateLecture,
+  onDeletion,
+  onCancelDeletionRequest,
+  currentUserId,
 }: EventDetailsProps) {
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
   const [showEditLectureDialog, setShowEditLectureDialog] = useState(false);
   const [eventNotes, setEventNotes] = useState(event.notes);
-
+  const [isDeletionPending, setIsDeletionPending] = useState(Boolean(event.deletingIntentionUser));
+  const deletingUser = event.deletingIntentionUser;
+  const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
+  const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
+  
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes.trim());
@@ -238,7 +248,6 @@ export default function EventDetails({
                 Serie bearbeiten
               </button>
             }
-
             <button
               type="button"
               className="cv-formBtn cv-formBtnSecondary"
@@ -246,6 +255,51 @@ export default function EventDetails({
             >
               {isPartOfSeries ? "Einzeln bearbeiten" : "Bearbeiten"}
             </button>
+          </div>
+          <div className="cv-formActions">
+            {deletingUser &&
+                <div className="cv-deletionRequestBanner">
+                  <span className="cv-deletionRequestIcon">⚠️</span>
+                  <span>
+                    {isOwnDeletionRequest
+                      ? "Sie haben die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
+                      : `${deletingUser.name} hat die Löschung dieses Termins beantragt. Sie können sie ausführen.`}
+                  </span>
+                </div>
+            }
+            {!isDeletionPending && (
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger"
+                disabled={isDeletionPending}
+                onClick={() => {
+                  onDeletion(event.id).then(() => setIsDeletionPending(true));
+                }}
+              >
+                Löschen
+              </button>
+            )}
+            {canConfirmDeletion && (
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger"
+                onClick={() => onDeletion(event.id).then(() => onClose())}
+              >
+                Löschung bestätigen
+              </button>
+            )}
+            {isDeletionPending &&
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
+                onClick={() => onCancelDeletionRequest(event.id).then(() => setIsDeletionPending(false))}
+              >
+                Löschanfrage zurückziehen
+              </button>
+            }
+
+
+
           </div>
         </div>
       </div>
