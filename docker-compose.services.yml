@@ -19,12 +19,18 @@ services:
       timeout: 5s
       retries: 5
       
-# Linus database dev build
+  # Linus database dev build
   linus-db:
-    container_name: linus-db
     extends: 
       file: ./Linus/docker-compose.yml
       service: linus-db
+
+  # Linus web frontend (outdated design - should only be used for development)
+  linus-app:
+    extends:
+      file: ./Linus/docker-compose.yml
+      service: linus-app
+
 
   # Dev build of backend application for VLAOrga
   # Does not merge the frontend into the backend, seperated process for frontend is needed
