@@ -225,9 +225,10 @@ public class Linussyncservice {
 
             appointment.setBookings(updatedExperimentBookings);
             appointment = appointmentRepository.save(appointment);
-            SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, appointment);
 
             if (!savedExperimentBookings.isEmpty()) {
+                SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, appointment);
+
                 SseController.notifyAllOfObject(SseMessageType.LINUSBOOKINGSIMPORT,
                     savedExperimentBookings);
             }
