@@ -1,7 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,7 +59,6 @@ public class User {
      */
     @Nullable
     @OneToMany(mappedBy = "deletingIntentionUser")
-    @JsonManagedReference
     @JsonIgnore
     private List<Appointment> appointmentsWithDeletionIntention;
 }
