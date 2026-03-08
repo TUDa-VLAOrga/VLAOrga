@@ -12,7 +12,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +49,7 @@ public class AppointmentMatchingController implements
 
     /**
      * Returns all appointmentMatchings without an assigned Appointment in a time frame.
+     * Bounds are inclusive
      *
      * @param startDate The start of the time frame in the iso format
      * @param endDate   The end of the time frame in the iso format
@@ -57,16 +57,17 @@ public class AppointmentMatchingController implements
      */
     @Transactional("vlaTransactionManager")
     @GetMapping("/nulledAppointments")
+    @SuppressWarnings({"checkstyle:indentation", "checkstyle:linelength"})
     public ResponseEntity<List<AppointmentMatching>> getUnmatchedAppointmentsInTimeFrame(
         @RequestParam("commence")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+        LocalDateTime startDate,
         @RequestParam("terminate")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+        LocalDateTime endDate
     ) {
 
         List<AppointmentMatching> appointmentMatchings =
             appointmentMatchingRepository
-                .findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeBetween(
+                .findAppointmentMatchingsByAppointmentNullAndLinusAppointmentTimeGreaterThanEqualAndLinusAppointmentTimeLessThanEqual(
                     startDate,
                     endDate
                 );
@@ -116,8 +117,11 @@ public class AppointmentMatchingController implements
     @Transactional("vlaTransactionManager")
     @PostMapping("/match/appointments")
     public synchronized ResponseEntity<String> matchAppointments(@RequestBody TimeFrame timeFrame) {
-        linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
-        return ResponseEntity.ok("");
+        LocalDateTime commence = timeFrame.getCommence();
+        LocalDateTime terminate = timeFrame.getTerminate();
+
+        linusSyncService.matchAppointments(commence, terminate);
+        return ResponseEntity.ok("[]");
     }
 
     /**
@@ -131,12 +135,17 @@ public class AppointmentMatchingController implements
     @PostMapping("/match/experimentBookings")
     public synchronized ResponseEntity<String> matchExperimentBookings(
         @RequestBody TimeFrame timeFrame) {
-        linusSyncService.matchAppointments(timeFrame.getCommence(), timeFrame.getTerminate());
+
+        LocalDateTime commence = timeFrame.getCommence();
+        LocalDateTime terminate = timeFrame.getTerminate();
+
+        linusSyncService.matchAppointments(commence, terminate);
         linusSyncService.syncExperimentBookings(
-            timeFrame.getCommence(),
-            timeFrame.getTerminate()
+            commence,
+            terminate
         );
-        return ResponseEntity.ok("");
+
+        return ResponseEntity.ok("[]");
     }
 
     /**

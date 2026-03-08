@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,13 +74,12 @@ public class AppointmentController
     @GetMapping("/includeTime")
     public ResponseEntity<List<Appointment>> getAppointmentsDuringTime(
         @RequestParam("eventTime")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
+        LocalDateTime eventTime
     ) {
-        List<Appointment> appointmentsInTimeFrame =
-            appointmentRepository
-                .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
-                    eventTime, eventTime
-                );
+        List<Appointment> appointmentsInTimeFrame = appointmentRepository
+            .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+                eventTime, eventTime
+            );
 
         return ResponseEntity.ok(appointmentsInTimeFrame);
     }

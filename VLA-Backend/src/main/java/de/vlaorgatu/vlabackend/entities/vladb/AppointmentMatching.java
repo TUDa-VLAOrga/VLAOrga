@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,7 +51,7 @@ public class AppointmentMatching {
      * The id of {@link Appointment} the linus_appointment is matched to.
      */
     @Nullable
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 }

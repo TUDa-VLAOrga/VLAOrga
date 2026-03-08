@@ -52,7 +52,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     /**
      * Finds all appointments that begin before a start time and end after an end time.
-     * Bounds inclusive
+     * Borders are inclusive.
      *
      * @param start The start of the event
      * @param end   The end of the event
