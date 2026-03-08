@@ -24,8 +24,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -152,7 +150,7 @@ public class BookingServiceTest {
                     any(LocalDateTime.class),
                     any(LocalDateTime.class)
                 )
-        )
+            )
             .thenAnswer(invocation -> {
                 LocalDateTime startTime = invocation.getArgument(0);
                 LocalDateTime endTime = invocation.getArgument(1);
@@ -208,18 +206,8 @@ public class BookingServiceTest {
     void checkNoAppointmentsPlannedInTimeFrame() {
         appointmentMatchingController.matchAppointments(
             new TimeFrame(
-                OffsetDateTime.of(
-                    LocalDateTime.of(2026, 1, 1, 0, 0),
-                    ZoneId.of("Europe/Berlin")
-                        .getRules()
-                        .getOffset(LocalDateTime.of(2026, 1, 1, 0, 0))
-                ),
-                OffsetDateTime.of(
-                    LocalDateTime.of(2026, 1, 1, 0, 0),
-                    ZoneId.of("Europe/Berlin")
-                        .getRules()
-                        .getOffset(LocalDateTime.of(2026, 1, 1, 0, 0))
-                )
+                LocalDateTime.of(2026, 1, 1, 0, 0),
+                LocalDateTime.of(2026, 1, 1, 0, 0)
             )
         );
 
@@ -236,18 +224,8 @@ public class BookingServiceTest {
     void checkTwoAppointmentsOnOneDay() {
         appointmentMatchingController.matchAppointments(
             new TimeFrame(
-                OffsetDateTime.of(
-                    LocalDateTime.of(2026, 3, 1, 0, 0),
-                    ZoneId.of("Europe/Berlin")
-                        .getRules()
-                        .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
-                ),
-                OffsetDateTime.of(
-                    LocalDateTime.of(2026, 3, 1, 2, 0),
-                    ZoneId.of("Europe/Berlin")
-                        .getRules()
-                        .getOffset(LocalDateTime.of(2026, 3, 1, 2, 0))
-                )
+                LocalDateTime.of(2026, 3, 1, 0, 0),
+                LocalDateTime.of(2026, 3, 1, 2, 0)
             )
         );
 
@@ -291,39 +269,19 @@ public class BookingServiceTest {
 
         Assertions.assertEquals(1, appointmentMatchingRepository.findAll().size());
 
-        appointmentMatchingController.matchExperimentBookings(new TimeFrame(
-            OffsetDateTime.of(
-                LocalDateTime.of(2026, 3, 1, 0, 0),
-                ZoneId.of("Europe/Berlin")
-                    .getRules()
-                    .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
-            ),
-            OffsetDateTime.of(
-                LocalDateTime.of(2026, 3, 1, 0, 0),
-                ZoneId.of("Europe/Berlin")
-                    .getRules()
-                    .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
-            )
-        ));
+        appointmentMatchingController.matchExperimentBookings(
+            new TimeFrame(LocalDateTime.of(2026, 3, 1, 0, 0),
+                LocalDateTime.of(2026, 3, 1, 0, 0))
+        );
 
         Assertions.assertEquals(0,
             appointmentRepository.getAppointmentById(appointment.getId()).get().getBookings()
                 .size());
 
-        appointmentMatchingController.matchExperimentBookings(new TimeFrame(
-            OffsetDateTime.of(
-                LocalDateTime.of(2026, 3, 1, 0, 0),
-                ZoneId.of("Europe/Berlin")
-                    .getRules()
-                    .getOffset(LocalDateTime.of(2026, 3, 1, 0, 0))
-            ),
-            OffsetDateTime.of(
-                LocalDateTime.of(2026, 3, 1, 1, 0),
-                ZoneId.of("Europe/Berlin")
-                    .getRules()
-                    .getOffset(LocalDateTime.of(2026, 3, 1, 1, 0))
-            )
-        ));
+        appointmentMatchingController.matchExperimentBookings(
+            new TimeFrame(LocalDateTime.of(2026, 3, 1, 0, 0),
+                LocalDateTime.of(2026, 3, 1, 1, 0))
+        );
 
         Assertions.assertEquals(1, experimentBookingRepository.findAll().size());
 
