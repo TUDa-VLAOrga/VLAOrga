@@ -230,7 +230,7 @@ public class Linussyncservice {
                     savedExperimentBookings);
             }
 
-            if(!savedExperimentBookings.isEmpty()) {
+            if (!savedExperimentBookings.isEmpty()) {
                 log.info(
                     "Imported " + savedExperimentBookings.size() + " experiment(s) for " +
                     "appointment id=" + appointmentMatching.getAppointment().getId() +
