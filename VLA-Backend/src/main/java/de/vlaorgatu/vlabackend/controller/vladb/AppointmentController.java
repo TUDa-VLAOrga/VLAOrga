@@ -94,7 +94,9 @@ public class AppointmentController
      * @return All ExperimentBookings of this appointment
      */
     @GetMapping("/{id}/experimentbookings")
-    public ResponseEntity<List<ExperimentBooking>> getAllAppointments(@PathVariable Long id) {
+    public ResponseEntity<List<ExperimentBooking>> getAllExperimentBookingsFromAppointment(
+        @PathVariable Long id
+    ) {
         Appointment appointment = appointmentRepository.findById(id)
             .orElseThrow(
                 () -> new EntityNotFoundException(
