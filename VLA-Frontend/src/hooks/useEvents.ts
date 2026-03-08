@@ -1,7 +1,7 @@
-import {useState, useMemo, useEffect} from "react";
+import {useState, useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import {addDays} from "../components/calendar/dateUtils";
-import {type Appointment, type AppointmentSeries, SseMessageType, type User} from "@/lib/databaseTypes";
+import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -34,14 +34,7 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
  */
 export function useEvents() {
   const [selectedEventId, setSelectedEventId] = useState<number>();
-  const [currentUserId, setCurrentUserId] = useState<number|undefined>();
-  useEffect(() => {
-    fetchBackend<User>("/api/users/sessionUser" , "GET")
-      .then((user) => setCurrentUserId(user.id))
-      .catch((error) => {
-        Logger.error("Error fetching current user: ", error);
-      });
-  }, []);
+
   /**
    * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
    */
@@ -371,7 +364,6 @@ export function useEvents() {
 
   return {
     allEvents,
-    currentUserId,
     selectedEventId,
     eventsByDate,
     handleCreateEvent,

@@ -12,6 +12,7 @@ import { useLectures } from "@/hooks/useLectures";
 import { useCategories } from "@/hooks/useCategories";
 import { usePeople } from "@/hooks/usePeople";
 import LogoutButton from "./LogoutButton.tsx";
+import {useUsers} from "@/hooks/useUsers.ts";
 
 /*
  * CalendarView is the main screen for the calendar UI.
@@ -25,10 +26,10 @@ export default function CalendarView() {
   const { lectures, handleAddLecture } = useLectures();
   const { categories, handleAddCategory } = useCategories();
   const { people, handleAddPerson, handleUpdatePersonNotes } = usePeople();
+  const { currentUserId } = useUsers();
 
   const {
     allEvents,
-    currentUserId,
     selectedEventId,
     eventsByDate, 
     handleCreateEvent, 

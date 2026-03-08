@@ -360,7 +360,7 @@
     width: 100%;
   }
 }
-/* [ADD] — Danger Button (rot) */
+/* Danger Button (rot) */
 .cv-formBtnDanger {
   background-color: #dc2626;
   color: white;
@@ -376,7 +376,7 @@
   cursor: not-allowed;
 }
 
-/* [ADD] — Outline-Variante für "Löschanfrage zurückziehen" */
+/* Outline-Variante für "Löschanfrage zurückziehen" */
 .cv-formBtnDanger.cv-formBtnOutline {
   background-color: transparent;
   color: #dc2626;
