@@ -6,9 +6,9 @@ import type {Lecture, Person} from "@/lib/databaseTypes";
 
 type LectureEditFormProps = {
   lecture: Lecture;
+  people: Person[];
   onSubmit: (lecture: Lecture) => void;
   onCancel: () => void;
-  people?: Person[];
   onAddPerson: (person: Person) => Promise<Person | void>;
 };
 
@@ -17,9 +17,9 @@ type LectureEditFormProps = {
  */
 export default function LectureEditForm({
   lecture,
+  people,
   onSubmit,
   onCancel,
-  people = [],
   onAddPerson,
 }: LectureEditFormProps) {
   const [lectureName, setLectureName] = useState(lecture.name);

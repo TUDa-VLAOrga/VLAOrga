@@ -260,8 +260,12 @@ export default function EventDetails({
       {showEditLectureDialog && (
         <LectureEditForm
           lecture={event.series.lecture!}
+          people={people}
           onCancel={() => setShowEditLectureDialog(false)}
-          onSubmit={onUpdateLecture}
+          onSubmit={(lecture) => {
+            onUpdateLecture(lecture);
+            setShowEditLectureDialog(false);
+          }}
           onAddPerson={onAddPerson}
         />
       )}

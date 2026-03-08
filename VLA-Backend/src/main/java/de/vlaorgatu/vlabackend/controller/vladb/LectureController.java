@@ -1,11 +1,15 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
+import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.LectureRepository;
+
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +35,11 @@ public class LectureController
      * Repository used for lecture persistence operations.
      */
     private final LectureRepository lectureRepository;
+
+    /**
+     * Repository used for appointment persistence operations.
+     */
+    private final AppointmentRepository appointmentRepository;
 
     /**
      * Creates a new lecture.
@@ -79,6 +88,9 @@ public class LectureController
 
         Lecture updatedLecture = lectureRepository.save(lecture);
         SseController.notifyAllOfObject(SseMessageType.LECTUREUPDATED, updatedLecture);
+        // update all appointments with this lecture
+        List<Appointment> appointmentsToUpdate = appointmentRepository.findAppointmentsBySeries_Lecture(updatedLecture);
+        appointmentsToUpdate.forEach((appointment -> SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED,appointment)));
         return ResponseEntity.ok(updatedLecture);
     }
 
