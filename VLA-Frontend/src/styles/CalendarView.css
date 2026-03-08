@@ -1222,10 +1222,3 @@
   margin-top: 24px;
 }
 
-.element {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.element::-webkit-scrollbar {
-  display: none;
-}
