@@ -5,5 +5,5 @@ html, body {
 
 .DragComponent {
     position: fixed;
-    z-index: 998;
+    z-index: var(--z-dragcomponent);
 }
