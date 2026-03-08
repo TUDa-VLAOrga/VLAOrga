@@ -131,7 +131,7 @@ export default function EventDetails({
                       onClick={() => setShowEditLectureDialog(true)}
                       title="Vorlesung bearbeiten"
                     >
-                      ⓘ
+                      ✎
                     </button>
                   </span>
                 </span>
@@ -263,8 +263,8 @@ export default function EventDetails({
           people={people}
           onCancel={() => setShowEditLectureDialog(false)}
           onSubmit={(lecture) => {
-            onUpdateLecture(lecture);
-            setShowEditLectureDialog(false);
+            onUpdateLecture(lecture)
+            .then(() => setShowEditLectureDialog(false));
           }}
           onAddPerson={onAddPerson}
         />
