@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-03-08 11:51:43.
+// Generated using typescript-generator version 3.2.1263 on 2026-03-08 14:17:43.
 
 export interface LinusAppointment {
     id: number;
@@ -104,7 +104,6 @@ export interface AppointmentSeriesBuilder {
 
 export interface ExperimentBooking {
     id: number;
-    appointment: Appointment;
     linusExperimentId: number;
     linusExperimentBookingId?: number;
     person?: Person;

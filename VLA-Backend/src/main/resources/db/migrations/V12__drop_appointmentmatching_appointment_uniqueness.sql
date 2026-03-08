@@ -1,0 +1,3 @@
+ALTER TABLE appointment_matching
+DROP
+CONSTRAINT uc_appointmentmatching_appointment;

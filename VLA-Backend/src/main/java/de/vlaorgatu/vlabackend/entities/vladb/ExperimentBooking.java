@@ -1,5 +1,7 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -34,13 +36,6 @@ public class ExperimentBooking {
     private Long id;
 
     /**
-     * ID of the booked-for appointment.
-     */
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Appointment appointment;
-
-    /**
      * ID of the booked experiment in Linus.
      */
     @Column(name = "linus_experiment_id", nullable = false)
@@ -59,6 +54,14 @@ public class ExperimentBooking {
     @ManyToOne
     @Nullable
     private Person person;
+
+    /**
+     * Appointment this experiment is booked for.
+     */
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = false)
+    @JsonIgnore
+    private Appointment appointment;
 
     /**
      * Notes for this booking, probably taken from linus reservation at init.
