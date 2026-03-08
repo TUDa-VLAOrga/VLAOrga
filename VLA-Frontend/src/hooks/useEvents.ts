@@ -336,10 +336,8 @@ export function useEvents() {
   }, [allEvents]);
 
   /**
- * Erster Schritt: User beantragt Löschung eines Termins.
- * TODO Backend: POST /api/deletion-requests { appointmentId }
- * TODO Backend: Gibt DeletionRequest zurück, sendet SSE DELETIONREQUESTCREATED an alle Clients
- */
+   * Erster Schritt: User beantragt Löschung eines Termins.
+   */
   async function handleRequestDeletion(appointmentId: number): Promise<void> {
     await fetchBackend<Appointment>(
       `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
@@ -348,10 +346,8 @@ export function useEvents() {
       });
   }
   /**
- * Löschanfrage zurückziehen.
- * TODO Backend: DELETE /api/deletion-requests/{requestId}
- * TODO Backend: Sendet SSE DELETIONREQUESTCANCELLED an alle Clients
- */
+   * Löschanfrage zurückziehen.
+   */
   async function handleCancelDeletionRequest(appointmentId: number): Promise<void> {
     const event = allEvents.find(e => e.id === appointmentId);
     if (!event) return;
@@ -364,11 +360,8 @@ export function useEvents() {
       });
   }
   /**
- * Zweiter Schritt: Zweiter User bestätigt die Löschung.
- * TODO Backend: POST /api/deletion-requests/{requestId}/confirm
- * TODO Backend: Löscht den Termin, sendet SSE DELETIONREQUESTCONFIRMED + APPOINTMENTDELETED
- * TODO Backend: Validieren, dass der confirmierende User != der requestende User ist
- */
+   * Zweiter Schritt: Zweiter User bestätigt die Löschung.
+   */
   async function handleConfirmDeletion(appointmentId: number): Promise<void> {
     await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
       .catch((error) => {

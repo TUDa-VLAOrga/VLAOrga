@@ -200,8 +200,8 @@ export default function EventDetails({
                 <span className="cv-deletionRequestIcon">⚠️</span>
                 <span>
                   {isOwnDeletionRequest
-                    ? "Du hast die Löschung dieses Termins beantragt."
-                    : `${deletingUser.name} hat die Löschung dieses Termins beantragt.`}
+                    ? "Du hast die Löschung dieses Termins beantragt. Ein zweiter Nutzer muss sie bestätigen."
+                    : `${deletingUser.name} hat die Löschung dieses Termins beantragt. Du kannst sie ausführen.`}
                 </span>
               </div>
             )}     
@@ -255,14 +255,8 @@ export default function EventDetails({
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
                 disabled={isDeletionPending}
-                onClick={async () => {
-                  setIsDeletionPending(true);
-                  try {
-                    await onRequestDeletion(event.id);
-                    // Modal offen lassen — zweiter User muss bestätigen
-                  } finally {
-                    setIsDeletionPending(false);
-                  }
+                onClick={() => {
+                  onRequestDeletion(event.id).then(() => setIsDeletionPending(true));
                 }}
               >
                 Löschen
@@ -282,10 +276,7 @@ export default function EventDetails({
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
-                onClick={async () => {
-                  await onConfirmDeletion(event.id);
-                  onClose();
-                }}
+                onClick={() => onConfirmDeletion(event.id).then(() => onClose())}
               >
                 Löschung bestätigen
               </button>
