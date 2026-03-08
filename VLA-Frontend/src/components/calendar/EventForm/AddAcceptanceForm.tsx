@@ -1,7 +1,7 @@
 import type {Appointment} from "@/lib/databaseTypes.ts";
 import TimeRangeInput from "@/components/calendar/EventForm/TimeRangeInput.tsx";
 import {useState} from "react";
-import {getEventTitle, isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
+import {getEventTitle, isCalendarEventAcceptance, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 import {daysBefore, formatDateAndTime, formatTime} from "@/components/calendar/dateUtils.ts";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
@@ -29,6 +29,24 @@ export default function AddAcceptanceForm({
   const diff = startTime
     ? `${daysBefore(startTime, event.startTime)} vor dem Termin um ${formatTime(startTime)} Uhr`
     : "entsprechend";
+
+  const [isValid, hintText] = verifyValidTimeRange(startTime, endTime);
+  /**
+   * Handle creation form and send request to server.
+   */
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!isValid)
+      return;
+    onSubmit(
+      event.id,
+      // isValid check ensures that startTime and endTime are defined here
+      startTime!,
+      endTime!
+    ).then(() => onClose());
+  }
+
   return (
     <>
       <div className="cv-formOverlay">
@@ -41,13 +59,7 @@ export default function AddAcceptanceForm({
           >&times;</button>
           <h2 className="cv-formTitle">Abnahmetermin hinzufügen</h2>
 
-          <form className="cv-form" onSubmit={(e) => {
-            e.preventDefault();
-            const startTime = new Date(e.currentTarget.startTime.value);
-            const endTime = new Date(e.currentTarget.endTime.value);
-            onSubmit(event.id, startTime, endTime)
-              .then(() => onClose());
-          }}>
+          <form className="cv-form" onSubmit={(e) => handleSubmit(e)}>
             <TimeRangeInput
               startDateTime={startTime}
               endDateTime={endTime}
@@ -75,7 +87,8 @@ export default function AddAcceptanceForm({
               <button
                 type="submit"
                 className="cv-formBtn cv-formBtnSubmit"
-                disabled={!startTime || !endTime}
+                disabled={!isValid}
+                title={hintText}
               >
                 Speichern
               </button>

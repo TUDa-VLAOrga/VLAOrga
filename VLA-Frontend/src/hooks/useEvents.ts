@@ -345,8 +345,8 @@ export function useEvents() {
     for (const appointment of allAppointments.filter(e => e.series.id === referenceAppointment.series.id)) {
       const acceptanceEvent: Acceptance = {
         id: getNotSynchronisedId(),
-        startTime: new Date(startTime.getTime() + deltaToAppointmentStart),
-        endTime: new Date(startTime.getTime() + deltaToAppointmentStart + acceptanceDuration),
+        startTime: new Date(appointment.startTime.getTime() - deltaToAppointmentStart),
+        endTime: new Date(appointment.startTime.getTime() - deltaToAppointmentStart + acceptanceDuration),
         appointment: appointment,
       };
       try {
@@ -404,7 +404,7 @@ export function useEvents() {
    */
   const eventsByDate = useMemo(() => {
     const grouped: Record<string, CalendarEvent[]> = {};
-    allAppointments.forEach((event) => {
+    allEvents.forEach((event) => {
       const eventDateISO = getEventDateISO(event);
       if (!grouped[eventDateISO]) {
         grouped[eventDateISO] = [];
@@ -412,7 +412,7 @@ export function useEvents() {
       grouped[eventDateISO].push(event);
     });
     return grouped;
-  }, [allAppointments]);
+  }, [allEvents]);
 
   return {
     allEvents,

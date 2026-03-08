@@ -41,9 +41,13 @@ public class AcceptanceController
     @PostMapping
     public ResponseEntity<Acceptance> createAcceptance(@RequestBody Acceptance acceptance) {
         if (Objects.nonNull(acceptance.getId())) {
-            throw new InvalidParameterException(
-                "Received acceptance with ID " + acceptance.getId() +
-                    " when creating a new acceptance.");
+            if (acceptance.getId() < 0) {
+                acceptance.setId(null);
+            } else {
+                throw new InvalidParameterException(
+                    "Received acceptance with ID " + acceptance.getId() +
+                        " when creating a new acceptance.");
+            }
         }
         Acceptance savedAcceptance = acceptanceRepository.save(acceptance);
         SseController.notifyAllOfObject(SseMessageType.ACCEPTANCECREATED, savedAcceptance);

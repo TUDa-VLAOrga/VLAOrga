@@ -157,9 +157,9 @@ export default function EventDetails({
           {isAcceptance &&
               <div>
                 <h2 className="cv-formTitle">Abnahmetermin</h2>
-                <h5 className="cv-formTitle">
+                <h3 className="cv-formSubtitle">
                   für {getEventTitle(event.appointment)} am {formatDateAndTime(event.appointment.startTime)}
-                </h5>
+                </h3>
               </div>
           }
 

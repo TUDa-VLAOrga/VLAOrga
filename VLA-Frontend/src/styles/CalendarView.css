@@ -621,6 +621,17 @@
   font-weight: 600;
   color: #1a1a1a;
 }
+/* If subtitle follows, smaller margin */
+.cv-formTitle:has(+.cv-formSubtitle) {
+  margin-bottom: 0;
+}
+
+.cv-formSubtitle {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #555;
+}
 
 .cv-form {
   display: flex;
