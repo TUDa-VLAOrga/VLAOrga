@@ -1,13 +1,17 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
+import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import java.util.Arrays;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,6 +88,45 @@ public class ExperimentBookingController
 
         SseController.notifyAllOfObject(SseMessageType.EXPERIMENTBOOKINGUPDATED,
             updatedExperimentBooking);
+
+        return ResponseEntity.ok(updatedExperimentBooking);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ExperimentBooking> updateExperimentBooking(
+        @PathVariable Long id,
+        @RequestBody Integer experimentPreparationStatus
+    ) {
+        int experimentPreparationStatusIndex = -1;
+
+        for (ExperimentPreparationStatus status : ExperimentPreparationStatus.values()) {
+            if (status.ordinal() == experimentPreparationStatus) {
+                experimentPreparationStatusIndex = status.ordinal();
+            }
+        }
+
+        if (experimentPreparationStatusIndex == -1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        ExperimentBooking toUpdate = experimentBookingRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Experiment booking with ID " + id + " not found."
+            )
+        );
+
+        toUpdate.setStatus(ExperimentPreparationStatus.values()[experimentPreparationStatusIndex]);
+
+        ExperimentBooking updatedExperimentBooking =
+            experimentBookingRepository.save(toUpdate);
+
+        SseController.notifyAllOfObject(
+            SseMessageType.EXPERIMENTBOOKINGUPDATED, updatedExperimentBooking
+        );
+
+        SseController.notifyAllOfObject(
+            SseMessageType.APPOINTMENTUPDATED, toUpdate.getAppointment()
+        );
 
         return ResponseEntity.ok(updatedExperimentBooking);
     }
