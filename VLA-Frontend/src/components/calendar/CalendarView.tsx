@@ -35,6 +35,8 @@ export default function CalendarView() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
+    handleAcceptanceSeriesCreate,
+    handleAcceptanceUpdate,
   } = useEvents();
 
   /**
@@ -120,6 +122,8 @@ export default function CalendarView() {
           onUpdatePersonNotes={handleUpdatePersonNotes}
           onUpdateEventNotes={handleUpdateEventNotes}
           onUpdateEvent={handleUpdateEvent}
+          onAddAcceptance={handleAcceptanceSeriesCreate}
+          onUpdateAcceptance={handleAcceptanceUpdate}
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}

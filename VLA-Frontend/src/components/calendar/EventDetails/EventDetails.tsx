@@ -3,7 +3,7 @@ import {formatDateAndTime, formatTimeRangeLongerDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import "../../../styles/Event-details-styles.css";
-import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import type {Acceptance, Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventNotes,
@@ -13,6 +13,7 @@ import {
 } from "@/components/calendar/eventUtils.ts";
 import AddAcceptanceForm from "@/components/calendar/EventForm/AddAcceptanceForm.tsx";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
+import AcceptanceEditForm from "@/components/calendar/EventDetails/AcceptanceEditForm.tsx";
 
 
 type EventDetailsProps = {
@@ -25,6 +26,8 @@ type EventDetailsProps = {
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
+  onAddAcceptance: (appointmentId: number, startTime: Date, endTime: Date) => Promise<Acceptance | void>;
+  onUpdateAcceptance: (acceptanceId: number, startTime: Date, endTime: Date) => Promise<Acceptance | void>;
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
@@ -44,6 +47,8 @@ export default function EventDetails({
   onUpdatePersonNotes,
   onUpdateEventNotes,
   onUpdateEvent,
+  onAddAcceptance,
+  onUpdateAcceptance,
   onAddCategory,
   onAddPerson,
   onAddLecture,
@@ -93,7 +98,15 @@ export default function EventDetails({
       />
     );
   } else if (showEditSingleDialog && isAcceptance) {
-    // ToDo: show EditAcceptanceForm w/o series
+    return (
+      <AcceptanceEditForm
+        acceptance={event}
+        onSubmit={(acceptanceId, startTime, endTime) => {
+          return onUpdateAcceptance(acceptanceId, startTime, endTime).then(() => setShowEditSingleDialog(false));
+        }}
+        onClose={() => setShowEditSingleDialog(false)}
+      />
+    );
   }
   if (showMoveSeriesDialog && !isAcceptance) {
     return (
@@ -119,9 +132,8 @@ export default function EventDetails({
       <AddAcceptanceForm
         event={event}
         allEvents={allEvents}
-        onSubmit={(_eventId, _startTime, _endTime) => {
-          // TODO: implement
-          return new Promise((_resolve, _reject) => {return;});
+        onSubmit={(appointmentId, startTime, endTime) => {
+          return onAddAcceptance(appointmentId, startTime, endTime).then(() => setShowCreateAcceptanceDialog(false));
         }}
         onClose={() => setShowCreateAcceptanceDialog(false)}
       />

@@ -24,11 +24,26 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
+function handleAcceptanceCreated(event: MessageEvent, currentValue: Acceptance[]) {
+  const newAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
+  return [...currentValue, newAcceptance];
+}
+
+function handleAcceptanceUpdated(event: MessageEvent, currentValue: Acceptance[]) {
+  const updatedAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
+  return currentValue.map((acceptance) => (acceptance.id === updatedAcceptance.id ? updatedAcceptance : acceptance));
+}
+
+function handleAcceptanceDeleted(event: MessageEvent, currentValue: Acceptance[]) {
+  const deletedAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
+  return currentValue.filter((acceptance) => acceptance.id !== deletedAcceptance.id);
+}
+
 /**
  * useEvents manages:
- * - the list of calendar events (local state for now)
- * - the currently selected event (for EventDetails modal)
- * - creation logic, including recurrence materialization
+ * - the list of calendar events, namely appointments and possible acceptance events for them
+ * - the currently selected event (for EventDetails popup)
+ * - creation logic, including logic for recurring events and moving them together in a series
  * - a derived "eventsByDate" map for efficient rendering in the grid
  */
 export function useEvents() {
@@ -61,6 +76,9 @@ export function useEvents() {
   const sseHandlersAcceptances = new Map<
     SseMessageType, (event: MessageEvent, currentValue: Acceptance[]) => Acceptance[]
   >();
+  sseHandlersAcceptances.set(SseMessageType.ACCEPTANCECREATED, handleAcceptanceCreated);
+  sseHandlersAcceptances.set(SseMessageType.ACCEPTANCEUPDATED, handleAcceptanceUpdated);
+  sseHandlersAcceptances.set(SseMessageType.ACCEPTANCEDELETED, handleAcceptanceDeleted);
   const [allAcceptances, _setAcceptances] = useSseConnectionWithInitialFetch<Acceptance[]>(
     [], API_URL_ACCEPTANCES, sseHandlersAcceptances
   );
@@ -308,8 +326,66 @@ export function useEvents() {
   }
 
   /**
+   * Create a new acceptance event for the whole series of appointment with the given ID.
+   */
+  async function handleAcceptanceSeriesCreate(
+    referenceAppointmentId: number, startTime: Date, endTime: Date
+  ): Promise<Acceptance | void> {
+    const referenceAppointment = allAppointments.find(e => e.id === referenceAppointmentId);
+    if (!referenceAppointment) {
+      Logger.error("Reference appointment not found for creating acceptance.");
+      return;
+    }
+    const acceptanceDuration = endTime.getTime() - startTime.getTime();
+    const deltaToAppointmentStart = referenceAppointment.startTime.getTime() - startTime.getTime();
+
+    let ret: Acceptance | undefined;
+    // TODO: add /multi endpoint in backend and avoid looping with many requests
+    // iterate over all appointments in the same series and add an acceptance event
+    for (const appointment of allAppointments.filter(e => e.series.id === referenceAppointment.series.id)) {
+      const acceptanceEvent: Acceptance = {
+        id: getNotSynchronisedId(),
+        startTime: new Date(startTime.getTime() + deltaToAppointmentStart),
+        endTime: new Date(startTime.getTime() + deltaToAppointmentStart + acceptanceDuration),
+        appointment: appointment,
+      };
+      try {
+        const createdAcceptance = await fetchBackend(API_URL_ACCEPTANCES, "POST", acceptanceEvent);
+        if (appointment.id === referenceAppointment.id) {
+          ret = createdAcceptance;
+        }
+      } catch (error) {
+        Logger.error("Error during acceptance creation in handleAcceptanceSeriesCreate: ", error);
+      }
+    }
+    if (!ret) {
+      Logger.error("Reference appointment not in its own series, this should not happen.");
+    }
+    return ret;
+  }
+
+  /**
+   * Update the time of an acceptance event.
+   */
+  async function handleAcceptanceUpdate(
+    acceptanceId: number, startTime: Date, endTime: Date
+  ): Promise<Acceptance | void> {
+    const acceptance = allAcceptances.find(e => e.id === acceptanceId);
+    if (!acceptance) {
+      Logger.error("Acceptance not found for update.");
+      return;
+    }
+    return fetchBackend(`${API_URL_ACCEPTANCES}/${acceptanceId}`, "PUT", {
+      ...acceptance,
+      startTime: startTime,
+      endTime: endTime,
+    });
+  }
+
+  /**
    * Update the {@link selectedEventId} state on clicking an event.
    */
+  // TODO: adjust this to acceptances
   function handleEventClick(eventId: number) {
     setSelectedEventId(eventId);
   }
@@ -317,6 +393,7 @@ export function useEvents() {
   /**
    * Update the {@link selectedEventId} state on closing the event details.
    */
+  // TODO: adjust this and its usages to acceptances
   function closeEventDetails() {
     setSelectedEventId(undefined);
   }
@@ -346,5 +423,7 @@ export function useEvents() {
     closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
+    handleAcceptanceSeriesCreate,
+    handleAcceptanceUpdate,
   };
 }

@@ -45,7 +45,7 @@ export default function EventEditForm({
   function handleAddCategory(category: AppointmentCategory) {
     onAddCategory(category).then((result ) => {
       if (result) {
-        setCategory(result)
+        setCategory(result);
       }
     });
   }
