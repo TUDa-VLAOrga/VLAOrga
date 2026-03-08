@@ -2,6 +2,7 @@ package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Acceptance;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AcceptanceRepository;
@@ -45,8 +46,7 @@ public class AcceptanceController
                     " when creating a new acceptance.");
         }
         Acceptance savedAcceptance = acceptanceRepository.save(acceptance);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Acceptance created: " + savedAcceptance);
+        SseController.notifyAllOfObject(SseMessageType.ACCEPTANCECREATED, savedAcceptance);
         return ResponseEntity.ok(savedAcceptance);
     }
 
@@ -72,8 +72,7 @@ public class AcceptanceController
                 "Acceptance with ID " + id + " not found.");
         }
         Acceptance updatedAcceptance = acceptanceRepository.save(acceptance);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Acceptance updated: " + updatedAcceptance);
+        SseController.notifyAllOfObject(SseMessageType.ACCEPTANCEUPDATED, updatedAcceptance);
         return ResponseEntity.ok(updatedAcceptance);
     }
 
@@ -89,8 +88,7 @@ public class AcceptanceController
             () -> new EntityNotFoundException(
                 "Acceptance with ID " + id + " not found."));
         acceptanceRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Acceptance deleted: " + deletedAcceptance);
+        SseController.notifyAllOfObject(SseMessageType.ACCEPTANCEDELETED, deletedAcceptance);
         return ResponseEntity.ok(deletedAcceptance);
     }
 
