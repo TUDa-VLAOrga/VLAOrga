@@ -251,45 +251,45 @@ export default function EventDetails({
             }
 
             {!deletingUser && (
-                <button
-                  type="button"
-                  className="cv-formBtn cv-formBtnDanger"
-                  disabled={isDeletionPending}
-                  onClick={async () => {
-                    setIsDeletionPending(true);
-                    try {
-                      await onRequestDeletion(event.id);
-                      // Modal offen lassen — zweiter User muss bestätigen
-                    } finally {
-                      setIsDeletionPending(false);
-                    }
-                  }}
-                >
-                  Löschen
-                </button>
-              )}
-              {isOwnDeletionRequest && (
-                <button
-                  type="button"
-                  className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
-                  onClick={() => onCancelDeletionRequest(event.id)}
-                >
-                  Löschanfrage zurückziehen
-                </button>
-              )}
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger"
+                disabled={isDeletionPending}
+                onClick={async () => {
+                  setIsDeletionPending(true);
+                  try {
+                    await onRequestDeletion(event.id);
+                    // Modal offen lassen — zweiter User muss bestätigen
+                  } finally {
+                    setIsDeletionPending(false);
+                  }
+                }}
+              >
+                Löschen
+              </button>
+            )}
+            {isOwnDeletionRequest && (
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
+                onClick={() => onCancelDeletionRequest(event.id)}
+              >
+                Löschanfrage zurückziehen
+              </button>
+            )}
 
-              {canConfirmDeletion && (
-                <button
-                  type="button"
-                  className="cv-formBtn cv-formBtnDanger"
-                  onClick={async () => {
-                    await onConfirmDeletion(event.id);
-                    onClose();
-                  }}
-                >
-                  Löschung bestätigen
-                </button>
-              )}
+            {canConfirmDeletion && (
+              <button
+                type="button"
+                className="cv-formBtn cv-formBtnDanger"
+                onClick={async () => {
+                  await onConfirmDeletion(event.id);
+                  onClose();
+                }}
+              >
+                Löschung bestätigen
+              </button>
+            )}
 
 
 

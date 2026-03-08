@@ -1,7 +1,7 @@
 import {useState, useMemo, useEffect} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
 import {addDays} from "../components/calendar/dateUtils";
-import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
+import {type Appointment, type AppointmentSeries, SseMessageType, type User} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -36,7 +36,7 @@ export function useEvents() {
   const [selectedEventId, setSelectedEventId] = useState<number>();
   const [currentUserId, setCurrentUserId] = useState<number|undefined>();
   useEffect(() => {
-    fetchBackend<{id: number}>("/api/user/me" , "GET")
+    fetchBackend<User>("/api/users/sessionUser" , "GET")
       .then((user) => setCurrentUserId(user.id))
       .catch((error) => {
         Logger.error("Error fetching current user: ", error);
@@ -63,7 +63,7 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
-   const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+  const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
     [], API_URL_APPOINTMENTS, sseHandlersAppointments
   );
 
@@ -340,41 +340,41 @@ export function useEvents() {
  * TODO Backend: POST /api/deletion-requests { appointmentId }
  * TODO Backend: Gibt DeletionRequest zurück, sendet SSE DELETIONREQUESTCREATED an alle Clients
  */
-async function handleRequestDeletion(appointmentId: number): Promise<void> {
-  await fetchBackend<Appointment>(
-    `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
-    .catch((error) => {
-      Logger.error("Fehler beim Erstellen der Löschanfrage: ", error);
-    });
-}
-/**
+  async function handleRequestDeletion(appointmentId: number): Promise<void> {
+    await fetchBackend<Appointment>(
+      `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Fehler beim Erstellen der Löschanfrage: ", error);
+      });
+  }
+  /**
  * Löschanfrage zurückziehen.
  * TODO Backend: DELETE /api/deletion-requests/{requestId}
  * TODO Backend: Sendet SSE DELETIONREQUESTCANCELLED an alle Clients
  */
-async function handleCancelDeletionRequest(appointmentId: number): Promise<void> {
-  const event = allEvents.find(e => e.id === appointmentId);
-  if (!event) return;
-  await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "PUT",{
-    ...event,
-    deletingIntentionUser: null,
-  })
-   .catch((error) => {
-      Logger.error("Fehler beim Abbrechen der Löschanfrage: ", error);
-    });
-}
-/**
+  async function handleCancelDeletionRequest(appointmentId: number): Promise<void> {
+    const event = allEvents.find(e => e.id === appointmentId);
+    if (!event) return;
+    await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "PUT",{
+      ...event,
+      deletingIntentionUser: null,
+    })
+      .catch((error) => {
+        Logger.error("Fehler beim Abbrechen der Löschanfrage: ", error);
+      });
+  }
+  /**
  * Zweiter Schritt: Zweiter User bestätigt die Löschung.
  * TODO Backend: POST /api/deletion-requests/{requestId}/confirm
  * TODO Backend: Löscht den Termin, sendet SSE DELETIONREQUESTCONFIRMED + APPOINTMENTDELETED
  * TODO Backend: Validieren, dass der confirmierende User != der requestende User ist
  */
-async function handleConfirmDeletion(appointmentId: number): Promise<void> {
-  await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
-    .catch((error) => {
-      Logger.error("Fehler beim Bestätigen der Löschung: ", error);
-    });
-}
+  async function handleConfirmDeletion(appointmentId: number): Promise<void> {
+    await fetchBackend(`${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Fehler beim Bestätigen der Löschung: ", error);
+      });
+  }
 
   return {
     allEvents,
