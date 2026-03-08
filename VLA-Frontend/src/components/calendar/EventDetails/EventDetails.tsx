@@ -264,7 +264,7 @@ export default function EventDetails({
           onCancel={() => setShowEditLectureDialog(false)}
           onSubmit={(lecture) => {
             onUpdateLecture(lecture)
-            .then(() => setShowEditLectureDialog(false));
+              .then(() => setShowEditLectureDialog(false));
           }}
           onAddPerson={onAddPerson}
         />
