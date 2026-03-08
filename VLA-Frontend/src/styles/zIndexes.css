@@ -13,6 +13,8 @@
 
     --z-global-note-container: 21;
 
-    --z-logger-toggle: 9999;
     --z-logger-container: 999;
+    /* Attention when changing this: See SseError.tsx, there is one z-Index 9998
+     which should be the highest of all, except for this logger. */
+    --z-logger-toggle: 9999;
 }
