@@ -13,15 +13,34 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+
     /**
-     * Gets the first appointment in a series that is after the startTime.
+     * Searches for next appointment in a series with lectures.
      *
-     * @param series    The {@link AppointmentSeries} the appointment belongs to
-     * @param startTime The time the appointment should start after
-     * @return An appointment, if exists, matching the criteria
+     * @param seriesLectureId The id of the lecture
+     * @param startTime         The lower exclusive time bound for start of event.
+     * @return The first appointment that is for the same lecture and starts after startTime
      */
-    Optional<Appointment> getAppointmentBySeriesAndStartTimeIsAfterOrderByStartTime(
-        AppointmentSeries series, LocalDateTime startTime);
+    @SuppressWarnings("checkstyle:indentation")
+    Optional<Appointment>
+    findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+        Long seriesLectureId,
+        LocalDateTime startTime
+    );
+
+    /**
+     * Searches for the next appointment in a series.
+     *
+     * @param seriesId The id of the series to search in
+     * @param startTime The lower exclusive time bound for start of event.
+     * @return Appointment in the specified series that starts after the startTime
+     */
+    @SuppressWarnings("checkstyle:indentation")
+    Optional<Appointment>
+    findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+        Long seriesId,
+        LocalDateTime startTime
+    );
 
     /**
      * Finds an appointment by its id.

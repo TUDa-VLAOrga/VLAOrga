@@ -5,7 +5,7 @@
  */
 
 export const WORKDAY_COUNT = 5;
-export const NON_WORKDAYS = [0, 6];  // days that are no workdays
+export const NON_WORKDAYS = [0, 6]; // days that are no workdays
 
 export function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
@@ -40,7 +40,6 @@ export function formatDDMM(date: Date) {
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   return `${dd}.${mm}.`;
 }
-
 
 /** gives a new Date that is `days` days away from `date`. */
 export function addDays(date: Date, days: number) {
@@ -127,8 +126,10 @@ export function formatTimeRangeShortDE(start: Date, end: Date) {
   if (compareSameDay(start, end)) {
     return `${dayFormat.format(start)}, ${timeFormat.format(start)} - ${timeFormat.format(end)}`;
   }
-  return `${dayFormat.format(start)}, ${timeFormat.format(start)}`
-    + ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`;
+  return (
+    `${dayFormat.format(start)}, ${timeFormat.format(start)}` +
+    ` - ${dayFormat.format(end)}, ${timeFormat.format(end)}`
+  );
 }
 
 /** Parse yyyy-mm-dd as a *local* Date (prevents timezone shift). */
@@ -155,12 +156,18 @@ export function formatISODateDE(iso: string): string {
  * @param b The second time to compare
  * Returns true iff a and b are on the same day in UTC
  */
-export function compareSameDay(a: Date, b: Date){
+export function compareSameDay(a: Date, b: Date) {
   // Conversion to remove time zone dependenies
 
-  return a.getDate() == b.getDate() &&
+  return (
+    a.getDate() == b.getDate() &&
     a.getMonth() == b.getMonth() &&
-    a.getFullYear() == b.getFullYear();
+    a.getFullYear() == b.getFullYear()
+  );
+}
+
+export function formatHourLabel(hour: number): string {
+  return `${String(hour).padStart(2, "0")}:00`;
 }
 
 export function getDateStringOfDate(date: Date){

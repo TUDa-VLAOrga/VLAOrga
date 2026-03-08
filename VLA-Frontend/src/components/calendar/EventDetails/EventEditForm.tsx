@@ -8,9 +8,9 @@ import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
-  lectures?: Lecture[];
-  people?: Person[];
-  categories?: AppointmentCategory[];
+  lectures: Lecture[];
+  people: Person[];
+  categories: AppointmentCategory[];
   onSave: (updates: Partial<Appointment>) => void;
   onCancel: () => void;
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
@@ -24,9 +24,9 @@ type EventEditFormProps = {
  */
 export default function EventEditForm({
   event,
-  lectures = [],
-  categories = [],
-  people = [],
+  lectures,
+  categories,
+  people,
   onSave,
   onCancel,
   onAddCategory,
@@ -34,7 +34,6 @@ export default function EventEditForm({
   onAddLecture,
   isSeries,
 }: EventEditFormProps) {
-  // TODO: proper copying, do not modify existing entity
   const [title, setTitle] = useState(event.series.name);
   const [category, setCategory] = useState<AppointmentCategory>(event.series.category);
   const [lecture, setLecture] = useState<Lecture | undefined>(event.series.lecture);

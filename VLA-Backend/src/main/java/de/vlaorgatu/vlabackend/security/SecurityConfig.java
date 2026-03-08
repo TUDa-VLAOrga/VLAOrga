@@ -49,6 +49,9 @@ public class SecurityConfig {
                 .loginPage("/login.html")
                 .permitAll()
                 .defaultSuccessUrl("/", true)
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
             );
 
         return http.build();

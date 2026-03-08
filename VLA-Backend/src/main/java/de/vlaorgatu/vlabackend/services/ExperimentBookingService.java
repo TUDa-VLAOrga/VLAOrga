@@ -1,16 +1,15 @@
 package de.vlaorgatu.vlabackend.services;
 
+import de.vlaorgatu.vlabackend.controller.sse.SseController;
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
-import de.vlaorgatu.vlabackend.entities.vladb.AppointmentSeries;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
+import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.InvalidRequestInCurrentServerState;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,120 +39,84 @@ public class ExperimentBookingService {
     ) {
         // Check if experimentBookings can be moved, abort if not possible
         List<ExperimentBooking> currentAppointmentExperimentBookings =
-            experimentBookingRepository.findExperimentBookingsByAppointment(toDeleteAppointment);
+            toDeleteAppointment.getBookings();
 
         if (currentAppointmentExperimentBookings.isEmpty()) {
             // Nothing to do when there are no experimentBookings
             return;
         }
 
-        Lecture appointmentLecture = toDeleteAppointment.getSeries().getLecture();
-
-        if (appointmentLecture == null) {
-            moveExperimentBookingsOnAppointmentWithoutLecture(
-                toDeleteAppointment,
-                currentAppointmentExperimentBookings
-            );
-            return;
-        }
-
-        moveExperimentBookingsOnAppointmentWithLecture(
-            toDeleteAppointment,
-            currentAppointmentExperimentBookings
+        Appointment nextAppointment = getNextValidExperimentBookingAppointmentFromSeries(
+            toDeleteAppointment
         );
+
+        moveExperimentBookings(toDeleteAppointment, nextAppointment);
     }
 
     /**
-     * Moves all {@link ExperimentBooking}s of a {@link Appointment} without lectures.
+     * Gets the next valid appointment for an experimentBooking.
+     * Errors with {@link InvalidRequestInCurrentServerState} if there is no valid appointment.
      *
-     * @param toDeleteAppointment        The appointment to move the {@link ExperimentBooking}s from
-     * @param currentAppointmentBookings The {@link ExperimentBooking}s of appointment
+     * @param previous The appointment to look in the future of
+     * @return The next valid appointment if existent
      */
-    private void moveExperimentBookingsOnAppointmentWithoutLecture(
-        Appointment toDeleteAppointment,
-        List<ExperimentBooking> currentAppointmentBookings
-    ) {
-        // If there is no lecture, move event to next in series
-        final List<Appointment> appointmentsInSeries =
-            toDeleteAppointment.getSeries().getAppointments();
+    public Appointment getNextValidExperimentBookingAppointmentFromSeries(Appointment previous) {
+        Lecture appointmentLecture = previous.getSeries().getLecture();
 
-        final LocalDateTime appointmentEnd = toDeleteAppointment.getEndTime();
-
-        Appointment nextAppointment = appointmentsInSeries.getFirst();
-
-        // We can not be sure that appointments are stored in sorted order
-        for (Appointment candidateAppointment : appointmentsInSeries) {
-            final boolean validAppointment =
-                appointmentEnd.isBefore(candidateAppointment.getStartTime());
-
-            final boolean earliestAppointmentYet =
-                candidateAppointment.getStartTime().isBefore(nextAppointment.getStartTime());
-
-            if (validAppointment && earliestAppointmentYet) {
-                nextAppointment = candidateAppointment;
-            }
+        if (appointmentLecture == null) {
+            // Appointment has no lecture
+            return appointmentRepository
+                .findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+                    previous.getId(),
+                    previous.getStartTime()
+                )
+                .orElseThrow(
+                    () -> new InvalidRequestInCurrentServerState(
+                        "Experimentbookings could not be moved automatically to next appointment " +
+                            "as there is no next appointment in series."
+                    )
+                );
+        } else {
+            // Appointment has lecture
+            return appointmentRepository
+                .findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+                    appointmentLecture.getId(),
+                    previous.getStartTime()
+                )
+                .orElseThrow(
+                    () -> new InvalidRequestInCurrentServerState(
+                        "Experimentbookings could not be moved automatically to next appointment " +
+                            "as there is no next appointment in series."
+                    )
+                );
         }
-
-        // Best-fit appointment is now chosen
-        // Check if it really meets the criteria or was just never updated
-
-        final boolean validAppointment =
-            appointmentEnd.isBefore(nextAppointment.getStartTime());
-
-        nextAppointment = validAppointment ? nextAppointment : null;
-
-        if (nextAppointment == null) {
-            moveExperimentBookingNotPossible();
-            // For readability
-            return;
-        }
-
-        // Valid appointment was found in series
-        // Update experimentBookings
-        List<ExperimentBooking> movedExperimentBookings = new ArrayList<>();
-        for (ExperimentBooking experimentBooking : currentAppointmentBookings) {
-            experimentBooking.setAppointment(nextAppointment);
-            movedExperimentBookings.add(experimentBooking);
-        }
-
-        // Successfully moved experimentBookings
-        experimentBookingRepository.saveAll(movedExperimentBookings);
     }
 
-    private void moveExperimentBookingsOnAppointmentWithLecture(
-        Appointment toBeDeletedAppointment,
-        List<ExperimentBooking> currentAppointmentExperimentBookings
-    ) {
-        final AppointmentSeries appointmentSeries = toBeDeletedAppointment.getSeries();
+    /**
+     * Moves all {@link ExperimentBooking}s from one {@link Appointment} to another.
+     *
+     * @param source The source appointment of experimentBookings
+     * @param target The target appointment of experimentBookings
+     */
+    public synchronized void moveExperimentBookings(Appointment source, Appointment target) {
+        List<ExperimentBooking> bookingsToMove = source.getBookings();
 
-        final Optional<Appointment> potentialNextAppointment =
-            appointmentRepository.getAppointmentBySeriesAndStartTimeIsAfterOrderByStartTime(
-                appointmentSeries,
-                toBeDeletedAppointment.getEndTime()
-            );
-
-        if (potentialNextAppointment.isEmpty()) {
-            moveExperimentBookingNotPossible();
-            // For readability
-            return;
+        for (ExperimentBooking booking : bookingsToMove) {
+            booking.setAppointment(target);
         }
 
-        Appointment nextAppointment = potentialNextAppointment.get();
+        List<ExperimentBooking> targetBookings = target.getBookings();
+        targetBookings.addAll(bookingsToMove);
 
-        List<ExperimentBooking> movedExperimentBookings = new ArrayList<>();
-        for (ExperimentBooking experimentBooking : currentAppointmentExperimentBookings) {
-            experimentBooking.setAppointment(nextAppointment);
-            movedExperimentBookings.add(experimentBooking);
-        }
+        source.setBookings(new ArrayList<>());
+        target.setBookings(targetBookings);
 
-        // Successfully moved experimentBookings
-        experimentBookingRepository.saveAll(movedExperimentBookings);
-    }
+        List<ExperimentBooking> savedBookings = experimentBookingRepository.saveAll(bookingsToMove);
+        source = appointmentRepository.save(source);
+        target = appointmentRepository.save(target);
 
-    private void moveExperimentBookingNotPossible() {
-        throw new InvalidRequestInCurrentServerState(
-            "Experimentbookings could not be moved automatically to next appointment " +
-                "as there is no next appointment in series."
-        );
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, source);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, target);
+        // Sending an update to the appointment should also update the savedBookings
     }
 }

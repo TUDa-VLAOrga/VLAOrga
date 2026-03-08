@@ -7,7 +7,7 @@
 }
 
 .LoggerToggle {
-    z-index: 9999;
+    z-index: var(--z-logger-toggle);
     position: fixed;
     top: 0;
     right: 0;
@@ -39,7 +39,7 @@
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    z-index: 999;
+    z-index: var(--z-logger-container);
 }
 
 .LogEntry {
