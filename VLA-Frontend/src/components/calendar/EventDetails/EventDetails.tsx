@@ -142,7 +142,6 @@ export default function EventDetails({
                       onClick={() => setShowEditLectureDialog(true)}
                       title="Vorlesung bearbeiten"
                     >
-                      <span className="cv-editPenIcon"></span>
                     </button>
                   </span>
                 </span>
