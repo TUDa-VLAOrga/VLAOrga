@@ -8,5 +8,9 @@ export const API_URL_APPOINTMENT_CATEGORIES = `${API_BASE_URL}/appointmentCatego
 export const API_URL_APPOINTMENT_SERIES = `${API_BASE_URL}/appointmentSeries`;
 export const API_URL_APPOINTMENTS = `${API_BASE_URL}/appointments`;
 export const API_URL_ACCEPTANCES = `${API_BASE_URL}/acceptances`;
+export const API_URL_APPOINTMENTMATCHINGS = `${API_BASE_URL}/appointmentMatchings`;
+export const API_URL_EXPERIMENTBOOKINGS = `${API_BASE_URL}/experimentBookings`;
+
+export const API_URL_LINUSAPPOINTMENTS = `${API_BASE_URL}/linusAppointments`;
 
 export const URL_LOGOUT = `/logout`;

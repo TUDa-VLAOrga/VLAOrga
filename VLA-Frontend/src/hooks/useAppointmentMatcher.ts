@@ -1,0 +1,86 @@
+import type { CalendarDay } from "@/components/calendar/CalendarTypes";
+import { SseMessageType, type Appointment, type AppointmentMatching, type TimeFrame } from "@/lib/databaseTypes";
+import useSseConnection from "./useSseConnection";
+import { useEffect } from "react";
+import { addDaysPresentFuture, toJSONLocalTime } from "@/components/calendar/dateUtils";
+import { fetchBackend } from "@/lib/utils";
+import { API_URL_APPOINTMENTMATCHINGS } from "@/lib/api";
+
+const weeksToCheckBeforeCalendarStartDate = 1;
+const weeksToCheckAfterCalendarStartDate = 2;
+
+const daysToCheckBeforeCalendarStartDate = weeksToCheckBeforeCalendarStartDate * 7;
+const daysToCheckAfterCalendarStartDate = weeksToCheckAfterCalendarStartDate * 7;
+
+function handleAppointmentMatchingCreated(event: MessageEvent, previousState: AppointmentMatching[]){
+  const createdMatchings = JSON.parse(event.data) as AppointmentMatching[];
+  // For later: if created matchings are displayed, change the undefined to according value
+  const toDoMatchings = createdMatchings.filter(matching => matching.appointment === undefined);
+
+  const nextState = [...previousState, ...toDoMatchings];
+
+  return nextState;
+}
+
+function handleAppointmentMatchingUpdated(event: MessageEvent, previousState: AppointmentMatching[]){
+  const changedMatching = JSON.parse(event.data) as AppointmentMatching;
+    
+  const nextState = previousState.filter(matching => matching.id !== changedMatching.id);
+    
+  return nextState;
+}
+
+interface useAppointmentMatcherProps {
+  days: CalendarDay[],
+  allEvents: Appointment[],
+}
+
+const sseHandlers = new Map<
+  SseMessageType,
+  (event: MessageEvent, value: AppointmentMatching[]) => AppointmentMatching[]
+>;
+
+sseHandlers.set(SseMessageType.APPOINTMENTMATCHINGCREATE, handleAppointmentMatchingCreated);
+sseHandlers.set(SseMessageType.APPOINTMENTMATCHINGUPDATE, handleAppointmentMatchingUpdated);
+
+/**
+ * 
+ * @param days Sorted array of days, at least one
+ * @returns The current AppointmentMatchings that need to be matched
+ */
+export function useAppointmentMatcher({days, allEvents} : useAppointmentMatcherProps): AppointmentMatching[]{
+  const [
+    nullAppointmentMatchings,
+    setNullAppointmentMatchings,
+  ] = useSseConnection([], sseHandlers);
+
+  useEffect(() => {
+    const firstDayInCalendar = days.at(0)!;
+    const firstFetchDay = addDaysPresentFuture(firstDayInCalendar.date, -daysToCheckBeforeCalendarStartDate);
+    const lastFetchDay = addDaysPresentFuture(firstDayInCalendar.date, daysToCheckAfterCalendarStartDate);
+
+    const timeFrame : TimeFrame = {
+      commence: firstFetchDay,
+      terminate: lastFetchDay,
+    };
+
+    // Update appointments and bookings when navigating
+    fetchBackend(
+      `${API_URL_APPOINTMENTMATCHINGS}/match/experimentBookings`,
+      "POST",
+      timeFrame
+    )
+      .then(() => {
+        fetchBackend<AppointmentMatching[]>(
+          `${API_URL_APPOINTMENTMATCHINGS}/nulledAppointments` +
+          `?commence=${toJSONLocalTime(firstFetchDay)}&terminate=${toJSONLocalTime(lastFetchDay)}`,
+          "GET"
+        )
+          .then(appointmentMatchings => 
+            setNullAppointmentMatchings(appointmentMatchings)
+          );
+      });
+  }, [days, allEvents, setNullAppointmentMatchings]);
+    
+  return nullAppointmentMatchings;
+}

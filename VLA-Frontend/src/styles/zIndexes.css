@@ -8,10 +8,12 @@
     --cv-z-dayColumn-not-last-child-after: 20;
     --cv-z-person-details-overlay: 1200 !important;
 
+    --z-appointmentMatcher: 21;
+
     --z-dragcontainer: 999;
     --z-dragcomponent: 998;
 
-    --z-global-note-container: 21;
+    --z-global-note-container: 22;
 
     --z-logger-container: 999;
     /* Attention when changing this: See SseError.tsx, there is one z-Index 9998

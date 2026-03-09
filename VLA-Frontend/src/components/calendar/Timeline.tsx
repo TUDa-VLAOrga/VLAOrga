@@ -1,6 +1,7 @@
 import {getEventColor, getEventTitle} from "./eventUtils";
 import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
+import CalendarExperimentIndicator from "./CalendarExperimentIndicator";
 
 type Props = {
   /** Timed events for a single day column. */
@@ -192,6 +193,8 @@ export default function Timeline({
               <div className="cv-timeline-event-time">
                 {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </div>
+
+              <CalendarExperimentIndicator appointment={event}/>
             </div>
           );
         })}

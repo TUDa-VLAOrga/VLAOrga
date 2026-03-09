@@ -8,7 +8,8 @@ import type {AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
 
 
-export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday to Saturday
+// limited to 0 - 6, corresponding to Sunday to Saturday
+export type Weekday = number;
 
 export type RecurrencePattern = {
   weekdays: Weekday[];

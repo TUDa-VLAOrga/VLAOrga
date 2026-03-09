@@ -3,9 +3,12 @@
  * Collection of pure date/formatting helper functions for the calendar.
  * Goal: CalendarView stays lean (State + UI), logic is here.
  */
+import type {Weekday} from "@/components/calendar/EventForm/EventCreationForm.tsx";
 
+// days that are no workdays, i.e. the VLA has no appointments
+export const NON_WORKDAYS: Weekday[] = [0];
+// number of columns displayed at most
 export const WORKDAY_COUNT = 5;
-export const NON_WORKDAYS = [0, 6]; // days that are no workdays
 
 export function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
@@ -58,6 +61,21 @@ export function addDays(date: Date, days: number) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return d;
+}
+
+/**
+ * Wrapper function for addDays that ensures that a date is never in the past.
+ * If the resulting day is in the past, it return the current date 
+ * 
+ * @param baseDate The base date to perform addtion of days on.
+ * @param daysToAdd The days to advance
+ * @returns A date with added days that is in the present of future
+ */
+export function addDaysPresentFuture(baseDate: Date, daysToAdd: number) {
+  const result = addDays(baseDate, daysToAdd);
+  const now = new Date();
+
+  return result < now ? now : result;
 }
 
 /** True, if date is Saturday or Sunday. */
@@ -198,4 +216,23 @@ export function compareSameDay(a: Date, b: Date) {
 
 export function formatHourLabel(hour: number): string {
   return `${String(hour).padStart(2, "0")}:00`;
+}
+
+export function getDateStringOfDate(date: Date){
+  const dateFormat = Intl.DateTimeFormat("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  });
+
+  return dateFormat.format(date);
+}
+
+export function getTimeStringOfDate(date: Date){
+  const dateFormat = Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return dateFormat.format(date);
 }

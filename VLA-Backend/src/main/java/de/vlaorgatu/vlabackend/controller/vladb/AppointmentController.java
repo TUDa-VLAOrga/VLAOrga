@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,15 +74,33 @@ public class AppointmentController
     @GetMapping("/includeTime")
     public ResponseEntity<List<Appointment>> getAppointmentsDuringTime(
         @RequestParam("eventTime")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventTime
+        LocalDateTime eventTime
     ) {
-        List<Appointment> appointmentsInTimeFrame =
-            appointmentRepository
-                .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
-                    eventTime, eventTime
-                );
+        List<Appointment> appointmentsInTimeFrame = appointmentRepository
+            .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+                eventTime, eventTime
+            );
 
         return ResponseEntity.ok(appointmentsInTimeFrame);
+    }
+
+    /**
+     * Returns all {@link ExperimentBooking}s associated with an {@link Appointment}.
+     *
+     * @param id The id of the appointment
+     * @return All ExperimentBookings of this appointment
+     */
+    @GetMapping("/{id}/experimentBookings")
+    public ResponseEntity<List<ExperimentBooking>> getAllExperimentBookingsFromAppointment(
+        @PathVariable Long id
+    ) {
+        Appointment appointment = appointmentRepository.findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Appointment with id " + id + " was not found"
+                )
+            );
+        return ResponseEntity.ok(appointment.getBookings());
     }
 
     /**

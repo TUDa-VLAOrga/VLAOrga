@@ -1,5 +1,6 @@
 import {Logger} from "@/components/logger/Logger";
 import {toJSONLocalTime} from "@/components/calendar/dateUtils.ts";
+import { ExperimentPreparationStatus } from "./databaseTypes";
 
 /**
  * Fetch a CSRF token from the server.
@@ -94,4 +95,14 @@ export function toJsonFixDate(_key: any, value: any) {
     return  toJSONLocalTime(new Date(value));
   }
   return value;
+}
+
+export function getExperimentPreperationsStatusGermanMap(){
+  const experimentPreperationStatusGermanMap = new Map<ExperimentPreparationStatus, string>();
+  
+  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.FINISHED, "Aufgebaut");  
+  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.IN_PROGRESS, "In Arbeit");  
+  experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.PENDING, "Unbearbeitet");  
+  
+  return experimentPreperationStatusGermanMap;
 }

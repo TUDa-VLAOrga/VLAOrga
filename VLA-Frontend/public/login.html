@@ -1,66 +1,79 @@
 <!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - VLA Kalender</title>
+    <link rel="stylesheet" href="login.css" />
+  </head>
 
-<html>
-    <head>
-        <link rel="stylesheet" href="login.css">
-    </head>
+  <body>
+    <div class="login-container">
+      <form class="login-form" action="login.html" method="post">
+        <h2 class="login-title">Login zum VLA Kalender</h2>
 
-    <body>
-        <div class="login-container">
-            <form class="login-form" action="login.html" method="post">
-                <h2 class="login-title">Login zum VLA Kalender</h2>
+        <div id="login-message" class="login-message" aria-live="polite"></div>
 
-                <input
-                    class="login-input"
-                    type="text"
-                    name="username"
-                    placeholder="Benutzername"
-                    required
-                />
+        <input
+          class="login-input"
+          type="text"
+          name="username"
+          placeholder="Benutzername"
+          required
+          autocomplete="username"
+        />
 
-                <input
-                    class="login-input"
-                    type="password"
-                    name="password"
-                    placeholder="Passwort"
-                    required
-                />
+        <input
+          class="login-input"
+          type="password"
+          name="password"
+          placeholder="Passwort"
+          required
+          autocomplete="current-password"
+        />
 
-                <input type="hidden" name="_csrf" id="csrf">
+        <input type="hidden" name="_csrf" id="csrf" />
 
-                <button type="submit" class="login-button">
-                    Login
-                </button>
-            </form>
-        </div>
+        <button type="submit" class="login-button">
+          Login
+        </button>
+      </form>
+    </div>
 
-        <script>
-            fetch('/csrf', {
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('csrf').value = data.token;
-            })
-            .catch(err => {
-                console.log("CSRF could not be fetched");
-                console.log(err);
+    <script>
+      const csrfInput = document.getElementById("csrf");
+      const messageBox = document.getElementById("login-message");
 
-                // TODO: Integrate this properly
-                document.body.innerHTML +=
-                    (
-                        "Die Authentifizierung kann gerade nicht erfolgen, bitte versuchen Sie es gleich erneut"
-                    );
-            });
+      function showError(message) {
+        messageBox.textContent = message;
+        messageBox.classList.add("visible");
+      }
 
-            if (new URLSearchParams(document.location.search).has("error")) {
-                
-                // TODO: Integrate this properly
-                document.body.innerHTML +=
-                    (
-                        "Die Anmeldedaten waren ungültig, bitte versuchen Sie es erneut"
-                    );
-            }
-        </script>
-    </body>
+      fetch("/csrf", {
+        credentials: "same-origin"
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("CSRF request failed");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          csrfInput.value = data.token;
+        })
+        .catch((err) => {
+          console.log("CSRF could not be fetched");
+          console.log(err);
+          showError(
+            "Die Authentifizierung kann gerade nicht erfolgen. Bitte versuchen Sie es gleich erneut."
+          );
+        });
+
+      if (new URLSearchParams(document.location.search).has("error")) {
+        showError(
+          "Die Anmeldedaten waren ungültig. Bitte versuchen Sie es erneut."
+        );
+      }
+    </script>
+  </body>
 </html>
