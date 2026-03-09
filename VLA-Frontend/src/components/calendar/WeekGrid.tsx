@@ -4,10 +4,10 @@ import DayColumn from "./DayColumn";
 import type {CalendarDay, CalendarEvent, CalendarEventsByDateISO} from "./CalendarTypes";
 import TimeColumn from "./TimeColumn";
 
-type Props = {
+type WeekGridProps = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
-  onEventClick?: (eventId: number) => void;
+  onEventClick?: (event: CalendarEvent) => void;
   startHour?: number;
   endHour?: number;
 };
@@ -33,7 +33,7 @@ export default function WeekGrid({
   onEventClick,
   startHour = 7,
   endHour = 22,
-}: Props) {
+}: WeekGridProps) {
   const hourCount = Math.max(0, endHour - startHour);
 
   const windowStartMin = startHour * 60;

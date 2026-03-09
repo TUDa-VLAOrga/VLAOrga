@@ -10,7 +10,7 @@ type Props = {
   startHour: number;
   /** Last visible hour boundary (exclusive for rows; used as end boundary). */
   endHour: number;
-  onEventClick?: (eventId: number) => void;
+  onEventClick?: (event: CalendarEvent) => void;
 };
 
 /**
@@ -185,7 +185,7 @@ export default function Timeline({
                 backgroundColor: color ?? undefined,
                 borderColor: color ?? undefined,
               }}
-              onClick={onEventClick ? () => onEventClick(event.id) : undefined}
+              onClick={onEventClick ? () => onEventClick(event) : undefined}
               title={`${title} (${formatTimeRangeShortDE(event.startTime, event.endTime)})`}
             >
               <div className="cv-timeline-event-title">{title}</div>

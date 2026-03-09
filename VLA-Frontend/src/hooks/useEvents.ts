@@ -1,4 +1,4 @@
-import {useState, useMemo} from "react";
+import {useMemo} from "react";
 import type { EventFormData, Weekday } from "../components/calendar/EventForm/AddEventForm.tsx";
 import {addDays} from "../components/calendar/dateUtils";
 import {type Acceptance, type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
@@ -26,6 +26,12 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
+function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
+  const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
+  return currentValue.filter((event) => event.id !== deletedEvent.id);
+}
+
+
 function handleAcceptanceCreated(event: MessageEvent, currentValue: Acceptance[]) {
   const newAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
   return [...currentValue, newAcceptance];
@@ -49,20 +55,6 @@ function handleAcceptanceDeleted(event: MessageEvent, currentValue: Acceptance[]
  * - a derived "eventsByDate" map for efficient rendering in the grid
  */
 export function useEvents() {
-  const [selectedEventId, setSelectedEventId] = useState<number>();
-
-  /**
-   * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
-   */
-  function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
-    const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
-    if (deletedEvent.id === selectedEventId) {
-      // TODO: figure out whether this has some weird react race conditions,
-      //  since the result of this function is also passed to a setState
-      setSelectedEventId(undefined);
-    }
-    return currentValue.filter((event) => event.id !== deletedEvent.id);
-  }
 
   // SSE handlers for appointments
   const sseHandlersAppointments = new Map<
@@ -395,22 +387,6 @@ export function useEvents() {
   }
 
   /**
-   * Update the {@link selectedEventId} state on clicking an event.
-   */
-  // TODO: adjust this to acceptances
-  function handleEventClick(eventId: number) {
-    setSelectedEventId(eventId);
-  }
-
-  /**
-   * Update the {@link selectedEventId} state on closing the event details.
-   */
-  // TODO: adjust this and its usages to acceptances
-  function closeEventDetails() {
-    setSelectedEventId(undefined);
-  }
-
-  /**
    * Derived map for rendering:
    * dateISO -> list of events on that date.
    */
@@ -453,11 +429,8 @@ export function useEvents() {
 
   return {
     allEvents,
-    selectedEventId,
     eventsByDate,
     handleCreateEvent,
-    handleEventClick,
-    closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
     handleDeletion,

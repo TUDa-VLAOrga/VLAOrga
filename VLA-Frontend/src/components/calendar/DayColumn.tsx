@@ -6,7 +6,7 @@ type DayColumnProps = {
   day: CalendarDay;
   eventsAllDay: CalendarEvent[];
   eventsTimed: CalendarEvent[];
-  onEventClick?: (eventId: number) => void;
+  onEventClick?: (event: CalendarEvent) => void;
   startHour: number;
   endHour: number;
   showAllDayRow?: boolean;
@@ -44,7 +44,7 @@ export default function DayColumn({
                   ? { backgroundColor: color, borderColor: color }
                   : undefined,
                 title: name,
-                ...(onEventClick && { onClick: () => onEventClick(event.id) }),
+                ...(onEventClick && { onClick: () => onEventClick(event) }),
               };
 
               return (
