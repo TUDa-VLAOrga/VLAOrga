@@ -5,8 +5,9 @@
  */
 import type {Weekday} from "@/components/calendar/EventForm/EventCreationForm.tsx";
 
-export const NON_WORKDAYS: Weekday[] = []; // days that are no workdays
-// TODO: 7 oder 5? Erik fragen
+// days that are no workdays, i.e. the VLA has no appointments
+export const NON_WORKDAYS: Weekday[] = [6];
+// number of columns displayed at most
 export const WORKDAY_COUNT = 5;
 
 export function toISODateLocal(d: Date) {

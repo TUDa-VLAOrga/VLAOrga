@@ -7,7 +7,6 @@ type WeekdayPickerProps = {
 };
 
 // every day which is not a non-workday ;)
-// TODO: Erik fragen: Für Wiederholungen hier alle Tage, oder nur Mo-Fr?
 const WORKDAYS: Weekday[] = [0, 1, 2, 3, 4, 5, 6].filter(dayNr => !NON_WORKDAYS.includes(dayNr));
 
 const WEEKDAY_LABELS: Record<Weekday, string> = {
