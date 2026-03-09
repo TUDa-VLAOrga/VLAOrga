@@ -3,9 +3,12 @@
  * Collection of pure date/formatting helper functions for the calendar.
  * Goal: CalendarView stays lean (State + UI), logic is here.
  */
+import type {Weekday} from "@/components/calendar/EventForm/EventCreationForm.tsx";
 
+// days that are no workdays, i.e. the VLA has no appointments
+export const NON_WORKDAYS: Weekday[] = [6];
+// number of columns displayed at most
 export const WORKDAY_COUNT = 5;
-export const NON_WORKDAYS = [0, 6]; // days that are no workdays
 
 export function toISODateLocal(d: Date) {
   const yyyy = String(d.getFullYear());
