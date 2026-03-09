@@ -30,6 +30,7 @@ type EventDetailsProps = {
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
   onAddAcceptance: (appointmentId: number, startTime: Date, endTime: Date) => Promise<Acceptance | void>;
   onUpdateAcceptance: (acceptanceId: number, startTime: Date, endTime: Date) => Promise<Acceptance | void>;
+  onDeleteAcceptance: (acceptanceId: number) => Promise<void>;
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
@@ -55,6 +56,7 @@ export default function EventDetails({
   onUpdateEvent,
   onAddAcceptance,
   onUpdateAcceptance,
+  onDeleteAcceptance,
   onAddCategory,
   onAddPerson,
   onAddLecture,
@@ -90,6 +92,13 @@ export default function EventDetails({
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
   const isAcceptance = isCalendarEventAcceptance(event);
   const appointment: Appointment = isAcceptance ? event.appointment : event;
+  const deletionBlocked = (
+    !isAcceptance
+    && allEvents
+      .filter(isCalendarEventAcceptance)
+      .filter(acc => acc.appointment.id == appointment.id)
+      .length > 0
+  );
   // double-deletion logic for appointments
   const [isDeletionPending, setIsDeletionPending] = useState(
     isAcceptance ? false : Boolean(event.deletingIntentionUser)
@@ -324,8 +333,13 @@ export default function EventDetails({
             </button>
           </div>
           <div className="cv-formActions">
-            {deletingUser &&
-                <div className="cv-deletionRequestBanner">
+            {deletionBlocked &&
+              <div className="cv-hintBanner cv-deletionHintBanner">
+                Dieser Termin kann noch nicht gelöscht werden, da Abnahmetermine verknüpft sind.
+              </div>
+            }
+            {!deletionBlocked && deletingUser &&
+                <div className="cv-hintBanner cv-deletionRequestBanner">
                   <span className="cv-deletionRequestIcon">⚠️</span>
                   <span>
                     {isOwnDeletionRequest
@@ -334,22 +348,22 @@ export default function EventDetails({
                   </span>
                 </div>
             }
-            {!isDeletionPending && (
+            {!deletionBlocked && !isDeletionPending && (
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
                 disabled={isDeletionPending}
                 onClick={() => {
-                  // TODO: fix deletion for acceptances (event.id does not suffice for determining what type it is)
-                  onDeletion(event.id).then(() => {
-                    if (!isAcceptance) setIsDeletionPending(true);
-                  });
+                  if (isAcceptance)
+                    onDeleteAcceptance(event.id).then(() => onClose());
+                  else
+                    onDeletion(event.id).then(() => setIsDeletionPending(true));
                 }}
               >
                 Löschen
               </button>
             )}
-            {canConfirmDeletion && (
+            {!deletionBlocked && canConfirmDeletion && (
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
@@ -358,7 +372,7 @@ export default function EventDetails({
                 Löschung bestätigen
               </button>
             )}
-            {isDeletionPending &&
+            {!deletionBlocked && isDeletionPending &&
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
@@ -367,9 +381,6 @@ export default function EventDetails({
                 Löschanfrage zurückziehen
               </button>
             }
-
-
-
           </div>
         </div>
       </div>

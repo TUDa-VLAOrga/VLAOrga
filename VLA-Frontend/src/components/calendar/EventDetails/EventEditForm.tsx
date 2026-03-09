@@ -127,7 +127,7 @@ export default function EventEditForm({
             errorText={timeRangeHintText}
           />
           <div className="cv-detailsContent">
-            <p className="cv-moveDialogInfo">
+            <p className="cv-hintBanner cv-moveDialogInfo">
               {isSeries
                 ? 'Alle Termine dieser Serie werden bearbeitet und entsprechend verschoben.'
                 : 'Nur dieser einzelne Termin wird bearbeitet und aus der Serie gelöst.'}

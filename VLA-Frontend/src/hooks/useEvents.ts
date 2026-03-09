@@ -385,6 +385,16 @@ export function useEvents() {
   }
 
   /**
+   * Delete an acceptance.
+   */
+  async function handleAcceptanceDeletion(acceptanceId: number): Promise<void> {
+    await fetchBackend<Appointment>(`${API_URL_ACCEPTANCES}/${acceptanceId}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Error on appointment deletion: ", error);
+      });
+  }
+
+  /**
    * Update the {@link selectedEventId} state on clicking an event.
    */
   // TODO: adjust this to acceptances
@@ -454,5 +464,6 @@ export function useEvents() {
     handleCancelDeletionRequest,
     handleAcceptanceSeriesCreate,
     handleAcceptanceUpdate,
+    handleAcceptanceDeletion,
   };
 }

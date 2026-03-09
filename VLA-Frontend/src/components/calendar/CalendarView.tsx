@@ -43,6 +43,7 @@ export default function CalendarView() {
     handleCancelDeletionRequest,
     handleAcceptanceSeriesCreate,
     handleAcceptanceUpdate,
+    handleAcceptanceDeletion,
   } = useEvents();
 
   const missingAppointmentMatchings = useAppointmentMatcher({days, allEvents});
@@ -134,6 +135,7 @@ export default function CalendarView() {
           onUpdateEvent={handleUpdateEvent}
           onAddAcceptance={handleAcceptanceSeriesCreate}
           onUpdateAcceptance={handleAcceptanceUpdate}
+          onDeleteAcceptance={handleAcceptanceDeletion}
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
