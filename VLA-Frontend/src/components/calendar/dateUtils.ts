@@ -6,7 +6,7 @@
 import type {Weekday} from "@/components/calendar/EventForm/EventCreationForm.tsx";
 
 // days that are no workdays, i.e. the VLA has no appointments
-export const NON_WORKDAYS: Weekday[] = [6];
+export const NON_WORKDAYS: Weekday[] = [0];
 // number of columns displayed at most
 export const WORKDAY_COUNT = 5;
 
