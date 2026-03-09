@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import LinusAppointmentMatcher from "./LinusAppointmentMatcher";
-import type { Appointment, AppointmentMatching } from "@/lib/databaseTypes";
+import type { AppointmentMatching } from "@/lib/databaseTypes";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 interface AppointmentMatchingButtonsProps {
-  appointmentMatching: AppointmentMatching[],
-  appointments: Appointment[],
+  appointmentMatchings: AppointmentMatching[],
+  events: CalendarEvent[],
 }
 
 export default function AppointmentMatchingButton({
-  appointmentMatching,
-  appointments,
+  appointmentMatchings,
+  events,
 } 
 : AppointmentMatchingButtonsProps)
 {
@@ -24,8 +25,8 @@ export default function AppointmentMatchingButton({
   ] = useState<boolean>(false);
 
   useEffect(() => {
-    setShowMatchTaskIcon(appointmentMatching.length !== 0);
-  }, [appointmentMatching]);
+    setShowMatchTaskIcon(appointmentMatchings.length !== 0);
+  }, [appointmentMatchings]);
     
   return (
     <>
@@ -43,10 +44,10 @@ export default function AppointmentMatchingButton({
       </button>
 
       <LinusAppointmentMatcher
-        appointmentMatching={appointmentMatching}
+        appointmentMatchings={appointmentMatchings}
         setAppointmentMatcherVisible={setAppointmentMatchingVisible}
         visible={appointmentMatchingVisible}
-        appointments={appointments}
+        events={events}
       />
     </>
   );

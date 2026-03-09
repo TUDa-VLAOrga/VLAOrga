@@ -88,7 +88,7 @@ export default function CalendarView() {
           + Neuer Termin
         </button>
 
-        <AppointmentMatchingButton appointmentMatching={missingAppointmentMatchings} appointments={allEvents}/>
+        <AppointmentMatchingButton appointmentMatchings={missingAppointmentMatchings} events={allEvents}/>
 
         <LogoutButton/>
       </div>

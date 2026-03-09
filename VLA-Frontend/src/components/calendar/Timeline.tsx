@@ -194,7 +194,7 @@ export default function Timeline({
                 {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </div>
 
-              <CalendarExperimentIndicator appointment={event}/>
+              <CalendarExperimentIndicator event={event}/>
             </div>
           );
         })}

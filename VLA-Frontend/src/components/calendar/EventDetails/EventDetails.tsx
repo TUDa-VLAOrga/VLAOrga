@@ -73,12 +73,7 @@ export default function EventDetails({
   // local state for note editing
   const [eventNotes, setEventNotes] = useState(getEventNotes(event));
 
-  // deletion logic
-  const [isDeletionPending, setIsDeletionPending] = useState(Boolean(event.deletingIntentionUser));
-  const deletingUser = event.deletingIntentionUser;
-  const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
-  const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
-  
+
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes.trim());
@@ -94,7 +89,14 @@ export default function EventDetails({
 
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
   const isAcceptance = isCalendarEventAcceptance(event);
-  const referenceEvent: Appointment = isAcceptance ? event.appointment : event;
+  const appointment: Appointment = isAcceptance ? event.appointment : event;
+  // double-deletion logic for appointments
+  const [isDeletionPending, setIsDeletionPending] = useState(
+    isAcceptance ? false : Boolean(event.deletingIntentionUser)
+  );
+  const deletingUser = isAcceptance ? null : event.deletingIntentionUser;
+  const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
+  const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
 
   if (showEditSingleDialog && !isAcceptance) {
     return (
@@ -183,20 +185,20 @@ export default function EventDetails({
           <div className="cv-detailsContent">
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Kategorie:</span>
-              <span className="cv-detailValue">{referenceEvent.series.category.title}</span>
+              <span className="cv-detailValue">{appointment.series.category.title}</span>
             </div>
 
             {/* Lecture details (only if lecture is assigned) */}
-            {referenceEvent.series.lecture && (
+            {appointment.series.lecture && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Vorlesung:</span>
                 <span className="cv-detailValue">
                   <span className="cv-detailValueLecture ">
                     <span
                       className="cv-lectureSwatch"
-                      style={{ backgroundColor: referenceEvent.series.lecture.color }}
+                      style={{ backgroundColor: appointment.series.lecture.color }}
                     />
-                    <span className="cv-lectureName">{referenceEvent.series.lecture.name}</span>
+                    <span className="cv-lectureName">{appointment.series.lecture.name}</span>
                     <button
                       type="button"
                       className="cv-personDetailsBtn"
@@ -210,10 +212,10 @@ export default function EventDetails({
               </div>
             )}
 
-            {referenceEvent.series.lecture?.semester && (
+            {appointment.series.lecture?.semester && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Semester:</span>
-                <span className="cv-detailValue">{referenceEvent.series.lecture.semester}</span>
+                <span className="cv-detailValue">{appointment.series.lecture.semester}</span>
               </div>
             )}
 
@@ -224,23 +226,23 @@ export default function EventDetails({
               </span>
             </div>
 
-            <ExperimentSection appointment={event} />
+            <ExperimentSection event={event} />
 
-            {referenceEvent.series.lecture && referenceEvent.series.lecture?.persons.length > 0 && (
+            {appointment.series.lecture && appointment.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabelPeople"> 
                   <span className="cv-detailLabel">Personen:</span>
                   <button
                     type="button"
                     className="cv-formBtn cv-formBtnSecondary"
-                    onClick={() => mailToPersons(referenceEvent.series.lecture!.persons)}
+                    onClick={() => mailToPersons(appointment.series.lecture!.persons)}
                   >
                     {"Email an Alle"}
                   </button>
                 </span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
-                    {referenceEvent.series.lecture?.persons.map((person) => (
+                    {appointment.series.lecture?.persons.map((person) => (
                       <span key={person.id} className="cv-personItem">
                         {/* Need to use people (state from usePeople) here, since lecture.persons
                          include probably old versions of the person entity. */}
@@ -338,7 +340,10 @@ export default function EventDetails({
                 className="cv-formBtn cv-formBtnDanger"
                 disabled={isDeletionPending}
                 onClick={() => {
-                  onDeletion(event.id).then(() => setIsDeletionPending(true));
+                  // TODO: fix deletion for acceptances (event.id does not suffice for determining what type it is)
+                  onDeletion(event.id).then(() => {
+                    if (!isAcceptance) setIsDeletionPending(true);
+                  });
                 }}
               >
                 Löschen
@@ -378,7 +383,7 @@ export default function EventDetails({
       )}
       {showEditLectureDialog && (
         <LectureEditForm
-          lecture={event.series.lecture!}
+          lecture={appointment.series.lecture!}
           people={people}
           onCancel={() => setShowEditLectureDialog(false)}
           onSubmit={(lecture) => {

@@ -1,8 +1,10 @@
-import { type ExperimentBooking, ExperimentPreparationStatus, type Appointment } from "@/lib/databaseTypes";
+import { type ExperimentBooking, ExperimentPreparationStatus } from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
+import {isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
 
 export interface CalendarExperimentIndicator {
-  appointment: Appointment;
+  event: CalendarEvent;
 }
 
 function getStateRepresentativeCounts(experimentBooking: ExperimentBooking[]) {
@@ -13,7 +15,8 @@ function getStateRepresentativeCounts(experimentBooking: ExperimentBooking[]) {
   ];
 }
 
-export default function CalendarExperimentIndicator({appointment} : CalendarExperimentIndicator){
+export default function CalendarExperimentIndicator({event} : CalendarExperimentIndicator){
+  const appointment = isCalendarEventAcceptance(event) ? event.appointment : event;
   const [appointmentBookings, setAppointmentBookings] = useState<ExperimentBooking[]>(appointment.bookings);
 
   useEffect(() => {

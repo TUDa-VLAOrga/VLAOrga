@@ -3,7 +3,7 @@
  * Collection of pure date/formatting helper functions for the calendar.
  * Goal: CalendarView stays lean (State + UI), logic is here.
  */
-import type {Weekday} from "@/components/calendar/EventForm/EventCreationForm.tsx";
+import type {Weekday} from "@/components/calendar/EventForm/AddEventForm.tsx";
 
 // days that are no workdays, i.e. the VLA has no appointments
 export const NON_WORKDAYS: Weekday[] = [0];

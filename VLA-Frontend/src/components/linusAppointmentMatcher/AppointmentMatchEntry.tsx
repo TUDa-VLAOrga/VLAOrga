@@ -7,10 +7,11 @@ import { getTimeStringOfDate, toJSONLocalTime } from "../calendar/dateUtils";
 import { fetchBackend } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS, API_URL_APPOINTMENTS } from "@/lib/api";
 import { getEventTitle } from "../calendar/eventUtils";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 interface AppointmentMatchEntryProps {
   matching: AppointmentMatching,
-  appointments: Appointment[],
+  events: CalendarEvent[],
 }
 
 function postMatching(matchingId: number, matchedAppointmentId: number){
@@ -20,7 +21,7 @@ function postMatching(matchingId: number, matchedAppointmentId: number){
     });
 }
 
-export default function AppointmentMatchEntry({matching, appointments} : AppointmentMatchEntryProps) {   
+export default function AppointmentMatchEntry({matching, events} : AppointmentMatchEntryProps) {
   const [availableAppointments, setAvailableAppointments] = 
     useState<Appointment[] | undefined>(undefined);
 
@@ -34,7 +35,7 @@ export default function AppointmentMatchEntry({matching, appointments} : Appoint
       .then(appointments => {
         setAvailableAppointments(appointments);
       });
-  }, [matching, appointments]);
+  }, [matching, events]);
     
   return (
     <>
