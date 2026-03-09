@@ -356,3 +356,46 @@
     width: 100%;
   }
 }
+/* Danger Button (rot) */
+.cv-formBtnDanger {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+}
+
+.cv-formBtnDanger:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.cv-formBtnDanger:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+}
+
+/* Outline-Variante für "Löschanfrage zurückziehen" */
+.cv-formBtnDanger.cv-formBtnOutline {
+  background-color: transparent;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+}
+
+.cv-formBtnDanger.cv-formBtnOutline:hover {
+  background-color: #fee2e2;
+}
+.cv-deletionRequestBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fff3cd;
+  border-left: 4px solid #f59e0b;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #92400e;
+  margin-bottom: 0.5rem;
+}
+
+.cv-deletionRequestIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}

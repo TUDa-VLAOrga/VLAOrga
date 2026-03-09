@@ -16,13 +16,6 @@ public enum SseMessageType {
      */
     SSEDEBUG("SSEDEBUG"),
 
-    /**
-     * Used for sending SSE Events after a {@link Appointment}s have been updated.
-     * This update contains all new bookings imported from Linus.
-     * TODO: Frontend handling
-     */
-    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
-
     // CRUD Mesages for all entities
     GLOBALNOTECREATED("GLOBALNOTECREATED"),
     GLOBALNOTEUPDATED("GLOBALNOTEUPDATED"),
@@ -50,6 +43,14 @@ public enum SseMessageType {
     APPOINTMENTCREATED("APPOINTMENTCREATED"),
     APPOINTMENTUPDATED("APPOINTMENTUPDATED"),
     APPOINTMENTDELETED("APPOINTMENTDELETED"),
+
+    /**
+     * Used for sending SSE Events after a {@link Appointment}s have been updated.
+     * This update contains all new bookings imported from Linus.
+     */
+    LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
+
+    EXPERIMENTBOOKINGUPDATED("EXPERIMENTBOOKINGUPDATED"),
     /**
      * Used for sending Debug messages to the frontend.
      */

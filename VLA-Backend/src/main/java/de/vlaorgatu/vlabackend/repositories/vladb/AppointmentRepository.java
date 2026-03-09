@@ -1,6 +1,7 @@
 package de.vlaorgatu.vlabackend.repositories.vladb;
 
 import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -61,4 +62,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
         LocalDateTime start,
         LocalDateTime end
     );
+
+    /**
+     * Finds all appointments belonging to a lecture.
+     *
+     * @param seriesLecture The lecture
+     * @return All appointments that have this lecture
+     */
+    List<Appointment> findAppointmentsBySeriesLecture(Lecture seriesLecture);
 }

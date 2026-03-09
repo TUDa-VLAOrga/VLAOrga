@@ -85,6 +85,25 @@ public class AppointmentController
     }
 
     /**
+     * Returns all {@link ExperimentBooking}s associated with an {@link Appointment}.
+     *
+     * @param id The id of the appointment
+     * @return All ExperimentBookings of this appointment
+     */
+    @GetMapping("/{id}/experimentBookings")
+    public ResponseEntity<List<ExperimentBooking>> getAllExperimentBookingsFromAppointment(
+        @PathVariable Long id
+    ) {
+        Appointment appointment = appointmentRepository.findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Appointment with id " + id + " was not found"
+                )
+            );
+        return ResponseEntity.ok(appointment.getBookings());
+    }
+
+    /**
      * Creates a new appointment.
      *
      * @param appointment Appointment to create, must not contain an ID (auto-generated).

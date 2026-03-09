@@ -105,6 +105,11 @@ public class AppointmentMatchingController implements
 
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTMATCHINGUPDATE, savedMatching);
 
+        linusSyncService.syncExperimentBookings(
+            referencedAppointment.getStartTime().minusDays(1),
+            referencedAppointment.getEndTime().plusDays(1)
+        );
+
         return ResponseEntity.ok(savedMatching);
     }
 

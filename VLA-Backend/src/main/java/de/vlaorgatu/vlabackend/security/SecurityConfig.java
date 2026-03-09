@@ -64,10 +64,15 @@ public class SecurityConfig {
     @Bean
     @Profile("dev")
     UserDetailsService userDetailsServiceDevelopment(PasswordEncoder passwordEncoder) {
-        return new InMemoryUserDetailsManager(User.builder()
-            .username("dev")
-            .password(passwordEncoder.encode("dev"))
-            .build()
+        return new InMemoryUserDetailsManager(
+            User.builder()
+                .username("1")
+                .password(passwordEncoder.encode("dev"))
+                .build(),
+            User.builder()
+                .username("2")
+                .password(passwordEncoder.encode("dev"))
+                .build()
         );
     }
 

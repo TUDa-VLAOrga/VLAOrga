@@ -11,6 +11,11 @@ services:
       file: docker-compose.services.yml
       service: linus-db
 
+  linus-app:
+    extends:
+      file: docker-compose.services.yml
+      service: linus-app
+
   dev-app:
     extends:
       file: docker-compose.services.yml

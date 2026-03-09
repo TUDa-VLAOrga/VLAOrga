@@ -1,31 +1,38 @@
+Prerequisite: The application has to be running and booted completely.
+
+All following commands are executed from the root folder of this VLAOrga repo.
+
 # Adding User accounts
 
-Prerequisite: The application has to be running and booted completely
+If you do not want to specify an email address:
 
-If you do not want to specify a mail
+```bash
+./scripts/addUserWithPassword.sh username password
+```
 
-Use `../scripts/addUserWithPassword.sh`
+* First parameter: Unique username
+* Second parameter: Password in clear text (you can prefix the command with a space to the password from the .bash_history)
 
-First parameter: Unique username
-Second parameter: Password in clear text
+If you want to specify an email address for the user:
 
-If you want to specify a mail
+```bash
+./scripts/addUserWithPasswordAndMail.sh username password "email@example.com"
+```
 
-Use `../scripts/addUserWithPasswordAndMail.sh`
+* First parameter: Unique username
+* Second parameter: Password in clear text (you can prefix the command with a space to hide the password from the .bash_history)
+* Third parameter: Valid mail of the user
 
-First parameter: Unique username
-Second parameter: Password in clear text
-Third parameter: Valid mail of the user
-
-The passwords will then be securely stored in the internal database
+The passwords will then be securely stored in the internal database.
 
 # Changing users in the database
-Prerequisite: The application has to be running and booted completely
 
-Use `../scripts/changeUserPassword.sh`
+```bash
+./scripts/changeUserPassword.sh username password
+```
 
-First parameter: Existing username
-Second parameter: Password in clear text
+* First parameter: Existing username
+* Second parameter: Password in clear text (you can prefix the command with a space to hide the password from the .bash_history)
 
-The passwords will then be securely stored in the internal database
+The passwords will then be securely stored in the internal database.
 
