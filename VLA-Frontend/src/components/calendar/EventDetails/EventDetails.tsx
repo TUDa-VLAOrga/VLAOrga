@@ -189,7 +189,7 @@ export default function EventDetails({
                           onClick={() => setSelectedPersonId(person.id)}
                           aria-label={`Details zu ${people.find((p) => p.id == selectedPersonId)?.name} anzeigen`}
                           title="Details anzeigen"
-                          style={{opacity: person.notes === "" ? 0.3 : 0.8}}
+                          style={{opacity: (people.find((p) => p.id == person.id)?.notes) === "" ? 0.3 : 0.8}}
                         >
                         </button>
                       </span>
