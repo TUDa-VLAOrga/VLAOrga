@@ -152,23 +152,20 @@
   height: 18px;
   padding: 0;
   margin-left: 0.15rem;
-  background: none;
-  color: #6c757d;  /* Dezentes Grau */
+  background-image: url("/public/icons/PencilIcon.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   border: none;
   cursor: pointer;
   font-size: 18px;
-  opacity: 0.7;
+  opacity: 0.3;
   transition: opacity 0.2s, color 0.2s;
 }
 
 .cv-personDetailsBtn:hover {
   background-color: rgba(0, 0, 0, 0.06);
   opacity: 1;
-  color: #495057;  /* Etwas dunkler beim Hover */
-}
-
-.cv-personDetailsBtn:active {
-  opacity: 0.6;
 }
 
 .cv-personDetailsBtn:focus {
@@ -194,7 +191,6 @@
 }
 /* Detail-Value ohne Input-Look nur für Personen */
 .cv-detailValuePeople {
-  background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;

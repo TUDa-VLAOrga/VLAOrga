@@ -2,8 +2,8 @@ import { useState } from "react";
 import {formatTimeRangeShortDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
+import "../../../styles/EventDetailsStyles.css";
 import LectureEditForm from "./LectureEditForm";
-import "../../../styles/Event-details-styles.css";
 import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import ExperimentSection from "@/components/experiments/ExperimentSection";
 import {getEventStatus, checkPartOfSeries, getEventTitle} from "@/components/calendar/eventUtils.ts";
@@ -142,7 +142,6 @@ export default function EventDetails({
                       onClick={() => setShowEditLectureDialog(true)}
                       title="Vorlesung bearbeiten"
                     >
-                      <span className="cv-editPenIcon"></span>
                     </button>
                   </span>
                 </span>
@@ -190,8 +189,8 @@ export default function EventDetails({
                           onClick={() => setSelectedPersonId(person.id)}
                           aria-label={`Details zu ${people.find((p) => p.id == selectedPersonId)?.name} anzeigen`}
                           title="Details anzeigen"
+                          style={{opacity: (people.find((p) => p.id == person.id)?.notes) === "" ? 0.3 : 0.8}}
                         >
-                          ⓘ
                         </button>
                       </span>
                     ))}
