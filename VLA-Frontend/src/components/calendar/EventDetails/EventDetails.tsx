@@ -70,6 +70,7 @@ export default function EventDetails({
     const mails: string[] = persons.filter(person => person.email != "").map(person => person.email);
     if(mails.length > 0){
       window.location.href = "mailto:" + mails.join(",");
+      location.reload();
     }
   }
 
