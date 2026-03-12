@@ -68,6 +68,7 @@ export class SSEHandler {
      */
   private static closeConnection(){
     Logger.warn("Sse connection was closed");
+    SSEHandler.setComponentStatus.current(true);
     SSEHandler.eventSource.close();
   }
 
