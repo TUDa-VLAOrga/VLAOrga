@@ -1,16 +1,13 @@
 import { ExperimentPreparationStatus, type ExperimentBooking, type LinusExperiment } from "@/lib/databaseTypes";
-import { useState } from "react";
 import { fetchBackend, getExperimentPreperationsStatusGermanMap } from "@/lib/utils";
 import { API_URL_EXPERIMENTBOOKINGS } from "@/lib/api";
 
 interface ExperimentOverviewProps {
   linusExperiment: LinusExperiment,
   experimentBooking: ExperimentBooking,
-  statusBackgroundColor: string,
-  statusTextColor: string,
 }
 
-function updateAppointmentStatus(experimentBooking: ExperimentBooking, status: ExperimentPreparationStatus){
+function updateBookingStatus(experimentBooking: ExperimentBooking, status: ExperimentPreparationStatus){
   fetchBackend(
     `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/status`,
     "PUT",
@@ -23,11 +20,7 @@ const translationMap = getExperimentPreperationsStatusGermanMap();
 export default function ExperimentOverview({
   linusExperiment,
   experimentBooking,
-  statusBackgroundColor,
-  statusTextColor,
 } : ExperimentOverviewProps){
-  const [isEditingStatus, setIsEditingStatus] = useState<boolean>(false);
-    
   return (
     <div className="experimentOverview">
       <div className="experimentPropertyGrid">
@@ -39,45 +32,25 @@ export default function ExperimentOverview({
           Aufbaustatus
         </div>
         <div>
-          {isEditingStatus &&
-            <>
-              <select onPointerDown={e => e.stopPropagation()}>
-                {Object.values(ExperimentPreparationStatus).map(status => {
-                  return (
-                    <>
-                      <option  
-                        key={status}
-                        value={status}
-                        onClick={e => {
-                          e.stopPropagation();
-                          updateAppointmentStatus(experimentBooking, status);
-                          setIsEditingStatus(false);
-                        }}
-                      >
-                        {translationMap.get(status)}
-                      </option>
-                    </>
-                  );
-                })}
-              </select>
-            </>
-          }
-
-          {!isEditingStatus &&
-            <>
-              <span 
-                className="experimentOverviewStatus" 
-                style={{
-                  backgroundColor: statusBackgroundColor,
-                  color: statusTextColor,
-                }}
-                onClick={() => setIsEditingStatus(true)}
-              >
-                {translationMap.get(experimentBooking.status)}
-              </span>
-            </>
-          }
-                    
+          <select
+            defaultValue={experimentBooking.status}
+            onPointerDown={e => e.stopPropagation()}
+          >
+            {Object.values(ExperimentPreparationStatus).map(status => {
+              return (
+                <option
+                  key={status}
+                  value={status}
+                  onClick={e => {
+                    e.stopPropagation();
+                    updateBookingStatus(experimentBooking, status);
+                  }}
+                >
+                  {translationMap.get(status)}
+                </option>
+              );
+            })}
+          </select>
         </div>
                 
         <div>
