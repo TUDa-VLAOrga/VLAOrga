@@ -1,10 +1,9 @@
-import { type ExperimentBooking, ExperimentPreparationStatus } from "@/lib/databaseTypes";
+import {type Appointment, type ExperimentBooking, ExperimentPreparationStatus} from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
-import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 import {isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
 
 export interface CalendarExperimentIndicator {
-  event: CalendarEvent;
+  event: Appointment;
 }
 
 function getStateRepresentativeCounts(experimentBooking: ExperimentBooking[]) {

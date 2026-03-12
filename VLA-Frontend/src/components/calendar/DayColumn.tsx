@@ -6,6 +6,8 @@ type DayColumnProps = {
   day: CalendarDay;
   eventsAllDay: CalendarEvent[];
   eventsTimed: CalendarEvent[];
+  /** all events from all days, needed for referencing experiments of future days */
+  allEvents: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   startHour: number;
   endHour: number;
@@ -21,6 +23,7 @@ export default function DayColumn({
   day,
   eventsAllDay,
   eventsTimed,
+  allEvents,
   onEventClick,
   startHour,
   endHour,
@@ -69,6 +72,7 @@ export default function DayColumn({
       <div className="cv-dayTimeline">
         <Timeline
           events={eventsTimed}
+          allEvents={allEvents}
           onEventClick={onEventClick}
           startHour={startHour}
           endHour={endHour}

@@ -123,6 +123,7 @@ export default function CalendarView() {
           <WeekGrid
             days={days}
             eventsByDate={eventsByDate}
+            allEvents={allEvents}
             onEventClick={handleEventClick}
           />
         </div>

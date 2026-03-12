@@ -1,11 +1,14 @@
-import {getEventColor, getEventTitle} from "./eventUtils";
+import {getEventColor, getEventTitle, isCalendarEventAcceptance} from "./eventUtils";
 import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 import CalendarExperimentIndicator from "./CalendarExperimentIndicator";
+import type {Appointment} from "@/lib/databaseTypes.ts";
 
 type Props = {
   /** Timed events for a single day column. */
   events: CalendarEvent[];
+  /** all existing events. Used for experiment references from acceptances. */
+  allEvents: CalendarEvent[];
   /** First visible hour (inclusive). */
   startHour: number;
   /** Last visible hour boundary (exclusive for rows; used as end boundary). */
@@ -107,6 +110,7 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
  */
 export default function Timeline({
   events,
+  allEvents,
   startHour,
   endHour,
   onEventClick,
@@ -194,7 +198,12 @@ export default function Timeline({
                 {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </div>
 
-              <CalendarExperimentIndicator event={event}/>
+              <CalendarExperimentIndicator event={isCalendarEventAcceptance(event) ?
+                allEvents.find((
+                  ev) => !isCalendarEventAcceptance(ev) && ev.id == event.appointment.id
+                ) as Appointment ?? event.appointment
+                : event}
+              />
             </div>
           );
         })}

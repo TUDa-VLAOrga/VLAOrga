@@ -7,6 +7,7 @@ import TimeColumn from "./TimeColumn";
 type WeekGridProps = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
+  allEvents: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   startHour?: number;
   endHour?: number;
@@ -30,6 +31,7 @@ const DEFAULT_ALL_DAY_HEIGHT = 56;
 export default function WeekGrid({
   days,
   eventsByDate = {},
+  allEvents,
   onEventClick,
   startHour = 7,
   endHour = 22,
@@ -130,6 +132,7 @@ export default function WeekGrid({
             day={day}
             eventsAllDay={(eventsByDate[day.iso] || []).filter((e) => isUntimedForView(e))}
             eventsTimed={(eventsByDate[day.iso] || []).filter((e) => !isUntimedForView(e))}
+            allEvents={allEvents}
             onEventClick={onEventClick}
             startHour={startHour}
             endHour={endHour}

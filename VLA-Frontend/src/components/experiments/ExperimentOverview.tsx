@@ -81,7 +81,7 @@ export default function ExperimentOverview({
         </div>
                 
         <div>
-          Link zu linus
+          Link zu Linus
         </div>
         <div>
           <a 
