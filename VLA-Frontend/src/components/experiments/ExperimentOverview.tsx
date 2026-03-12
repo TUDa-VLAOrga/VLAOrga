@@ -23,47 +23,62 @@ export default function ExperimentOverview({
 } : ExperimentOverviewProps){
   return (
     <div className="experimentOverview">
-      <div className="experimentPropertyGrid">
+      <div className="cv-detailsContent">
         <div className="experimentOverviewTitle">
           {linusExperiment.name}
         </div>  
 
-        <div>
-          Aufbaustatus
+        <div className="cv-detailRow">
+
+          <div className="cv-detailLabel">
+            Aufbaustatus
+          </div>
+          <div className="cv-detailValue">
+            <select
+              defaultValue={experimentBooking.status}
+              onPointerDown={e => e.stopPropagation()}
+            >
+              {Object.values(ExperimentPreparationStatus).map(status => {
+                return (
+                  <option
+                    key={status}
+                    value={status}
+                    onClick={e => {
+                      e.stopPropagation();
+                      updateBookingStatus(experimentBooking, status);
+                    }}
+                  >
+                    {translationMap.get(status)}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
         </div>
-        <div>
-          <select
-            defaultValue={experimentBooking.status}
-            onPointerDown={e => e.stopPropagation()}
-          >
-            {Object.values(ExperimentPreparationStatus).map(status => {
-              return (
-                <option
-                  key={status}
-                  value={status}
-                  onClick={e => {
-                    e.stopPropagation();
-                    updateBookingStatus(experimentBooking, status);
-                  }}
-                >
-                  {translationMap.get(status)}
-                </option>
-              );
-            })}
-          </select>
+
+        <div className="cv-detailRow">
+
+          <div className="cv-detailLabel">
+            Link zu Linus
+          </div>
+          <div className="cv-detailValue">
+            <a 
+              className="linusLink"
+              target="_blank"
+              href={"https://linus.iap.physik.tu-darmstadt.de/experiment/" + linusExperiment.id + "/description"}
+            >
+              Experiment in Linus
+            </a>
+          </div>
         </div>
-                
-        <div>
-          Link zu Linus
-        </div>
-        <div>
-          <a 
-            className="linusLink"
-            target="_blank"
-            href={"https://linus.iap.physik.tu-darmstadt.de/experiment/" + linusExperiment.id + "/description"}
-          >
-            Experiment in Linus
-          </a>
+
+        <div className="cv-detailRow">
+          <div className="cv-detailLabel">
+            Notizen:
+          </div>
+          <div className="cv-detailValue">
+            {experimentBooking.notes}
+          </div>
         </div>
       </div>
     </div>
