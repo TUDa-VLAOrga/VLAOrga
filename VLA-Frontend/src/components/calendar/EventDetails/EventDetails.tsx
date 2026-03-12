@@ -7,7 +7,6 @@ import "../../../styles/Event-details-styles.css";
 import type {Acceptance, Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
-  getEventNotes,
   getEventStatus,
   getEventTitle,
   isCalendarEventAcceptance
@@ -72,9 +71,6 @@ export default function EventDetails({
   const [showCreateAcceptanceDialog, setShowCreateAcceptanceDialog] = useState(false);
   const [showEditLectureDialog, setShowEditLectureDialog] = useState(false);
 
-  // local state for note editing
-  const [eventNotes, setEventNotes] = useState(getEventNotes(event));
-
 
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
@@ -91,7 +87,13 @@ export default function EventDetails({
 
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
   const isAcceptance = isCalendarEventAcceptance(event);
-  const appointment: Appointment = isAcceptance ? event.appointment : event;
+  const appointment: Appointment = isAcceptance ? allEvents.find(
+    (ev) => !isCalendarEventAcceptance(ev) && ev.id === event.appointment.id
+  ) as Appointment : event;
+  // local state for note editing
+  const [eventNotes, setEventNotes] = useState(appointment.notes);
+
+
   const deletionBlocked = (
     !isAcceptance
     && allEvents
@@ -129,6 +131,7 @@ export default function EventDetails({
     return (
       <AcceptanceEditForm
         acceptance={event}
+        referenceAppointment={appointment}
         onSubmit={(acceptanceId, startTime, endTime) => {
           return onUpdateAcceptance(acceptanceId, startTime, endTime).then(() => setShowEditSingleDialog(false));
         }}
@@ -306,9 +309,9 @@ export default function EventDetails({
             <button
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
-              disabled={typeof eventNotes === "string" && eventNotes.trim() === getEventNotes(event)}
+              disabled={typeof eventNotes === "string" && eventNotes.trim() === appointment.notes}
               onClick={() => {
-                onUpdateEventNotes(event.id, eventNotes);
+                onUpdateEventNotes(appointment.id, eventNotes);
                 onClose();
               }}
             >

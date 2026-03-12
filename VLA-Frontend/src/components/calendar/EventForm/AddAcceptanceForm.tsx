@@ -1,7 +1,12 @@
 import type {Appointment} from "@/lib/databaseTypes.ts";
 import TimeRangeInput from "@/components/calendar/EventForm/TimeRangeInput.tsx";
 import {useState} from "react";
-import {getEventTitle, isCalendarEventAcceptance, verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
+import {
+  DEFAULT_ACCEPTANCE_DURATION_MIN,
+  getEventTitle,
+  isCalendarEventAcceptance,
+  verifyValidTimeRange
+} from "@/components/calendar/eventUtils.ts";
 import {daysBefore, formatDateAndTime, formatTime} from "@/components/calendar/dateUtils.ts";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
@@ -30,7 +35,7 @@ export default function AddAcceptanceForm({
     ? `${daysBefore(startTime, event.startTime)} vor dem Termin um ${formatTime(startTime)} Uhr`
     : "entsprechend";
 
-  const [isValid, hintText] = verifyValidTimeRange(startTime, endTime);
+  const [isValid, errorText] = verifyValidTimeRange(startTime, endTime);
   /**
    * Handle creation form and send request to server.
    */
@@ -65,8 +70,9 @@ export default function AddAcceptanceForm({
               endDateTime={endTime}
               onStartChange={setStartTime}
               onEndChange={setEndTime}
-              autoCalculateEnd={false}
+              durationMilliseconds={DEFAULT_ACCEPTANCE_DURATION_MIN * 60 * 1000}
               hintText={"Referenz: " + getEventTitle(event) + " am " + formatDateAndTime(event.startTime)}
+              errorText={errorText}
             />
 
             <div className="cv-formGroup">
@@ -88,7 +94,7 @@ export default function AddAcceptanceForm({
                 type="submit"
                 className="cv-formBtn cv-formBtnSubmit"
                 disabled={!isValid}
-                title={hintText}
+                title={errorText}
               >
                 Speichern
               </button>

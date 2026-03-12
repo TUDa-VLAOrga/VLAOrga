@@ -4,6 +4,8 @@ import type {CalendarEvent, EventStatus} from "@/components/calendar/CalendarTyp
 
 /** Default event duration in minutes. */
 export const DEFAULT_DURATION_MIN = 100;
+/** Default duration of an acceptance event in minutes. */
+export const DEFAULT_ACCEPTANCE_DURATION_MIN = 30;
 
 /**
  * Returns a readable title for an event.
@@ -51,7 +53,7 @@ export function verifyValidTimeRange(start?: Date, end?: Date): [boolean, string
     helpString = "Start und Ende muss am selben Tag liegen.";
   } else if (NON_WORKDAYS.includes(start.getDay())) {
     validRange = false;
-    helpString = "Termin muss an einem Wochentag liegen.";
+    helpString = "Termin muss an einem Werktag liegen.";
   } else {
     validRange = true;
     helpString = "";
@@ -136,11 +138,3 @@ export function isCalendarEventAcceptance(event: CalendarEvent): event is Accept
   return "appointment" in event;
 }
 
-/**
- * Get the notes of an event. In case of an acceptance, the associated appointment notes are returned.
- */
-export function getEventNotes(event: CalendarEvent): string {
-  if (isCalendarEventAcceptance(event))
-    return event.appointment.notes;
-  return event.notes;
-}
