@@ -1,5 +1,5 @@
-import type { CalendarDay } from "@/components/calendar/CalendarTypes";
-import { SseMessageType, type Appointment, type AppointmentMatching, type TimeFrame } from "@/lib/databaseTypes";
+import type {CalendarDay, CalendarEvent} from "@/components/calendar/CalendarTypes";
+import { SseMessageType, type AppointmentMatching, type TimeFrame } from "@/lib/databaseTypes";
 import useSseConnection from "./useSseConnection";
 import { useEffect } from "react";
 import { addDaysPresentFuture, toJSONLocalTime } from "@/components/calendar/dateUtils";
@@ -32,7 +32,7 @@ function handleAppointmentMatchingUpdated(event: MessageEvent, previousState: Ap
 
 interface useAppointmentMatcherProps {
   days: CalendarDay[],
-  allEvents: Appointment[],
+  allEvents: CalendarEvent[],
 }
 
 const sseHandlers = new Map<

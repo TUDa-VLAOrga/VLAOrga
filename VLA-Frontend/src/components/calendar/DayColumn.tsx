@@ -1,13 +1,14 @@
-import type { CalendarDay } from "./CalendarTypes";
+import type {CalendarDay, CalendarEvent} from "./CalendarTypes";
 import Timeline from "./Timeline";
-import type { Appointment } from "@/lib/databaseTypes";
-import { getEventTitle } from "./eventUtils";
+import {getEventColor, getEventTitle} from "./eventUtils";
 
 type DayColumnProps = {
   day: CalendarDay;
-  eventsAllDay: Appointment[];
-  eventsTimed: Appointment[];
-  onEventClick?: (eventId: number) => void;
+  eventsAllDay: CalendarEvent[];
+  eventsTimed: CalendarEvent[];
+  /** all events from all days, needed for referencing experiments of future days */
+  allEvents: CalendarEvent[];
+  onEventClick?: (event: CalendarEvent) => void;
   startHour: number;
   endHour: number;
   showAllDayRow?: boolean;
@@ -22,6 +23,7 @@ export default function DayColumn({
   day,
   eventsAllDay,
   eventsTimed,
+  allEvents,
   onEventClick,
   startHour,
   endHour,
@@ -36,7 +38,7 @@ export default function DayColumn({
             <div className="cv-allDayEmpty" />
           ) : (
             eventsAllDay.map((event) => {
-              const color = event.series.lecture?.color;
+              const color = getEventColor(event);
               const name = getEventTitle(event);
 
               const eventProps = {
@@ -45,7 +47,7 @@ export default function DayColumn({
                   ? { backgroundColor: color, borderColor: color }
                   : undefined,
                 title: name,
-                ...(onEventClick && { onClick: () => onEventClick(event.id) }),
+                ...(onEventClick && { onClick: () => onEventClick(event) }),
               };
 
               return (
@@ -70,6 +72,7 @@ export default function DayColumn({
       <div className="cv-dayTimeline">
         <Timeline
           events={eventsTimed}
+          allEvents={allEvents}
           onEventClick={onEventClick}
           startHour={startHour}
           endHour={endHour}

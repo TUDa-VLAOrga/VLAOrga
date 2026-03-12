@@ -44,6 +44,10 @@ public enum SseMessageType {
     APPOINTMENTUPDATED("APPOINTMENTUPDATED"),
     APPOINTMENTDELETED("APPOINTMENTDELETED"),
 
+    ACCEPTANCECREATED("ACCEPTANCECREATED"),
+    ACCEPTANCEUPDATED("ACCEPTANCEUPDATED"),
+    ACCEPTANCEDELETED("ACCEPTANCEDELETED"),
+
     /**
      * Used for sending SSE Events after a {@link Appointment}s have been updated.
      * This update contains all new bookings imported from Linus.

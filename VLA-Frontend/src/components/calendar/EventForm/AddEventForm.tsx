@@ -47,7 +47,7 @@ type EventFormProps = {
  * - optional recurrence
  * - optional people list
  */
-export default function EventCreationForm({
+export default function AddEventForm({
   onSubmit,
   onCancel,
   lectures,
@@ -137,6 +137,11 @@ export default function EventCreationForm({
     <div className="cv-formOverlay">
       <div className="cv-formBox" >
         <h2 className="cv-formTitle">Neuer Termin</h2>
+
+        <p className="cv-moveDialogInfo">
+          Um Abnahmetermine für eine Vorlesung zu erstellen,
+          bitte den Knopf in der Detailansicht der Vorlesung benutzen.
+        </p>
 
         <form onSubmit={handleSubmit} className="cv-form">
           <div className="cv-formGroup">

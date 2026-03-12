@@ -1,5 +1,5 @@
 import WeekdayPicker from "../WeekdayPicker";
-import type { Weekday } from "./EventCreationForm.tsx";
+import type { Weekday } from "./AddEventForm.tsx";
 import type {CalendarDay} from "@/components/calendar/CalendarTypes.ts";
 
 

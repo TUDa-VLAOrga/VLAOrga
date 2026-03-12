@@ -1,7 +1,7 @@
-import {useState, useMemo} from "react";
-import type { EventFormData, Weekday } from "../components/calendar/EventForm/EventCreationForm.tsx";
+import {useMemo} from "react";
+import type { EventFormData, Weekday } from "../components/calendar/EventForm/AddEventForm.tsx";
 import {addDays} from "../components/calendar/dateUtils";
-import {type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
+import {type Acceptance, type Appointment, type AppointmentSeries, SseMessageType} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
   getEventDateISO,
@@ -11,7 +11,8 @@ import {
 import {Logger} from "@/components/logger/Logger.ts";
 import {fetchBackend, getNotSynchronisedId, parseJsonFixDate} from "@/lib/utils.ts";
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch.ts";
-import {API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
+import {API_URL_ACCEPTANCES, API_URL_APPOINTMENT_SERIES, API_URL_APPOINTMENTS} from "@/lib/api.ts";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 
 
@@ -25,28 +26,35 @@ function handleAppointmentUpdated(event: MessageEvent, currentValue: Appointment
   return currentValue.map((event) => (event.id === updatedEvent.id ? updatedEvent : event));
 }
 
+function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
+  const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
+  return currentValue.filter((event) => event.id !== deletedEvent.id);
+}
+
+
+function handleAcceptanceCreated(event: MessageEvent, currentValue: Acceptance[]) {
+  const newAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
+  return [...currentValue, newAcceptance];
+}
+
+function handleAcceptanceUpdated(event: MessageEvent, currentValue: Acceptance[]) {
+  const updatedAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
+  return currentValue.map((acceptance) => (acceptance.id === updatedAcceptance.id ? updatedAcceptance : acceptance));
+}
+
+function handleAcceptanceDeleted(event: MessageEvent, currentValue: Acceptance[]) {
+  const deletedAcceptance = JSON.parse(event.data, parseJsonFixDate) as Acceptance;
+  return currentValue.filter((acceptance) => acceptance.id !== deletedAcceptance.id);
+}
+
 /**
  * useEvents manages:
- * - the list of calendar events (local state for now)
- * - the currently selected event (for EventDetails modal)
- * - creation logic, including recurrence materialization
+ * - the list of calendar events, namely appointments and possible acceptance events for them
+ * - the currently selected event (for EventDetails popup)
+ * - creation logic, including logic for recurring events and moving them together in a series
  * - a derived "eventsByDate" map for efficient rendering in the grid
  */
 export function useEvents() {
-  const [selectedEventId, setSelectedEventId] = useState<number>();
-
-  /**
-   * This is here below unlike {@link handleAppointmentCreated} since we need to call {@Link setSelectedEventId}.
-   */
-  function handleAppointmentDeleted(event: MessageEvent, currentValue: Appointment[]) {
-    const deletedEvent = JSON.parse(event.data, parseJsonFixDate) as Appointment;
-    if (deletedEvent.id === selectedEventId) {
-      // TODO: figure out whether this has some weird react race conditions,
-      //  since the result of this function is also passed to a setState
-      setSelectedEventId(undefined);
-    }
-    return currentValue.filter((event) => event.id !== deletedEvent.id);
-  }
 
   // SSE handlers for appointments
   const sseHandlersAppointments = new Map<
@@ -56,12 +64,25 @@ export function useEvents() {
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTCREATED, handleAppointmentCreated);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTDELETED, handleAppointmentDeleted);
   sseHandlersAppointments.set(SseMessageType.APPOINTMENTUPDATED, handleAppointmentUpdated);
-  const [allEvents, _setEvents] = useSseConnectionWithInitialFetch<Appointment[]>(
+  const [allAppointments, _setAppointments] = useSseConnectionWithInitialFetch<Appointment[]>(
     [], API_URL_APPOINTMENTS, sseHandlersAppointments
+  );
+  const sseHandlersAcceptances = new Map<
+    SseMessageType, (event: MessageEvent, currentValue: Acceptance[]) => Acceptance[]
+  >();
+  sseHandlersAcceptances.set(SseMessageType.ACCEPTANCECREATED, handleAcceptanceCreated);
+  sseHandlersAcceptances.set(SseMessageType.ACCEPTANCEUPDATED, handleAcceptanceUpdated);
+  sseHandlersAcceptances.set(SseMessageType.ACCEPTANCEDELETED, handleAcceptanceDeleted);
+  const [allAcceptances, _setAcceptances] = useSseConnectionWithInitialFetch<Acceptance[]>(
+    [], API_URL_ACCEPTANCES, sseHandlersAcceptances
+  );
+  const allEvents: CalendarEvent[] = useMemo(
+    () => [...allAppointments, ...allAcceptances],
+    [allAcceptances, allAppointments]
   );
 
   function handleUpdateEventNotes(eventId: number, notes: string) {
-    const event = allEvents.find(e => e.id === eventId);
+    const event = allAppointments.find(e => e.id === eventId);
     if (event) {
       event.notes = notes;
       fetchBackend<Appointment>(
@@ -90,16 +111,16 @@ export function useEvents() {
       Logger.error("Invalid time range for event");
       throw new Error("Invalid time range for event");
     }
-    const oldEvent = allEvents.find(e => e.id === eventId);
+    const oldEvent = allAppointments.find(e => e.id === eventId);
     if (!oldEvent) {
       Logger.error("Event not found");
       throw new Error("Event not found");
     }
     // case 1: only this event should be updated
-    if (!editSeries || !checkPartOfSeries(oldEvent, allEvents)) {
+    if (!editSeries || !checkPartOfSeries(oldEvent, allAppointments)) {
       let newSeries: AppointmentSeries | undefined;
       // create new series for event, if not already alone in a series
-      if (checkPartOfSeries(oldEvent, allEvents)) {
+      if (checkPartOfSeries(oldEvent, allAppointments)) {
         newSeries = {
           ...oldEvent.series,
           ...updates.series,
@@ -137,7 +158,7 @@ export function useEvents() {
         Logger.error("Error during appointment update in handleUpdateEvent: ", error);
         return oldEvent;
       }
-    } else if (checkPartOfSeries(oldEvent, allEvents)) {  // case 2: the whole series should be updated as well
+    } else if (checkPartOfSeries(oldEvent, allAppointments)) {  // case 2: the whole series should be updated as well
       let newSeries = {
         ...oldEvent.series,
         ...updates.series,
@@ -148,13 +169,13 @@ export function useEvents() {
         Logger.error("Error during series update in handleUpdateEvent: ", error);
         return oldEvent;
       }
-      let movedEvents: Appointment[] = allEvents.filter(e => e.series.id === oldEvent.series.id).map(e => ({
+      let movedEvents: Appointment[] = allAppointments.filter(e => e.series.id === oldEvent.series.id).map(e => ({
         ...e,
         series: newSeries,
       }));
       if (updates.startTime && updates.endTime) {
         // calculate new start and end for every event, if changed
-        movedEvents = moveEventSeries(allEvents, oldEvent, updates.startTime, updates.endTime);
+        movedEvents = moveEventSeries(allAppointments, oldEvent, updates.startTime, updates.endTime);
       }
       // set events to moved ones with updated series
       try {
@@ -299,17 +320,70 @@ export function useEvents() {
   }
 
   /**
-   * Update the {@link selectedEventId} state on clicking an event.
+   * Create a new acceptance event for the whole series of appointment with the given ID.
    */
-  function handleEventClick(eventId: number) {
-    setSelectedEventId(eventId);
+  async function handleAcceptanceSeriesCreate(
+    referenceAppointmentId: number, startTime: Date, endTime: Date
+  ): Promise<Acceptance | void> {
+    const referenceAppointment = allAppointments.find(e => e.id === referenceAppointmentId);
+    if (!referenceAppointment) {
+      Logger.error("Reference appointment not found for creating acceptance.");
+      return;
+    }
+    const acceptanceDuration = endTime.getTime() - startTime.getTime();
+    const deltaToAppointmentStart = referenceAppointment.startTime.getTime() - startTime.getTime();
+
+    let ret: Acceptance | undefined;
+    // TODO: add /multi endpoint in backend and avoid looping with many requests
+    // iterate over all appointments in the same series and add an acceptance event
+    for (const appointment of allAppointments.filter(e => e.series.id === referenceAppointment.series.id)) {
+      const acceptanceEvent: Acceptance = {
+        id: getNotSynchronisedId(),
+        startTime: new Date(appointment.startTime.getTime() - deltaToAppointmentStart),
+        endTime: new Date(appointment.startTime.getTime() - deltaToAppointmentStart + acceptanceDuration),
+        appointment: appointment,
+      };
+      try {
+        const createdAcceptance = await fetchBackend(API_URL_ACCEPTANCES, "POST", acceptanceEvent);
+        if (appointment.id === referenceAppointment.id) {
+          ret = createdAcceptance;
+        }
+      } catch (error) {
+        Logger.error("Error during acceptance creation in handleAcceptanceSeriesCreate: ", error);
+      }
+    }
+    if (!ret) {
+      Logger.error("Reference appointment not in its own series, this should not happen.");
+    }
+    return ret;
   }
 
   /**
-   * Update the {@link selectedEventId} state on closing the event details.
+   * Update the time of an acceptance event.
    */
-  function closeEventDetails() {
-    setSelectedEventId(undefined);
+  async function handleAcceptanceUpdate(
+    acceptanceId: number, startTime: Date, endTime: Date
+  ): Promise<Acceptance | void> {
+    const acceptance = allAcceptances.find(e => e.id === acceptanceId);
+    if (!acceptance) {
+      Logger.error("Acceptance not found for update.");
+      return;
+    }
+    return fetchBackend(`${API_URL_ACCEPTANCES}/${acceptanceId}`, "PUT", {
+      ...acceptance,
+      startTime: startTime,
+      endTime: endTime,
+    });
+  }
+
+  /**
+   * Delete an acceptance.
+   */
+  async function handleAcceptanceDeletion(acceptanceId: number): Promise<void> {
+    await fetchBackend<Appointment>(`${API_URL_ACCEPTANCES}/${acceptanceId}`, "DELETE")
+      .catch((error) => {
+        Logger.error("Error on appointment deletion: ", error);
+      });
   }
 
   /**
@@ -317,7 +391,7 @@ export function useEvents() {
    * dateISO -> list of events on that date.
    */
   const eventsByDate = useMemo(() => {
-    const grouped: Record<string, Appointment[]> = {};
+    const grouped: Record<string, CalendarEvent[]> = {};
     allEvents.forEach((event) => {
       const eventDateISO = getEventDateISO(event);
       if (!grouped[eventDateISO]) {
@@ -355,14 +429,14 @@ export function useEvents() {
 
   return {
     allEvents,
-    selectedEventId,
     eventsByDate,
     handleCreateEvent,
-    handleEventClick,
-    closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
     handleDeletion,
     handleCancelDeletionRequest,
+    handleAcceptanceSeriesCreate,
+    handleAcceptanceUpdate,
+    handleAcceptanceDeletion,
   };
 }

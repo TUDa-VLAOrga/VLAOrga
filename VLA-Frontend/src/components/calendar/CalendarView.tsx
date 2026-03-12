@@ -4,7 +4,7 @@ import WeekHeader from "./WeekHeader";
 import WeekGrid from "./WeekGrid";
 import "../../styles/CalendarView.css";
 import GoToMenu from "./GoToButton";
-import EventCreationForm, { type EventFormData } from "./EventForm/EventCreationForm.tsx";
+import AddEventForm, { type EventFormData } from "./EventForm/AddEventForm.tsx";
 import EventDetails from "./EventDetails/EventDetails";
 import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
 import { useEvents } from "@/hooks/useEvents";
@@ -15,6 +15,9 @@ import AppointmentMatchingButton from "../linusAppointmentMatcher/AppointmentMat
 import { useAppointmentMatcher } from "@/hooks/useAppointmentMatcher.ts";
 import LogoutButton from "./LogoutButton.tsx";
 import {useUsers} from "@/hooks/useUsers.ts";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
+import {isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
+import type {Acceptance, Appointment} from "@/lib/databaseTypes.ts";
 
 /*
  * CalendarView is the main screen for the calendar UI.
@@ -22,8 +25,27 @@ import {useUsers} from "@/hooks/useUsers.ts";
  * and meta data (lectures, categories) that can be used by the form and the event tiles.
  */
 export default function CalendarView() {
-  
-  const [showEventForm, setShowEventForm] = useState(false);
+
+  // === bits for display logic ===
+  const [showAddEventForm, setShowAddEventForm] = useState(false);
+  // since we have two entity types mixe in allEvents, we need two flags
+  const [selectedAcceptance, setselectedAcceptance] = useState<Acceptance | undefined>(undefined);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | undefined>(undefined);
+  function handleEventClick(event: CalendarEvent) {
+    if (isCalendarEventAcceptance(event)) {
+      setselectedAcceptance(event);
+      setSelectedAppointment(undefined);
+    } else {
+      setSelectedAppointment(event);
+      setselectedAcceptance(undefined);
+    }
+  }
+  function closeEventDetails() {
+    setSelectedAppointment(undefined);
+    setselectedAcceptance(undefined);
+  }
+
+  // === stateful stuff  ===
   const { days, weekStart, rangeText, prevDay, nextDay, goToDate } = useCalendarNavigation();
   const { lectures, handleAddLecture, handleUpdateLecture } = useLectures();
   const { categories, handleAddCategory } = useCategories();
@@ -32,15 +54,15 @@ export default function CalendarView() {
 
   const {
     allEvents,
-    selectedEventId,
-    eventsByDate, 
+    eventsByDate,
     handleCreateEvent, 
-    handleEventClick,
-    closeEventDetails,
     handleUpdateEventNotes,
     handleUpdateEvent,
     handleDeletion,
     handleCancelDeletionRequest,
+    handleAcceptanceSeriesCreate,
+    handleAcceptanceUpdate,
+    handleAcceptanceDeletion,
   } = useEvents();
 
   const missingAppointmentMatchings = useAppointmentMatcher({days, allEvents});
@@ -49,7 +71,7 @@ export default function CalendarView() {
    * Called by EventForm when the user submits.
    */
   function onEventSubmit(formData: EventFormData) {
-    handleCreateEvent(formData).then(() => setShowEventForm(false));
+    handleCreateEvent(formData).then(() => setShowAddEventForm(false));
   }
 
  
@@ -79,14 +101,14 @@ export default function CalendarView() {
 
         <button
           className="cv-createBtn"
-          onClick={() => setShowEventForm(true)}
+          onClick={() => setShowAddEventForm(true)}
           type="button"
           aria-label="Neuen Termin erstellen"
         >
           + Neuer Termin
         </button>
 
-        <AppointmentMatchingButton appointmentMatching={missingAppointmentMatchings} appointments={allEvents}/>
+        <AppointmentMatchingButton appointmentMatchings={missingAppointmentMatchings} events={allEvents}/>
 
         <LogoutButton/>
       </div>
@@ -101,15 +123,16 @@ export default function CalendarView() {
           <WeekGrid
             days={days}
             eventsByDate={eventsByDate}
+            allEvents={allEvents}
             onEventClick={handleEventClick}
           />
         </div>
       </div>
 
-      {showEventForm && (
-        <EventCreationForm
+      {showAddEventForm && (
+        <AddEventForm
           onSubmit={onEventSubmit}
-          onCancel={() => setShowEventForm(false)}
+          onCancel={() => setShowAddEventForm(false)}
           lectures={lectures}
           categories={categories}
           onAddLecture={handleAddLecture}
@@ -119,9 +142,9 @@ export default function CalendarView() {
         />
       )}
       {/* Modal overlay: event details */}
-      {selectedEventId && allEvents.find(e => e.id === selectedEventId) && (
+      {(selectedAppointment || selectedAcceptance) &&
         <EventDetails
-          event={allEvents.find((e) => e.id === selectedEventId)!}
+          event={selectedAcceptance ?? selectedAppointment!}
           allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}
@@ -130,6 +153,9 @@ export default function CalendarView() {
           onUpdatePersonNotes={handleUpdatePersonNotes}
           onUpdateEventNotes={handleUpdateEventNotes}
           onUpdateEvent={handleUpdateEvent}
+          onAddAcceptance={handleAcceptanceSeriesCreate}
+          onUpdateAcceptance={handleAcceptanceUpdate}
+          onDeleteAcceptance={handleAcceptanceDeletion}
           onAddCategory={handleAddCategory}
           onAddPerson={handleAddPerson}
           onAddLecture={handleAddLecture}
@@ -138,7 +164,7 @@ export default function CalendarView() {
           onCancelDeletionRequest={handleCancelDeletionRequest}
           currentUserId={currentUserId}
         />
-      )}
+      }
     </div>
   );
 }

@@ -72,8 +72,7 @@ export default function ExperimentEntry({experiment}: ExperimentProps){
           <ExperimentOverview
             linusExperiment={linusExperiment}
             experimentBooking={experiment}
-            statusBackgroundColor={statusBackgroundColorMap.get(experiment.status)!}
-            statusTextColor={statusTextColorMap.get(experiment.status)!}/>
+          />
         </Draggable>
       </>
       }

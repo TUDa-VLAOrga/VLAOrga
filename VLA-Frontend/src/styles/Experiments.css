@@ -22,7 +22,10 @@
 .experimentOverview {
     min-width: 30dvw;
     min-height: 20dvw;
+    padding: 24px;
     background-color: white;
+    border-color: #000000;
+    border-width: thin;
     border-radius: 20px;
     overflow: hidden;
     resize: both;
