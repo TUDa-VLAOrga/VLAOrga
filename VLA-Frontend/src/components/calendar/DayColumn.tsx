@@ -38,8 +38,8 @@ export default function DayColumn({
             <div className="cv-allDayEmpty" />
           ) : (
             eventsAllDay.map((event) => {
-              const color = getEventColor(event);
-              const name = getEventTitle(event);
+              const color = getEventColor(event, allEvents);
+              const name = getEventTitle(event, allEvents);
 
               const eventProps = {
                 className: `cv-event`,

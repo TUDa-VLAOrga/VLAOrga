@@ -9,7 +9,7 @@ import {
   checkPartOfSeries,
   getEventStatus,
   getEventTitle,
-  isCalendarEventAcceptance
+  isCalendarEventAcceptance, retrieveAppointment
 } from "@/components/calendar/eventUtils.ts";
 import AddAcceptanceForm from "@/components/calendar/EventForm/AddAcceptanceForm.tsx";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
@@ -87,9 +87,7 @@ export default function EventDetails({
 
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
   const isAcceptance = isCalendarEventAcceptance(event);
-  const appointment: Appointment = isAcceptance ? allEvents.find(
-    (ev) => !isCalendarEventAcceptance(ev) && ev.id === event.appointment.id
-  ) as Appointment : event;
+  const appointment: Appointment = retrieveAppointment(event, allEvents);
   // local state for note editing
   const [eventNotes, setEventNotes] = useState(appointment.notes);
 
@@ -182,14 +180,14 @@ export default function EventDetails({
             >
               +&nbsp;Abnahmetermin
             </button>
-            <h2 className="cv-formTitle">{getEventTitle(event)}</h2>
+            <h2 className="cv-formTitle">{getEventTitle(event, allEvents)}</h2>
           </div>
           }
           {isAcceptance &&
               <div>
                 <h2 className="cv-formTitle">Abnahmetermin</h2>
                 <h3 className="cv-formSubtitle">
-                  für {getEventTitle(event.appointment)} am {formatDateAndTime(event.appointment.startTime)}
+                  für {getEventTitle(appointment)} am {formatDateAndTime(appointment.startTime)}
                 </h3>
               </div>
           }
@@ -238,7 +236,7 @@ export default function EventDetails({
               </span>
             </div>
 
-            <ExperimentSection event={event} />
+            <ExperimentSection appointment={appointment} />
 
             {appointment.series.lecture && appointment.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
