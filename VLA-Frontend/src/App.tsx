@@ -1,7 +1,6 @@
 import './styles/App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CalendarPage from "./pages/CalendarPage";
-import LoggerComponent from './components/logger/LoggerComponent';
 
 function App() {
 
