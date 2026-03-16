@@ -34,7 +34,7 @@ type EventDetailsProps = {
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
   onUpdateLecture: (lecture: Lecture) => Promise<Lecture | void>;
-  onDeletion: (eventId: number) => Promise<void>;
+  onDeletion: (eventId: number) => Promise<Appointment | string>;
   onCancelDeletionRequest: (eventId: number) => Promise<void>;
   currentUserId?: number;
 };
@@ -94,13 +94,13 @@ export default function EventDetails({
   const [eventNotes, setEventNotes] = useState(appointment.notes);
 
 
-  const deletionBlocked = (
+  const [deletionBlocked, setDeletionBlocked] = useState((
     !isAcceptance
     && allEvents
       .filter(isCalendarEventAcceptance)
       .filter(acc => acc.appointment.id == appointment.id)
       .length > 0
-  );
+  ) ? "Dieser Termin kann noch nicht gelöscht werden, da Abnahmetermine verknüpft sind." : "");
   // double-deletion logic for appointments
   const [isDeletionPending, setIsDeletionPending] = useState(
     isAcceptance ? false : Boolean(event.deletingIntentionUser)
@@ -338,7 +338,7 @@ export default function EventDetails({
           <div className="cv-formActions">
             {deletionBlocked &&
               <div className="cv-hintBanner cv-deletionHintBanner">
-                Dieser Termin kann noch nicht gelöscht werden, da Abnahmetermine verknüpft sind.
+                {deletionBlocked}
               </div>
             }
             {!deletionBlocked && deletingUser &&
@@ -360,7 +360,14 @@ export default function EventDetails({
                   if (isAcceptance)
                     onDeleteAcceptance(event.id).then(() => onClose());
                   else
-                    onDeletion(event.id).then(() => setIsDeletionPending(true));
+                    onDeletion(event.id).then((errorStr: Appointment | string) => {
+                      // string returned => error message, otherwise success
+                      if (typeof errorStr === "string") {
+                        setDeletionBlocked(errorStr);
+                      } else {
+                        setIsDeletionPending(true);
+                      }
+                    });
                 }}
               >
                 Löschen
@@ -370,7 +377,15 @@ export default function EventDetails({
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
-                onClick={() => onDeletion(event.id).then(() => onClose())}
+                onClick={() => onDeletion(event.id).then(
+                  (errorStr: Appointment | string) => {
+                    // string returned => error message, otherwise success
+                    if (typeof errorStr === "string") {
+                      setDeletionBlocked(errorStr);
+                    } else {
+                      setIsDeletionPending(true);
+                    }
+                  })}
               >
                 Löschung bestätigen
               </button>
