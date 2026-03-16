@@ -98,7 +98,7 @@ export default function ExperimentOverview({
           onClick={() => deleteExperimentBooking()}
           aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
         >
-          {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
+          {deletionRequested ? "Sicher?" : "Experimentbuchung löschen"}
         </button>
       </div>
     </div>
