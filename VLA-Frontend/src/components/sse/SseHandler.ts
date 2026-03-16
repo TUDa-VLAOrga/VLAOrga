@@ -37,8 +37,6 @@ export class SSEHandler {
     this.eventSource.addEventListener("error", SSEHandler.handleSseError);
         
     this.addEventSourceEventHandlers();
-
-    window.addEventListener("beforeunload", SSEHandler.closeConnection);
   }
 
   /**
@@ -66,8 +64,8 @@ export class SSEHandler {
      * Closes the eventSource
      * Cannot be reopened without a reload
      */
-  private static closeConnection(){
-    Logger.warn("Sse connection was closed");
+  private static _closeConnection(){
+    Logger.error("Sse connection was closed");
     SSEHandler.setComponentStatus.current(true);
     SSEHandler.eventSource.close();
   }
