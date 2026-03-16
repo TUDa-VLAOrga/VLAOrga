@@ -102,9 +102,7 @@ export default function EventDetails({
       .length > 0
   ) ? "Dieser Termin kann noch nicht gelöscht werden, da Abnahmetermine verknüpft sind." : "");
   // double-deletion logic for appointments
-  const [isDeletionPending, setIsDeletionPending] = useState(
-    isAcceptance ? false : Boolean(event.deletingIntentionUser)
-  );
+  const isDeletionPending = isAcceptance ? false : Boolean(event.deletingIntentionUser);
   const deletingUser = isAcceptance ? null : event.deletingIntentionUser;
   const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
   const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
@@ -364,8 +362,6 @@ export default function EventDetails({
                       // string returned => error message, otherwise success
                       if (typeof errorStr === "string") {
                         setDeletionBlocked(errorStr);
-                      } else {
-                        setIsDeletionPending(true);
                       }
                     });
                 }}
@@ -382,8 +378,6 @@ export default function EventDetails({
                     // string returned => error message, otherwise success
                     if (typeof errorStr === "string") {
                       setDeletionBlocked(errorStr);
-                    } else {
-                      setIsDeletionPending(true);
                     }
                   })}
               >
@@ -394,7 +388,7 @@ export default function EventDetails({
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
-                onClick={() => onCancelDeletionRequest(event.id).then(() => setIsDeletionPending(false))}
+                onClick={() => onCancelDeletionRequest(event.id)}
               >
                 Löschanfrage zurückziehen
               </button>

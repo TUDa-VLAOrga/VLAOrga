@@ -17,7 +17,6 @@ import LogoutButton from "./LogoutButton.tsx";
 import {useUsers} from "@/hooks/useUsers.ts";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 import {isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
-import type {Acceptance, Appointment} from "@/lib/databaseTypes.ts";
 
 /*
  * CalendarView is the main screen for the calendar UI.
@@ -29,20 +28,20 @@ export default function CalendarView() {
   // === bits for display logic ===
   const [showAddEventForm, setShowAddEventForm] = useState(false);
   // since we have two entity types mixe in allEvents, we need two flags
-  const [selectedAcceptance, setselectedAcceptance] = useState<Acceptance | undefined>(undefined);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | undefined>(undefined);
+  const [selectedAcceptanceId, setselectedAcceptanceId] = useState<number | undefined>(undefined);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | undefined>(undefined);
   function handleEventClick(event: CalendarEvent) {
     if (isCalendarEventAcceptance(event)) {
-      setselectedAcceptance(event);
-      setSelectedAppointment(undefined);
+      setselectedAcceptanceId(event.id);
+      setSelectedAppointmentId(undefined);
     } else {
-      setSelectedAppointment(event);
-      setselectedAcceptance(undefined);
+      setSelectedAppointmentId(event.id);
+      setselectedAcceptanceId(undefined);
     }
   }
   function closeEventDetails() {
-    setSelectedAppointment(undefined);
-    setselectedAcceptance(undefined);
+    setSelectedAppointmentId(undefined);
+    setselectedAcceptanceId(undefined);
   }
 
   // === stateful stuff  ===
@@ -142,9 +141,12 @@ export default function CalendarView() {
         />
       )}
       {/* Modal overlay: event details */}
-      {(selectedAppointment || selectedAcceptance) &&
+      {(selectedAppointmentId || selectedAcceptanceId) &&
         <EventDetails
-          event={selectedAcceptance ?? selectedAppointment!}
+          event={selectedAcceptanceId
+            ? allEvents.find(ev => isCalendarEventAcceptance(ev) && ev.id === selectedAcceptanceId)!
+            : allEvents.find(ev => !isCalendarEventAcceptance(ev) && ev.id === selectedAppointmentId)!
+          }
           allEvents={allEvents}
           onClose={closeEventDetails}
           lectures={lectures}
