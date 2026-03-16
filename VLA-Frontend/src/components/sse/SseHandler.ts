@@ -38,7 +38,7 @@ export class SSEHandler {
         
     this.addEventSourceEventHandlers();
 
-    window.addEventListener("beforeunload", SSEHandler.closeConnection);
+    window.addEventListener("offline", SSEHandler.closeConnection);
   }
 
   /**
@@ -67,7 +67,8 @@ export class SSEHandler {
      * Cannot be reopened without a reload
      */
   private static closeConnection(){
-    Logger.warn("Sse connection was closed");
+    Logger.error("Sse connection was closed");
+    SSEHandler.setComponentStatus.current(true);
     SSEHandler.eventSource.close();
   }
 
