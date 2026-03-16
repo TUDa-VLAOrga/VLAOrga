@@ -16,8 +16,17 @@ function handleExperimentBookingUpdate(event: MessageEvent, previousState: Exper
   return newState;
 }
 
+function handleExperimentBookingDeletion(event: MessageEvent, previousState: ExperimentBooking[]){
+  const deletedBooking = JSON.parse(event.data) as unknown as ExperimentBooking;
+  
+  const newState = previousState.filter(booking => booking.id != deletedBooking.id);
+
+  return newState;
+}
+
 const handlers = new Map<SseMessageType, (event: MessageEvent, value: ExperimentBooking[]) => ExperimentBooking[]>;
 handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpdate);
+handlers.set(SseMessageType.EXPERIMENTBOOKINGDELETED, handleExperimentBookingDeletion);
 
 /**
  * Part of Appointments that handles interactions with the experiments
