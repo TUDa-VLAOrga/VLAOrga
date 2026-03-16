@@ -1,7 +1,7 @@
 import { ExperimentPreparationStatus, type ExperimentBooking, type LinusExperiment } from "@/lib/databaseTypes";
 import { fetchBackend, getExperimentPreperationsStatusGermanMap } from "@/lib/utils";
 import { API_URL_EXPERIMENTBOOKINGS } from "@/lib/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface ExperimentOverviewProps {
   linusExperiment: LinusExperiment,
@@ -29,7 +29,7 @@ export default function ExperimentOverview({
       setDeletionRequested(true);
       return;
     } 
-    fetchBackend(`${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}`, "DELETE")
+    fetchBackend(`${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}`, "DELETE");
   }
 
   return (
@@ -93,10 +93,10 @@ export default function ExperimentOverview({
         </div>
 
         <button 
-            type="button"
-            className="cv-formBtn cv-formBtnDanger"
-            onClick={() => deleteExperimentBooking()}
-            aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
+          type="button"
+          className="cv-formBtn cv-formBtnDanger"
+          onClick={() => deleteExperimentBooking()}
+          aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
         >
           {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
         </button>
