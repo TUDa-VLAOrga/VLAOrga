@@ -65,7 +65,6 @@ public class SseController {
 
             try {
                 eventData = UtilityFunctions.convertObjectToJson(eventObject);
-                System.out.println(eventData);
             } catch (JsonProcessingException e) {
                 // This should never happen as we should only input Entities
                 logger.error("Object could not be serialized as JSON");
