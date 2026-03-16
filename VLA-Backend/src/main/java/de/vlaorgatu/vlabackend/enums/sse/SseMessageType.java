@@ -55,6 +55,7 @@ public enum SseMessageType {
     LINUSBOOKINGSIMPORT("LINUSBOOKINGSIMPORT"),
 
     EXPERIMENTBOOKINGUPDATED("EXPERIMENTBOOKINGUPDATED"),
+    EXPERIMENTBOOKINGDELETED("EXPERIMENTBOOKINGDELETED"),
     /**
      * Used for sending Debug messages to the frontend.
      */
