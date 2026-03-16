@@ -13,18 +13,22 @@ export const DEFAULT_ACCEPTANCE_DURATION_MIN = 30;
  * This is factored out here since the title may be set at the event series already, otherwise the lecture name.
  * In case both are present, the lecture name is appended in parentheses.
  */
-export function getEventTitle(event: CalendarEvent) {
+export function getEventTitle(event: CalendarEvent, allEvents?: CalendarEvent[]) {
   let title = "";
   if (isCalendarEventAcceptance(event)) {
     title += "Abnahme: ";
-    event = event.appointment;
   }
-  if (!event.series.lecture)
-    title += event.series.name;
-  else if (!event.series.name)
-    title += event.series.lecture.name;
+  const appointment = allEvents
+    ? retrieveAppointment(event, allEvents)
+    : isCalendarEventAcceptance(event)
+      ? event.appointment
+      : event;
+  if (!appointment.series.lecture)
+    title += appointment.series.name;
+  else if (!appointment.series.name)
+    title += appointment.series.lecture.name;
   else
-    title += `${event.series.name} (${event.series.lecture.name})`;
+    title += `${appointment.series.name} (${appointment.series.lecture.name})`;
   return title;
 }
 
@@ -115,12 +119,10 @@ export function getEventStatus(_event: Appointment) {
 /**
  * Get color to display the event with in frontend.
  */
-export function getEventColor(event: CalendarEvent): string {
-  if (isCalendarEventAcceptance(event)) {
-    event = event.appointment;
-  }
-  if (event.series.lecture) {
-    return event.series.lecture.color;
+export function getEventColor(event: CalendarEvent, allEvents: CalendarEvent[]): string {
+  const appointment = retrieveAppointment(event, allEvents);
+  if (appointment.series.lecture) {
+    return appointment.series.lecture.color;
   } else {
     return "";
   }
@@ -136,5 +138,18 @@ export function getEventColor(event: CalendarEvent): string {
  */
 export function isCalendarEventAcceptance(event: CalendarEvent): event is Acceptance {
   return "appointment" in event;
+}
+
+/**
+ * Get the associated appointment for an acceptance.
+ * If input is already an appointment, return itself.
+ */
+export function retrieveAppointment(event: CalendarEvent, allEvents: CalendarEvent[]): Appointment {
+  if (isCalendarEventAcceptance(event))
+    return allEvents.find((
+      ev) => !isCalendarEventAcceptance(ev) && ev.id == event.appointment.id
+    ) as Appointment ?? event.appointment;
+  else
+    return event;
 }
 

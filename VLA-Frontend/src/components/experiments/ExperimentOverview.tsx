@@ -37,16 +37,13 @@ export default function ExperimentOverview({
             <select
               defaultValue={experimentBooking.status}
               onPointerDown={e => e.stopPropagation()}
+              onChange={(e) => updateBookingStatus(experimentBooking, e.target.value as ExperimentPreparationStatus)}
             >
               {Object.values(ExperimentPreparationStatus).map(status => {
                 return (
                   <option
                     key={status}
                     value={status}
-                    onClick={e => {
-                      e.stopPropagation();
-                      updateBookingStatus(experimentBooking, status);
-                    }}
                   >
                     {translationMap.get(status)}
                   </option>

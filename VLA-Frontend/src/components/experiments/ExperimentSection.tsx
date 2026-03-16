@@ -1,11 +1,9 @@
 import useSseConnectionWithInitialFetch from "@/hooks/useSseConnectionWithInitialFetch";
-import { SseMessageType, type ExperimentBooking } from "@/lib/databaseTypes";
+import {SseMessageType, type ExperimentBooking, type Appointment} from "@/lib/databaseTypes";
 import ExperimentEntry from "./ExperimentEntry";
-import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
-import {isCalendarEventAcceptance} from "@/components/calendar/eventUtils.ts";
 
 interface ExperimentSectionProps {
-  event: CalendarEvent;
+  appointment: Appointment;
 }
 
 function handleExperimentBookingUpdate(event: MessageEvent, previousState: ExperimentBooking[]){
@@ -22,8 +20,7 @@ handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpd
 /**
  * Part of Appointments that handles interactions with the experiments
  */
-export default function ExperimentSection({event}: ExperimentSectionProps){
-  const appointment = isCalendarEventAcceptance(event) ? event.appointment : event;
+export default function ExperimentSection({appointment}: ExperimentSectionProps){
   const [experimentBookings, _setExperimentBooking] = useSseConnectionWithInitialFetch<ExperimentBooking[]>(
     [],
     `/api/appointments/${appointment.id}/experimentBookings`,

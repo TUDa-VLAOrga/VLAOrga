@@ -1,8 +1,7 @@
-import {getEventColor, getEventTitle, isCalendarEventAcceptance} from "./eventUtils";
+import {getEventColor, getEventTitle, retrieveAppointment} from "./eventUtils";
 import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 import CalendarExperimentIndicator from "./CalendarExperimentIndicator";
-import type {Appointment} from "@/lib/databaseTypes.ts";
 
 type Props = {
   /** Timed events for a single day column. */
@@ -167,8 +166,8 @@ export default function Timeline({
           const widthPct = 100 / colCount;
           const leftPct = col * widthPct;
 
-          const color = getEventColor(event);
-          const title = getEventTitle(event);
+          const color = getEventColor(event, allEvents);
+          const title = getEventTitle(event, allEvents);
 
           const shortClass =
             durationMin < 60
@@ -198,11 +197,7 @@ export default function Timeline({
                 {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </div>
 
-              <CalendarExperimentIndicator event={isCalendarEventAcceptance(event) ?
-                allEvents.find((
-                  ev) => !isCalendarEventAcceptance(ev) && ev.id == event.appointment.id
-                ) as Appointment ?? event.appointment
-                : event}
+              <CalendarExperimentIndicator appointment={retrieveAppointment(event, allEvents)}
               />
             </div>
           );
