@@ -12,7 +12,6 @@ function App() {
           <Route path="/" element={<CalendarPage/>}/>
         </Routes>
       </div>
-      <LoggerComponent></LoggerComponent>
     </BrowserRouter>
   );
 }
