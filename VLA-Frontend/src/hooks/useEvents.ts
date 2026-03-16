@@ -404,12 +404,19 @@ export function useEvents() {
 
   /**
    * User beantragt oder bestätigt Löschung eines Termins.
+   * @return nothing if successful, error string otherwise.
    */
-  async function handleDeletion(appointmentId: number): Promise<void> {
-    await fetchBackend<Appointment>(
+  async function handleDeletion(appointmentId: number): Promise<Appointment | string> {
+    return fetchBackend<Appointment>(
       `${API_URL_APPOINTMENTS}/${appointmentId}`, "DELETE")
-      .catch((error) => {
+      .catch((error: Error) => {
+        if (error.message.includes("Conflict.")) {
+          console.log("Returning error message");
+          return "Löschen nicht möglich, da Experimente gebucht sind," +
+            " aber kein Folgetermin für Verschiebung vorhanden ist.";
+        }
         Logger.error("Error on appointment deletion: ", error);
+        return "";
       });
   }
   /**

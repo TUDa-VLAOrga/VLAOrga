@@ -23,7 +23,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     @SuppressWarnings("checkstyle:indentation")
     Optional<Appointment>
-    findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+    findFirstAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
         Long seriesLectureId,
         LocalDateTime startTime
     );
@@ -37,7 +37,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     @SuppressWarnings("checkstyle:indentation")
     Optional<Appointment>
-    findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+    findFirstAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
         Long seriesId,
         LocalDateTime startTime
     );
