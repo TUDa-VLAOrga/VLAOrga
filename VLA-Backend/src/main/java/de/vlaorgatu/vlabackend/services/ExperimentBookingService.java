@@ -66,7 +66,7 @@ public class ExperimentBookingService {
         if (appointmentLecture == null) {
             // Appointment has no lecture
             return appointmentRepository
-                .findAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+                .findFirstAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
                     previous.getId(),
                     previous.getStartTime()
                 )
@@ -79,7 +79,7 @@ public class ExperimentBookingService {
         } else {
             // Appointment has lecture
             return appointmentRepository
-                .findAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
+                .findFirstAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
                     appointmentLecture.getId(),
                     previous.getStartTime()
                 )
