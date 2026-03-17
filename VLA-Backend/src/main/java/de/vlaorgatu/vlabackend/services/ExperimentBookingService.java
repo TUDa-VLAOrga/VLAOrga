@@ -111,12 +111,13 @@ public class ExperimentBookingService {
         source.setBookings(new ArrayList<>());
         target.setBookings(targetBookings);
 
-        List<ExperimentBooking> savedBookings = experimentBookingRepository.saveAll(bookingsToMove);
         source = appointmentRepository.save(source);
         target = appointmentRepository.save(target);
 
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, source);
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, target);
+
+        List<ExperimentBooking> savedBookings = experimentBookingRepository.saveAll(bookingsToMove);
 
         for (ExperimentBooking booking : savedBookings) {
             SseController.notifyAllOfObject(SseMessageType.EXPERIMENTBOOKINGUPDATED, booking);
@@ -136,7 +137,6 @@ public class ExperimentBookingService {
         }
 
         // Update booking
-        Appointment sourceAppointment = booking.getAppointment();
         booking.setAppointment(target);
 
         // Update target
@@ -145,6 +145,7 @@ public class ExperimentBookingService {
         target.setBookings(targetBookings);
 
         // Update source
+        Appointment sourceAppointment = booking.getAppointment();
         sourceAppointment.getBookings().remove(booking);
 
         booking = experimentBookingRepository.save(booking);
