@@ -76,7 +76,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      *
      * @param start The inclusive lower bound of the time frame
      * @param end   The inclusive upper bound of the time frame
-     * @return
+     * @return All appointments during a time span (inclusive bounds)
      */
     List<Appointment> findAppointmentsByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(
         LocalDateTime start,

@@ -12,7 +12,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -98,7 +97,7 @@ public class AppointmentController
         LocalDateTime eventTime
     ) {
         final LocalDateTime dayBegin = eventTime.truncatedTo(ChronoUnit.DAYS);
-        
+
         final LocalDateTime dayEnd =
             eventTime.plusDays(1).truncatedTo(ChronoUnit.DAYS).minusSeconds(1);
 

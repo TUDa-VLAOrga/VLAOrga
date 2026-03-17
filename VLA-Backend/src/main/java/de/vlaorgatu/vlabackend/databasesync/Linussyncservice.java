@@ -69,7 +69,7 @@ public class Linussyncservice {
     /**
      * Time from 00:00.0000 - 23:59:59.0000 representing whole day events.
      */
-    private final int WHOLE_DAY_SECONDS = 24 * 60 * 60 - 1;
+    private final int wholeDaySeconds = 24 * 60 * 60 - 1;
 
     /**
      * Creates {@link AppointmentMatching} objects for each linus reservation in a given time frame.
@@ -117,7 +117,7 @@ public class Linussyncservice {
                     appointment ->
                         appointment.getEndTime().toEpochSecond(ZoneOffset.UTC) -
                             appointment.getStartTime().toEpochSecond(ZoneOffset.UTC) !=
-                            WHOLE_DAY_SECONDS
+                            wholeDaySeconds
                 )
                 .toList();
 
