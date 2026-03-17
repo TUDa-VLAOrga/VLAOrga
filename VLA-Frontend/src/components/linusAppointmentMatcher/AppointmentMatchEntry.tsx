@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
 import { Button } from "../ui/Button";
 import { getTimeStringOfDate, toJSONLocalTime } from "../calendar/dateUtils";
-import { fetchBackend } from "@/lib/utils";
+import { checkIsNotWholeDayAppointment, fetchBackend } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS, API_URL_APPOINTMENTS } from "@/lib/api";
 import { getEventTitle } from "../calendar/eventUtils";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
@@ -22,20 +22,38 @@ function postMatching(matchingId: number, matchedAppointmentId: number){
 }
 
 export default function AppointmentMatchEntry({matching, events} : AppointmentMatchEntryProps) {
-  const [availableAppointments, setAvailableAppointments] = 
+  const [dayAppointments, setDayAppointments] = 
     useState<Appointment[] | undefined>(undefined);
 
   useEffect(() => {
     const linusAppointmentTime = new Date(matching.linusAppointmentTime);
 
     fetchBackend<Appointment[]>(
-      `${API_URL_APPOINTMENTS}/includeTime?eventTime=${toJSONLocalTime(linusAppointmentTime)}`,
+      `${API_URL_APPOINTMENTS}/appointmentsOnDay?eventTime=${toJSONLocalTime(linusAppointmentTime)}`,
       "GET"
     )
       .then(appointments => {
-        setAvailableAppointments(appointments);
+        setDayAppointments(appointments);
       });
   }, [matching, events]);
+
+
+
+  let availableAppointments = undefined;
+
+  if(dayAppointments !== undefined) {
+    const nonWholeDayAppointments = dayAppointments.filter(appointment => checkIsNotWholeDayAppointment(appointment));
+    const linusAppointmentInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
+      appointment.startTime.getTime() <= matching.linusAppointmentTime.getTime() &&
+      matching.linusAppointmentTime.getTime() <= appointment.endTime.getTime()
+    );
+
+    const linusAppointmentNotInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
+      !linusAppointmentInTimeFrameAppointments.includes(appointment)
+    );
+
+    availableAppointments = [...linusAppointmentInTimeFrameAppointments, ...linusAppointmentNotInTimeFrameAppointments];
+  }
     
   return (
     <>
