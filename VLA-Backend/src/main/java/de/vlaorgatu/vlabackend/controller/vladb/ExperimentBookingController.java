@@ -189,7 +189,7 @@ public class ExperimentBookingController
             targetAppointment = appointmentRepository
                 .findFirstAppointmentBySeriesLectureIdAndEndTimeLessThanOrderByEndTimeDesc(
                     originalAppointment.getSeries().getLecture().getId(),
-                    originalAppointment.getStartTime())
+                    originalAppointment.getEndTime())
                 .orElseThrow(() -> new InvalidRequestInCurrentServerState(
                     "No previous appointment in lecture to move experimentBooking to"
                 ));
@@ -197,7 +197,7 @@ public class ExperimentBookingController
             targetAppointment = appointmentRepository
                 .findFirstAppointmentBySeriesIdAndEndTimeLessThanOrderByEndTimeDesc(
                     originalAppointment.getSeries().getId(),
-                    originalAppointment.getStartTime())
+                    originalAppointment.getEndTime())
                 .orElseThrow(() -> new InvalidRequestInCurrentServerState(
                     "No previous appointment in series to move experimentBooking to"
                 ));
