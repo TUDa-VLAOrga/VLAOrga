@@ -17,6 +17,7 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.PersonRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,11 @@ public class Linussyncservice {
     private final AppointmentRepository appointmentRepository;
 
     /**
+     * Time from 00:00.0000 - 23:59:59.0000 representing whole day events.
+     */
+    private final int WHOLE_DAY_SECONDS = 24 * 60 * 60 - 1;
+
+    /**
      * Creates {@link AppointmentMatching} objects for each linus reservation in a given time frame.
      *
      * @param start The start of the time frame that should be matched
@@ -105,6 +111,15 @@ public class Linussyncservice {
                         linusAppointment.getAppointmentTime(),
                         linusAppointment.getAppointmentTime()
                     );
+
+            // Remove whole day events from matching
+            appointmentsInThisTimeFrame = appointmentsInThisTimeFrame.stream().filter(
+                    appointment ->
+                        appointment.getEndTime().toEpochSecond(ZoneOffset.UTC) -
+                            appointment.getStartTime().toEpochSecond(ZoneOffset.UTC) !=
+                            WHOLE_DAY_SECONDS
+                )
+                .toList();
 
             if (appointmentsInThisTimeFrame.size() == 1) {
                 assignedAppointment = appointmentsInThisTimeFrame.getFirst();
