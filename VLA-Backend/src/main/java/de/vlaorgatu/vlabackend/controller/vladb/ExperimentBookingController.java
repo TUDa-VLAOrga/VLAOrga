@@ -97,7 +97,7 @@ public class ExperimentBookingController
     /**
      * Updates the state of a ExperimentBooking.
      *
-     * @param id id of the experimentBooking
+     * @param id                          id of the experimentBooking
      * @param experimentPreparationStatus The ordinal of the preparation enum
      * @return The updated booking
      */
@@ -120,9 +120,9 @@ public class ExperimentBookingController
 
         ExperimentBooking toUpdate = experimentBookingRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Experiment booking with ID " + id + " not found."
-            )
-        );
+                    "Experiment booking with ID " + id + " not found."
+                )
+            );
 
         toUpdate.setStatus(ExperimentPreparationStatus.values()[experimentPreparationStatusIndex]);
 
@@ -142,7 +142,6 @@ public class ExperimentBookingController
 
     /**
      * Deletes an experiment booking by its ID.
-     * TODO: Think about this mapping and implement SSE accordingly
      *
      * @param id ID of the experiment booking to delete.
      * @return OK response with the deleted experiment booking, Error response otherwise.
