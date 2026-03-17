@@ -45,7 +45,7 @@ export default function ExperimentOverview({
     )
     .catch(error => {
       Logger.warn("ExperimentBooking could not be moved forward", error);
-      setMoveForwardPossible(false);
+      setMoveBackwardPossible(false);
     })
   }
 
@@ -138,9 +138,9 @@ export default function ExperimentOverview({
           className="cv-formBtn cv-formBtnSubmit"
           onClick={() => moveBookingToPreviousAppointment(experimentBooking)}
           aria-label="Experiment vorziehen" 
-          disabled={!moveForwardPossible}
+          disabled={!moveBackwardPossible}
         >
-          {moveForwardPossible ? "Experiment auf vorherigen Termin verschieben" : "Kein vorheriger Termin in Serie gefunden!"}
+          {moveBackwardPossible ? "Experiment auf vorherigen Termin verschieben" : "Kein vorheriger Termin in Serie gefunden!"}
         </button>
       </div>
     </div>
