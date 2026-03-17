@@ -31,7 +31,7 @@ export default function AppointmentMatchingButton({
   return (
     <>
       <button
-        className="cv-createBtn"
+        className={"cv-createBtn " + (showMatchTaskIcon ? "cv-linusMatchReadyButton" : "")}
         onClick={() => setAppointmentMatchingVisible(!appointmentMatchingVisible)}
         aria-label="Linussynchronisationsbutton"
         title="Synchronisation für Linustermine"
@@ -39,7 +39,7 @@ export default function AppointmentMatchingButton({
       >
         Linus
         {showMatchTaskIcon &&
-        <span style={{color: "#8000d7", marginLeft: "3px"}}>⨝</span>
+        <span className="cv-linusJoinIcon">⨝</span>
         }
       </button>
 
