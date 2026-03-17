@@ -32,10 +32,10 @@ export default function ExperimentOverview({
       `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/moveNext`,
       "PUT"
     )
-    .catch(error => {
-      Logger.warn("ExperimentBooking could not be moved forward", error);
-      setMoveForwardPossible(false);
-    })
+      .catch(error => {
+        Logger.warn("ExperimentBooking could not be moved forward", error);
+        setMoveForwardPossible(false);
+      });
   }
 
   function moveBookingToPreviousAppointment(experimentBooking: ExperimentBooking) {
@@ -43,10 +43,10 @@ export default function ExperimentOverview({
       `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/movePrevious`,
       "PUT"
     )
-    .catch(error => {
-      Logger.warn("ExperimentBooking could not be moved forward", error);
-      setMoveBackwardPossible(false);
-    })
+      .catch(error => {
+        Logger.warn("ExperimentBooking could not be moved forward", error);
+        setMoveBackwardPossible(false);
+      });
   }
 
   function deleteExperimentBooking(){
@@ -140,7 +140,10 @@ export default function ExperimentOverview({
           aria-label="Experiment vorziehen" 
           disabled={!moveBackwardPossible}
         >
-          {moveBackwardPossible ? "Experiment auf vorherigen Termin verschieben" : "Kein vorheriger Termin in Serie gefunden!"}
+          {moveBackwardPossible ? 
+            "Experiment auf vorherigen Termin verschieben" : 
+            "Kein vorheriger Termin in Serie gefunden!"
+          }
         </button>
       </div>
     </div>
