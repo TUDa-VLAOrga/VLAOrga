@@ -6,14 +6,6 @@ interface ExperimentSectionProps {
   appointment: Appointment;
 }
 
-function handleExperimentBookingUpdate(event: MessageEvent, previousState: ExperimentBooking[]){
-  const updatedBooking = JSON.parse(event.data) as unknown as ExperimentBooking;
-  
-  const newState = previousState.map(booking => booking.id == updatedBooking.id ? updatedBooking : booking);
-  
-  return newState;
-}
-
 function handleExperimentBookingDeletion(event: MessageEvent, previousState: ExperimentBooking[]){
   const deletedBooking = JSON.parse(event.data) as unknown as ExperimentBooking;
   
@@ -23,13 +15,25 @@ function handleExperimentBookingDeletion(event: MessageEvent, previousState: Exp
 }
 
 const handlers = new Map<SseMessageType, (event: MessageEvent, value: ExperimentBooking[]) => ExperimentBooking[]>;
-handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpdate);
 handlers.set(SseMessageType.EXPERIMENTBOOKINGDELETED, handleExperimentBookingDeletion);
 
 /**
  * Part of Appointments that handles interactions with the experiments
  */
 export default function ExperimentSection({appointment}: ExperimentSectionProps){
+  
+  // Cannot be declared in top level as we need information about the underlying appointment
+  function handleExperimentBookingUpdate(event: MessageEvent, previousState: ExperimentBooking[]){
+    const updatedBooking = JSON.parse(event.data) as unknown as ExperimentBooking;
+    
+    const newState = previousState
+      .map(booking => booking.id == updatedBooking.id ? updatedBooking : booking)
+      .filter(booking => appointment.bookings.includes(booking));
+
+    return newState;
+  }
+  handlers.set(SseMessageType.EXPERIMENTBOOKINGUPDATED, handleExperimentBookingUpdate);
+
   const [experimentBookings, _setExperimentBooking] = useSseConnectionWithInitialFetch<ExperimentBooking[]>(
     [],
     `/api/appointments/${appointment.id}/experimentBookings`,
