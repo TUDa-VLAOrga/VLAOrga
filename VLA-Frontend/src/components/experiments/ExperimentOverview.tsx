@@ -2,6 +2,7 @@ import { ExperimentPreparationStatus, type ExperimentBooking, type LinusExperime
 import { fetchBackend, getExperimentPreperationsStatusGermanMap } from "@/lib/utils";
 import { API_URL_EXPERIMENTBOOKINGS } from "@/lib/api";
 import { useState } from "react";
+import { Logger } from "../logger/Logger";
 
 interface ExperimentOverviewProps {
   linusExperiment: LinusExperiment,
@@ -23,6 +24,30 @@ export default function ExperimentOverview({
   experimentBooking,
 } : ExperimentOverviewProps){
   const [deletionRequested, setDeletionRequested] = useState<boolean>(false);
+  const [moveForwardPossible, setMoveForwardPossible] = useState<boolean>(true);
+  const [moveBackwardPossible, setMoveBackwardPossible] = useState<boolean>(true);
+
+  function moveBookingToNextAppointment(experimentBooking: ExperimentBooking) {
+    fetchBackend(
+      `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/moveNext`,
+      "PUT"
+    )
+    .catch(error => {
+      Logger.warn("ExperimentBooking could not be moved forward", error);
+      setMoveForwardPossible(false);
+    })
+  }
+
+  function moveBookingToPreviousAppointment(experimentBooking: ExperimentBooking) {
+    fetchBackend(
+      `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/movePrevious`,
+      "PUT"
+    )
+    .catch(error => {
+      Logger.warn("ExperimentBooking could not be moved forward", error);
+      setMoveForwardPossible(false);
+    })
+  }
 
   function deleteExperimentBooking(){
     if(!deletionRequested) {
@@ -96,6 +121,26 @@ export default function ExperimentOverview({
           aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
         >
           {deletionRequested ? "Sicher?" : "Experimentbuchung löschen"}
+        </button>
+
+        <button 
+          type="button"
+          className="cv-formBtn cv-formBtnSubmit"
+          onClick={() => moveBookingToNextAppointment(experimentBooking)}
+          aria-label="Experiment auf nächsten Termin vertagen" 
+          disabled={!moveForwardPossible}
+        >
+          {moveForwardPossible ? "Experiment auf nächsten Termin vertagen" : "Kein nächster Termin in Serie gefunden!"}
+        </button>
+
+        <button 
+          type="button"
+          className="cv-formBtn cv-formBtnSubmit"
+          onClick={() => moveBookingToPreviousAppointment(experimentBooking)}
+          aria-label="Experiment vorziehen" 
+          disabled={!moveForwardPossible}
+        >
+          {moveForwardPossible ? "Experiment auf vorherigen Termin verschieben" : "Kein vorheriger Termin in Serie gefunden!"}
         </button>
       </div>
     </div>
