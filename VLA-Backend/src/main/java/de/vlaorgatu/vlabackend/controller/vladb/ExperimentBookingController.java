@@ -10,6 +10,7 @@ import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidRequestInCurrentServerState;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.services.AppointmentService;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,8 @@ public class ExperimentBookingController
     private final AppointmentRepository appointmentRepository;
 
     private final ExperimentBookingService experimentBookingService;
+
+    private final AppointmentService appointmentService;
 
     /**
      * Updates an existing experiment booking.
@@ -138,25 +141,7 @@ public class ExperimentBookingController
 
         Appointment originalAppointment = experimentBooking.getAppointment();
 
-        Appointment targetAppointment;
-
-        if (originalAppointment.getSeries().getLecture() != null) {
-            targetAppointment = appointmentRepository
-                .findFirstAppointmentBySeriesLectureIdAndStartTimeGreaterThanOrderByStartTimeAsc(
-                    originalAppointment.getSeries().getLecture().getId(),
-                    originalAppointment.getStartTime())
-                .orElseThrow(() -> new InvalidRequestInCurrentServerState(
-                    "No next appointment in lecture to move experimentBooking to"
-                ));
-        } else {
-            targetAppointment = appointmentRepository
-                .findFirstAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
-                    originalAppointment.getSeries().getId(),
-                    originalAppointment.getStartTime())
-                .orElseThrow(() -> new InvalidRequestInCurrentServerState(
-                    "No next appointment in series to move experimentBooking to"
-                ));
-        }
+        Appointment targetAppointment = appointmentService.findNextAppointment(originalAppointment);
 
         // Handles SSE updating
         ExperimentBooking updatedExperimentBooking =
@@ -182,25 +167,8 @@ public class ExperimentBookingController
 
         Appointment originalAppointment = experimentBooking.getAppointment();
 
-        Appointment targetAppointment;
-
-        if (originalAppointment.getSeries().getLecture() != null) {
-            targetAppointment = appointmentRepository
-                .findFirstAppointmentBySeriesLectureIdAndEndTimeLessThanOrderByEndTimeDesc(
-                    originalAppointment.getSeries().getLecture().getId(),
-                    originalAppointment.getEndTime())
-                .orElseThrow(() -> new InvalidRequestInCurrentServerState(
-                    "No previous appointment in lecture to move experimentBooking to"
-                ));
-        } else {
-            targetAppointment = appointmentRepository
-                .findFirstAppointmentBySeriesIdAndEndTimeLessThanOrderByEndTimeDesc(
-                    originalAppointment.getSeries().getId(),
-                    originalAppointment.getEndTime())
-                .orElseThrow(() -> new InvalidRequestInCurrentServerState(
-                    "No previous appointment in series to move experimentBooking to"
-                ));
-        }
+        Appointment targetAppointment = appointmentService
+            .findPreviousAppointment(originalAppointment);
 
         // Handles SSE updating
         ExperimentBooking updatedExperimentBooking =
