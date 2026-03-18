@@ -136,6 +136,10 @@ public class ExperimentBookingService {
             return booking;
         }
 
+        // Update source
+        Appointment sourceAppointment = booking.getAppointment();
+        sourceAppointment.getBookings().remove(booking);
+
         // Update booking
         booking.setAppointment(target);
 
@@ -143,10 +147,6 @@ public class ExperimentBookingService {
         List<ExperimentBooking> targetBookings = target.getBookings();
         targetBookings.add(booking);
         target.setBookings(targetBookings);
-
-        // Update source
-        Appointment sourceAppointment = booking.getAppointment();
-        sourceAppointment.getBookings().remove(booking);
 
         booking = experimentBookingRepository.save(booking);
         sourceAppointment = appointmentRepository.save(sourceAppointment);
