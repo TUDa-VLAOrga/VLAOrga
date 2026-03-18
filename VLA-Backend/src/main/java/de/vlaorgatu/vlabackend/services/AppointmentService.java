@@ -80,6 +80,12 @@ public class AppointmentService {
             ));
     }
 
+    /**
+     * Finds the next appointment in a series that starts after the source appointment starts.
+     *
+     * @param source The appointment to search from
+     * @return The next appointment
+     */
     public Appointment findNextAppointment(Appointment source) {
         if (source.getSeries().getLecture() != null) {
             return findNextAppointmentInSeriesWithLecture(source);
@@ -88,6 +94,12 @@ public class AppointmentService {
         }
     }
 
+    /**
+     * Finds the previous appointment in a series that ends before the source appointment ends.
+     *
+     * @param source The appointment to search from
+     * @return The next appointment
+     */
     public Appointment findPreviousAppointment(Appointment source) {
         if (source.getSeries().getLecture() != null) {
             return findPreviousAppointmentInSeriesWithLecture(source);
