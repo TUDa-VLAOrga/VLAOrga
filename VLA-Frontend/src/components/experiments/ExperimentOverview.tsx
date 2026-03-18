@@ -116,15 +116,6 @@ export default function ExperimentOverview({
 
         <button 
           type="button"
-          className="cv-formBtn cv-formBtnDanger"
-          onClick={() => deleteExperimentBooking()}
-          aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
-        >
-          {deletionRequested ? "Sicher?" : "Experimentbuchung löschen"}
-        </button>
-
-        <button 
-          type="button"
           className="cv-formBtn cv-formBtnSubmit"
           onClick={() => moveBookingToNextAppointment(experimentBooking)}
           aria-label="Experiment auf nächsten Termin vertagen" 
@@ -144,6 +135,15 @@ export default function ExperimentOverview({
             "Experiment auf vorherigen Termin verschieben" : 
             "Kein vorheriger Termin in Serie gefunden!"
           }
+        </button>
+
+        <button
+          type="button"
+          className="cv-formBtn cv-formBtnDanger"
+          onClick={() => deleteExperimentBooking()}
+          aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"}
+        >
+          {deletionRequested ? "Sicher?" : "Experimentbuchung löschen"}
         </button>
       </div>
     </div>
