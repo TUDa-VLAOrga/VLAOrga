@@ -21,14 +21,14 @@ handlers.set(SseMessageType.EXPERIMENTBOOKINGDELETED, handleExperimentBookingDel
  * Part of Appointments that handles interactions with the experiments
  */
 export default function ExperimentSection({appointment}: ExperimentSectionProps){
-  
   // Cannot be declared in top level as we need information about the underlying appointment
   function handleExperimentBookingUpdate(event: MessageEvent, previousState: ExperimentBooking[]){
     const updatedBooking = JSON.parse(event.data) as unknown as ExperimentBooking;
     
     const newState = previousState
       .map(booking => booking.id == updatedBooking.id ? updatedBooking : booking)
-      .filter(booking => appointment.bookings.includes(booking));
+      // Checks if it is still in the appointment pool
+      .filter(booking => appointment.bookings.map(booking => booking.id).includes(booking.id));
 
     return newState;
   }
