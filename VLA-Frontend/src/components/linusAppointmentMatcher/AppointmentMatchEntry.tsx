@@ -49,8 +49,10 @@ export default function AppointmentMatchEntry({matching, events} : AppointmentMa
     );
 
     const linusAppointmentNotInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
-      !linusAppointmentInTimeFrameAppointments.includes(appointment)
-    );
+        !linusAppointmentInTimeFrameAppointments.includes(appointment)
+      )
+      .sort((appointment1, appointment2) => appointment1.startTime.getTime() - appointment2.startTime.getTime())
+    ;
 
     availableAppointments = [...linusAppointmentInTimeFrameAppointments, ...linusAppointmentNotInTimeFrameAppointments];
   }
