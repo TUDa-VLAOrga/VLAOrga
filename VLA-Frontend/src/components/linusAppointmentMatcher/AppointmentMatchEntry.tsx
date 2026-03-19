@@ -46,7 +46,8 @@ export default function AppointmentMatchEntry({matching, events} : AppointmentMa
     const linusAppointmentInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
       appointment.startTime.getTime() <= matching.linusAppointmentTime.getTime() &&
       matching.linusAppointmentTime.getTime() <= appointment.endTime.getTime()
-    );
+    )
+    .sort((appointment1, appointment2) => appointment1.startTime.getTime() - appointment2.startTime.getTime());
 
     const linusAppointmentNotInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
       !linusAppointmentInTimeFrameAppointments.includes(appointment)
