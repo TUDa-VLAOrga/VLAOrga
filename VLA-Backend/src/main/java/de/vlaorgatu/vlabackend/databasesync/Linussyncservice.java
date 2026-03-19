@@ -106,6 +106,12 @@ public class Linussyncservice {
                         linusAppointment.getAppointmentTime()
                     );
 
+            // Remove whole day events from matching
+            appointmentsInThisTimeFrame = appointmentsInThisTimeFrame.stream().filter(
+                    UtilityFunctions::isWholeDayEvent
+                )
+                .toList();
+
             if (appointmentsInThisTimeFrame.size() == 1) {
                 assignedAppointment = appointmentsInThisTimeFrame.getFirst();
             }

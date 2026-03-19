@@ -111,12 +111,51 @@ public class ExperimentBookingService {
         source.setBookings(new ArrayList<>());
         target.setBookings(targetBookings);
 
-        List<ExperimentBooking> savedBookings = experimentBookingRepository.saveAll(bookingsToMove);
         source = appointmentRepository.save(source);
         target = appointmentRepository.save(target);
 
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, source);
         SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, target);
-        // Sending an update to the appointment should also update the savedBookings
+
+        List<ExperimentBooking> savedBookings = experimentBookingRepository.saveAll(bookingsToMove);
+
+        for (ExperimentBooking booking : savedBookings) {
+            SseController.notifyAllOfObject(SseMessageType.EXPERIMENTBOOKINGUPDATED, booking);
+        }
+    }
+
+    /**
+     * Moves a {@link ExperimentBooking} from a {@link Appointment} to another.
+     *
+     * @param booking The booking to move
+     * @param target  The target appointment of experimentBooking assignment
+     */
+    public synchronized ExperimentBooking moveExperimentBooking(ExperimentBooking booking,
+                                                                Appointment target) {
+        if (booking.getAppointment().equals(target)) {
+            return booking;
+        }
+
+        // Update source
+        Appointment sourceAppointment = booking.getAppointment();
+        sourceAppointment.getBookings().remove(booking);
+
+        // Update booking
+        booking.setAppointment(target);
+
+        // Update target
+        List<ExperimentBooking> targetBookings = target.getBookings();
+        targetBookings.add(booking);
+        target.setBookings(targetBookings);
+
+        booking = experimentBookingRepository.save(booking);
+        sourceAppointment = appointmentRepository.save(sourceAppointment);
+        target = appointmentRepository.save(target);
+
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, sourceAppointment);
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, target);
+        SseController.notifyAllOfObject(SseMessageType.EXPERIMENTBOOKINGUPDATED, booking);
+
+        return booking;
     }
 }

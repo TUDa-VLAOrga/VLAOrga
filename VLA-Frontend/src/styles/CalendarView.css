@@ -1280,3 +1280,17 @@
   background-image: url("/public/DetailsIcons/pencil-icon.png");
   background-size: cover;
 }
+
+.cv-linusMatchReadyButton {
+  color: white;
+  font-weight: bold;
+  background-color: #7c00d2;
+}
+
+.cv-linusMatchReadyButton:hover {
+  background-color: #7100c2;
+}
+
+.cv-linusJoinIcon {
+  margin-left: 3px;
+}

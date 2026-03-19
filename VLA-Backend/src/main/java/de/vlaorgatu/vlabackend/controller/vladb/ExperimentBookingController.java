@@ -9,13 +9,14 @@ import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
+import de.vlaorgatu.vlabackend.services.AppointmentService;
+import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,27 +40,9 @@ public class ExperimentBookingController
 
     private final AppointmentRepository appointmentRepository;
 
-    /**
-     * Creates a new experiment booking.
-     * TODO: Think about this mapping and implement SSE accordingly
-     *
-     * @param experimentBooking The dataset for creation. Must not contain an ID (auto-generated).
-     * @return OK response with the created experiment booking, Error response otherwise.
-     */
-    @PostMapping
-    public ResponseEntity<?> createExperimentBooking(
-        @RequestBody ExperimentBooking experimentBooking) {
-        if (Objects.nonNull(experimentBooking.getId())) {
-            throw new InvalidParameterException(
-                "Received experiment booking with ID " + experimentBooking.getId() +
-                    " when creating a new experiment booking.");
-        }
-        ExperimentBooking savedExperimentBooking =
-            experimentBookingRepository.save(experimentBooking);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Experiment booking created: " + savedExperimentBooking);
-        return ResponseEntity.ok(savedExperimentBooking);
-    }
+    private final ExperimentBookingService experimentBookingService;
+
+    private final AppointmentService appointmentService;
 
     /**
      * Updates an existing experiment booking.
@@ -97,7 +80,7 @@ public class ExperimentBookingController
     /**
      * Updates the state of a ExperimentBooking.
      *
-     * @param id id of the experimentBooking
+     * @param id                          id of the experimentBooking
      * @param experimentPreparationStatus The ordinal of the preparation enum
      * @return The updated booking
      */
@@ -120,9 +103,9 @@ public class ExperimentBookingController
 
         ExperimentBooking toUpdate = experimentBookingRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Experiment booking with ID " + id + " not found."
-            )
-        );
+                    "Experiment booking with ID " + id + " not found."
+                )
+            );
 
         toUpdate.setStatus(ExperimentPreparationStatus.values()[experimentPreparationStatusIndex]);
 
@@ -141,8 +124,60 @@ public class ExperimentBookingController
     }
 
     /**
+     * Moves an {@link ExperimentBooking} to the next {@link Appointment} in a sequence.
+     *
+     * @param id The experimentBooking to update
+     * @return 200 with booking iff. experimentBooking could be moved
+     */
+    @PutMapping("/{id}/moveNext")
+    public ResponseEntity<ExperimentBooking> updateExperimentBookingNextAppointment(
+        @PathVariable Long id
+    ) {
+        ExperimentBooking experimentBooking = experimentBookingRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "No valid experiment booking with ID " + id + " found."
+            ));
+
+        Appointment originalAppointment = experimentBooking.getAppointment();
+
+        Appointment targetAppointment = appointmentService.findNextAppointment(originalAppointment);
+
+        // Handles SSE updating
+        ExperimentBooking updatedExperimentBooking =
+            experimentBookingService.moveExperimentBooking(experimentBooking, targetAppointment);
+
+        return ResponseEntity.ok(updatedExperimentBooking);
+    }
+
+    /**
+     * Moves an {@link ExperimentBooking} to the previous {@link Appointment} in a sequence.
+     *
+     * @param id The experimentBooking to update
+     * @return 200 with booking iff. experimentBooking could be moved
+     */
+    @PutMapping("/{id}/movePrevious")
+    public ResponseEntity<ExperimentBooking> updateExperimentBookingPreviousAppointment(
+        @PathVariable Long id
+    ) {
+        ExperimentBooking experimentBooking = experimentBookingRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "No valid experiment booking with ID " + id + " found."
+            ));
+
+        Appointment originalAppointment = experimentBooking.getAppointment();
+
+        Appointment targetAppointment = appointmentService
+            .findPreviousAppointment(originalAppointment);
+
+        // Handles SSE updating
+        ExperimentBooking updatedExperimentBooking =
+            experimentBookingService.moveExperimentBooking(experimentBooking, targetAppointment);
+
+        return ResponseEntity.ok(updatedExperimentBooking);
+    }
+
+    /**
      * Deletes an experiment booking by its ID.
-     * TODO: Think about this mapping and implement SSE accordingly
      *
      * @param id ID of the experiment booking to delete.
      * @return OK response with the deleted experiment booking, Error response otherwise.
