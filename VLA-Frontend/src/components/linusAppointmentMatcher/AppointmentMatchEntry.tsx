@@ -6,12 +6,14 @@ import { Button } from "../ui/Button";
 import { getTimeStringOfDate, toJSONLocalTime } from "../calendar/dateUtils";
 import { fetchBackend } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS, API_URL_APPOINTMENTS } from "@/lib/api";
-import { getEventTitle } from "../calendar/eventUtils";
+import { getEventTitle, isUntimedForView } from "../calendar/eventUtils";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 interface AppointmentMatchEntryProps {
   matching: AppointmentMatching,
   events: CalendarEvent[],
+  calendarStartMinSinceMidnight: number,
+  calendarEndMinSinceMidnight: number,
 }
 
 function postMatching(matchingId: number, matchedAppointmentId: number){
@@ -21,21 +23,51 @@ function postMatching(matchingId: number, matchedAppointmentId: number){
     });
 }
 
-export default function AppointmentMatchEntry({matching, events} : AppointmentMatchEntryProps) {
-  const [availableAppointments, setAvailableAppointments] = 
+export default function AppointmentMatchEntry({
+  matching,
+  events,
+  calendarStartMinSinceMidnight,
+  calendarEndMinSinceMidnight,
+} : AppointmentMatchEntryProps) 
+{
+  const [dayAppointments, setDayAppointments] = 
     useState<Appointment[] | undefined>(undefined);
 
   useEffect(() => {
     const linusAppointmentTime = new Date(matching.linusAppointmentTime);
 
     fetchBackend<Appointment[]>(
-      `${API_URL_APPOINTMENTS}/includeTime?eventTime=${toJSONLocalTime(linusAppointmentTime)}`,
+      `${API_URL_APPOINTMENTS}/appointmentsOnDay?eventTime=${toJSONLocalTime(linusAppointmentTime)}`,
       "GET"
     )
       .then(appointments => {
-        setAvailableAppointments(appointments);
+        setDayAppointments(appointments);
       });
   }, [matching, events]);
+
+
+
+  let availableAppointments = undefined;
+
+  if(dayAppointments !== undefined) {
+    const nonWholeDayAppointments = dayAppointments.filter(
+      appointment => isUntimedForView(appointment, calendarStartMinSinceMidnight, calendarEndMinSinceMidnight)
+    );
+    
+    const linusAppointmentInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
+      appointment.startTime.getTime() <= matching.linusAppointmentTime.getTime() &&
+      matching.linusAppointmentTime.getTime() <= appointment.endTime.getTime()
+    )
+      .sort((appointment1, appointment2) => appointment1.startTime.getTime() - appointment2.startTime.getTime());
+
+    const linusAppointmentNotInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
+      !linusAppointmentInTimeFrameAppointments.includes(appointment)
+    )
+      .sort((appointment1, appointment2) => appointment1.startTime.getTime() - appointment2.startTime.getTime())
+    ;
+
+    availableAppointments = [...linusAppointmentInTimeFrameAppointments, ...linusAppointmentNotInTimeFrameAppointments];
+  }
     
   return (
     <>

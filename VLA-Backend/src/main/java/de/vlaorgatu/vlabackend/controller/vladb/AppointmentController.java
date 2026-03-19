@@ -13,6 +13,7 @@ import de.vlaorgatu.vlabackend.repositories.vladb.UserRepository;
 import de.vlaorgatu.vlabackend.security.securityutils.SecurityUtils;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +80,31 @@ public class AppointmentController
         List<Appointment> appointmentsInTimeFrame = appointmentRepository
             .findAppointmentsByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
                 eventTime, eventTime
+            );
+
+        return ResponseEntity.ok(appointmentsInTimeFrame);
+    }
+
+    /**
+     * Returns all appointments on a given day.
+     *
+     * @param eventTime The specified time as an ISO string
+     * @return All appointments on a given day
+     */
+    @GetMapping("/appointmentsOnDay")
+    public ResponseEntity<List<Appointment>> getAppointmentsOnDay(
+        @RequestParam("eventTime")
+        LocalDateTime eventTime
+    ) {
+        final LocalDateTime dayBegin = eventTime.truncatedTo(ChronoUnit.DAYS);
+
+        final LocalDateTime dayEnd =
+            eventTime.plusDays(1).truncatedTo(ChronoUnit.DAYS).minusSeconds(1);
+
+        List<Appointment> appointmentsInTimeFrame = appointmentRepository
+            .findAppointmentsByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(
+                dayBegin,
+                dayEnd
             );
 
         return ResponseEntity.ok(appointmentsInTimeFrame);

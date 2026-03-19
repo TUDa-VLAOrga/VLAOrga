@@ -10,6 +10,8 @@ interface LinusAppointmentMatcherProps {
   setAppointmentMatcherVisible: Dispatch<SetStateAction<boolean>>,
   visible: boolean,
   events: CalendarEvent[],
+  calendarStartMinSinceMidnight: number,
+  calendarEndMinSinceMidnight: number,
 }
 
 export default function LinusAppointmentMatcher({
@@ -17,6 +19,8 @@ export default function LinusAppointmentMatcher({
   setAppointmentMatcherVisible,
   visible,
   events,
+  calendarStartMinSinceMidnight,
+  calendarEndMinSinceMidnight,
 }
 : LinusAppointmentMatcherProps)
 {
@@ -36,6 +40,8 @@ export default function LinusAppointmentMatcher({
             matching={matching}
             key={matching.id}
             events={events}
+            calendarStartMinSinceMidnight={calendarStartMinSinceMidnight}
+            calendarEndMinSinceMidnight={calendarEndMinSinceMidnight}
           />
         )}
       </div>
