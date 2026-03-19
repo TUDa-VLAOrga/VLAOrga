@@ -1,6 +1,6 @@
 import {Logger} from "@/components/logger/Logger";
 import {toJSONLocalTime} from "@/components/calendar/dateUtils.ts";
-import { ExperimentPreparationStatus, type Appointment } from "./databaseTypes";
+import { ExperimentPreparationStatus } from "./databaseTypes";
 
 /**
  * Fetch a CSRF token from the server.
@@ -105,11 +105,4 @@ export function getExperimentPreperationsStatusGermanMap(){
   experimentPreperationStatusGermanMap.set(ExperimentPreparationStatus.PENDING, "Unbearbeitet");  
   
   return experimentPreperationStatusGermanMap;
-}
-
-// Whole days go from 00:00.0000 - 23:59.0000
-export const WHOLE_DAY_MS = 24 * 60 * 60 * 1000 - 1000;
-
-export function checkIsNotWholeDayAppointment(appointment: Appointment): boolean {
-  return (appointment.endTime.getTime() - appointment.startTime.getTime()) != WHOLE_DAY_MS;
 }

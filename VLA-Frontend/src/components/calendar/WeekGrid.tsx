@@ -3,14 +3,15 @@ import { useLayoutEffect, useRef, useState } from "react";
 import DayColumn from "./DayColumn";
 import type {CalendarDay, CalendarEvent, CalendarEventsByDateISO} from "./CalendarTypes";
 import TimeColumn from "./TimeColumn";
+import { isUntimedForView } from "./eventUtils";
 
 type WeekGridProps = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
   allEvents: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
-  startHour?: number;
-  endHour?: number;
+  startHour: number;
+  endHour: number;
 };
 
 // default height for the all-day row in pixels
@@ -33,35 +34,16 @@ export default function WeekGrid({
   eventsByDate = {},
   allEvents,
   onEventClick,
-  startHour = 7,
-  endHour = 22,
+  startHour,
+  endHour,
 }: WeekGridProps) {
   const hourCount = Math.max(0, endHour - startHour);
 
   const windowStartMin = startHour * 60;
   const windowEndMin = endHour * 60;
 
-  /**
-   * Determine whether an event is completely inside the displayed time range.
-   * Otherwise, it will be displayed as for the whole day above the time scale.
-   */
-  function isUntimedForView(e: CalendarEvent): boolean {
-    const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
-    const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
-
-    // Invalid range -> untimed
-    if (!(endMin > startMin)) return true;
-
-    const intersectsWindow = startMin < windowEndMin && endMin > windowStartMin;
-
-    // Outside hours OR spanning entire visible window -> untimed row
-    return (
-      !intersectsWindow || (startMin < windowStartMin && endMin > windowEndMin)
-    );
-  }
-
   const showAllDayRow = days.some((day) =>
-    (eventsByDate[day.iso] || []).some(isUntimedForView)
+    (eventsByDate[day.iso] || []).some((event) => isUntimedForView(event, windowStartMin, windowEndMin))
   );
 
   /**
@@ -130,8 +112,15 @@ export default function WeekGrid({
           <DayColumn
             key={day.iso}
             day={day}
-            eventsAllDay={(eventsByDate[day.iso] || []).filter((e) => isUntimedForView(e))}
-            eventsTimed={(eventsByDate[day.iso] || []).filter((e) => !isUntimedForView(e))}
+
+            eventsAllDay={(eventsByDate[day.iso] || []).filter((e) =>
+              isUntimedForView(e, windowStartMin, windowEndMin)
+            )}
+
+            eventsTimed={(eventsByDate[day.iso] || []).filter((e) =>
+              !isUntimedForView(e, windowStartMin, windowEndMin)
+            )}
+            
             allEvents={allEvents}
             onEventClick={onEventClick}
             startHour={startHour}

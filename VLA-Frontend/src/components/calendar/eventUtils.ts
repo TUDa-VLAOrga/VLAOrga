@@ -153,3 +153,26 @@ export function retrieveAppointment(event: CalendarEvent, allEvents: CalendarEve
     return event;
 }
 
+
+/**
+ * Determine whether an event is completely inside the displayed calendar time range.
+ * 
+ * @param event The event to check
+ * @param windowStartMin The start of the calendar since 00:00 in minutes
+ * @param windowEndMin The end of the calendar since 00:00 in minutes
+ * @returns true iff event spans the entire day 
+ */
+export function isUntimedForView(event: CalendarEvent, windowStartMin: number, windowEndMin: number): boolean {
+  const startMin = event.startTime.getHours() * 60 + event.startTime.getMinutes();
+  const endMin = event.endTime.getHours() * 60 + event.endTime.getMinutes();
+
+  // Invalid range -> untimed
+  if (!(endMin > startMin)) return true;
+
+  const intersectsWindow = startMin < windowEndMin && endMin > windowStartMin;
+
+  // Outside hours OR spanning entire visible window -> untimed row
+  return (
+    !intersectsWindow || (startMin < windowStartMin && endMin > windowEndMin)
+  );
+}

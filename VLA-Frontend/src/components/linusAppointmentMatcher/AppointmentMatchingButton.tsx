@@ -6,11 +6,15 @@ import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 interface AppointmentMatchingButtonsProps {
   appointmentMatchings: AppointmentMatching[],
   events: CalendarEvent[],
+  calendarStartMinSinceMidnight: number,
+  calendarEndMinSinceMidnight: number,
 }
 
 export default function AppointmentMatchingButton({
   appointmentMatchings,
   events,
+  calendarStartMinSinceMidnight,
+  calendarEndMinSinceMidnight,
 } 
 : AppointmentMatchingButtonsProps)
 {
@@ -48,6 +52,8 @@ export default function AppointmentMatchingButton({
         setAppointmentMatcherVisible={setAppointmentMatchingVisible}
         visible={appointmentMatchingVisible}
         events={events}
+        calendarStartMinSinceMidnight={calendarStartMinSinceMidnight}
+        calendarEndMinSinceMidnight={calendarEndMinSinceMidnight}
       />
     </>
   );

@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import { Logger } from "../logger/Logger";
 import { Button } from "../ui/Button";
 import { getTimeStringOfDate, toJSONLocalTime } from "../calendar/dateUtils";
-import { checkIsNotWholeDayAppointment, fetchBackend } from "@/lib/utils";
+import { fetchBackend } from "@/lib/utils";
 import { API_URL_APPOINTMENTMATCHINGS, API_URL_APPOINTMENTS } from "@/lib/api";
-import { getEventTitle } from "../calendar/eventUtils";
+import { getEventTitle, isUntimedForView } from "../calendar/eventUtils";
 import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 interface AppointmentMatchEntryProps {
   matching: AppointmentMatching,
   events: CalendarEvent[],
+  calendarStartMinSinceMidnight: number,
+  calendarEndMinSinceMidnight: number,
 }
 
 function postMatching(matchingId: number, matchedAppointmentId: number){
@@ -21,7 +23,13 @@ function postMatching(matchingId: number, matchedAppointmentId: number){
     });
 }
 
-export default function AppointmentMatchEntry({matching, events} : AppointmentMatchEntryProps) {
+export default function AppointmentMatchEntry({
+  matching,
+  events,
+  calendarStartMinSinceMidnight,
+  calendarEndMinSinceMidnight,
+} : AppointmentMatchEntryProps) 
+{
   const [dayAppointments, setDayAppointments] = 
     useState<Appointment[] | undefined>(undefined);
 
@@ -42,12 +50,15 @@ export default function AppointmentMatchEntry({matching, events} : AppointmentMa
   let availableAppointments = undefined;
 
   if(dayAppointments !== undefined) {
-    const nonWholeDayAppointments = dayAppointments.filter(appointment => checkIsNotWholeDayAppointment(appointment));
+    const nonWholeDayAppointments = dayAppointments.filter(
+      appointment => isUntimedForView(appointment, calendarStartMinSinceMidnight, calendarEndMinSinceMidnight)
+    );
+    
     const linusAppointmentInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
       appointment.startTime.getTime() <= matching.linusAppointmentTime.getTime() &&
       matching.linusAppointmentTime.getTime() <= appointment.endTime.getTime()
     )
-    .sort((appointment1, appointment2) => appointment1.startTime.getTime() - appointment2.startTime.getTime());
+      .sort((appointment1, appointment2) => appointment1.startTime.getTime() - appointment2.startTime.getTime());
 
     const linusAppointmentNotInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
       !linusAppointmentInTimeFrameAppointments.includes(appointment)
