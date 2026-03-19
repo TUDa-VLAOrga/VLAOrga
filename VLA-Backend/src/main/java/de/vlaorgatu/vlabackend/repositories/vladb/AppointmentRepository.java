@@ -43,6 +43,30 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     );
 
     /**
+     * Finds the last event in a series without a lecture that ends before the endtime.
+     *
+     * @param seriesLectureId The id of the series of the lecture the appointments belong to.
+     * @param endTime         The exclusive upper bound for the end of events.
+     * @return Previous appointment in series without lecture
+     */
+    Optional<Appointment> findFirstAppointmentBySeriesIdAndEndTimeLessThanOrderByEndTimeDesc(
+        Long seriesLectureId,
+        LocalDateTime endTime
+    );
+
+    /**
+     * Finds the last event in a series with a lecture that ends before the endtime.
+     *
+     * @param seriesLectureId The id of the series of the lecture the appointments belong to.
+     * @param endTime         The exclusive upper bound for the end of events.
+     * @return Previous appointment in series with lecture
+     */
+    Optional<Appointment> findFirstAppointmentBySeriesLectureIdAndEndTimeLessThanOrderByEndTimeDesc(
+        Long seriesLectureId,
+        LocalDateTime endTime
+    );
+
+    /**
      * Finds an appointment by its id.
      *
      * @param id The id of the appointment
