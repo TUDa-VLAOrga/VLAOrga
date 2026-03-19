@@ -121,7 +121,10 @@ export default function ExperimentOverview({
           aria-label="Experiment auf nächsten Termin vertagen" 
           disabled={!moveForwardPossible}
         >
-          {moveForwardPossible ? "Experiment auf nächsten Termin vertagen" : "Kein nächster Termin in Serie gefunden!"}
+          {moveForwardPossible ? 
+            "Experiment auf nächsten Termin vertagen" : 
+            "Kein nächster Termin gefunden!"
+          }
         </button>
 
         <button 
@@ -133,7 +136,7 @@ export default function ExperimentOverview({
         >
           {moveBackwardPossible ? 
             "Experiment auf vorherigen Termin verschieben" : 
-            "Kein vorheriger Termin in Serie gefunden!"
+            "Kein vorheriger Termin gefunden!"
           }
         </button>
 
