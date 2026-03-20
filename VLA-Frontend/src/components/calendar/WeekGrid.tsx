@@ -1,14 +1,14 @@
 import type React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import DayColumn from "./DayColumn";
-import type { CalendarDay, CalendarEventsByDateISO } from "./CalendarTypes";
-import type { Appointment } from "@/lib/databaseTypes";
+import type {CalendarDay, CalendarEvent, CalendarEventsByDateISO} from "./CalendarTypes";
 import TimeColumn from "./TimeColumn";
 
-type Props = {
+type WeekGridProps = {
   days: CalendarDay[];
   eventsByDate: CalendarEventsByDateISO;
-  onEventClick?: (eventId: number) => void;
+  allEvents: CalendarEvent[];
+  onEventClick?: (event: CalendarEvent) => void;
   startHour?: number;
   endHour?: number;
 };
@@ -31,10 +31,11 @@ const DEFAULT_ALL_DAY_HEIGHT = 56;
 export default function WeekGrid({
   days,
   eventsByDate = {},
+  allEvents,
   onEventClick,
   startHour = 7,
   endHour = 22,
-}: Props) {
+}: WeekGridProps) {
   const hourCount = Math.max(0, endHour - startHour);
 
   const windowStartMin = startHour * 60;
@@ -44,7 +45,7 @@ export default function WeekGrid({
    * Determine whether an event is completely inside the displayed time range.
    * Otherwise, it will be displayed as for the whole day above the time scale.
    */
-  function isUntimedForView(e: Appointment): boolean {
+  function isUntimedForView(e: CalendarEvent): boolean {
     const startMin = e.startTime.getHours() * 60 + e.startTime.getMinutes();
     const endMin = e.endTime.getHours() * 60 + e.endTime.getMinutes();
 
@@ -131,6 +132,7 @@ export default function WeekGrid({
             day={day}
             eventsAllDay={(eventsByDate[day.iso] || []).filter((e) => isUntimedForView(e))}
             eventsTimed={(eventsByDate[day.iso] || []).filter((e) => !isUntimedForView(e))}
+            allEvents={allEvents}
             onEventClick={onEventClick}
             startHour={startHour}
             endHour={endHour}

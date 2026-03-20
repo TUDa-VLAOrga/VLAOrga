@@ -1,4 +1,4 @@
-import { type ExperimentBooking, ExperimentPreparationStatus, type Appointment } from "@/lib/databaseTypes";
+import {type Appointment, type ExperimentBooking, ExperimentPreparationStatus} from "@/lib/databaseTypes";
 import { useEffect, useState } from "react";
 
 export interface CalendarExperimentIndicator {

@@ -4,7 +4,7 @@ import AddCategorySection from "../EventForm/AddCategorySection";
 import TimeRangeInput from "../EventForm/TimeRangeInput";
 import type {Appointment, AppointmentCategory, AppointmentSeries, Lecture, Person} from "@/lib/databaseTypes";
 import {verifyValidTimeRange} from "@/components/calendar/eventUtils.ts";
-import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
+import {formatTimeRangeLongerDE} from "@/components/calendar/dateUtils.ts";
 
 type EventEditFormProps = {
   event: Appointment;
@@ -43,8 +43,11 @@ export default function EventEditForm({
   const [endDateTime, setEndDateTime] = useState<Date | undefined>(event.endTime);
 
   function handleAddCategory(category: AppointmentCategory) {
-    onAddCategory(category);
-    setCategory(category);
+    onAddCategory(category).then((result ) => {
+      if (result) {
+        setCategory(result);
+      }
+    });
   }
 
   function handleAddLecture(lecture: Lecture) {
@@ -120,11 +123,11 @@ export default function EventEditForm({
             endDateTime={endDateTime}
             onStartChange={setStartDateTime}
             onEndChange={setEndDateTime}
-            hintText={"Ursprüngliche Zeit: " + formatTimeRangeShortDE(event.startTime, event.endTime)}
+            hintText={"Ursprüngliche Zeit: " + formatTimeRangeLongerDE(event.startTime, event.endTime)}
             errorText={timeRangeHintText}
           />
           <div className="cv-detailsContent">
-            <p className="cv-moveDialogInfo">
+            <p className="cv-hintBanner cv-moveDialogInfo">
               {isSeries
                 ? 'Alle Termine dieser Serie werden bearbeitet und entsprechend verschoben.'
                 : 'Nur dieser einzelne Termin wird bearbeitet und aus der Serie gelöst.'}

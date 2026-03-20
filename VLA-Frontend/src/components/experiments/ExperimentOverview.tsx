@@ -1,16 +1,14 @@
 import { ExperimentPreparationStatus, type ExperimentBooking, type LinusExperiment } from "@/lib/databaseTypes";
-import { useState } from "react";
 import { fetchBackend, getExperimentPreperationsStatusGermanMap } from "@/lib/utils";
 import { API_URL_EXPERIMENTBOOKINGS } from "@/lib/api";
+import { useState } from "react";
 
 interface ExperimentOverviewProps {
   linusExperiment: LinusExperiment,
   experimentBooking: ExperimentBooking,
-  statusBackgroundColor: string,
-  statusTextColor: string,
 }
 
-function updateAppointmentStatus(experimentBooking: ExperimentBooking, status: ExperimentPreparationStatus){
+function updateBookingStatus(experimentBooking: ExperimentBooking, status: ExperimentPreparationStatus){
   fetchBackend(
     `${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}/status`,
     "PUT",
@@ -23,75 +21,82 @@ const translationMap = getExperimentPreperationsStatusGermanMap();
 export default function ExperimentOverview({
   linusExperiment,
   experimentBooking,
-  statusBackgroundColor,
-  statusTextColor,
 } : ExperimentOverviewProps){
-  const [isEditingStatus, setIsEditingStatus] = useState<boolean>(false);
-    
+  const [deletionRequested, setDeletionRequested] = useState<boolean>(false);
+
+  function deleteExperimentBooking(){
+    if(!deletionRequested) {
+      setDeletionRequested(true);
+      return;
+    } 
+    fetchBackend(`${API_URL_EXPERIMENTBOOKINGS}/${experimentBooking.id}`, "DELETE");
+  }
+
   return (
     <div className="experimentOverview">
-      <div className="experimentPropertyGrid">
+      <div className="cv-detailsContent">
         <div className="experimentOverviewTitle">
           {linusExperiment.name}
         </div>  
 
-        <div>
-          Aufbaustatus
-        </div>
-        <div>
-          {isEditingStatus &&
-            <>
-              <select onPointerDown={e => e.stopPropagation()}>
-                {Object.values(ExperimentPreparationStatus).map(status => {
-                  return (
-                    <>
-                      <option  
-                        key={status}
-                        value={status}
-                        onClick={e => {
-                          e.stopPropagation();
-                          updateAppointmentStatus(experimentBooking, status);
-                          setIsEditingStatus(false);
-                        }}
-                      >
-                        {translationMap.get(status)}
-                      </option>
-                    </>
-                  );
-                })}
-              </select>
-            </>
-          }
+        <div className="cv-detailRow">
 
-          {!isEditingStatus &&
-            <>
-              <span 
-                className="experimentOverviewStatus" 
-                style={{
-                  backgroundColor: statusBackgroundColor,
-                  color: statusTextColor,
-                }}
-                onClick={() => setIsEditingStatus(true)}
-              >
-                {translationMap.get(experimentBooking.status)}
-              </span>
-            </>
-          }
-                    
+          <div className="cv-detailLabel">
+            Aufbaustatus
+          </div>
+          <div className="cv-detailValue">
+            <select
+              defaultValue={experimentBooking.status}
+              onPointerDown={e => e.stopPropagation()}
+              onChange={(e) => updateBookingStatus(experimentBooking, e.target.value as ExperimentPreparationStatus)}
+            >
+              {Object.values(ExperimentPreparationStatus).map(status => {
+                return (
+                  <option
+                    key={status}
+                    value={status}
+                  >
+                    {translationMap.get(status)}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
         </div>
-                
-        <div>
-          Link zu linus
+
+        <div className="cv-detailRow">
+
+          <div className="cv-detailLabel">
+            Link zu Linus
+          </div>
+          <div className="cv-detailValue">
+            <a 
+              className="linusLink"
+              target="_blank"
+              href={"https://linus.iap.physik.tu-darmstadt.de/experiment/" + linusExperiment.id + "/description"}
+            >
+              Experiment in Linus
+            </a>
+          </div>
         </div>
-        <div>
-          <a 
-            className="linusLink"
-            target="_blank"
-            href={"https://linus.iap.physik.tu-darmstadt.de/experiment/" + linusExperiment.id + "/description"}
-          >
-            Experiment in Linus
-          </a>
+
+        <div className="cv-detailRow">
+          <div className="cv-detailLabel">
+            Notizen:
+          </div>
+          <div className="cv-detailValue">
+            {experimentBooking.notes}
+          </div>
         </div>
+
+        <button 
+          type="button"
+          className="cv-formBtn cv-formBtnDanger"
+          onClick={() => deleteExperimentBooking()}
+          aria-label= {deletionRequested ? "Löschung bestätigen" : "Experimentbuchung löschen"} 
+        >
+          {deletionRequested ? "Sicher?" : "Experimentbuchung löschen"}
+        </button>
       </div>
     </div>
   );

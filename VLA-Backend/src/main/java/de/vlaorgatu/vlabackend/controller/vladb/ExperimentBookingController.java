@@ -1,11 +1,13 @@
 package de.vlaorgatu.vlabackend.controller.vladb;
 
 import de.vlaorgatu.vlabackend.controller.sse.SseController;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
 import de.vlaorgatu.vlabackend.entities.vladb.ExperimentBooking;
 import de.vlaorgatu.vlabackend.enums.calendar.experimentbooking.ExperimentPreparationStatus;
 import de.vlaorgatu.vlabackend.enums.sse.SseMessageType;
 import de.vlaorgatu.vlabackend.exceptions.EntityNotFoundException;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
+import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,8 @@ public class ExperimentBookingController
      * Repository used for experiment booking persistence operations.
      */
     private final ExperimentBookingRepository experimentBookingRepository;
+
+    private final AppointmentRepository appointmentRepository;
 
     /**
      * Creates a new experiment booking.
@@ -148,10 +152,22 @@ public class ExperimentBookingController
         ExperimentBooking deletedExperimentBooking =
             experimentBookingRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
-                    "Experiment booking with ID " + id + " not found."));
+                    "Experiment booking with ID " + id + " not found."
+                )
+            );
+
+        Appointment toUpdateAppointment = deletedExperimentBooking.getAppointment();
+
+        toUpdateAppointment.getBookings().remove(deletedExperimentBooking);
+        toUpdateAppointment = appointmentRepository.save(toUpdateAppointment);
+
+        SseController.notifyAllOfObject(SseMessageType.APPOINTMENTUPDATED, toUpdateAppointment);
+
         experimentBookingRepository.deleteById(id);
-        // TODO: use a better method here instead of debug message
-        SseController.notifyDebugTest("Experiment booking deleted: " + deletedExperimentBooking);
+        SseController.notifyAllOfObject(
+            SseMessageType.EXPERIMENTBOOKINGDELETED,
+            deletedExperimentBooking
+        );
         return ResponseEntity.ok(deletedExperimentBooking);
     }
 

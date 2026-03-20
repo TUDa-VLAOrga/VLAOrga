@@ -45,13 +45,19 @@
 }
 
 /* Move dialog info text */
-.cv-moveDialogInfo {
-  margin-bottom: 1.5rem;
+.cv-hintBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem;
-  background-color: #e7f3ff;
-  border-left: 4px solid #0066cc;
   border-radius: 4px;
   font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.cv-moveDialogInfo {
+  background-color: #e7f3ff;
+  border-left: 4px solid #0066cc;
   color: #004085;
 }
 
@@ -383,21 +389,20 @@
   background-color: #fee2e2;
 }
 .cv-deletionRequestBanner {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
   background-color: #fff3cd;
   border-left: 4px solid #f59e0b;
-  border-radius: 4px;
-  font-size: 0.875rem;
   color: #92400e;
-  margin-bottom: 0.5rem;
 }
 
 .cv-deletionRequestIcon {
   font-size: 1rem;
   flex-shrink: 0;
+}
+
+.cv-deletionHintBanner {
+  background-color: #fff5f5;
+  border-left: 4px solid #b91c1c;
+  color: #dc2626;
 }
 
 .cv-notesIcon {

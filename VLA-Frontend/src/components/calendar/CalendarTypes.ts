@@ -1,4 +1,4 @@
-import type {Appointment} from "@/lib/databaseTypes";
+import type {Acceptance, Appointment} from "@/lib/databaseTypes";
 
 
 /**
@@ -23,4 +23,12 @@ export type EventStatus = string;
 /**
  * Data structure to group events by date.
  */
-export type CalendarEventsByDateISO = Record<string, Appointment[]>;
+export type CalendarEventsByDateISO = Record<string, CalendarEvent[]>;
+
+
+/**
+ * Union type for appointments and acceptances.
+ * Since we display both acceptances and appointments in the calendar, we store them mixed.
+ * Both have startTime and endTime, so they can be ordered together.
+ */
+export type CalendarEvent = Appointment | Acceptance;

@@ -1,4 +1,4 @@
-import type { Weekday } from "./EventForm/EventCreationForm.tsx";
+import type { Weekday } from "./EventForm/AddEventForm.tsx";
 import {NON_WORKDAYS} from "@/components/calendar/dateUtils.ts";
 
 type WeekdayPickerProps = {

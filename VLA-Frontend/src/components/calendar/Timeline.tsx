@@ -1,22 +1,19 @@
-import type { Appointment } from "@/lib/databaseTypes";
-import { getEventTitle } from "./eventUtils";
+import {getEventColor, getEventTitle, retrieveAppointment} from "./eventUtils";
+import {formatTimeRangeShortDE} from "@/components/calendar/dateUtils.ts";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 import CalendarExperimentIndicator from "./CalendarExperimentIndicator";
 
 type Props = {
   /** Timed events for a single day column. */
-  events: Appointment[];
+  events: CalendarEvent[];
+  /** all existing events. Used for experiment references from acceptances. */
+  allEvents: CalendarEvent[];
   /** First visible hour (inclusive). */
   startHour: number;
   /** Last visible hour boundary (exclusive for rows; used as end boundary). */
   endHour: number;
-  onEventClick?: (eventId: number) => void;
-  getEventColor?: (event: Appointment) => string | undefined;
+  onEventClick?: (event: CalendarEvent) => void;
 };
-
-const timeFmt = new Intl.DateTimeFormat("de-DE", {
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 /**
  * Convert a Date to minutes relative to the visible start hour.
@@ -27,7 +24,7 @@ function minutesSinceStartHour(d: Date, startHour: number): number {
 }
 
 type TimedItem = {
-  event: Appointment;
+  event: CalendarEvent;
   start: number; // clamped minutes since startHour
   end: number; // clamped minutes since startHour
   rawStart: number; // unclamped
@@ -112,10 +109,10 @@ function layoutOverlaps(items: TimedItem[]): PositionedItem[] {
  */
 export default function Timeline({
   events,
+  allEvents,
   startHour,
   endHour,
   onEventClick,
-  getEventColor,
 }: Props) {
   const minutesVisible = (endHour - startHour) * 60;
 
@@ -169,8 +166,8 @@ export default function Timeline({
           const widthPct = 100 / colCount;
           const leftPct = col * widthPct;
 
-          const color = getEventColor?.(event) ?? event.series?.lecture?.color;
-          const title = getEventTitle(event);
+          const color = getEventColor(event, allEvents);
+          const title = getEventTitle(event, allEvents);
 
           const shortClass =
             durationMin < 60
@@ -191,18 +188,17 @@ export default function Timeline({
                 backgroundColor: color ?? undefined,
                 borderColor: color ?? undefined,
               }}
-              onClick={onEventClick ? () => onEventClick(event.id) : undefined}
-              title={`${title} (${timeFmt.format(event.startTime)} – ${timeFmt.format(
-                event.endTime
-              )})`}
+              onClick={onEventClick ? () => onEventClick(event) : undefined}
+              title={`${title} (${formatTimeRangeShortDE(event.startTime, event.endTime)})`}
             >
               <div className="cv-timeline-event-title">{title}</div>
 
               <div className="cv-timeline-event-time">
-                {timeFmt.format(event.startTime)} – {timeFmt.format(event.endTime)}
+                {formatTimeRangeShortDE(event.startTime, event.endTime)}
               </div>
 
-              <CalendarExperimentIndicator appointment={event}/>
+              <CalendarExperimentIndicator appointment={retrieveAppointment(event, allEvents)}
+              />
             </div>
           );
         })}

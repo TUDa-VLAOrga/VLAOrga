@@ -1,29 +1,41 @@
 import { useState } from "react";
-import {formatTimeRangeShortDE} from "../dateUtils";
+import {formatDateAndTime, formatTimeRangeLongerDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
 import "../../../styles/EventDetailsStyles.css";
 import LectureEditForm from "./LectureEditForm";
-import type {Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import "../../../styles/EventDetailsStyles.css";
+import type {Acceptance, Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
+import {
+  checkPartOfSeries,
+  getEventStatus,
+  getEventTitle,
+  isCalendarEventAcceptance, retrieveAppointment
+} from "@/components/calendar/eventUtils.ts";
+import AddAcceptanceForm from "@/components/calendar/EventForm/AddAcceptanceForm.tsx";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
+import AcceptanceEditForm from "@/components/calendar/EventDetails/AcceptanceEditForm.tsx";
 import ExperimentSection from "@/components/experiments/ExperimentSection";
-import {getEventStatus, checkPartOfSeries, getEventTitle} from "@/components/calendar/eventUtils.ts";
 
 
 type EventDetailsProps = {
-  event: Appointment;
-  allEvents: Appointment[];
+  event: CalendarEvent;
+  allEvents: CalendarEvent[];
   onClose: () => void;
-  lectures?: Lecture[];
+  lectures: Lecture[];
   people: Person[];
-  categories?: AppointmentCategory[];
+  categories: AppointmentCategory[];
   onUpdatePersonNotes: (personId: number, notes: string) => void;
   onUpdateEventNotes: (eventId: number, notes: string) => void;
   onUpdateEvent: (eventId: number, updates: Partial<Appointment>, editSeries: boolean) => void;
+  onAddAcceptance: (appointmentId: number, startTime: Date, endTime: Date) => Promise<Acceptance | void>;
+  onUpdateAcceptance: (acceptanceId: number, startTime: Date, endTime: Date) => Promise<Acceptance | void>;
+  onDeleteAcceptance: (acceptanceId: number) => Promise<void>;
   onAddCategory: (category: AppointmentCategory) => Promise<AppointmentCategory | void>;
   onAddPerson: (person: Person) => Promise<Person | void>;
   onAddLecture: (lecture: Lecture) => Promise<Lecture | void>;
   onUpdateLecture: (lecture: Lecture) => Promise<Lecture | void>;
-  onDeletion: (eventId: number) => Promise<void>;
+  onDeletion: (eventId: number) => Promise<Appointment | string>;
   onCancelDeletionRequest: (eventId: number) => Promise<void>;
   currentUserId?: number;
 };
@@ -36,12 +48,15 @@ export default function EventDetails({
   event,
   allEvents,
   onClose,
-  lectures = [],
+  lectures,
   people,
-  categories = [],
+  categories,
   onUpdatePersonNotes,
   onUpdateEventNotes,
   onUpdateEvent,
+  onAddAcceptance,
+  onUpdateAcceptance,
+  onDeleteAcceptance,
   onAddCategory,
   onAddPerson,
   onAddLecture,
@@ -50,16 +65,14 @@ export default function EventDetails({
   onCancelDeletionRequest,
   currentUserId,
 }: EventDetailsProps) {
+  // toggles for other popups
   const [selectedPersonId, setSelectedPersonId] = useState<number>();
   const [showEditSingleDialog, setShowEditSingleDialog] = useState(false);
   const [showMoveSeriesDialog, setShowMoveSeriesDialog] = useState(false);
+  const [showCreateAcceptanceDialog, setShowCreateAcceptanceDialog] = useState(false);
   const [showEditLectureDialog, setShowEditLectureDialog] = useState(false);
-  const [eventNotes, setEventNotes] = useState(event.notes);
-  const [isDeletionPending, setIsDeletionPending] = useState(Boolean(event.deletingIntentionUser));
-  const deletingUser = event.deletingIntentionUser;
-  const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
-  const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
-  
+
+
   function handlePersonNotesUpdate(personId: number, notes: string) {
     if (onUpdatePersonNotes) {
       onUpdatePersonNotes(personId, notes.trim());
@@ -74,8 +87,26 @@ export default function EventDetails({
   }
 
   const isPartOfSeries = checkPartOfSeries(event, allEvents);
+  const isAcceptance = isCalendarEventAcceptance(event);
+  const appointment: Appointment = retrieveAppointment(event, allEvents);
+  // local state for note editing
+  const [eventNotes, setEventNotes] = useState(appointment.notes);
 
-  if (showEditSingleDialog) {
+
+  const [deletionBlocked, setDeletionBlocked] = useState((
+    !isAcceptance
+    && allEvents
+      .filter(isCalendarEventAcceptance)
+      .filter(acc => acc.appointment.id == appointment.id)
+      .length > 0
+  ) ? "Dieser Termin kann noch nicht gelöscht werden, da Abnahmetermine verknüpft sind." : "");
+  // double-deletion logic for appointments
+  const isDeletionPending = isAcceptance ? false : Boolean(event.deletingIntentionUser);
+  const deletingUser = isAcceptance ? null : event.deletingIntentionUser;
+  const isOwnDeletionRequest = deletingUser != null && deletingUser.id === currentUserId;
+  const canConfirmDeletion = deletingUser != null && !isOwnDeletionRequest;
+
+  if (showEditSingleDialog && !isAcceptance) {
     return (
       <EventEditForm
         event={event}
@@ -93,8 +124,19 @@ export default function EventDetails({
         onCancel={() => setShowEditSingleDialog(false)}
       />
     );
+  } else if (showEditSingleDialog && isAcceptance) {
+    return (
+      <AcceptanceEditForm
+        acceptance={event}
+        referenceAppointment={appointment}
+        onSubmit={(acceptanceId, startTime, endTime) => {
+          return onUpdateAcceptance(acceptanceId, startTime, endTime).then(() => setShowEditSingleDialog(false));
+        }}
+        onClose={() => setShowEditSingleDialog(false)}
+      />
+    );
   }
-  if (showMoveSeriesDialog) {
+  if (showMoveSeriesDialog && !isAcceptance) {
     return (
       <EventEditForm
         event={event}
@@ -113,29 +155,59 @@ export default function EventDetails({
       />
     );
   }
+  if (showCreateAcceptanceDialog && !isAcceptance) {
+    return (
+      <AddAcceptanceForm
+        event={event}
+        allEvents={allEvents}
+        onSubmit={(appointmentId, startTime, endTime) => {
+          return onAddAcceptance(appointmentId, startTime, endTime).then(() => setShowCreateAcceptanceDialog(false));
+        }}
+        onClose={() => setShowCreateAcceptanceDialog(false)}
+      />
+    );
+  }
   return (
     <>
       <div className="cv-formOverlay">
         <div className="cv-formBox">
-          <h2 className="cv-formTitle">{getEventTitle(event)}</h2>
+          {!isAcceptance &&
+          <div>
+            <button
+              className="cv-floatRight cv-formBtn cv-formBtnSecondary"
+              onClick={() => setShowCreateAcceptanceDialog(true)}
+            >
+              +&nbsp;Abnahmetermin
+            </button>
+            <h2 className="cv-formTitle">{getEventTitle(event, allEvents)}</h2>
+          </div>
+          }
+          {isAcceptance &&
+              <div>
+                <h2 className="cv-formTitle">Abnahmetermin</h2>
+                <h3 className="cv-formSubtitle">
+                  für {getEventTitle(appointment)} am {formatDateAndTime(appointment.startTime)}
+                </h3>
+              </div>
+          }
 
           <div className="cv-detailsContent">
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Kategorie:</span>
-              <span className="cv-detailValue">{event.series.category.title}</span>
+              <span className="cv-detailValue">{appointment.series.category.title}</span>
             </div>
 
             {/* Lecture details (only if lecture is assigned) */}
-            {event.series.lecture && (
+            {appointment.series.lecture && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Vorlesung:</span>
                 <span className="cv-detailValue">
                   <span className="cv-detailValueLecture ">
                     <span
                       className="cv-lectureSwatch"
-                      style={{ backgroundColor: event.series.lecture.color }}
+                      style={{ backgroundColor: appointment.series.lecture.color }}
                     />
-                    <span className="cv-lectureName">{event.series.lecture.name}</span>
+                    <span className="cv-lectureName">{appointment.series.lecture.name}</span>
                     <button
                       type="button"
                       className="cv-personDetailsBtn"
@@ -148,37 +220,37 @@ export default function EventDetails({
               </div>
             )}
 
-            {event.series.lecture?.semester && (
+            {appointment.series.lecture?.semester && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Semester:</span>
-                <span className="cv-detailValue">{event.series.lecture.semester}</span>
+                <span className="cv-detailValue">{appointment.series.lecture.semester}</span>
               </div>
             )}
 
             <div className="cv-detailRow">
               <span className="cv-detailLabel">Zeit:</span>
               <span className="cv-detailValue">
-                {formatTimeRangeShortDE(event.startTime, event.endTime)}
+                {formatTimeRangeLongerDE(event.startTime, event.endTime)}
               </span>
             </div>
 
-            <ExperimentSection appointment={event} />
+            <ExperimentSection appointment={appointment} />
 
-            {event.series.lecture && event.series.lecture?.persons.length > 0 && (
+            {appointment.series.lecture && appointment.series.lecture?.persons.length > 0 && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabelPeople"> 
                   <span className="cv-detailLabel">Personen:</span>
                   <button
                     type="button"
                     className="cv-formBtn cv-formBtnSecondary"
-                    onClick={() => mailToPersons(event.series.lecture!.persons)}
+                    onClick={() => mailToPersons(appointment.series.lecture!.persons)}
                   >
                     {"Email an Alle"}
                   </button>
                 </span>
                 <div className="cv-detailValue cv-detailValuePeople">
                   <span className="cv-peopleList"> 
-                    {event.series.lecture?.persons.map((person) => (
+                    {appointment.series.lecture?.persons.map((person) => (
                       <span key={person.id} className="cv-personItem">
                         {/* Need to use people (state from usePeople) here, since lecture.persons
                          include probably old versions of the person entity. */}
@@ -204,7 +276,7 @@ export default function EventDetails({
             )}
 
             {/* Status is optional; used for UI highlighting elsewhere */}
-            {getEventStatus(event) && (
+            {!isAcceptance && getEventStatus(event) && (
               <div className="cv-detailRow">
                 <span className="cv-detailLabel">Status:</span>
                 <span className="cv-detailValue">{getEventStatus(event)}</span>
@@ -237,15 +309,16 @@ export default function EventDetails({
             <button
               type="submit"
               className="cv-formBtn cv-formBtnSubmit"
-              disabled={typeof eventNotes === "string" && eventNotes.trim() === event.notes}
+              disabled={typeof eventNotes === "string" && eventNotes.trim() === appointment.notes}
               onClick={() => {
-                onUpdateEventNotes(event.id, eventNotes);
+                onUpdateEventNotes(appointment.id, eventNotes);
                 onClose();
               }}
             >
               Notizen speichern
             </button>
-            {isPartOfSeries &&
+            {isPartOfSeries && !isAcceptance &&
+              // We do not allow editing acceptances in series for simplicity of code logic
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnSecondary"
@@ -263,8 +336,13 @@ export default function EventDetails({
             </button>
           </div>
           <div className="cv-formActions">
-            {deletingUser &&
-                <div className="cv-deletionRequestBanner">
+            {deletionBlocked &&
+              <div className="cv-hintBanner cv-deletionHintBanner">
+                {deletionBlocked}
+              </div>
+            }
+            {!deletionBlocked && deletingUser &&
+                <div className="cv-hintBanner cv-deletionRequestBanner">
                   <span className="cv-deletionRequestIcon">⚠️</span>
                   <span>
                     {isOwnDeletionRequest
@@ -273,39 +351,50 @@ export default function EventDetails({
                   </span>
                 </div>
             }
-            {!isDeletionPending && (
+            {!deletionBlocked && !isDeletionPending && (
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
                 disabled={isDeletionPending}
                 onClick={() => {
-                  onDeletion(event.id).then(() => setIsDeletionPending(true));
+                  if (isAcceptance)
+                    onDeleteAcceptance(event.id).then(() => onClose());
+                  else
+                    onDeletion(event.id).then((errorStr: Appointment | string) => {
+                      // string returned => error message, otherwise success
+                      if (typeof errorStr === "string") {
+                        setDeletionBlocked(errorStr);
+                      }
+                    });
                 }}
               >
                 Löschen
               </button>
             )}
-            {canConfirmDeletion && (
+            {!deletionBlocked && canConfirmDeletion && (
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger"
-                onClick={() => onDeletion(event.id).then(() => onClose())}
+                onClick={() => onDeletion(event.id).then(
+                  (errorStr: Appointment | string) => {
+                    // string returned => error message, otherwise success
+                    if (typeof errorStr === "string") {
+                      setDeletionBlocked(errorStr);
+                    }
+                  })}
               >
                 Löschung bestätigen
               </button>
             )}
-            {isDeletionPending &&
+            {!deletionBlocked && isDeletionPending &&
               <button
                 type="button"
                 className="cv-formBtn cv-formBtnDanger cv-formBtnOutline"
-                onClick={() => onCancelDeletionRequest(event.id).then(() => setIsDeletionPending(false))}
+                onClick={() => onCancelDeletionRequest(event.id)}
               >
                 Löschanfrage zurückziehen
               </button>
             }
-
-
-
           </div>
         </div>
       </div>
@@ -319,7 +408,7 @@ export default function EventDetails({
       )}
       {showEditLectureDialog && (
         <LectureEditForm
-          lecture={event.series.lecture!}
+          lecture={appointment.series.lecture!}
           people={people}
           onCancel={() => setShowEditLectureDialog(false)}
           onSubmit={(lecture) => {

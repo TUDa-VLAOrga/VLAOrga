@@ -1,21 +1,22 @@
-import type { Appointment, AppointmentMatching } from "@/lib/databaseTypes";
+import type { AppointmentMatching } from "@/lib/databaseTypes";
 import LinusAppointmentMatch from "./LinusAppointmentMatch";
 import "@/styles/AppointmentMatching.css";
 import { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../ui/Button";
+import type {CalendarEvent} from "@/components/calendar/CalendarTypes.ts";
 
 interface LinusAppointmentMatcherProps {
-  appointmentMatching: AppointmentMatching[],
+  appointmentMatchings: AppointmentMatching[],
   setAppointmentMatcherVisible: Dispatch<SetStateAction<boolean>>,
   visible: boolean,
-  appointments: Appointment[],
+  events: CalendarEvent[],
 }
 
 export default function LinusAppointmentMatcher({
-  appointmentMatching,
+  appointmentMatchings,
   setAppointmentMatcherVisible,
   visible,
-  appointments,
+  events,
 }
 : LinusAppointmentMatcherProps)
 {
@@ -30,11 +31,11 @@ export default function LinusAppointmentMatcher({
       </div>
 
       <div className="matchingColumn">
-        {appointmentMatching.map(matching => 
+        {appointmentMatchings.map(matching =>
           <LinusAppointmentMatch
             matching={matching}
             key={matching.id}
-            appointments={appointments}
+            events={events}
           />
         )}
       </div>
