@@ -19,8 +19,8 @@ export default function WeekHeader({ days }: Props) {
           key={day.iso}
           className="cv-headerCell"
         >
-          <div className="cv-headerDay">{weekdayFmt.format(day.date)}</div>
           <div className="cv-headerDate">{formatDDMM(day.date)}</div>
+          <div className="cv-headerDay">{weekdayFmt.format(day.date)}</div>
         </div>
       ))}
     </div>
