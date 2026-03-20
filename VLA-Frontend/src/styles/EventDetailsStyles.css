@@ -159,7 +159,7 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  opacity: 0.3;
+  opacity: 0.6;
   transition: opacity 0.2s, color 0.2s;
 }
 
@@ -398,4 +398,19 @@
 .cv-deletionRequestIcon {
   font-size: 1rem;
   flex-shrink: 0;
+}
+
+.cv-notesIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-left: 0.15rem;
+  background-image: url("/public/icons/NotesIcon.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
 }
