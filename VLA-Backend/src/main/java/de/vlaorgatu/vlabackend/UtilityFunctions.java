@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.vlaorgatu.vlabackend.entities.vladb.Acceptance;
+import de.vlaorgatu.vlabackend.entities.vladb.Appointment;
+import java.time.ZoneOffset;
 
 /**
  * Class for frequently reusable functions.
@@ -76,5 +79,36 @@ public class UtilityFunctions {
         jsonMapper.registerModule(new JavaTimeModule());
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return jsonMapper.writeValueAsString(object);
+    }
+
+    /**
+     * Time from 00:00.0000 - 23:59:00.0000 (or later) representing whole day events.
+     */
+    private static final int wholeDaySecondsMinimum = 24 * 60 * 60 - 60;
+
+    /**
+     * Checks if an event may be considered as an event that takes place the entire day.
+     *
+     * @param appointment The appointment to check
+     * @return true iff appointment is a whole day events
+     */
+    public static boolean isWholeDayEvent(Appointment appointment) {
+        return
+            appointment.getEndTime().toEpochSecond(ZoneOffset.UTC) -
+            appointment.getStartTime().toEpochSecond(ZoneOffset.UTC) >=
+            wholeDaySecondsMinimum;
+    }
+
+    /**
+     * Checks if an event may be considered as an event that takes place the entire day.
+     *
+     * @param acceptance The acceptance to check
+     * @return true iff acceptance is a whole day events
+     */
+    public static boolean isWholeDayEvent(Acceptance acceptance) {
+        return
+            acceptance.getEndTime().toEpochSecond(ZoneOffset.UTC) -
+            acceptance.getStartTime().toEpochSecond(ZoneOffset.UTC) >=
+            wholeDaySecondsMinimum;
     }
 }

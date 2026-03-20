@@ -18,7 +18,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * Searches for next appointment in a series with lectures.
      *
      * @param seriesLectureId The id of the lecture
-     * @param startTime         The lower exclusive time bound for start of event.
+     * @param startTime       The lower exclusive time bound for start of event.
      * @return The first appointment that is for the same lecture and starts after startTime
      */
     @SuppressWarnings("checkstyle:indentation")
@@ -31,7 +31,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     /**
      * Searches for the next appointment in a series.
      *
-     * @param seriesId The id of the series to search in
+     * @param seriesId  The id of the series to search in
      * @param startTime The lower exclusive time bound for start of event.
      * @return Appointment in the specified series that starts after the startTime
      */
@@ -40,6 +40,30 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     findFirstAppointmentBySeriesIdAndStartTimeGreaterThanOrderByStartTimeAsc(
         Long seriesId,
         LocalDateTime startTime
+    );
+
+    /**
+     * Finds the last event in a series without a lecture that ends before the endtime.
+     *
+     * @param seriesLectureId The id of the series of the lecture the appointments belong to.
+     * @param endTime         The exclusive upper bound for the end of events.
+     * @return Previous appointment in series without lecture
+     */
+    Optional<Appointment> findFirstAppointmentBySeriesIdAndEndTimeLessThanOrderByEndTimeDesc(
+        Long seriesLectureId,
+        LocalDateTime endTime
+    );
+
+    /**
+     * Finds the last event in a series with a lecture that ends before the endtime.
+     *
+     * @param seriesLectureId The id of the series of the lecture the appointments belong to.
+     * @param endTime         The exclusive upper bound for the end of events.
+     * @return Previous appointment in series with lecture
+     */
+    Optional<Appointment> findFirstAppointmentBySeriesLectureIdAndEndTimeLessThanOrderByEndTimeDesc(
+        Long seriesLectureId,
+        LocalDateTime endTime
     );
 
     /**
@@ -70,4 +94,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * @return All appointments that have this lecture
      */
     List<Appointment> findAppointmentsBySeriesLecture(Lecture seriesLecture);
+
+    /**
+     * Finds all {@link Appointment} during a time span.
+     *
+     * @param start The inclusive lower bound of the time frame
+     * @param end   The inclusive upper bound of the time frame
+     * @return All appointments during a time span (inclusive bounds)
+     */
+    List<Appointment> findAppointmentsByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(
+        LocalDateTime start,
+        LocalDateTime end
+    );
 }

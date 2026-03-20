@@ -73,7 +73,8 @@ export default function CalendarView() {
     handleCreateEvent(formData).then(() => setShowAddEventForm(false));
   }
 
- 
+  const calendarStartHour = 7;
+  const calendarEndHour = 22;
 
   return (
     <div className="cv-root">
@@ -107,7 +108,12 @@ export default function CalendarView() {
           + Neuer Termin
         </button>
 
-        <AppointmentMatchingButton appointmentMatchings={missingAppointmentMatchings} events={allEvents}/>
+        <AppointmentMatchingButton
+          appointmentMatchings={missingAppointmentMatchings}
+          events={allEvents}
+          calendarStartMinSinceMidnight={calendarStartHour * 60}
+          calendarEndMinSinceMidnight={calendarEndHour * 60}
+        />
 
         <LogoutButton/>
       </div>
@@ -124,6 +130,8 @@ export default function CalendarView() {
             eventsByDate={eventsByDate}
             allEvents={allEvents}
             onEventClick={handleEventClick}
+            startHour={calendarStartHour}
+            endHour={calendarEndHour}
           />
         </div>
       </div>
