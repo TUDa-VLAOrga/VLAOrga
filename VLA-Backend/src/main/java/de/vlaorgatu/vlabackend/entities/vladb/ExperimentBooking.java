@@ -52,7 +52,8 @@ public class ExperimentBooking {
      */
     @ManyToOne
     @Nullable
-    private Person person;
+    @Builder.Default
+    private Person person = null;
 
     /**
      * Appointment this experiment is booked for.
@@ -66,11 +67,13 @@ public class ExperimentBooking {
      * Notes for this booking, probably taken from linus reservation at init.
      */
     @Column(name = "notes", nullable = false, length = 4096)
+    @Builder.Default
     private String notes = "";
 
     /**
      * Preparation status of the experiment.
      */
     @Column(name = "status", nullable = false)
+    @Builder.Default
     private ExperimentPreparationStatus status = ExperimentPreparationStatus.PENDING;
 }

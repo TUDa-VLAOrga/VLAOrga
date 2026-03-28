@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,13 +43,15 @@ public class AppointmentSeries {
      */
     @ManyToOne
     @Nullable
-    private Lecture lecture;
+    @Builder.Default
+    private Lecture lecture = null;
 
     /**
      * Name of this series. Should be empty if an associated lecture exists.
      * Otherwise, for example, "Sommerurlaub Albert"
      */
     @Column(name = "name", nullable = false)
+    @Builder.Default
     private String name = "";
 
     /**
@@ -62,5 +65,6 @@ public class AppointmentSeries {
      */
     @OneToMany(mappedBy = "series")
     @JsonIgnore
-    private List<Appointment> appointments;
+    @Builder.Default
+    private List<Appointment> appointments = new ArrayList<>();
 }

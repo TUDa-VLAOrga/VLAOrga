@@ -60,12 +60,14 @@ public class Appointment {
      * Notes for this appointment.
      */
     @Column(name = "notes", nullable = false)
+    @Builder.Default
     private String notes = "";
 
     /**
      * List of {@link ExperimentBooking}s of this appointment.
      */
     @OneToMany(mappedBy = "appointment", fetch = FetchType.EAGER)
+    @Builder.Default
     private List<ExperimentBooking> bookings = new ArrayList<>();
 
     /**
@@ -78,5 +80,6 @@ public class Appointment {
     @Nullable
     @OneToMany(mappedBy = "appointment")
     @JsonIgnore
+    @Builder.Default
     private List<AppointmentMatching> appointmentMatchings = new ArrayList<>();
 }

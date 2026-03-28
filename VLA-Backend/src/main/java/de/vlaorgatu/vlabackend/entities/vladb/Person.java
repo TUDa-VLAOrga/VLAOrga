@@ -41,12 +41,14 @@ public class Person {
      * Email address to contact this person.
      */
     @Column(name = "email", nullable = false)
+    @Builder.Default
     private String email = "";
 
     /**
      * Personal notes, specifying e.g. equipment preferences of this lecturer.
      */
     @Column(name = "notes", nullable = false)
+    @Builder.Default
     private String notes = "";
 
     /**
