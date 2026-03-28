@@ -247,7 +247,7 @@ public class BookingServiceTest {
         appointmentCategory = appointmentCategoryRepository.save(appointmentCategory);
 
         AppointmentSeries appointmentSeries =
-            AppointmentSeries.builder().id(null).lecture(null).name("Series")
+            AppointmentSeries.builder().id(null).name("Series")
                 .category(appointmentCategory).build();
 
         appointmentSeries = appointmentSeriesRepository.save(appointmentSeries);

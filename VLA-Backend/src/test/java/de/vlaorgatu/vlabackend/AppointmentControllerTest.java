@@ -68,7 +68,6 @@ public class AppointmentControllerTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.now())
             .endTime(LocalDateTime.now())
-            .notes("")
             .build();
 
         appointmentController.createAppointment(appointment);
@@ -82,7 +81,6 @@ public class AppointmentControllerTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.now())
             .endTime(LocalDateTime.now())
-            .notes("")
             .build();
 
         appointment = appointmentController.createAppointment(appointment).getBody();
@@ -91,7 +89,6 @@ public class AppointmentControllerTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.now())
             .endTime(LocalDateTime.now())
-            .notes("")
             .build();
 
         appointment2 = appointmentController.createAppointment(appointment2).getBody();

@@ -14,7 +14,6 @@ import de.vlaorgatu.vlabackend.entities.vladb.Lecture;
 import de.vlaorgatu.vlabackend.entities.vladb.Person;
 import de.vlaorgatu.vlabackend.exceptions.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +38,11 @@ public class VlaBackendEntitiesTest {
         .name("Physik 1")
         .semester("WS 25/26")
         .color("#FFFF00")
-        .persons(null)
         .build();
 
     Person person = Person.builder()
         .id(1L)
         .name("Dr. Alberner Stein")
-        .email("")
         .notes("bitte grünen Laserpointer")
         .linusUserId(42)
         .build();
@@ -66,7 +63,6 @@ public class VlaBackendEntitiesTest {
             .startTime(LocalDateTime.parse("2025-10-14T09:50:00"))
             .endTime(LocalDateTime.parse("2025-10-14T11:30:00"))
             .notes("Mit Willkommensgeschenk zum Semesterstart!")
-            .bookings(List.of())
             .build();
 
     Acceptance acceptance = Acceptance.builder()

@@ -89,7 +89,6 @@ public class AppointmentTest {
             .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
             .notes("Note that.")
-            .bookings(List.of())
             .build();
 
         appointmentRepository.save(appointment);
@@ -139,7 +138,6 @@ public class AppointmentTest {
             .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
             .notes("Note that.")
-            .bookings(List.of())
             .build();
 
         ExperimentBooking experimentBooking = ExperimentBooking.builder()
@@ -147,7 +145,6 @@ public class AppointmentTest {
             .appointment(appointment)
             .linusExperimentId(1)
             .linusExperimentBookingId(1)
-            .person(null)
             .notes("Experiment note")
             .status(ExperimentPreparationStatus.PENDING)
             .build();

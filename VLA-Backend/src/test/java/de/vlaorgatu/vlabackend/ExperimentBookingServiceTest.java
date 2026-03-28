@@ -11,7 +11,6 @@ import de.vlaorgatu.vlabackend.repositories.vladb.AppointmentSeriesRepository;
 import de.vlaorgatu.vlabackend.repositories.vladb.ExperimentBookingRepository;
 import de.vlaorgatu.vlabackend.services.ExperimentBookingService;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +55,6 @@ public class ExperimentBookingServiceTest {
         appointmentSeriesRepository.save(AppointmentSeries.builder()
             .name("NoLectureSeries")
             .category(cat)
-            .appointments(new ArrayList<>())
             .build()
         );
     }
@@ -67,8 +65,6 @@ public class ExperimentBookingServiceTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
-            .bookings(new ArrayList<>())
-            .notes("")
             .build()
         );
 
@@ -76,8 +72,6 @@ public class ExperimentBookingServiceTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
-            .bookings(new ArrayList<>())
-            .notes("")
             .build()
         );
 
@@ -127,8 +121,6 @@ public class ExperimentBookingServiceTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
-            .bookings(new ArrayList<>())
-            .notes("")
             .build()
         );
 
@@ -136,8 +128,6 @@ public class ExperimentBookingServiceTest {
             .series(appointmentSeriesRepository.findAll().getFirst())
             .startTime(LocalDateTime.of(2026, 1, 1, 0, 0))
             .endTime(LocalDateTime.of(2026, 1, 1, 1, 0))
-            .bookings(new ArrayList<>())
-            .notes("")
             .build()
         );
 
