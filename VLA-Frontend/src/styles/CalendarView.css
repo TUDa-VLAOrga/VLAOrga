@@ -95,12 +95,12 @@
 }
 
 .cv-headerDay {
-  font-weight: 700;
+  margin-top: 2px;
+  font-size: 12px;
 }
 
 .cv-headerDate {
-  margin-top: 2px;
-  font-size: 12px;
+  font-weight: 700;
 }
 
 /* Main grid area with shared vertical scrolling */
@@ -373,7 +373,6 @@
   color: #111;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -1242,7 +1241,6 @@
   border-radius: 20px;
   overflow: hidden;
   width: 80%;
-  height: 30%;
   margin-left: 10%;
 }
 
