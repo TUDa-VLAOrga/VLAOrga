@@ -264,8 +264,11 @@ export default function EventDetails({
                         >
                         </button>
                         { people.find((p) => p.id == person.id)?.notes !== "" && (
-                          <span className="cv-notesIcon">
-                            {""}
+                          <span
+                            className="cv-notesIcon"
+                            onClick={() => setSelectedPersonId(person.id)}
+                            title={people.find((p) => p.id == person.id)!.notes}
+                          >
                           </span>
                         )}
                       </span>
