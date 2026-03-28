@@ -293,6 +293,7 @@ export default function EventDetails({
               onChange={(e) => setEventNotes(e.target.value)}
               placeholder="Notizen zu diesem Termin..."
               rows={4}
+              maxLength={4096}
             />
           </div>
 

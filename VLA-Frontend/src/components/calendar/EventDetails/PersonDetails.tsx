@@ -73,6 +73,7 @@ export default function PersonDetails({ person, onClose, onSaveNotes }: PersonDe
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Notizen zu dieser Person"
             rows={4}
+            maxLength={4096}
           />
         </div>
 
