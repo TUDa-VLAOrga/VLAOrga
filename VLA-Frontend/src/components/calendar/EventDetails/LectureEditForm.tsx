@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ColorPicker from "../ColorPicker";
 import {createPortal} from "react-dom";
 import AddPeopleSection from "../EventForm/AddPeopleSection";
 import type {Lecture, Person} from "@/lib/databaseTypes";
@@ -94,9 +93,10 @@ export default function LectureEditForm({
           {/* Farbauswahl */}
           <div className="cv-formGroup">
             <label className="cv-formLabel">Farbe wählen:</label>
-            <ColorPicker
-              selectedColor={color}
-              onColorChange={setColor}
+            <input
+              type="color"
+              value={color}
+              onChange={e => setColor(e.target.value)}
             />
           </div>
 
