@@ -128,11 +128,11 @@ public class BookingServiceTest {
             .build();
 
         LinusExperimentBooking linusExperimentBooking1 =
-            LinusExperimentBooking.builder().id(1).linusExperimentId(1).linusUserId(1)
+            LinusExperimentBooking.builder().id(1).linusExperimentId(1)
                 .linusAppointmentId(1).status(0).build();
 
         LinusExperimentBooking linusExperimentBooking2 =
-            LinusExperimentBooking.builder().id(2).linusExperimentId(1).linusUserId(1)
+            LinusExperimentBooking.builder().id(2).linusExperimentId(1)
                 .linusAppointmentId(2).status(0).build();
 
         when(linusExperimentRepository.findById(1)).thenReturn(Optional.of(experiment1));
