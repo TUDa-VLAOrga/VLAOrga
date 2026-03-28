@@ -16,7 +16,7 @@
     right: 10px;
     bottom: 10px;
     cursor: pointer;
-    background-image: url("/public/GlobalNotes/NotesIcon.png");
+    background-image: url("/public/icons/NotesIcon.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
