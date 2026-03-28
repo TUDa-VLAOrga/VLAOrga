@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-03-16 11:49:58.
+// Generated using typescript-generator version 3.2.1263 on 2026-03-28 19:30:59.
 
 export interface LinusAppointment {
     id: number;
@@ -9,6 +9,7 @@ export interface LinusAppointment {
     status: number;
     appointmentTime?: Date;
     comment?: string;
+    message?: string;
     name?: string;
 }
 
@@ -26,6 +27,8 @@ export interface LinusExperiment {
     executionTime?: number;
     safetySigns?: string;
     experimentNumber: number;
+    tags?: string;
+    presented: boolean;
 }
 
 export interface LinusExperimentBuilder {
@@ -35,7 +38,6 @@ export interface LinusExperimentBooking {
     id: number;
     linusAppointmentId?: number;
     linusExperimentId: number;
-    linusUserId: number;
     status: number;
     pinnedOn?: Date;
 }
@@ -45,10 +47,18 @@ export interface LinusExperimentBookingBuilder {
 
 export interface LinusUser {
     id: number;
-    name: string;
-    roles: string;
     password: string;
+    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
+    lastLogin?: Date;
+    dateJoined: Date;
+    colorId?: number;
+    presetId?: number;
+    superuser: boolean;
+    staff: boolean;
+    active: boolean;
 }
 
 export interface Acceptance {

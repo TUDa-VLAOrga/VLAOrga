@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/ReservationExperiment.php
+// table and column names are taken from a production SQL dump.
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation_experiment")
 public class LinusExperimentBooking {
@@ -43,13 +43,6 @@ public class LinusExperimentBooking {
     // TODO: possible candidate for @JoinColumn
     @Column(name = "experiment_id")
     private int linusExperimentId;
-
-    /**
-     * Linus user id.
-     */
-    // TODO: possible candidate for @JoinColumn
-    @Column(name = "user_id")
-    private int linusUserId;
 
     /**
      * Status of the booking.

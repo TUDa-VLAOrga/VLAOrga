@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
+// table and column names are taken from a production SQL dump.
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation")
 public class LinusAppointment {
@@ -59,10 +59,19 @@ public class LinusAppointment {
 
     /**
      * Comment from the linus order.
+     * TODO: find out what the intended difference between comment and message is.
      */
     @Column(name = "comment")
     @Nullable
     private String comment;
+
+    /**
+     * Message from the linus order.
+     * TODO: find out what the intended difference between comment and message is.
+     */
+    @Column(name = "message")
+    @Nullable
+    private String message;
 
     /**
      * Name of the person/lecture.

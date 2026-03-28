@@ -199,15 +199,22 @@ public class Linussyncservice {
                 String experimentNote = "";
 
                 final int maxLinusAppointmentCommentLength = 4096;
-                final String linusComment = linusAppointment.getComment();
-                experimentNote += UtilityFunctions.truncateStringIfNeccessary(linusComment,
-                    maxLinusAppointmentCommentLength);
+                final String linusComment =
+                    linusAppointment.getComment() != null ? linusAppointment.getComment().strip() :
+                        "";
+                final String linusMessage =
+                    linusAppointment.getMessage() != null ? linusAppointment.getMessage().strip() :
+                        "";
+                experimentNote += UtilityFunctions.truncateStringIfNeccessary(
+                    linusComment + "\n\n" + linusMessage,
+                    maxLinusAppointmentCommentLength)
+                ;
 
                 // When adding new things to the note change this to a sum of lengths
                 assert maxLinusAppointmentCommentLength <= 4096;
 
                 Optional<Person> appointmentRequester = personRepository
-                    .findPersonByLinusUserId(linusExperimentBooking.getLinusUserId());
+                    .findPersonByLinusUserId(linusAppointment.getLinusUserId());
 
                 ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
                     .id(null)
