@@ -87,9 +87,10 @@ public class LinusAppointment {
      * <br/>
      * Actually, we need to return in user's browser timezone, but We do not know that here
      */
-    public LocalDateTime getAppointmenttime() {
-        if (Objects.isNull(appointmentTime))
+    public LocalDateTime getAppointmentTime() {
+        if (Objects.isNull(appointmentTime)) {
             return null;
+        }
 
         ZoneId darmstadtZone = ZoneId.of("Europe/Berlin");
         return appointmentTime.atZone(darmstadtZone).toLocalDateTime();
