@@ -1,5 +1,6 @@
 package de.vlaorgatu.vlabackend.entities.vladb;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.vlaorgatu.vlabackend.entities.linusdb.LinusAppointment;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -54,4 +55,12 @@ public class AppointmentMatching {
     @ManyToOne
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
+
+    /**
+     * Indicates whether the experiments of an appointment were already matched.
+     */
+    @Builder.Default
+    @JsonIgnore
+    @Column(name = "linus_appointment_experiments_synced")
+    private boolean experimentsSynced = false;
 }

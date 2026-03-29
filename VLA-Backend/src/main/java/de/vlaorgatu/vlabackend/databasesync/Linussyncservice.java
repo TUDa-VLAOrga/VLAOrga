@@ -155,13 +155,19 @@ public class Linussyncservice {
         List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository
             .getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
 
-        int unmatchedBecauseAppointmentNull = 0;
+        int unmatchedBecauseCannotSync = 0;
+
+        ArrayList<AppointmentMatching> updatedAppointmentMatchingStatus = new ArrayList<>();
 
         for (AppointmentMatching appointmentMatching : appointmentMatchings) {
-            if (appointmentMatching.getAppointment() == null) {
-                unmatchedBecauseAppointmentNull++;
+            if (appointmentMatching.getAppointment() == null ||
+                appointmentMatching.isExperimentsSynced()
+            ) {
+                unmatchedBecauseCannotSync++;
                 continue;
             }
+
+            updatedAppointmentMatchingStatus.add(appointmentMatching);
 
             Optional<LinusAppointment> fetchedLinusAppointment =
                 linusAppointmentRepository.findById(appointmentMatching.getLinusAppointmentId());
@@ -256,11 +262,18 @@ public class Linussyncservice {
 
         }
 
+        /*
+        Update state of already synced experiments
+        This is done now to prevent messing with the iterator above
+        This should also improve performance as generally only few should be updated
+         */
+        appointmentMatchingRepository.saveAll(updatedAppointmentMatchingStatus);
+
         // Comment this in for debug information about unmatched bookings.
-        // if (unmatchedBecauseAppointmentNull > 0) {
+        // if (unmatchedBecauseCannotSync > 0) {
         //     log.warning(
-        //         "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
-        //             "with a null-matched appointment. " +
+        //         "There were " + unmatchedBecauseCannotSync + " AppointmentMatchings " +
+        //             "with a null-matched or already-matched appointment. " +
         //             "According experiments were not imported."
         //     );
         // }
