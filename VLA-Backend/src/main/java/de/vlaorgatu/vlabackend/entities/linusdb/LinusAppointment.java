@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -79,4 +81,17 @@ public class LinusAppointment {
     @Column(name = "name")
     @Nullable
     private String name;
+
+    /**
+     * Overridden getter to convert saved UTC time to Eurpe/Berlin timezone.
+     * <br/>
+     * Actually, we need to return in user's browser timezone, but We do not know that here
+     */
+    public LocalDateTime getAppointmenttime() {
+        if (Objects.isNull(appointmentTime))
+            return null;
+
+        ZoneId darmstadtZone = ZoneId.of("Europe/Berlin");
+        return appointmentTime.atZone(darmstadtZone).toLocalDateTime();
+    }
 }

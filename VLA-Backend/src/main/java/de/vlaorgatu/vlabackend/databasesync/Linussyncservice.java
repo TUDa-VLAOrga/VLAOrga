@@ -73,7 +73,7 @@ public class Linussyncservice {
      */
     @SuppressWarnings("linelength")
     @Transactional("vlaTransactionManager")
-    public void matchAppointments(LocalDateTime start, LocalDateTime end) {
+    public synchronized void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository
                 .findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
@@ -151,7 +151,7 @@ public class Linussyncservice {
      * @param end   The end of the time frame that should be synced
      */
     @Transactional("vlaTransactionManager")
-    public void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
+    public synchronized void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
         List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository
             .getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
 

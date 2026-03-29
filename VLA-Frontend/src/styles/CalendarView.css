@@ -889,6 +889,10 @@
   flex: 1;
 }
 
+.cv-respectNewlines {
+  white-space: pre-wrap;
+}
+
 .cv-detailValueLecture {
   display: inline-flex;
   align-items: center;

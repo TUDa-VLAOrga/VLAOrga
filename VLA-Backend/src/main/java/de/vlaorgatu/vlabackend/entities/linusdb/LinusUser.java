@@ -63,6 +63,7 @@ public class LinusUser {
     /**
      * Timestamp of account creation.
      */
+    @Column(name = "date_joined", nullable = false)
     private LocalDateTime dateJoined;
 
     /**
