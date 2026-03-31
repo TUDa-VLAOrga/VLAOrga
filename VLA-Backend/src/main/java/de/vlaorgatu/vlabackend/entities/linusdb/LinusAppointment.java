@@ -92,7 +92,9 @@ public class LinusAppointment {
             return null;
         }
 
-        ZoneId darmstadtZone = ZoneId.of("Europe/Berlin");
-        return appointmentTime.atZone(darmstadtZone).toLocalDateTime();
+        ZoneId UTC_ZONE = ZoneId.of("UTC");
+        ZoneId DARMSTADT_ZONE = ZoneId.of("Europe/Berlin");
+        return appointmentTime.atZone(UTC_ZONE).withZoneSameInstant(DARMSTADT_ZONE)
+            .toLocalDateTime();
     }
 }
