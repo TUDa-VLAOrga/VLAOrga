@@ -25,6 +25,10 @@ import lombok.NoArgsConstructor;
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation")
 public class LinusAppointment {
+    static final ZoneId UTC_ZONE = ZoneId.of("UTC");
+    static final ZoneId DARMSTADT_ZONE = ZoneId.of("Europe/Berlin");
+
+
     /**
      * Primary key.
      */
@@ -92,8 +96,6 @@ public class LinusAppointment {
             return null;
         }
 
-        ZoneId UTC_ZONE = ZoneId.of("UTC");
-        ZoneId DARMSTADT_ZONE = ZoneId.of("Europe/Berlin");
         return appointmentTime.atZone(UTC_ZONE).withZoneSameInstant(DARMSTADT_ZONE)
             .toLocalDateTime();
     }
