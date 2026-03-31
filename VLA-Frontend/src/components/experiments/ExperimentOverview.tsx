@@ -109,7 +109,7 @@ export default function ExperimentOverview({
           <div className="cv-detailLabel">
             Notizen:
           </div>
-          <div className="cv-detailValue">
+          <div className="cv-detailValue cv-respectNewlines">
             {experimentBooking.notes}
           </div>
         </div>

@@ -2,8 +2,9 @@ import { useState } from "react";
 import {formatDateAndTime, formatTimeRangeLongerDE} from "../dateUtils";
 import PersonDetails from "./PersonDetails";
 import EventEditForm from "./EventEditForm";
+import "../../../styles/EventDetailsStyles.css";
 import LectureEditForm from "./LectureEditForm";
-import "../../../styles/Event-details-styles.css";
+import "../../../styles/EventDetailsStyles.css";
 import type {Acceptance, Appointment, AppointmentCategory, Lecture, Person} from "@/lib/databaseTypes";
 import {
   checkPartOfSeries,
@@ -213,7 +214,6 @@ export default function EventDetails({
                       onClick={() => setShowEditLectureDialog(true)}
                       title="Vorlesung bearbeiten"
                     >
-                      <span className="cv-editPenIcon"></span>
                     </button>
                   </span>
                 </span>
@@ -262,8 +262,15 @@ export default function EventDetails({
                           aria-label={`Details zu ${people.find((p) => p.id == selectedPersonId)?.name} anzeigen`}
                           title="Details anzeigen"
                         >
-                          ⓘ
                         </button>
+                        { people.find((p) => p.id == person.id)?.notes !== "" && (
+                          <span
+                            className="cv-notesIcon"
+                            onClick={() => setSelectedPersonId(person.id)}
+                            title={people.find((p) => p.id == person.id)!.notes}
+                          >
+                          </span>
+                        )}
                       </span>
                     ))}
                   </span>
@@ -286,6 +293,7 @@ export default function EventDetails({
               onChange={(e) => setEventNotes(e.target.value)}
               placeholder="Notizen zu diesem Termin..."
               rows={4}
+              maxLength={4096}
             />
           </div>
 

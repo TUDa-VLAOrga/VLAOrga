@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,10 +21,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Reservation.php
+// table and column names are taken from a production SQL dump.
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "reservation")
 public class LinusAppointment {
+    static final ZoneId UTC_ZONE = ZoneId.of("UTC");
+    static final ZoneId DARMSTADT_ZONE = ZoneId.of("Europe/Berlin");
+
+
     /**
      * Primary key.
      */
@@ -59,10 +65,19 @@ public class LinusAppointment {
 
     /**
      * Comment from the linus order.
+     * TODO: find out what the intended difference between comment and message is.
      */
     @Column(name = "comment")
     @Nullable
     private String comment;
+
+    /**
+     * Message from the linus order.
+     * TODO: find out what the intended difference between comment and message is.
+     */
+    @Column(name = "message")
+    @Nullable
+    private String message;
 
     /**
      * Name of the person/lecture.
@@ -70,4 +85,18 @@ public class LinusAppointment {
     @Column(name = "name")
     @Nullable
     private String name;
+
+    /**
+     * Overridden getter to convert saved UTC time to Eurpe/Berlin timezone.
+     * <br/>
+     * Actually, we need to return in user's browser timezone, but We do not know that here
+     */
+    public LocalDateTime getAppointmentTime() {
+        if (Objects.isNull(appointmentTime)) {
+            return null;
+        }
+
+        return appointmentTime.atZone(UTC_ZONE).withZoneSameInstant(DARMSTADT_ZONE)
+            .toLocalDateTime();
+    }
 }

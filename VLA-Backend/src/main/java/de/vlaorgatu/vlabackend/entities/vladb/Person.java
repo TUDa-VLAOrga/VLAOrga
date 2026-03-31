@@ -46,7 +46,7 @@ public class Person {
     /**
      * Personal notes, specifying e.g. equipment preferences of this lecturer.
      */
-    @Column(name = "notes", nullable = false)
+    @Column(name = "notes", nullable = false, length = 4096)
     private String notes = "";
 
     /**

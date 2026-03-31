@@ -204,6 +204,7 @@ export default function AddEventForm({
               onChange={(e) => setNotes(e.target.value)}
               placeholder={recurrence.enabled ? "initiale Notizen für alle Termine" : "Notizen zu diesem Termin..."}
               rows={4}
+              maxLength={4096}
             />
           </div>
 

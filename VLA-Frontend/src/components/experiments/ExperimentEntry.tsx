@@ -29,6 +29,7 @@ export default function ExperimentEntry({experiment}: ExperimentProps){
     name: "Experimente laden..",
     status: "",
     experimentNumber: 0,
+    presented: false,
   });
 
   const [experimentModalOpen, setExperimentModalOpen] = useState<boolean>(false);

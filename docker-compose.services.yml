@@ -25,13 +25,6 @@ services:
       file: ./Linus/docker-compose.yml
       service: linus-db
 
-  # Linus web frontend (outdated design - should only be used for development)
-  linus-app:
-    extends:
-      file: ./Linus/docker-compose.yml
-      service: linus-app
-
-
   # Dev build of backend application for VLAOrga
   # Does not merge the frontend into the backend, seperated process for frontend is needed
   backend:

@@ -73,7 +73,7 @@ public class Linussyncservice {
      */
     @SuppressWarnings("linelength")
     @Transactional("vlaTransactionManager")
-    public void matchAppointments(LocalDateTime start, LocalDateTime end) {
+    public synchronized void matchAppointments(LocalDateTime start, LocalDateTime end) {
         List<LinusAppointment> linusAppointments =
             linusAppointmentRepository
                 .findLinusAppointmentsByAppointmentTimeGreaterThanEqualAndAppointmentTimeLessThanEqual(
@@ -151,17 +151,23 @@ public class Linussyncservice {
      * @param end   The end of the time frame that should be synced
      */
     @Transactional("vlaTransactionManager")
-    public void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
+    public synchronized void syncExperimentBookings(LocalDateTime start, LocalDateTime end) {
         List<AppointmentMatching> appointmentMatchings = appointmentMatchingRepository
             .getAppointmentMatchingsBylinusAppointmentTimeBetween(start, end);
 
-        int unmatchedBecauseAppointmentNull = 0;
+        int unmatchedBecauseCannotSync = 0;
+
+        ArrayList<AppointmentMatching> updatedAppointmentMatchingStatus = new ArrayList<>();
 
         for (AppointmentMatching appointmentMatching : appointmentMatchings) {
-            if (appointmentMatching.getAppointment() == null) {
-                unmatchedBecauseAppointmentNull++;
+            if (appointmentMatching.getAppointment() == null ||
+                appointmentMatching.isExperimentsSynced()
+            ) {
+                unmatchedBecauseCannotSync++;
                 continue;
             }
+
+            updatedAppointmentMatchingStatus.add(appointmentMatching);
 
             Optional<LinusAppointment> fetchedLinusAppointment =
                 linusAppointmentRepository.findById(appointmentMatching.getLinusAppointmentId());
@@ -199,15 +205,22 @@ public class Linussyncservice {
                 String experimentNote = "";
 
                 final int maxLinusAppointmentCommentLength = 4096;
-                final String linusComment = linusAppointment.getComment();
-                experimentNote += UtilityFunctions.truncateStringIfNeccessary(linusComment,
-                    maxLinusAppointmentCommentLength);
+                final String linusComment =
+                    linusAppointment.getComment() != null ? linusAppointment.getComment().strip() :
+                        "";
+                final String linusMessage =
+                    linusAppointment.getMessage() != null ? linusAppointment.getMessage().strip() :
+                        "";
+                experimentNote += UtilityFunctions.truncateStringIfNeccessary(
+                    linusComment + "\n\n" + linusMessage,
+                    maxLinusAppointmentCommentLength)
+                ;
 
                 // When adding new things to the note change this to a sum of lengths
                 assert maxLinusAppointmentCommentLength <= 4096;
 
                 Optional<Person> appointmentRequester = personRepository
-                    .findPersonByLinusUserId(linusExperimentBooking.getLinusUserId());
+                    .findPersonByLinusUserId(linusAppointment.getLinusUserId());
 
                 ExperimentBooking newExperimentBooking = ExperimentBooking.builder()
                     .id(null)
@@ -249,11 +262,18 @@ public class Linussyncservice {
 
         }
 
+        /*
+        Update state of already synced experiments
+        This is done now to prevent messing with the iterator above
+        This should also improve performance as generally only few should be updated
+         */
+        appointmentMatchingRepository.saveAll(updatedAppointmentMatchingStatus);
+
         // Comment this in for debug information about unmatched bookings.
-        // if (unmatchedBecauseAppointmentNull > 0) {
+        // if (unmatchedBecauseCannotSync > 0) {
         //     log.warning(
-        //         "There were " + unmatchedBecauseAppointmentNull + " AppointmentMatchings " +
-        //             "with a null-matched appointment. " +
+        //         "There were " + unmatchedBecauseCannotSync + " AppointmentMatchings " +
+        //             "with a null-matched or already-matched appointment. " +
         //             "According experiments were not imported."
         //     );
         // }
