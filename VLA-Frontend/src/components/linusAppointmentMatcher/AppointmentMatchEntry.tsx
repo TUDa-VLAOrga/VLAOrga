@@ -51,9 +51,9 @@ export default function AppointmentMatchEntry({
 
   if(dayAppointments !== undefined) {
     const nonWholeDayAppointments = dayAppointments.filter(
-      appointment => isUntimedForView(appointment, calendarStartMinSinceMidnight, calendarEndMinSinceMidnight)
+      appointment => !isUntimedForView(appointment, calendarStartMinSinceMidnight, calendarEndMinSinceMidnight)
     );
-    
+
     const linusAppointmentInTimeFrameAppointments = nonWholeDayAppointments.filter(appointment => 
       appointment.startTime.getTime() <= matching.linusAppointmentTime.getTime() &&
       matching.linusAppointmentTime.getTime() <= appointment.endTime.getTime()

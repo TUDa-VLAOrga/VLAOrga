@@ -59,7 +59,7 @@ public class Appointment {
     /**
      * Notes for this appointment.
      */
-    @Column(name = "notes", nullable = false)
+    @Column(name = "notes", nullable = false, length = 4096)
     private String notes = "";
 
     /**

@@ -1,9 +1,11 @@
 # Setup of VLAOrga
 
-## Requirements
+## Installation
+
+### Requirements
 This setup requires `git` and `docker` installed. Also, the credentials to a running database of a linus instance have to be known.
 
-## Preparation
+### Preparation
 1. Clone the git repository:
 
         git clone --branch deployed https://github.com/TUDa-VLAOrga/VLAOrga.git
@@ -11,7 +13,7 @@ This setup requires `git` and `docker` installed. Also, the credentials to a run
 2. In the VLAOrga folder, copy the `.env.template` file to a file named `.env`.
 3. In `.env`, change all `LINUS_` variables to the credentials of the linus instance, and all `POSTGRES_` variables to secure values.
 
-## Starting the Software
+### Starting the Software
 Make sure that linus is running and reachable.
 
 To start the software, run (in VLAOrga folder):
@@ -23,6 +25,15 @@ The application will launch on port 8080.
 To stop the Software, run in VLAOrga folder:
 
     docker compose --file docker-compose.prod.yml stop
+
+## Restarting VLAOrga / Update
+
+    docker compose --file docker-compose.prod.yml stop prod-app
+    git pull
+    
+    # here more setup possible, e.g. adjusting config keys in .env
+    
+    docker compose --file docker-compose.prod.yml up --build -d
 
 ## Creating users
 

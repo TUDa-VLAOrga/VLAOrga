@@ -117,22 +117,32 @@ public class BookingServiceTest {
 
         LinusAppointment linusAppointment1 = LinusAppointment.builder().id(1).linusUserId(1)
             .appointmentTime(
-                LocalDateTime.of(2026, 3, 1, 1, 0)
+                // this is UTC, linus saves everything in UTC
+                LocalDateTime.of(2026, 3, 1, 0, 0)
             )
             .build();
 
         LinusAppointment linusAppointment2 = LinusAppointment.builder().id(2).linusUserId(1)
             .appointmentTime(
-                LocalDateTime.of(2026, 3, 1, 2, 0)
+                // this is UTC, linus saves everything in UTC
+                LocalDateTime.of(2026, 3, 1, 1, 0)
+            )
+            .build();
+
+        // a third appointment that should not be matched, since the time frame is just earlier
+        LinusAppointment linusAppointment3 = LinusAppointment.builder().id(2).linusUserId(1)
+            .appointmentTime(
+                // this is UTC, linus saves everything in UTC
+                LocalDateTime.of(2026, 3, 1, 20, 0)
             )
             .build();
 
         LinusExperimentBooking linusExperimentBooking1 =
-            LinusExperimentBooking.builder().id(1).linusExperimentId(1).linusUserId(1)
+            LinusExperimentBooking.builder().id(1).linusExperimentId(1)
                 .linusAppointmentId(1).status(0).build();
 
         LinusExperimentBooking linusExperimentBooking2 =
-            LinusExperimentBooking.builder().id(2).linusExperimentId(1).linusUserId(1)
+            LinusExperimentBooking.builder().id(2).linusExperimentId(1)
                 .linusAppointmentId(2).status(0).build();
 
         when(linusExperimentRepository.findById(1)).thenReturn(Optional.of(experiment1));
@@ -141,8 +151,9 @@ public class BookingServiceTest {
 
         when(linusAppointmentRepository.findById(1)).thenReturn(Optional.of(linusAppointment1));
         when(linusAppointmentRepository.findById(2)).thenReturn(Optional.of(linusAppointment2));
+        when(linusAppointmentRepository.findById(3)).thenReturn(Optional.of(linusAppointment3));
         when(linusAppointmentRepository.findAll()).thenReturn(
-            List.of(linusAppointment1, linusAppointment2));
+            List.of(linusAppointment1, linusAppointment2, linusAppointment3));
 
         when(
             linusAppointmentRepository
@@ -193,7 +204,7 @@ public class BookingServiceTest {
      */
     @Test
     void checkCorrectDbSetup() {
-        assertEquals(2, linusAppointmentRepository.findAll().size());
+        assertEquals(3, linusAppointmentRepository.findAll().size());
         assertEquals(2, linusExperimentBookingRepository.findAll().size());
         assertEquals(2, linusExperimentRepository.findAll().size());
     }

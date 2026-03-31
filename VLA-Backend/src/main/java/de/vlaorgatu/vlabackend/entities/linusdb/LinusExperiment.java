@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-// table and column names are taken from https://git.rwth-aachen.de/datenbank-physik/datenbank-physik/-/blob/master/src/Entity/Experiment.php
+// table and column names are taken from a production SQL dump.
 // Integer is used for nullable columns and int for non-null ones.
 @Table(name = "experiment")
 public class LinusExperiment {
@@ -88,4 +88,17 @@ public class LinusExperiment {
      */
     @Column(name = "experiment_number", nullable = false)
     private int experimentNumber;
+
+    /**
+     * TODO: find out what this attribute means.
+     */
+    @Column(name = "tags")
+    @Nullable
+    private String tags;
+
+    /**
+     * TODO: find out what this attribute means.
+     */
+    @Column(name = "presented", nullable = false)
+    private boolean presented;
 }
