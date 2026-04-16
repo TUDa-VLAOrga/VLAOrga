@@ -5,13 +5,13 @@ services:
     extends:
       file: docker-compose.services.yml
       service: db
-    restart: on-failure
+    restart: always
 
   prod-app:
     extends:
       file: docker-compose.services.yml
       service: prod
-    restart: on-failure
+    restart: always
 
 # !!! Changes in volumes must be applied in all docker-compose*.yml at this level !!!
 volumes:

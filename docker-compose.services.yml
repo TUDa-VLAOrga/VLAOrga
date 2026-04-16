@@ -24,6 +24,7 @@ services:
     extends: 
       file: ./Linus/docker-compose.yml
       service: linus-db
+    restart: always
 
   # Dev build of backend application for VLAOrga
   # Does not merge the frontend into the backend, seperated process for frontend is needed
